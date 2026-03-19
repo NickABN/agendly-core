@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.nuxt/
+.output/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Coverage
+coverage/
+
+# Prisma
+prisma/*.db
+
+# Turbo
+.turbo/
+
+# IDE
+.idea/
