@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "#e7e8e9",
+              "on-secondary-fixed-variant": "#005236",
+              "inverse-on-surface": "#f0f1f2",
+              "on-surface": "#191c1d",
+              "on-secondary": "#ffffff",
+              "surface-bright": "#f8f9fa",
+              "inverse-primary": "#a4c9ff",
+              "primary": "#2383E2",
+              "on-primary-container": "#fdfcff",
+              "error-container": "#ffdad6",
+              "on-background": "#191c1d",
+              "on-secondary-container": "#00714d",
+              "outline-variant": "#c0c7d4",
+              "on-primary-fixed-variant": "#004884",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "on-secondary-fixed": "#002113",
+              "on-primary": "#ffffff",
+              "on-error": "#ffffff",
+              "on-primary-fixed": "#001c39",
+              "surface-container-highest": "#e1e3e4",
+              "surface-variant": "#e1e3e4",
+              "surface-container-low": "#f3f4f5",
+              "primary-fixed-dim": "#a4c9ff",
+              "surface": "#f8f9fa",
+              "on-tertiary": "#ffffff",
+              "error": "#ba1a1a",
+              "primary-container": "#E3F2FD",
+              "tertiary-fixed": "#ffdf9f",
+              "surface-container": "#edeeef",
+              "tertiary": "#765700",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed": "#6ffbbe",
+              "outline": "#717784",
+              "surface-tint": "#2383E2",
+              "primary-fixed": "#D1E9FF",
+              "secondary": "#006c49",
+              "secondary-fixed-dim": "#4edea3",
+              "on-tertiary-fixed": "#261a00",
+              "on-tertiary-container": "#fffbff",
+              "secondary-container": "#6cf8bb",
+              "tertiary-fixed-dim": "#f9bd22",
+              "on-error-container": "#93000a",
+              "background": "#f8f9fa",
+              "tertiary-container": "#956e00",
+              "inverse-surface": "#2e3132",
+              "surface-dim": "#d9dadb",
+              "on-surface-variant": "#414752"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ghost-shadow {
+            box-shadow: 0px 4px 20px rgba(25, 28, 29, 0.06);
+        }
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar Component (Shared COMPONENTS_25) -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/85 backdrop-blur-md shadow-[0px_4px_20px_rgba(25,28,29,0.06)] flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<button class="p-2 -ml-2 rounded-full hover:bg-slate-100/50 transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined text-blue-700" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tighter text-blue-800">Agendly</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200">
+<img alt="Salon Specialist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhdN46Hea-OqP6hNM3LpHrELQVp5kl6wawrDDDl5Ky_kho1UAaO4juMc6lSRD2tmg-FN40QShhrIyGZAQ-82E8JK3PX99OXR4W04pWTpUNLwaviktQoZGmSL-gbAmYTOiE6aTjrGpQ0k5LqUJKXhYAop_9s9vTWLHobDOeYpnEsajRW6jUkvN4QuFke0FoYHofbhClt2m-u4evJcUR-NUp1vLpdyjNJlu9g_RsCn9CB3XgpuQ1sK_Hfq1lDKgcwwW0nAGYvjnrTLs"/>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-2xl mx-auto w-full px-4 pt-24 pb-32">
+<!-- Business Header -->
+<div class="text-center mb-10">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-4 uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                Paso 1 de 4
+            </div>
+<h2 class="text-3xl font-bold tracking-tight text-on-surface mb-2">Salón Lupita · Narvarte</h2>
+<p class="text-on-surface-variant text-lg">Reserva tu experiencia de bienestar</p>
+</div>
+<!-- Booking Progress Step Card -->
+<div class="bg-surface-container-lowest rounded-lg ghost-shadow p-6 mb-8">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-xl font-bold text-on-surface">¿Qué servicio necesitas?</h3>
+<span class="text-xs font-semibold text-primary bg-primary-fixed px-3 py-1 rounded-full uppercase tracking-tight">Selecciona uno</span>
+</div>
+<!-- Services List -->
+<div class="space-y-4">
+<!-- Service Item: Selected -->
+<button class="w-full flex items-center justify-between p-5 rounded-lg border-2 border-primary bg-blue-50/30 transition-all duration-200 text-left">
+<div class="flex gap-4 items-center">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+<img alt="Hair cutting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_B8Yg4ZcJli5c_VUx7CxtJxhoobjCyGrhcEcpQWVLP3jFSsJ_lhEIF8IOQng6ewrvemGjERDu2woR6ps1RprYEfe1gOeC7xGdBmXHMoTN7EiEnLe1I7Le3CsXo1LvyZl_NdDz3ThorbMy29M2FfcrbZdNvuLo8yPyFFW4QbsuzR7BFRj0SbVuhObzyfkNwVE0Hkt3H5s1VaFNL4G4Yx2b5PnbkAeAT63xjfqNx2_0IIDW-WwJYn1aHU7RkXwZzVbParJ8pPNA23U"/>
+</div>
+<div>
+<p class="font-bold text-on-surface text-lg">Corte y Peinado Profesional</p>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>45 min</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xl font-extrabold text-primary">$450 MXN</p>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</button>
+<!-- Service Item -->
+<button class="w-full flex items-center justify-between p-5 rounded-lg bg-surface-container-lowest border border-slate-100 hover:bg-slate-50 transition-all duration-200 text-left group">
+<div class="flex gap-4 items-center">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+<img alt="Hair coloring" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4eF_n9tr7C0YpT_-cNbpXYRmSUiNMmKnpmQLjkzFwBulq_iUff9lzshcLma4nt3CPi0mV-31h5yGns8t2uLrCgSlLlGbd1KfWa4aw_4R8cajKEuB5j8pFjYZ4n_whFm9F9ihZkSXjtzGvn-hVISBrT55vbW8G2Zt5cYYrU-wpdoPIh5jJBq4Ouk0oCnhdV_3V-3u_7uKc-4IDfecoGrNr5haJWQ8M6DGvh7cBeSW-Z5aCCMHrfOjxzi5ZepbukJbcRssTsrPqjYE"/>
+</div>
+<div>
+<p class="font-bold text-on-surface text-lg">Tinte Completo</p>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>2h</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xl font-bold text-on-surface-variant">$1,200 MXN</p>
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+</button>
+<!-- Service Item -->
+<button class="w-full flex items-center justify-between p-5 rounded-lg bg-surface-container-lowest border border-slate-100 hover:bg-slate-50 transition-all duration-200 text-left group">
+<div class="flex gap-4 items-center">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+<img alt="Manicure" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACgXRuFqxtbdwiX_oZuOMDrzM3tKoNaFyJG_WnywQcs2v_H1IUFbJ1HT3DleXrQNU6tquPuMpxnVJk3MLXyg5kmXQk6-ryufFbYxflf4He7BS-FL4dvmGG5A1bnFc-v7_7A_sHYOVLac9qurvUo_I2PGTF7-VViscK_L8lSled6WbrwX35IwrFjHwynoVeCJ4RsmzMgJ67brysD6L8UASWJBMsInmp8AODVY-KE9zDJ5U_eOTHXdjOLXtpPawVq_DzIhnUMOz_xnc"/>
+</div>
+<div>
+<p class="font-bold text-on-surface text-lg">Manicure Spa</p>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>60 min</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xl font-bold text-on-surface-variant">$350 MXN</p>
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+</button>
+</div>
+</div>
+<!-- Sticky Bottom CTA Area -->
+<div class="mt-8 mb-12">
+<button class="w-full bg-primary hover:brightness-110 text-on-primary py-4 px-6 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all duration-200">
+                Elegir Especialista
+                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<p class="text-center text-on-surface-variant text-sm mt-4 px-4 italic">
+                Paso siguiente: Disponibilidad de profesionales
+            </p>
+</div>
+</main>
+<!-- BottomNavBar Component (Shared COMPONENTS_25) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-white/90 backdrop-blur-lg border-t border-slate-100 rounded-t-[24px] shadow-[0_-4px_20px_rgba(25,28,29,0.04)] flex justify-around items-center px-4 pb-6 pt-3">
+<button class="flex flex-col items-center justify-center bg-blue-50 text-blue-800 rounded-2xl px-5 py-2 transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide mt-1">Services</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide mt-1">Staff</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide mt-1">Time</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide mt-1">Review</span>
+</button>
+</nav>
+<!-- Footer decoration / Branding -->
+<footer class="py-12 bg-slate-50 text-center">
+<div class="flex justify-center items-center gap-2 opacity-40">
+<span class="material-symbols-outlined text-sm" data-icon="verified_user">verified_user</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Powered by Agendly Operational Calm</span>
+</div>
+</footer>
+</body></html>

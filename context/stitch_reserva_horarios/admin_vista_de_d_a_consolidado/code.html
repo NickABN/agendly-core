@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agendly Admin - Vista de Día</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#ffdad6",
+              "outline-variant": "#c0c7d4",
+              "on-surface": "#191c1d",
+              "tertiary-container": "#956e00",
+              "inverse-on-surface": "#f0f1f2",
+              "secondary": "#006c49",
+              "secondary-container": "#6cf8bb",
+              "surface-tint": "#005fad",
+              "error": "#ba1a1a",
+              "outline": "#717784",
+              "on-surface-variant": "#414752",
+              "tertiary": "#765700",
+              "primary-container": "#0076d3",
+              "on-secondary": "#ffffff",
+              "on-background": "#191c1d",
+              "tertiary-fixed": "#ffdf9f",
+              "primary": "#005da9",
+              "on-secondary-container": "#00714d",
+              "on-primary-fixed-variant": "#004884",
+              "primary-fixed-dim": "#a4c9ff",
+              "surface-container-low": "#f3f4f5",
+              "on-primary-container": "#fdfcff",
+              "inverse-primary": "#a4c9ff",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "background": "#f8f9fa",
+              "surface": "#f8f9fa",
+              "on-secondary-fixed": "#002113",
+              "on-tertiary-container": "#fffbff",
+              "on-tertiary": "#ffffff",
+              "surface-bright": "#f8f9fa",
+              "secondary-fixed-dim": "#4edea3",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#6ffbbe",
+              "surface-variant": "#e1e3e4",
+              "primary-fixed": "#d4e3ff",
+              "on-secondary-fixed-variant": "#005236",
+              "on-primary-fixed": "#001c39",
+              "on-tertiary-fixed": "#261a00",
+              "surface-dim": "#d9dadb",
+              "tertiary-fixed-dim": "#f9bd22",
+              "inverse-surface": "#2e3132",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-highest": "#e1e3e4",
+              "surface-container": "#edeeef",
+              "surface-container-high": "#e7e8e9"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "inter": ["Inter"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem", 
+              "lg": "0.5rem", 
+              "xl": "0.75rem", 
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Inter', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex">
+<!-- SideNavBar (Shared Component COMPONENTS_14 Implementation) -->
+<aside class="fixed left-0 top-0 h-full w-64 flex flex-col p-4 gap-2 bg-slate-50 dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 text-sm font-medium Inter hidden md:flex">
+<div class="flex flex-col gap-2 p-2">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div>
+<h1 class="text-lg font-black tracking-tighter text-blue-800 dark:text-blue-300 leading-none">Agendly Admin</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 mt-1">Administración</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<!-- Navigation items based on COMPONENTS_14 tab_labels and tab_icons -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-700 dark:text-blue-300 bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span>Agenda</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+<span>Servicios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span>Personal</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-2">
+<button class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Nueva Cita</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 min-h-screen">
+<!-- TopAppBar (Shared Component COMPONENTS_14 Reference) -->
+<header class="fixed top-0 w-full z-50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md shadow-sm dark:shadow-none font-inter antialiased tracking-tight">
+<div class="flex justify-between items-center h-16 px-6 md:pr-[270px] w-full">
+<div class="flex items-center flex-1 max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xl" data-icon="search">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-11 pr-4 py-2 focus:ring-2 focus:ring-primary focus:bg-white transition-all placeholder:text-slate-400" placeholder="Buscar clientes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-200 relative active:scale-95">
+<span class="material-symbols-outlined text-slate-500" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined text-slate-500" data-icon="help">help</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold text-slate-900 dark:text-slate-50 leading-none">Sandra G.</p>
+<p class="text-[11px] text-slate-500">Owner</p>
+</div>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary/10" data-alt="professional portrait of a confident woman with a warm smile, business casual attire, soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-6lFqwk9ENHzMvQlVEla-esHXRbshikATsQrzQs01NivfoT2p1nqzR2qDayao6KSy_4Ihh0sbZLEzcLWClKi6KW2FIrKVoDvPYTiLNU32uHOUIYP68_LKDVjUDRQhxHby9jMg6DG9DPNMCfxcx6OaIviV0ijRhrYeX_kmL6Zw4Qyf9Ueqy09pBda4oXTVGANhXZsNOJTZ9erFXygo48iXWgeymi_mNfq1MPwJkUDe6hGrwNIyd0noTdyal1yLJPBFfeca8vXKeoU"/>
+</div>
+</div>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 h-[1px] w-full self-end"></div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="px-8 pt-24 pb-8 max-w-6xl mx-auto">
+<!-- Header & Stats Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div class="space-y-1">
+<h2 class="text-4xl font-black tracking-tight text-on-surface">Martes 4 de marzo</h2>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">5 citas hoy</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant/60 text-xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+                        Actualizado hace 4 seg
+                    </div>
+</div>
+</div>
+<!-- Employee Filters -->
+<div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+<button class="px-5 py-2 rounded-full text-sm font-semibold transition-all bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest">All</button>
+<button class="px-1.5 py-1.5 rounded-full ring-2 ring-primary ring-offset-2 flex items-center gap-3 pr-5 bg-primary text-on-primary transition-all shadow-sm">
+<img alt="CA Avatar" class="w-8 h-8 rounded-full border-2 border-on-primary/20" data-alt="headshot of a stylish male barber with a short beard and modern haircut, warm natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ174_a13-kJDdTVNA9zY2L-wsI5EfjuMM-ZycQhXo5inm3MOuR7wDhZ-gTJZb4bJIfeKLZb0uOkr_uybBCBZ-yFeqIbiMJ_1CG6WSdyZ1QB_ADu4jaMOYvnWBF9Qy7t2WFs6pH5W4ajDPS7ZhW7hTToAUD00RifLH3OfVAXWOf9DNk3aR9mYdIoPqCDvI4J6m3m4yi6UZ-Qd7nIqGyo-i60p0PEfross5w2iMiR7NKiycTINy7-Ap7ceH5sJs1BEpnGrKBQ0ocKA"/>
+<span class="text-sm font-bold">CA</span>
+</button>
+<button class="p-1 rounded-full bg-surface-container-high hover:bg-surface-container-highest transition-all group">
+<img alt="SO Avatar" class="w-8 h-8 rounded-full grayscale group-hover:grayscale-0 transition-all" data-alt="portrait of a professional woman in a salon environment, soft focus background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtwa8hKbfhVjxX-4znCYPPAWDeFZ4X9Fwc5H9nwvhcNEmIUj2ynhMLfCx8wlFjibGTwhiQx9QqkDKchIjf7f2psJyLfLyhNAQx9JwtbvD6IIm15iX1sUYCKv4lKG8_htgY6i2PDRILwPnCBKaJwfYwwwjPZYlHJW05pCW0_e6oDrXL3SycXy5JUbPaDr13uYYruHfGbaAoMthB0QyA6qJiIAEedpwMiJI9FAUa2cyJzuGECdMxqbZ70Xi2w1vx11fQXNWPtg63aLI"/>
+</button>
+<button class="p-1 rounded-full bg-surface-container-high hover:bg-surface-container-highest transition-all group">
+<img alt="ME Avatar" class="w-8 h-8 rounded-full grayscale group-hover:grayscale-0 transition-all" data-alt="friendly male professional with glasses and a clean-cut look, bright indoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkKTrAZY8ulfXoTAE2RlF4XzNUwEusiY0-by1NSwy_YP9BnmbgrKsFlfth7nzbynRolZI2yAM3xlpSD-P2tM-3UQHRmmB9gPVc8ZjLZaC6H7GVG849ymRyTsZCgFbFtUN3zCdRV4Vm2eRbxBQzKAmKZBbza8KARgTH6HAYY6rXR0wQYPtj-26ey7fG3neB505hoWt1LoY-o6J1MGbwNlkzu1BoWnlYOqi-gJ7RozjDSfwDHjV7SkLXdHPrpioYCYKNqMWZTh_86i0"/>
+</button>
+<button class="p-1 rounded-full bg-surface-container-high hover:bg-surface-container-highest transition-all group">
+<img alt="LU Avatar" class="w-8 h-8 rounded-full grayscale group-hover:grayscale-0 transition-all" data-alt="young professional woman with a minimalist aesthetic, neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfi08QtOm5D-iKjJWE7SaHNzaNVuxECR9raU4-qousOD0JexvapMJyvfJZJYKIgSpDOybyUDk1AMs-7URgXogRTTZdxboi4r8Ma1gpyygjQyXuvhZL85FEF89dwMiHHP_tkyD0OGtMPbH8qn0A4VPB5DvftUCcsXw36s_a8nx2-GFKE0OwKIMxt0mIE0AVukAXtU_ZOf4sxgwkuinYwiATaax5vfbu-bTUsso42uySsSqwBtfrNjKgtw99xo1nvAzNAJZYcYqzXm4"/>
+</button>
+</div>
+</div>
+<!-- Timeline / Appointment List -->
+<div class="relative">
+<!-- Vertical Timeline Line -->
+<div class="absolute left-16 top-0 bottom-0 w-[1px] bg-outline-variant/30 hidden sm:block"></div>
+<div class="space-y-6">
+<!-- Appointment 1 -->
+<div class="relative flex flex-col sm:flex-row gap-6">
+<div class="sm:w-16 pt-6 text-right hidden sm:block">
+<span class="text-sm font-bold text-primary">09:30</span>
+</div>
+<div class="flex-1 group">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow duration-300 flex items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="w-14 h-14 rounded-full bg-surface-container overflow-hidden flex-shrink-0 border border-outline-variant/10">
+<img alt="Daniela Ruiz" class="w-full h-full object-cover" data-alt="close-up portrait of a young woman with long dark hair and elegant features, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhTTertOuAJfrnnA5MQEpPyU5WPNTbXwvtcJyw-xhEt3Tcu2RvyAuWSFFbAr3A6fSJT15DQQVcxtXOZdd2fHvbvCY_TY0ERJXGGtKIs5WYDp4jy7sbSwO4FWqnfBQNcfZ597HqqwCBLdIh0_6GRzvxpjAAK7J_lQUEZWTornqhTtq2xavCQVOJ8Eh3ZWqa9x8oKxlTzdEMTdHM3y07ayDXXpnVPWNziWP60yQLImIkMVAMLauXzhwS8ttZkiqjwkElxePvLJW5eXs"/>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<h3 class="text-lg font-bold text-on-surface">Daniela Ruiz</h3>
+<span class="sm:hidden text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded">09:30</span>
+</div>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="content_cut">content_cut</span> Corte + color</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> 1h 30m</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-3">
+<div class="flex -space-x-2">
+<img alt="Staff CA" class="w-8 h-8 rounded-full ring-2 ring-surface-container-lowest" data-alt="headshot of male barber" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgQ9EDpb8eEtEzhGxRmyyfuVhaAxoFhlJ8QRGn5D38Q62lYiZuDvGC8CKDJxv90c9drmiGVYmxY4vn3HZhkkAZ0JTzqUxVUil3ghZt3IWubJhpy7XUPeTkYL-N82isUa45YlTorzVBLf5NsMuLd0uzmZsgoPUqww-XrzYu_EJmoCKhcQQl5tXRfXOP298TPoPDsvAFBYCdcSZ4dtT7AL0wDjeMcOp2hP_NhtEldqbGyYUBPdMKxS8X_hcXGvpiPiRSCD5C3tMGvjM"/>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Appointment 2 (New Client) -->
+<div class="relative flex flex-col sm:flex-row gap-6">
+<div class="sm:w-16 pt-6 text-right hidden sm:block">
+<span class="text-sm font-bold text-on-surface-variant/60">11:00</span>
+</div>
+<div class="flex-1 group">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow duration-300 flex items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="w-14 h-14 rounded-full bg-surface-container overflow-hidden flex-shrink-0 border border-outline-variant/10">
+<img alt="María González" class="w-full h-full object-cover" data-alt="portrait of a middle-aged woman with a friendly expression, professional business style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCRh-Ut0qWOiQsK4XxdA4eiUFgmnUa3NpjNcvGoG7Rcccm6Q8oQJs9thR95IXKPp_p5OfOF6U3K6VEdkykcVZS_qw8r-wTA69_TlbkZhQNvrvalItCOQNmFHS55BibTyVEuonF8ap-8rV0nV0YN_e_mmaOR0xdp3mtXnqPWA746N8UZN8wmicHYqD086cWikk4LTmvwxFkRakXLt0wsyKy__ClJqoKTG7-CaN81kNKfdzPPD0s68kZPMwnVbipKCS1-JUdoKRqqzU"/>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<h3 class="text-lg font-bold text-on-surface">María González</h3>
+<span class="sm:hidden text-xs font-bold text-on-surface-variant/60 bg-surface-container px-2 py-0.5 rounded">11:00</span>
+<span class="flex items-center gap-1 bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+<span class="material-symbols-outlined text-[10px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+                                            Cliente nueva
+                                        </span>
+</div>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="spa">spa</span> Manicure</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> 45m</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-3">
+<div class="flex -space-x-2">
+<img alt="Staff SO" class="w-8 h-8 rounded-full ring-2 ring-surface-container-lowest" data-alt="portrait of female salon staff" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-pzCazw9SLT4zEmeo25VnTkHCUhHbiPcGYuq3om9TlxU1Zw5QYiJc7Lg5n4fxSNu6CZCIOEGeGbu_B5BnWi0mhMn9gpRoDv7bbR_PSES95Q9ljcGvXrIUyPWVHFoaNPILGBmGwU_6edeVWmrB-i395kZST31g1Zz4GryYgkpWeD86p4M6wbiGOXDyhR85BEkiYCsR_zJ2HOm-Y_Qg3XsDVKsgievYEO5ciB4aZEt_Cpj7jg9VfbscvQZH3MfzIoX3tXwoheX194A"/>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Appointment 3 -->
+<div class="relative flex flex-col sm:flex-row gap-6">
+<div class="sm:w-16 pt-6 text-right hidden sm:block">
+<span class="text-sm font-bold text-on-surface-variant/60">13:00</span>
+</div>
+<div class="flex-1 group">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10 hover:shadow-md transition-shadow duration-300 flex items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="w-14 h-14 rounded-full bg-surface-container overflow-hidden flex-shrink-0 border border-outline-variant/10">
+<img alt="Ana López" class="w-full h-full object-cover" data-alt="lifestyle portrait of a woman with a natural look, bright airy setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9P6megMBlq2GI0iuG_YHrRFQQpZDdlns0t5Xq5tTfQvfuPPm6LEa1KYUlWwfJExv7iGGh9Ld7iXP6iZhEpYgCReD2tjIJl78bnNJ5Iid-Lw59H0Z3naPLYWbXhk_clW6IBylFOJGkG_YyY_WzFP-xhx8_bgqzF26Ygvzqv38pAlwYYCDvFC2Pg7xoOTbMbqUdOA3vhUx4mmReg3JSQ3-HOjGHcW278NR4tL25VG1rukaE3kvDqUX42ocNKX-TrhmjKRl96PECVag"/>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<h3 class="text-lg font-bold text-on-surface">Ana López</h3>
+<span class="sm:hidden text-xs font-bold text-on-surface-variant/60 bg-surface-container px-2 py-0.5 rounded">13:00</span>
+</div>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="brush">brush</span> Peinado</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> 1h</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-3">
+<div class="flex -space-x-2">
+<img alt="Staff CA" class="w-8 h-8 rounded-full ring-2 ring-surface-container-lowest" data-alt="headshot of male barber" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1ItUwuXVh6ZfqSg8aPDAEk7naZP5mCNfhDuRxwxl7KFYmw8bHnIzewkNbxNzoqIYSB88mNhelVrNHyOMwJBUKn2OHtug5JAd6VUS4ySLh57puNErzs6-QQnwXkaKCCFkQaPUAdUllM2oPh0ZvGcoWXHrrKmhGK58QGpd6DtNFP3Pc4laQAvcnat5-TlS4nn0Npd23Tzzt-TRKbDY0toSa2a-Ij_jM7IYUbBn2LfiAD1qA2y5iW-amWQSSZm6P0fe7QtyDjOvUT4A"/>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty slots visualization -->
+<div class="mt-12 p-8 rounded-2xl border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center text-on-surface-variant/40 space-y-2">
+<span class="material-symbols-outlined text-4xl" data-icon="event_available">event_available</span>
+<p class="font-medium text-slate-500">Espacios disponibles por la tarde</p>
+<button class="text-primary text-sm font-bold hover:underline">Ver agenda completa</button>
+</div>
+</div>
+<!-- Mobile Floating Action Button -->
+<button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform z-[60]">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</main>
+</body></html>

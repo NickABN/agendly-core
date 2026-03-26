@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary": "#006c49",
+                        "outline-variant": "#c0c7d4",
+                        "on-secondary-container": "#00714d",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#765700",
+                        "on-tertiary-fixed": "#261a00",
+                        "inverse-surface": "#2e3132",
+                        "on-surface-variant": "#414752",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#001c39",
+                        "surface": "#f8f9fa",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-container": "#6cf8bb",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#005da9",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-secondary-fixed": "#002113",
+                        "primary-fixed": "#d4e3ff",
+                        "tertiary-container": "#956e00",
+                        "on-background": "#191c1d",
+                        "outline": "#717784",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-primary-fixed-variant": "#004884",
+                        "on-primary-container": "#fdfcff",
+                        "surface-dim": "#d9dadb",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-container-low": "#f3f4f5",
+                        "inverse-primary": "#a4c9ff",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-surface": "#191c1d",
+                        "surface-tint": "#005fad",
+                        "background": "#f8f9fa",
+                        "on-secondary-fixed-variant": "#005236",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-container": "#edeeef",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#0076d3",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed antialiased">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-64 z-50 bg-slate-50 dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col p-4 gap-2 font-['Inter'] text-sm font-medium">
+<div class="px-2 py-4 mb-4">
+<h1 class="text-lg font-black tracking-tighter text-blue-800 dark:text-blue-300">Agendly Admin</h1>
+<p class="text-xs text-on-surface-variant/70">Administración</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-700 dark:text-blue-300 bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span>Agenda</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">content_cut</span>
+<span>Servicios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span>Personal</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+<div class="mt-auto space-y-1 pt-4 border-t border-slate-200/50">
+<button class="w-full mb-4 bg-primary text-on-primary rounded-full py-3 px-4 font-semibold shadow-md flex items-center justify-center gap-2 active:scale-95 duration-200 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span>Nueva Cita</span>
+</button>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full flex items-center justify-between px-6 h-16 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md z-40 shadow-sm dark:shadow-none font-['Inter'] antialiased tracking-tight">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-slate-200/50 rounded-full transition-colors"><span class="material-symbols-outlined">chevron_left</span></button>
+<h2 class="text-lg font-bold text-slate-900">Marzo 2 – 8, 2026</h2>
+<button class="p-2 hover:bg-slate-200/50 rounded-full transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+<div class="flex bg-surface-container rounded-lg p-1">
+<button class="px-4 py-1.5 text-slate-500 hover:text-slate-700 transition-colors">Día</button>
+<button class="px-4 py-1.5 text-blue-700 border-b-2 border-blue-700 font-semibold bg-white rounded-md shadow-sm">Semana</button>
+<button class="px-4 py-1.5 text-slate-500 hover:text-slate-700 transition-colors">Mes</button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-highest border-none rounded-md focus:ring-2 focus:ring-primary w-64 text-sm" placeholder="Buscar..." type="text"/>
+</div>
+<button class="p-2 text-slate-600 hover:bg-slate-200/50 rounded-full transition-colors"><span class="material-symbols-outlined">calendar_today</span></button>
+<button class="p-2 text-slate-600 hover:bg-slate-200/50 rounded-full transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-primary-fixed flex items-center justify-center">
+<img alt="User profile avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZVHXgCVTY6Ef2S96eO6mOeCkDI942XeV0ChZlCzKFq3ZWoD5Xak-eARB2mepeDonV3pa1lxuv92xTVVUmzeEyFkIprRU5k7zBSMgZXgCiX1YYW_r5UpRc-MZQ5slkFyMou_EzTh10N5Lc3AKXu_w0RWx9f0OMqhoIc2isoXkR1TgKSyOjWHFeCg3qU2k2NdimKUk7fyups1gzpFGe5Ve9jYckJ4SCxfZijohJ8T-PcLVbTjdjB76_barsKukz2PI5OxrY2GbJv_U"/>
+</div>
+</div>
+</header>
+<!-- Agenda Grid -->
+<section class="flex-1 p-6 overflow-x-auto">
+<div class="min-w-[1000px] h-full flex flex-col">
+<!-- Day Headers -->
+<div class="grid grid-cols-7 mb-4">
+<div class="text-center py-2 px-1">
+<span class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant/60">Lun</span>
+<span class="text-2xl font-bold">02</span>
+</div>
+<div class="text-center py-2 px-1">
+<span class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant/60">Mar</span>
+<span class="text-2xl font-bold">03</span>
+</div>
+<div class="text-center py-2 px-1 relative">
+<span class="block text-xs font-bold uppercase tracking-wider text-primary">Mié</span>
+<span class="text-2xl font-bold text-primary bg-primary-fixed px-3 py-1 rounded-full">04</span>
+</div>
+<div class="text-center py-2 px-1">
+<span class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant/60">Jue</span>
+<span class="text-2xl font-bold">05</span>
+</div>
+<div class="text-center py-2 px-1">
+<span class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant/60">Vie</span>
+<span class="text-2xl font-bold">06</span>
+</div>
+<div class="text-center py-2 px-1">
+<span class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant/60">Sáb</span>
+<span class="text-2xl font-bold">07</span>
+</div>
+<div class="text-center py-2 px-1">
+<span class="block text-xs font-bold uppercase tracking-wider text-error/60">Dom</span>
+<span class="text-2xl font-bold text-error/80">08</span>
+</div>
+</div>
+<!-- Grid Columns -->
+<div class="flex-1 grid grid-cols-7 gap-4 relative">
+<!-- 'Now' Timeline Line -->
+<div class="absolute top-[32%] left-0 w-full border-t-2 border-error z-10 flex items-center pointer-events-none">
+<div class="w-2 h-2 rounded-full bg-error -ml-1"></div>
+<span class="bg-error text-[10px] text-white px-1 rounded-sm ml-1">11:15</span>
+</div>
+<!-- Column Mon -->
+<div class="bg-surface-container-low rounded-xl p-3 space-y-3 min-h-[600px]">
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm border border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/70 uppercase">09:00 - 10:00</span>
+<h4 class="font-bold text-sm mt-1">Elena Rivas</h4>
+<p class="text-xs text-on-surface-variant">Consultoría General</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-blue-500"></div>
+<span class="text-[10px] font-medium text-blue-700">Lucía</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$450 MXN</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm border border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/70 uppercase">11:30 - 12:30</span>
+<h4 class="font-bold text-sm mt-1">Marcos Paz</h4>
+<p class="text-xs text-on-surface-variant">Revisión Mensual</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<span class="text-[10px] font-medium text-amber-700">Sandra</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$600 MXN</span>
+</div>
+</div>
+</div>
+<!-- Column Tue -->
+<div class="bg-surface-container-low rounded-xl p-3 space-y-3 min-h-[600px]">
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm border border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/70 uppercase">10:00 - 11:30</span>
+<h4 class="font-bold text-sm mt-1">Javier Gómez</h4>
+<p class="text-xs text-on-surface-variant">Terapia Avanzada</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="text-[10px] font-medium text-emerald-700">Carmen</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$1,200 MXN</span>
+</div>
+</div>
+</div>
+<!-- Column Wed (Current Day Highlighted) -->
+<div class="bg-primary/5 rounded-xl p-3 space-y-3 min-h-[600px] border-x border-primary/10">
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm border border-outline-variant/10 opacity-60">
+<span class="text-[10px] font-bold text-on-surface-variant/70 uppercase">08:30 - 09:30</span>
+<h4 class="font-bold text-sm mt-1">Lucía Sanz</h4>
+<p class="text-xs text-on-surface-variant">Chequeo Rutina</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-blue-500"></div>
+<span class="text-[10px] font-medium text-blue-700">Lucía</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$350 MXN</span>
+</div>
+</div>
+<!-- Empty slot where the red line passes -->
+<div class="h-16"></div>
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-md border-l-4 border-l-primary border-outline-variant/20">
+<span class="text-[10px] font-bold text-primary uppercase">12:30 - 14:00</span>
+<h4 class="font-bold text-sm mt-1 text-on-surface">Roberto Cano</h4>
+<p class="text-xs text-on-surface-variant">Sesión Intensiva</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="text-[10px] font-medium text-emerald-700">Carmen</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$2,000 MXN</span>
+</div>
+</div>
+</div>
+<!-- Column Thu -->
+<div class="bg-surface-container-low rounded-xl p-3 space-y-3 min-h-[600px]">
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm border border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/70 uppercase">09:00 - 10:00</span>
+<h4 class="font-bold text-sm mt-1">Ana Belén</h4>
+<p class="text-xs text-on-surface-variant">Asesoría Fiscal</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-blue-500"></div>
+<span class="text-[10px] font-medium text-blue-700">Lucía</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$850 MXN</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm border border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/70 uppercase">11:00 - 12:00</span>
+<h4 class="font-bold text-sm mt-1">Pedro Luis</h4>
+<p class="text-xs text-on-surface-variant">Primera Cita</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<span class="text-[10px] font-medium text-amber-700">Sandra</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$500 MXN</span>
+</div>
+</div>
+</div>
+<!-- Column Fri -->
+<div class="bg-surface-container-low rounded-xl p-3 space-y-3 min-h-[600px]">
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm border border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/70 uppercase">10:00 - 11:00</span>
+<h4 class="font-bold text-sm mt-1">Carlos Ruiz</h4>
+<p class="text-xs text-on-surface-variant">Evaluación</p>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-blue-500"></div>
+<span class="text-[10px] font-medium text-blue-700">Lucía</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant">$450 MXN</span>
+</div>
+</div>
+</div>
+<!-- Column Sat -->
+<div class="bg-surface-container-low rounded-xl p-3 space-y-3 min-h-[600px]">
+<div class="border-2 border-dashed border-outline-variant/40 rounded-xl h-full flex items-center justify-center p-6 text-center">
+<p class="text-xs text-on-surface-variant/50">No hay citas agendadas</p>
+</div>
+</div>
+<!-- Column Sun -->
+<div class="bg-surface-container/30 rounded-xl p-3 space-y-3 min-h-[600px]">
+<div class="h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-300 scale-150">event_busy</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

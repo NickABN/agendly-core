@@ -7,15 +7,23 @@ const apiUrl = config.public.apiUrl;
 const slug = route.params.slug as string;
 
 // State
-const step = ref(1); // 1=service, 2=employee+date+time, 3=client info
+const step = ref(1); // 1=service, 2=employee, 3=date+time, 4=client info
 const loading = ref(false);
 const error = ref('');
 const success = ref(false);
 
-// Data from API
-const tenantName = ref('');
-const services = ref<Array<{ id: string; name: string; durationMinutes: number; priceMXN: string }>>([]);
-const employees = ref<Array<{ id: string; name: string; serviceIds: string[] }>>([]);
+// Fetch tenant data
+const { data: tenantData, error: fetchError } = await useAsyncData(`public-${slug}`, () =>
+  $fetch<{
+    tenant: { name: string; slug: string };
+    services: Array<{ id: string; name: string; durationMinutes: number; priceMXN: string }>;
+    employees: Array<{ id: string; name: string; serviceIds: string[] }>;
+  }>(`${apiUrl}/public/${slug}`),
+);
+
+const tenantName = computed(() => tenantData.value?.tenant.name ?? '');
+const services = computed(() => tenantData.value?.services ?? []);
+const employees = computed(() => tenantData.value?.employees ?? []);
 
 // Selection
 const selectedServiceId = ref('');
@@ -32,21 +40,7 @@ const clientForm = reactive({
   privacyAccepted: false,
 });
 
-// Fetch tenant data
-const { error: fetchError } = await useAsyncData(`public-${slug}`, async () => {
-  const data = await $fetch<{
-    tenant: { name: string; slug: string };
-    services: Array<{ id: string; name: string; durationMinutes: number; priceMXN: string }>;
-    employees: Array<{ id: string; name: string; serviceIds: string[] }>;
-  }>(`${apiUrl}/public/${slug}`);
-
-  tenantName.value = data.tenant.name;
-  services.value = data.services;
-  employees.value = data.employees;
-  return data;
-});
-
-// Computed: employees that offer the selected service
+// Computed
 const filteredEmployees = computed(() => {
   if (!selectedServiceId.value) return [];
   return employees.value.filter((e) => e.serviceIds.includes(selectedServiceId.value));
@@ -60,13 +54,11 @@ const selectedEmployee = computed(() =>
   employees.value.find((e) => e.id === selectedEmployeeId.value),
 );
 
-// Minimum date is today
-const minDate = computed(() => {
-  const d = new Date();
-  return d.toISOString().split('T')[0];
+const selectedEmployeeName = computed(() => {
+  if (selectedEmployeeId.value === 'any') return 'Cualquier disponible';
+  return selectedEmployee.value?.name ?? '';
 });
 
-// Format slot time
 function formatTime(isoString: string) {
   const [, time] = isoString.split('T');
   const [h, m] = time.split(':');
@@ -76,10 +68,23 @@ function formatTime(isoString: string) {
   return `${hour12}:${m} ${ampm}`;
 }
 
-// Fetch available slots when employee + date are selected
-async function fetchSlots() {
-  if (!selectedEmployeeId.value || !selectedDate.value || !selectedServiceId.value) return;
+function formatDate(dateStr: string) {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+  const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  return `${dayNames[d.getDay()]} ${d.getDate()} ${monthNames[d.getMonth()]}`;
+}
 
+const resolvedEmployeeId = computed(() => {
+  if (selectedEmployeeId.value === 'any' && filteredEmployees.value.length > 0) {
+    return filteredEmployees.value[0].id;
+  }
+  return selectedEmployeeId.value;
+});
+
+async function fetchSlots() {
+  if (!resolvedEmployeeId.value || !selectedDate.value || !selectedServiceId.value) return;
   loading.value = true;
   selectedSlot.value = '';
   try {
@@ -88,7 +93,7 @@ async function fetchSlots() {
       {
         params: {
           tenantSlug: slug,
-          employeeId: selectedEmployeeId.value,
+          employeeId: resolvedEmployeeId.value,
           serviceId: selectedServiceId.value,
           date: selectedDate.value,
         },
@@ -110,12 +115,27 @@ function selectService(id: string) {
   selectedDate.value = '';
   selectedSlot.value = '';
   availableSlots.value = [];
-  step.value = 2;
+
+  const available = employees.value.filter((e) => e.serviceIds.includes(id));
+  if (available.length === 1) {
+    selectedEmployeeId.value = available[0].id;
+    step.value = 3; // skip employee step
+  } else {
+    step.value = 2;
+  }
+}
+
+function selectEmployee(id: string) {
+  selectedEmployeeId.value = id;
+  selectedDate.value = '';
+  selectedSlot.value = '';
+  availableSlots.value = [];
+  step.value = 3;
 }
 
 function goToClientForm() {
   if (!selectedSlot.value) return;
-  step.value = 3;
+  step.value = 4;
 }
 
 async function submitBooking() {
@@ -123,15 +143,13 @@ async function submitBooking() {
     error.value = 'Debes aceptar el aviso de privacidad';
     return;
   }
-
   loading.value = true;
   error.value = '';
-
   try {
     await $fetch(`${apiUrl}/availability/book?tenantSlug=${slug}`, {
       method: 'POST',
       body: {
-        employeeId: selectedEmployeeId.value,
+        employeeId: resolvedEmployeeId.value,
         serviceId: selectedServiceId.value,
         startTime: selectedSlot.value,
         clientName: clientForm.name,
@@ -148,208 +166,279 @@ async function submitBooking() {
     loading.value = false;
   }
 }
+
+const progressStep = computed(() => Math.min(step.value, 4));
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white border-b px-4 py-4 text-center">
-      <h1 class="text-xl font-bold">{{ tenantName }}</h1>
-      <p class="text-sm text-gray-500">Reserva tu cita en línea</p>
-    </header>
+  <div class="min-h-screen bg-[var(--color-surface)] font-['Inter',sans-serif]">
 
-    <div class="max-w-lg mx-auto p-4">
-      <!-- Not found -->
-      <div v-if="fetchError" class="text-center py-12">
-        <p class="text-gray-500">Negocio no encontrado</p>
-      </div>
+    <!-- Success: full-screen confirmation -->
+    <BookingConfirmationScreen
+      v-if="success"
+      :service-name="selectedService?.name ?? ''"
+      :employee-name="selectedEmployeeName"
+      :date="selectedDate"
+      :time="formatTime(selectedSlot)"
+      :tenant-name="tenantName"
+    />
 
-      <!-- Success -->
-      <UCard v-else-if="success" class="text-center">
-        <div class="py-6">
-          <div class="text-4xl mb-3">✅</div>
-          <h2 class="text-lg font-semibold mb-2">¡Cita confirmada!</h2>
-          <p class="text-gray-600 mb-4">
-            {{ selectedService?.name }} con {{ selectedEmployee?.name }}
-          </p>
-          <p class="text-sm text-gray-500">
-            {{ selectedDate }} a las {{ formatTime(selectedSlot) }}
-          </p>
-          <p class="text-sm text-gray-400 mt-4">
-            Recibirás un correo de confirmación.
-          </p>
-        </div>
-      </UCard>
+    <!-- Not found -->
+    <div v-else-if="fetchError" class="flex flex-col items-center justify-center min-h-screen px-6 text-center space-y-4">
+      <span class="material-symbols-outlined text-5xl text-[var(--color-outline-variant)]">search_off</span>
+      <p class="font-semibold text-[var(--color-on-surface)]">Negocio no encontrado</p>
+      <p class="text-sm text-[var(--color-on-surface-variant)]">Verifica el enlace e intenta de nuevo.</p>
+    </div>
 
-      <!-- Step 1: Select service -->
-      <div v-else-if="step === 1">
-        <h2 class="text-lg font-semibold mb-4">¿Qué servicio necesitas?</h2>
-        <div class="space-y-3">
+    <!-- Booking flow -->
+    <template v-else>
+      <!-- Sticky header -->
+      <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[var(--color-outline-variant)]/10">
+        <div class="max-w-sm mx-auto flex items-center justify-between px-4 h-14">
+          <!-- Back button -->
           <button
-            v-for="s in services"
-            :key="s.id"
-            class="w-full p-4 bg-white rounded-lg border border-gray-200 text-left hover:border-primary hover:bg-primary/5 transition"
-            @click="selectService(s.id)"
+            v-if="step > 1"
+            class="flex items-center gap-1 text-[var(--color-primary)] text-sm font-medium"
+            @click="step--"
           >
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="font-medium">{{ s.name }}</p>
-                <p class="text-sm text-gray-500">{{ s.durationMinutes }} min</p>
-              </div>
-              <span class="font-semibold">${{ s.priceMXN }}</span>
-            </div>
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+          </button>
+          <div v-else class="w-8"></div>
+
+          <!-- Logo -->
+          <span class="font-bold text-[var(--color-on-surface)] tracking-tight">Agendly</span>
+
+          <!-- Avatar placeholder -->
+          <div class="w-8 h-8 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center">
+            <span class="material-symbols-outlined text-sm text-[var(--color-on-surface-variant)]">person</span>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <BookingProgressBar :current="progressStep" :total="4" />
+      </header>
+
+      <div class="max-w-sm mx-auto px-4 py-6 pb-24">
+
+        <!-- Business header (step 1 only) -->
+        <div v-if="step === 1" class="mb-6 space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-emerald-500 text-lg" style="font-variation-settings: 'FILL' 1">verified</span>
+            <h1 class="text-2xl font-bold text-[var(--color-on-surface)] leading-tight">{{ tenantName }}</h1>
+          </div>
+          <p class="text-sm text-[var(--color-on-surface-variant)]">Reserva tu experiencia de bienestar</p>
+        </div>
+
+        <!-- Step chips for step > 1 -->
+        <div v-if="step > 1" class="flex flex-wrap gap-2 mb-5">
+          <div class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">content_cut</span>
+            {{ selectedService?.name }} · {{ selectedService?.durationMinutes }} min
+          </div>
+          <div v-if="step > 2 && selectedEmployeeName" class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10">
+            <span class="material-symbols-outlined text-sm">person</span>
+            {{ selectedEmployeeName }}
+          </div>
+          <div v-if="step === 4 && selectedSlot" class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10">
+            <span class="material-symbols-outlined text-sm">schedule</span>
+            {{ formatDate(selectedDate) }} · {{ formatTime(selectedSlot) }}
+          </div>
+        </div>
+
+        <!-- STEP 1: Service selection -->
+        <div v-if="step === 1">
+          <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-4">¿Qué servicio necesitas?</h2>
+          <div class="space-y-3">
+            <BookingServiceCard
+              v-for="s in services"
+              :key="s.id"
+              :name="s.name"
+              :duration-minutes="s.durationMinutes"
+              :price="s.priceMXN"
+              :selected="selectedServiceId === s.id"
+              @select="selectService(s.id)"
+            />
+          </div>
+
+          <!-- CTA after selection -->
+          <button
+            v-if="selectedServiceId"
+            class="w-full mt-6 soul-gradient text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all"
+            @click="step === 2 ? null : selectService(selectedServiceId)"
+          >
+            Elegir Especialista
+            <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
-      </div>
 
-      <!-- Step 2: Employee + Date + Time -->
-      <div v-else-if="step === 2">
-        <button class="text-sm text-primary mb-4 flex items-center gap-1" @click="step = 1">
-          ← Cambiar servicio
-        </button>
+        <!-- STEP 2: Employee selection -->
+        <div v-if="step === 2">
+          <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-1">Selecciona tu especialista</h2>
+          <p class="text-sm text-[var(--color-on-surface-variant)] mb-5">Elige con quién quieres tu cita</p>
 
-        <div class="bg-white rounded-lg border p-3 mb-4">
-          <span class="text-sm text-gray-500">Servicio:</span>
-          <span class="font-medium ml-1">{{ selectedService?.name }}</span>
+          <BookingEmployeeSelector
+            :employees="filteredEmployees"
+            :model-value="selectedEmployeeId"
+            @update:model-value="selectEmployee($event)"
+          />
         </div>
 
-        <div class="space-y-4">
-          <!-- Employee selection -->
+        <!-- STEP 3: Date + time -->
+        <div v-if="step === 3" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              ¿Con quién?
-            </label>
-            <div class="grid grid-cols-2 gap-2">
-              <button
-                v-for="e in filteredEmployees"
-                :key="e.id"
-                class="p-3 rounded-lg border text-center transition"
-                :class="selectedEmployeeId === e.id
-                  ? 'border-primary bg-primary/5 font-medium'
-                  : 'border-gray-200 hover:border-gray-300'"
-                @click="selectedEmployeeId = e.id"
-              >
-                {{ e.name }}
-              </button>
-            </div>
+            <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-1">Selecciona tu horario</h2>
+            <p class="text-sm text-[var(--color-on-surface-variant)]">{{ selectedService?.name }} · {{ selectedService?.durationMinutes }} min</p>
           </div>
 
-          <!-- Date selection -->
-          <UFormField v-if="selectedEmployeeId" label="¿Qué día?">
-            <UInput
-              v-model="selectedDate"
-              type="date"
-              :min="minDate"
-              size="lg"
-            />
-          </UFormField>
+          <!-- Date tabs -->
+          <div>
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-3">¿Qué día?</p>
+            <BookingDayTabs v-model="selectedDate" />
+          </div>
 
           <!-- Time slots -->
-          <div v-if="availableSlots.length > 0">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Horarios disponibles
-            </label>
-            <div class="grid grid-cols-3 gap-2">
-              <button
-                v-for="slot in availableSlots"
-                :key="slot.start"
-                class="p-2 rounded-lg border text-center text-sm transition"
-                :class="selectedSlot === slot.start
-                  ? 'border-primary bg-primary text-white font-medium'
-                  : 'border-gray-200 hover:border-gray-300'"
-                @click="selectedSlot = slot.start"
-              >
-                {{ formatTime(slot.start) }}
-              </button>
+          <div v-if="selectedDate || loading">
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-3">Horarios disponibles</p>
+            <BookingSlotGrid
+              :slots="availableSlots"
+              :model-value="selectedSlot"
+              :loading="loading"
+              :has-date="!!selectedDate"
+              @update:model-value="selectedSlot = $event"
+            />
+          </div>
+
+          <!-- CTA -->
+          <button
+            v-if="selectedSlot"
+            class="w-full soul-gradient text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all"
+            @click="goToClientForm"
+          >
+            Continuar al paso final
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+
+          <button
+            class="w-full text-center text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+            @click="step = 1"
+          >
+            Regresar a servicios
+          </button>
+        </div>
+
+        <!-- STEP 4: Client info -->
+        <div v-if="step === 4">
+          <!-- Summary card -->
+          <div class="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-[var(--color-outline-variant)]/10 space-y-3">
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Resumen de la cita</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base">content_cut</span>
+                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Servicio</span>
+                </div>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">{{ selectedService?.name }}</p>
+              </div>
+              <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base">person</span>
+                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Especialista</span>
+                </div>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">{{ selectedEmployeeName }}</p>
+              </div>
+              <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base">event</span>
+                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Fecha</span>
+                </div>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">{{ formatDate(selectedDate) }}</p>
+              </div>
+              <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base">payments</span>
+                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Precio est.</span>
+                </div>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">${{ selectedService?.priceMXN }} MXN</p>
+              </div>
             </div>
           </div>
 
-          <div v-else-if="selectedDate && !loading" class="text-center py-4">
-            <p class="text-gray-500 text-sm">No hay horarios disponibles para esta fecha</p>
+          <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-5">Tus datos</h2>
+
+          <!-- Error -->
+          <div v-if="error" class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">error</span>
+            {{ error }}
           </div>
-
-          <div v-if="loading" class="text-center py-4">
-            <p class="text-gray-500 text-sm">Cargando horarios...</p>
-          </div>
-
-          <UButton
-            v-if="selectedSlot"
-            block
-            size="lg"
-            @click="goToClientForm"
-          >
-            Continuar
-          </UButton>
-        </div>
-      </div>
-
-      <!-- Step 3: Client info -->
-      <div v-else-if="step === 3">
-        <button class="text-sm text-primary mb-4 flex items-center gap-1" @click="step = 2">
-          ← Cambiar horario
-        </button>
-
-        <div class="bg-white rounded-lg border p-3 mb-4 space-y-1">
-          <p class="text-sm">
-            <span class="text-gray-500">Servicio:</span>
-            <span class="font-medium ml-1">{{ selectedService?.name }}</span>
-          </p>
-          <p class="text-sm">
-            <span class="text-gray-500">Con:</span>
-            <span class="font-medium ml-1">{{ selectedEmployee?.name }}</span>
-          </p>
-          <p class="text-sm">
-            <span class="text-gray-500">Fecha:</span>
-            <span class="font-medium ml-1">{{ selectedDate }}</span>
-          </p>
-          <p class="text-sm">
-            <span class="text-gray-500">Hora:</span>
-            <span class="font-medium ml-1">{{ formatTime(selectedSlot) }}</span>
-          </p>
-        </div>
-
-        <UCard>
-          <template #header>
-            <h2 class="text-lg font-semibold">Tus datos</h2>
-          </template>
 
           <form class="space-y-4" @submit.prevent="submitBooking">
-            <UAlert v-if="error" color="error" :title="error" />
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Nombre completo</label>
+              <input
+                v-model="clientForm.name"
+                required
+                type="text"
+                placeholder="Ej. Alex García"
+                autocomplete="name"
+                class="w-full bg-[var(--color-surface-container-high)] border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] outline-none transition-all placeholder:text-[var(--color-outline)]/50"
+              />
+            </div>
 
-            <UFormField label="Nombre completo">
-              <UInput v-model="clientForm.name" required size="lg" placeholder="Tu nombre" />
-            </UFormField>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Teléfono móvil</label>
+              <input
+                v-model="clientForm.phone"
+                required
+                type="tel"
+                inputmode="numeric"
+                placeholder="+52 000 000 0000"
+                autocomplete="tel"
+                class="w-full bg-[var(--color-surface-container-high)] border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] outline-none transition-all placeholder:text-[var(--color-outline)]/50"
+              />
+            </div>
 
-            <UFormField label="Teléfono">
-              <UInput v-model="clientForm.phone" required size="lg" type="tel" placeholder="10 dígitos" />
-            </UFormField>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Email <span class="normal-case font-normal text-[var(--color-outline)]">(opcional)</span></label>
+              <input
+                v-model="clientForm.email"
+                type="email"
+                placeholder="Para recibir confirmación"
+                autocomplete="email"
+                class="w-full bg-[var(--color-surface-container-high)] border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] outline-none transition-all placeholder:text-[var(--color-outline)]/50"
+              />
+            </div>
 
-            <UFormField label="Email (opcional)">
-              <UInput v-model="clientForm.email" size="lg" type="email" placeholder="tu@email.com" />
-            </UFormField>
-
-            <label class="flex items-start gap-2 text-sm">
-              <input v-model="clientForm.privacyAccepted" type="checkbox" class="mt-1" />
-              <span class="text-gray-600">
-                Acepto el
-                <NuxtLink to="/privacidad" target="_blank" class="text-primary underline">
-                  aviso de privacidad
-                </NuxtLink>
-                y autorizo el uso de mis datos para esta cita.
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input
+                v-model="clientForm.privacyAccepted"
+                type="checkbox"
+                class="mt-0.5 w-4 h-4 rounded border-[var(--color-outline-variant)] accent-[var(--color-primary)]"
+              />
+              <span class="text-sm text-[var(--color-on-surface-variant)] leading-snug">
+                Al confirmar, aceptas nuestras
+                <NuxtLink to="/privacidad" target="_blank" class="text-[var(--color-primary)] underline">Políticas de Cancelación, Términos de Servicio y Aviso de Privacidad</NuxtLink>.
               </span>
             </label>
 
-            <UButton type="submit" block size="lg" :loading="loading">
-              Confirmar cita
-            </UButton>
+            <button
+              type="submit"
+              :disabled="loading"
+              class="w-full soul-gradient text-white py-4 rounded-full font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">check_circle</span>
+              {{ loading ? 'Confirmando...' : 'Confirmar cita' }}
+            </button>
           </form>
-        </UCard>
+        </div>
+
       </div>
 
-      <!-- Footer -->
-      <p class="text-center text-xs text-gray-400 mt-8">
-        Agenda gestionada por <span class="font-medium">Agendly</span>
-      </p>
-    </div>
+      <!-- Bottom Agendly badge -->
+      <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[var(--color-outline-variant)]/10 py-3">
+        <p class="text-center text-xs text-[var(--color-outline)]">
+          Hecho con <span class="font-bold text-[var(--color-on-surface)]">⬡ Agendly</span>
+        </p>
+      </div>
+    </template>
   </div>
 </template>

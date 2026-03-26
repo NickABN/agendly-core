@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary": "#765700",
+              "secondary-fixed-dim": "#4edea3",
+              "on-error-container": "#93000a",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#004884",
+              "on-secondary-container": "#00714d",
+              "secondary": "#006c49",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#fffbff",
+              "on-primary-fixed": "#001c39",
+              "background": "#f8f9fa",
+              "on-surface-variant": "#414752",
+              "tertiary-fixed": "#ffdf9f",
+              "surface-variant": "#e1e3e4",
+              "on-tertiary": "#ffffff",
+              "inverse-on-surface": "#f0f1f2",
+              "surface-tint": "#005fad",
+              "inverse-surface": "#2e3132",
+              "primary": "#005da9",
+              "inverse-primary": "#a4c9ff",
+              "error": "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "surface-container-high": "#e7e8e9",
+              "secondary-container": "#6cf8bb",
+              "on-surface": "#191c1d",
+              "on-background": "#191c1d",
+              "secondary-fixed": "#6ffbbe",
+              "outline-variant": "#c0c7d4",
+              "on-secondary-fixed": "#002113",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed-variant": "#005236",
+              "surface": "#f8f9fa",
+              "outline": "#717784",
+              "tertiary-fixed-dim": "#f9bd22",
+              "surface-container-low": "#f3f4f5",
+              "on-primary-container": "#fdfcff",
+              "surface-dim": "#d9dadb",
+              "surface-container-highest": "#e1e3e4",
+              "surface-bright": "#f8f9fa",
+              "primary-container": "#0076d3",
+              "error-container": "#ffdad6",
+              "tertiary-container": "#956e00",
+              "surface-container": "#edeeef",
+              "on-tertiary-fixed": "#261a00",
+              "primary-fixed-dim": "#a4c9ff",
+              "primary-fixed": "#d4e3ff"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .scale-98-on-click:active {
+        transform: scale(0.98);
+      }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface antialiased min-h-screen flex flex-col">
+<!-- Top Navigation Anchor (Shared Component) -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/85 backdrop-blur-md">
+<div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto w-full">
+<span class="text-xl font-bold tracking-tight text-blue-600">Agendly</span>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:text-blue-600 transition-colors duration-200">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="text-slate-500 hover:text-blue-600 transition-colors duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center px-4 pt-24 pb-12">
+<div class="flex w-full max-w-5xl gap-8">
+<!-- Side Navigation Guide (Shared Component Implementation) -->
+<aside class="hidden md:flex flex-col p-6 gap-4 w-64 bg-slate-50 rounded-xl h-fit">
+<div class="mb-4">
+<h2 class="text-lg font-black text-blue-600 leading-tight">Setup Guide</h2>
+<p class="text-[0.75rem] text-slate-500 uppercase tracking-wider font-semibold">Onboarding Progress</p>
+</div>
+<nav class="space-y-2">
+<div class="flex items-center gap-3 p-3 text-slate-500 transition-all rounded-xl">
+<span class="material-symbols-outlined">storefront</span>
+<span class="text-sm font-medium">Business</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-blue-50 text-blue-700 font-semibold rounded-xl">
+<span class="material-symbols-outlined">spa</span>
+<span class="text-sm font-medium">Services</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-slate-500 transition-all rounded-xl">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Team</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-slate-500 transition-all rounded-xl">
+<span class="material-symbols-outlined">schedule</span>
+<span class="text-sm font-medium">Hours</span>
+</div>
+</nav>
+</aside>
+<!-- Main Wizard Content -->
+<div class="flex-1 flex flex-col items-center">
+<div class="w-full max-w-xl bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(25,28,29,0.06)] p-8 md:p-12">
+<!-- Progress Section -->
+<div class="mb-8">
+<div class="flex justify-between items-end mb-2">
+<span class="text-[0.75rem] font-semibold text-primary uppercase tracking-widest">Paso 2 de 4</span>
+<span class="text-[0.75rem] text-on-surface-variant">50% completado</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/2 rounded-full"></div>
+</div>
+</div>
+<!-- Header -->
+<div class="mb-10 text-center">
+<h1 class="text-3xl font-bold tracking-tight text-on-surface mb-3">¿Qué servicios ofreces?</h1>
+<p class="text-on-surface-variant leading-relaxed">Agrega tus servicios principales. Podrás añadir más después.</p>
+</div>
+<!-- Services Form -->
+<form class="space-y-8">
+<!-- Service Entry Card (Nested Surface Level 1) -->
+<div class="bg-surface-container-low p-6 rounded-xl space-y-6">
+<div class="grid grid-cols-1 gap-5">
+<div class="space-y-1.5">
+<label class="text-[0.75rem] font-semibold text-on-surface-variant ml-1">Nombre del servicio</label>
+<input class="w-full bg-surface-container-lowest border-0 focus:ring-2 focus:ring-primary rounded-xl px-4 py-3 placeholder:text-outline/50 transition-all" placeholder="Ej: Corte de cabello" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-[0.75rem] font-semibold text-on-surface-variant ml-1">Duración</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-lowest border-0 focus:ring-2 focus:ring-primary rounded-xl px-4 py-3 text-on-surface transition-all">
+<option>30m</option>
+<option selected="">45m</option>
+<option>1h</option>
+<option>1h 30m</option>
+<option>2h</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-[0.75rem] font-semibold text-on-surface-variant ml-1">Precio</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
+<input class="w-full bg-surface-container-lowest border-0 focus:ring-2 focus:ring-primary rounded-xl pl-8 pr-4 py-3 transition-all" placeholder="0.00" type="number"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Add Another Action -->
+<button class="flex items-center gap-2 px-4 py-2 text-primary font-semibold hover:bg-primary/5 rounded-full transition-all scale-98-on-click" type="button">
+<span class="material-symbols-outlined text-xl">add_circle</span>
+<span>+ Agregar otro servicio</span>
+</button>
+<!-- Footer Actions -->
+<div class="pt-8 flex flex-col sm:flex-row-reverse gap-4">
+<button class="w-full sm:w-auto flex-grow bg-primary hover:bg-primary-container text-on-primary font-bold py-4 px-8 rounded-full shadow-lg shadow-primary/20 transition-all scale-98-on-click" type="submit">
+                                Continuar
+                            </button>
+<button class="w-full sm:w-auto bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant font-bold py-4 px-8 rounded-full transition-all scale-98-on-click" type="button">
+                                Atrás
+                            </button>
+</div>
+</form>
+</div>
+<!-- Contextual Hint -->
+<div class="mt-8 flex items-center gap-3 px-6 py-4 bg-tertiary-fixed/30 rounded-xl max-w-xl">
+<span class="material-symbols-outlined text-tertiary" data-weight="fill">lightbulb</span>
+<p class="text-sm text-on-tertiary-fixed-variant">
+<strong>Dato:</strong> Los negocios con al menos 3 servicios configurados tienen un 40% más de reservas iniciales.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Accents -->
+<div class="fixed bottom-0 right-0 p-8 pointer-events-none opacity-20 hidden lg:block">
+<div class="w-64 h-64 bg-gradient-to-br from-primary to-secondary blur-3xl rounded-full"></div>
+</div>
+<!-- Image Decorator for Context (Abstract) -->
+<div class="fixed bottom-12 left-12 w-32 h-32 rounded-2xl overflow-hidden opacity-40 grayscale hover:grayscale-0 transition-all duration-700 hidden xl:block">
+<img class="w-full h-full object-cover" data-alt="Modern minimalist aesthetic of a wellness spa with clean white towels and a small green plant in soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhNmznVXPKFHHe--MBETHpSHn2GOtjM1SLyTHmk1lF-8OgXliVBRLTwKa2GQC-6Eo74yK8cHTP0tOxHbXlhD-SFSZKK3U88fWposJCk9Qg2RLWuFIBxo4WclK6bH--byhN8R8A6mG_u4Ml4dA-BBPqv9dj-1y456UkJ4h63LOX3aHCSRclo5sxEmOVG3kRiDra_T4Msd7ucA8s9q2t4LFw2_PhwvPZ0DQPeSpHJlBM4bOfA4rIH14MrTyJrnmi1mXcoe2fKgy9PI4"/>
+</div>
+</body></html>

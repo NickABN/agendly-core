@@ -1,2 +1,79 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/* Agendly Design System — MD3-inspired tokens */
+:root {
+  /* Primary */
+  --color-primary: #005da9;
+  --color-primary-container: #0076d3;
+  --color-primary-fixed: #d4e3ff;
+  --color-primary-fixed-dim: #a4c9ff;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #001d36;
+
+  /* Secondary */
+  --color-secondary: #526070;
+  --color-secondary-container: #d5e4f7;
+  --color-secondary-fixed: #6ffbbe;
+  --color-on-secondary: #ffffff;
+
+  /* Tertiary */
+  --color-tertiary: #8d4b00;
+  --color-tertiary-fixed: #ffdf9f;
+  --color-tertiary-fixed-dim: #f9bd22;
+
+  /* Surface / Backgrounds */
+  --color-surface: #f8f9fa;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f4f5;
+  --color-surface-container: #edeeef;
+  --color-surface-container-high: #e7e8e9;
+  --color-surface-container-highest: #e1e3e4;
+
+  /* On Surface */
+  --color-on-surface: #191c1d;
+  --color-on-surface-variant: #414752;
+  --color-outline: #717784;
+  --color-outline-variant: #c0c7d4;
+
+  /* Error */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+
+  /* Inverse */
+  --color-inverse-surface: #2e3132;
+
+  /* Celebration */
+  --color-celebrate: #FBBF24;
+  --color-celebrate-dark: #F59E0B;
+
+  /* Success / Warning */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+}
+
+/* Base typography & background */
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--color-on-surface);
+  background-color: var(--color-surface);
+}
+
+/* Agendly Design System Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.editorial-shadow {
+  box-shadow: 0px 4px 20px rgba(25, 28, 29, 0.06);
+}
+
+.soul-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+}
+
+.celebrate-gradient {
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+}

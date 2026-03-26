@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#586676",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "surface-dim": "#d9dadb",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-fixed-variant": "#3a4857",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#fdfcff",
+                        "primary": "#005da9",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface-container-low": "#f3f4f5",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8f9fa",
+                        "surface": "#f8f9fa",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-tint": "#005fad",
+                        "on-primary-fixed-variant": "#004884",
+                        "secondary-fixed-dim": "#b9c8da",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#d4e3ff",
+                        "primary-container": "#0076d3",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1d",
+                        "surface-container": "#edeeef",
+                        "inverse-primary": "#a4c9ff",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "outline-variant": "#c0c7d4",
+                        "secondary-container": "#d5e4f7",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#191c1d",
+                        "tertiary-fixed": "#ffdcc3",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-container": "#b15f00",
+                        "secondary-fixed": "#d5e4f7",
+                        "on-secondary-fixed": "#0e1d2a",
+                        "on-tertiary-fixed": "#2f1500",
+                        "secondary": "#526070",
+                        "on-surface-variant": "#414752",
+                        "tertiary": "#8d4b00",
+                        "surface-variant": "#e1e3e4",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001c39",
+                        "outline": "#717784"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body antialiased flex overflow-hidden">
+<!-- SideNavBar (Predicted Component) -->
+<aside class="flex flex-col h-full sticky left-0 top-0 h-screen w-64 bg-slate-50 dark:bg-slate-900 border-r-0 z-50">
+<div class="p-6">
+<h1 class="text-xl font-semibold text-blue-700 dark:text-blue-300 font-headline tracking-tight">Agendly</h1>
+<p class="text-xs text-slate-500 font-medium">Salón Calma</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<!-- Agenda is Active -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-200/50 text-blue-700 dark:text-blue-400 font-semibold transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-inter font-medium tracking-tight">Agenda</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-inter font-medium tracking-tight">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+<span class="font-inter font-medium tracking-tight">Servicios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-inter font-medium tracking-tight">Personal</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-inter font-medium tracking-tight">Configuración</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100/50 dark:border-slate-800/50">
+<div class="flex items-center gap-3 p-2">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Professional woman portrait, salon manager with a friendly and composed expression, soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_8wh0BiEarVzvm4MXm2MM-Rl0cAyFfKFiwfRUgc4xEA65qs-tr15USF_4imEyPTT5gpZVJZ4zGxyuktNjudePMrQx3rAw8kliG5TnWD2Aj3nHEUoknEi4dsx-fpqNJjkOi8khYb7nof6B83Ez898xJPPjng0-m8vkhytijjJjo1wco5DFDBTiqUMy_L4R8i6snP2xCxqtwa_jGwTM42k4VPmh9iRvbmB2Y9zpwAxy8Ax9FKS5OaMk9j12-n9XHf524PFeu0bwXaU"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Ana Valera</p>
+<p class="text-xs text-on-secondary-container">Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="flex-1 flex flex-col h-screen relative bg-surface">
+<!-- TopAppBar (Predicted Component) -->
+<header class="flex items-center justify-between px-6 sticky top-0 z-40 w-full h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100/50 dark:border-slate-800/50">
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-slate-400 mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400" placeholder="Buscar citas o clientes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-slate-400 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-400 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="ml-2 bg-primary text-on-primary px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+                    Nueva Cita
+                </button>
+</div>
+</header>
+<!-- Dynamic Content Canvas -->
+<div class="flex-1 overflow-y-auto hide-scrollbar p-6">
+<!-- Header Section: Title + Staff Filter -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<h2 class="text-3xl font-extrabold text-on-surface tracking-tight mb-1">Miércoles, 22 May</h2>
+<p class="text-on-secondary-container font-medium">Vista Consolidada del Salón</p>
+</div>
+<!-- Staff Bubble Filters -->
+<div class="flex items-center -space-x-2">
+<div class="relative group cursor-pointer">
+<img class="w-12 h-12 rounded-full ring-4 ring-surface object-cover transition-transform group-hover:-translate-y-1" data-alt="Young smiling woman with dark hair, professional stylist portrait, neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhyjA2_dZYmxXNSJyOJPdDVjt7e2jkm17JI9YmdegqY_-dbl_gKgp1tW2zHziN-84n0wo-QWX9GI2nVlyrsuiQi_tqqSs56aJYYZ4KlcLG0spmgMyO6p3DOg04oESFOPeDsFtcKl874fXYnimM82HV30sqMEFJH80UrH-3AbgHhfaThGMbncgGEzlA92a7ApFq7Q_cvXyKgZOORH8_VYuPFaZh-Z0S48QU1NOd0ilZVerkd6VzG40KkRQ8Ha4ToysbVJhDdVL18NQ"/>
+<div class="absolute -bottom-1 -right-1 bg-green-500 w-3 h-3 rounded-full border-2 border-surface"></div>
+</div>
+<div class="relative group cursor-pointer opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+<img class="w-12 h-12 rounded-full ring-4 ring-surface object-cover transition-transform group-hover:-translate-y-1" data-alt="Young man with beard, male hairstylist profile, professional look, soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQf-W3CLAlutrj9LTRhiIj30abQUWEu_0z0XVJC7iBprFoNbiLRL0m1fWg6NjGEDty2rGS-aeUeucr3N13j_PFUlXCrHo5shcC0Od0BEt_vFnhP3UA1XcCJe7aja_RTMSHzMFQrSVZAKPWu0vVy1OhZfWbDrh8Ke_oQ9bDKKoMOF5pHDW4pYlqXGwA1QAmh_H8N7bIP8QSl2u7VgZQYbZrezBYst_YN0VlXulHlwv3dVDnN1unBPGQlQjZ60K63orB8WD_ITN4_1Y"/>
+</div>
+<div class="relative group cursor-pointer opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+<img class="w-12 h-12 rounded-full ring-4 ring-surface object-cover transition-transform group-hover:-translate-y-1" data-alt="Middle aged woman with blonde hair, beauty therapist portrait, clean bright aesthetics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiVbigCbso9lN687TykJSDuU1gYIxb4BxYridKZwrbI9nAhIxu7Fq-WQD6taktiS5vPmPu5Z8eE1x2I_nC0g3j2-XItP93MkrWWEh0PxyVyrwPx1c4-eh3jZoz7cHQW0qEtPZuljI7-RFEThLh1iZG5zlEob2NcpVaoU0qyNrPCw47PoRYHcxLO_6zvxUHAVxaE9aB8d1bGCisDg2cO6gyBXrbJx-4bCvrmt-7YU5NB_t_a2PQbMNzkvCAdwEJd9BPS0F-7sM8guo"/>
+</div>
+<div class="relative group cursor-pointer opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+<img class="w-12 h-12 rounded-full ring-4 ring-surface object-cover transition-transform group-hover:-translate-y-1" data-alt="Young woman with glasses, salon specialist, minimalist studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5qUWcifuAvYOouBZRnKBvg9qwpsrx7_Aatvy4naCyf0kapzW3Nnqw-8EOjwRg_jQCMGopihqjen-Rl1ajqRg_zpBfM75F5hZagc4XH3qFOeuwrAxp8e7gbAErpzML-6SRMrIqkjF1Ctt2sg8gyFatX8TiKz19OsW_WGt45DOxAuwTaZpv4Svnd5q2I9SUisAmMFan8wOR_I5Pf0IZUu2yUbnnO8FLsMWQYKGdNmb69pzhBwV37QAs1Nd9HJ7msu50WQ5xTPDAf-s"/>
+</div>
+<button class="w-12 h-12 rounded-full ring-4 ring-surface bg-surface-container-high text-on-surface-variant flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</section>
+<!-- Agenda Grid Container -->
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm relative min-h-[800px]">
+<!-- Timeline Headers -->
+<div class="grid grid-cols-[80px_1fr] gap-6">
+<!-- Time Labels -->
+<div class="space-y-[60px] pt-4">
+<div class="text-xs font-bold text-on-secondary-container h-4">09:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4">10:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4">11:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4">12:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4 text-primary">13:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4">14:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4">15:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4">16:00</div>
+<div class="text-xs font-bold text-on-secondary-container h-4">17:00</div>
+</div>
+<!-- Slots & Appointments Canvas -->
+<div class="relative border-l border-outline-variant/20 pl-6 space-y-[60px] pt-6">
+<!-- Grid Lines (Subtle) -->
+<div class="absolute inset-0 z-0 pointer-events-none">
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+<div class="border-b border-outline-variant/10 h-[76px]"></div>
+</div>
+<!-- Current Time Indicator -->
+<div class="absolute top-[340px] left-0 right-0 z-20 flex items-center -ml-6">
+<div class="w-3 h-3 rounded-full bg-error border-2 border-surface-container-lowest ml-4 shadow-sm"></div>
+<div class="flex-1 h-0.5 bg-error/40 relative">
+<span class="absolute right-0 -top-6 text-[10px] font-bold text-error bg-error-container/20 px-2 py-0.5 rounded-full">AHORA: 13:15</span>
+</div>
+</div>
+<!-- Appointment: 09:30 - 10:45 -->
+<div class="absolute top-[45px] left-6 right-8 z-10">
+<div class="bg-secondary-container/40 hover:bg-secondary-container/60 transition-colors p-4 rounded-xl flex justify-between items-start border-l-4 border-primary">
+<div class="flex gap-4">
+<div class="p-2 bg-white rounded-lg shadow-sm self-start">
+<span class="material-symbols-outlined text-primary" data-icon="face">face</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Elena Rodríguez</h4>
+<p class="text-xs text-on-secondary-container font-medium">Corte de Pelo + Hidratación</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-[10px] px-2 py-0.5 bg-white/80 rounded-full font-bold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="schedule">schedule</span> 09:30 - 10:45
+                                            </span>
+<span class="text-[10px] px-2 py-0.5 bg-primary/10 rounded-full font-bold text-primary-container">NUEVO CLIENTE</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover grayscale opacity-60" data-alt="Stylist avatar for appointment context" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmbYfTVYiAeVQcAo3gz4y-N2mzsJZvKHAEF6fqhP9MfOvKfOLg45kL_ga-WyTwdq5qEq3MhE-7ZykdN_B02a_mX6qNbjVc2fTJFh__OojcAJ9OfyC2DL_UkxSG4vcro0DMYicusQYnEutB0QG-L6ERcvVts4D3RkX1YFMr3OdCdQb28XQPcW9bg4erMQBHj0YMRV0VkQp_appwCg0mrO-DkEOVJ5Yo5YR-nkJeElt-3Uabls0wpKEo_aKLKPdY4IaPAOvTS8XQq74"/>
+<button class="text-on-secondary-container hover:text-on-surface"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+</div>
+</div>
+<!-- Appointment: 11:30 - 12:30 -->
+<div class="absolute top-[200px] left-6 right-8 z-10">
+<div class="bg-surface-container-high/40 hover:bg-surface-container-high/60 transition-colors p-4 rounded-xl flex justify-between items-start border-l-4 border-outline">
+<div class="flex gap-4">
+<div class="p-2 bg-white rounded-lg shadow-sm self-start">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="brush">brush</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Marcos García</h4>
+<p class="text-xs text-on-secondary-container font-medium">Diseño de Barba</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-[10px] px-2 py-0.5 bg-white/80 rounded-full font-bold text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="schedule">schedule</span> 11:30 - 12:30
+                                            </span>
+</div>
+</div>
+</div>
+<button class="text-on-secondary-container hover:text-on-surface"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+</div>
+<!-- Appointment: 14:00 - 15:30 -->
+<div class="absolute top-[410px] left-6 right-8 z-10">
+<div class="bg-tertiary-container/10 hover:bg-tertiary-container/20 transition-colors p-4 rounded-xl flex justify-between items-start border-l-4 border-tertiary">
+<div class="flex gap-4">
+<div class="p-2 bg-white rounded-lg shadow-sm self-start">
+<span class="material-symbols-outlined text-tertiary" data-icon="spa">spa</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Sofía Méndez</h4>
+<p class="text-xs text-on-secondary-container font-medium">Manicura Premium Gel</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-[10px] px-2 py-0.5 bg-white/80 rounded-full font-bold text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="schedule">schedule</span> 14:00 - 15:30
+                                            </span>
+<span class="text-[10px] px-2 py-0.5 bg-tertiary/10 rounded-full font-bold text-tertiary">URGENTE</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="Stylist avatar for appointment context" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXm-cuq4FqgTy9IwPmEuDvAKzp8niH3vn4-vStWwpETVnSh3VlthBCGUE7JR2HFe7eL03oBYbIM-l7SZdtkx9Q2gvOPgB-y5xPfy7uTyu5qAH12ifNjsrZKgLSZIxT6gIC_5Zh-A_C8bv3Sq1syWgqC8Tj8wbsTIKdQYawq7MlgAuwIEd-k35HbdSP8D9rFbaTajsUc4mdjv7Z6cfjIap822DQa4wiUwplk5TvDjvScYXazHrFhJ2oMTovsMIUvgbnCxBkYNDda2M"/>
+<button class="text-on-secondary-container hover:text-on-surface"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+</div>
+</div>
+<!-- Slot Empty Clickable Area -->
+<div class="h-[76px] w-full border border-dashed border-outline-variant/30 rounded-xl flex items-center justify-center group cursor-pointer hover:bg-primary/5 transition-all">
+<span class="text-xs font-bold text-outline opacity-0 group-hover:opacity-100 transition-opacity">Reservar 16:00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer (Predicted Component) -->
+<footer class="flex flex-col items-center justify-center space-y-4 w-full py-8 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900">
+<div class="flex gap-8">
+<a class="text-slate-400 font-inter text-xs tracking-widest hover:text-blue-500 transition-colors uppercase" href="#">Privacidad</a>
+<a class="text-slate-400 font-inter text-xs tracking-widest hover:text-blue-500 transition-colors uppercase" href="#">Términos</a>
+<a class="text-slate-400 font-inter text-xs tracking-widest hover:text-blue-500 transition-colors uppercase" href="#">Soporte</a>
+</div>
+<p class="text-slate-400 font-inter text-xs tracking-widest uppercase">© 2024 AGENDLY. TODOS LOS DERECHOS RESERVADOS.</p>
+</footer>
+</main>
+<!-- FAB Action (Contextual) -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-2xl" data-icon="calendar_add_on">calendar_add_on</span>
+</button>
+</div>
+</body></html>

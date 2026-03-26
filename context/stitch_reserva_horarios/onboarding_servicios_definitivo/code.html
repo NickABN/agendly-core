@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es-MX"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding: Servicios (Definitivo) - Agendly</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-container-lowest": "#ffffff",
+                "on-secondary-container": "#586676",
+                "surface-bright": "#f8f9fa",
+                "on-tertiary-fixed-variant": "#6e3900",
+                "surface-dim": "#d9dadb",
+                "surface-container-highest": "#e1e3e4",
+                "on-secondary-fixed-variant": "#3a4857",
+                "on-error": "#ffffff",
+                "on-primary-container": "#fdfcff",
+                "primary": "#005da9",
+                "primary-fixed-dim": "#a4c9ff",
+                "surface-container-low": "#f3f4f5",
+                "error": "#ba1a1a",
+                "on-tertiary": "#ffffff",
+                "background": "#f8f9fa",
+                "surface": "#f8f9fa",
+                "inverse-on-surface": "#f0f1f2",
+                "surface-container-high": "#e7e8e9",
+                "surface-tint": "#005fad",
+                "on-primary-fixed-variant": "#004884",
+                "secondary-fixed-dim": "#b9c8da",
+                "error-container": "#ffdad6",
+                "primary-fixed": "#d4e3ff",
+                "primary-container": "#0076d3",
+                "on-primary": "#ffffff",
+                "on-background": "#191c1d",
+                "surface-container": "#edeeef",
+                "inverse-primary": "#a4c9ff",
+                "on-tertiary-container": "#fffbff",
+                "tertiary-fixed-dim": "#ffb77d",
+                "outline-variant": "#c0c7d4",
+                "secondary-container": "#d5e4f7",
+                "on-error-container": "#93000a",
+                "on-surface": "#191c1d",
+                "tertiary-fixed": "#ffdcc3",
+                "inverse-surface": "#2e3132",
+                "tertiary-container": "#b15f00",
+                "secondary-fixed": "#d5e4f7",
+                "on-secondary-fixed": "#0e1d2a",
+                "on-tertiary-fixed": "#2f1500",
+                "secondary": "#526070",
+                "on-surface-variant": "#414752",
+                "tertiary": "#8d4b00",
+                "surface-variant": "#e1e3e4",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed": "#001c39",
+                "outline": "#717784"
+              },
+              fontFamily: {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .scale-98-on-click:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="w-full h-16 flex items-center justify-between px-8 bg-white/80 backdrop-blur-md sticky top-0 z-40">
+<div class="flex items-center gap-2">
+<span class="text-lg font-bold text-slate-900 tracking-tight">Agendly</span>
+<span class="h-4 w-px bg-outline-variant mx-2"></span>
+<span class="text-sm font-medium text-on-surface-variant">Configuración inicial</span>
+</div>
+<div class="flex items-center gap-4 text-sm font-medium text-outline">Paso 2 de 4</div>
+</header>
+<main class="flex-grow flex flex-col lg:flex-row">
+<!-- Main Content Area: The Form -->
+<section class="flex-grow flex flex-col items-center justify-start py-12 px-6 lg:px-20 overflow-y-auto">
+<!-- Stepper (Updated to match SCREEN_11 style) -->
+<div class="w-full max-w-xl mb-12">
+<div class="flex items-center justify-between relative">
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container-high -z-10 -translate-y-1/2"></div>
+<!-- Step 1: Negocio (Completed) -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-primary/20">
+<span class="material-symbols-outlined text-xl">check</span>
+</div>
+<span class="text-xs font-medium text-on-surface-variant">Negocio</span>
+</div>
+<!-- Step 2: Servicios (Active) -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shadow-md ring-4 ring-primary/10">2</div>
+<span class="text-xs font-semibold text-primary">Servicios</span>
+</div>
+<!-- Step 3: Equipo (Inactive) -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm">3</div>
+<span class="text-xs font-medium text-on-surface-variant">Equipo</span>
+</div>
+<!-- Step 4: Horarios (Inactive) -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm">4</div>
+<span class="text-xs font-medium text-on-surface-variant">Horarios</span>
+</div>
+</div>
+</div>
+<!-- Form Container -->
+<div class="w-full max-w-xl space-y-10">
+<div class="space-y-2">
+<h1 class="text-3xl font-semibold tracking-tight text-on-surface">¿Qué servicios ofreces?</h1>
+<p class="text-on-secondary-container leading-relaxed">Agrega tus servicios principales. Podrás añadir más después.</p>
+</div>
+<div class="space-y-6">
+<!-- Service Card 1 -->
+<div class="p-6 bg-surface-container-high rounded-2xl space-y-6">
+<div class="space-y-4">
+<!-- Name -->
+<div class="space-y-2">
+<label class="text-[0.7rem] font-bold tracking-widest text-on-surface-variant uppercase" for="service-name-1">Nombre del servicio</label>
+<input class="w-full px-4 py-3 bg-surface-container-lowest border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all text-on-surface placeholder:text-outline/40" id="service-name-1" placeholder="Ej. Corte de cabello" type="text"/>
+</div>
+<!-- Duration & Price -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-[0.7rem] font-bold tracking-widest text-on-surface-variant uppercase">Duración</label>
+<div class="relative">
+<select class="w-full px-4 py-3 bg-surface-container-lowest border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all text-on-surface appearance-none cursor-pointer">
+<option>30 min</option>
+<option selected="">45 min</option>
+<option>1 h</option>
+<option>1 h 30 min</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[0.7rem] font-bold tracking-widest text-on-surface-variant uppercase">Precio</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">$</span>
+<input class="w-full pl-8 pr-4 py-3 bg-surface-container-lowest border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all text-on-surface placeholder:text-outline/40" placeholder="0.00" type="number"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Add Button -->
+<button class="flex items-center gap-2 px-4 py-2 text-primary font-semibold hover:bg-primary/5 rounded-full transition-all scale-98-on-click group" type="button">
+<span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform duration-300">add_circle</span>
+<span>Agregar otro servicio</span>
+</button>
+</div>
+<!-- Footer Actions -->
+<div class="pt-8 flex flex-col sm:flex-row-reverse items-center justify-between gap-4">
+<button class="w-full sm:w-auto px-10 py-3.5 bg-primary text-on-primary rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-container transition-all flex items-center justify-center gap-2 scale-98-on-click">
+                        Siguiente paso
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<button class="w-full sm:w-auto px-10 py-3.5 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all">
+                        Atrás
+                    </button>
+</div>
+<!-- Contextual Hint -->
+<div class="mt-8 flex items-start gap-4 p-5 bg-tertiary-fixed/20 border border-tertiary-fixed/30 rounded-2xl">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-fixed text-xl" style="font-variation-settings: 'FILL' 1">lightbulb</span>
+</div>
+<p class="text-sm text-on-tertiary-fixed-variant leading-relaxed">
+<strong>Dato:</strong> Los negocios con al menos 3 servicios configurados tienen un 40% más de reservas iniciales.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Preview Sidebar -->
+<aside class="w-full lg:w-[480px] bg-surface-container-low p-8 flex flex-col items-center justify-center border-l border-outline-variant/30">
+<div class="w-full max-w-sm">
+<p class="text-[10px] font-bold text-center text-outline uppercase tracking-[0.2em] mb-6">Vista previa pública</p>
+<!-- Mock Phone -->
+<div class="bg-surface-container-lowest rounded-[2.5rem] p-4 shadow-2xl shadow-slate-200/50 aspect-[9/18.5] relative overflow-hidden flex flex-col ring-8 ring-slate-900/5">
+<!-- Status Bar -->
+<div class="flex justify-between items-center px-6 pt-4 mb-8">
+<span class="text-xs font-bold">9:41</span>
+<div class="flex gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+</div>
+</div>
+<!-- Public Page Content -->
+<div class="flex-grow space-y-8 px-4">
+<div class="flex flex-col items-center space-y-4">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-3xl text-outline-variant">storefront</span>
+</div>
+<div class="text-center space-y-1">
+<h2 class="text-lg font-bold text-on-surface tracking-tight">Salón Calma</h2>
+<p class="text-xs text-on-secondary-container">agendly.mx/salon-calma</p>
+</div>
+</div>
+<!-- Service Skeleton Preview -->
+<div class="space-y-6">
+<div class="space-y-3">
+<div class="h-3 w-1/3 bg-surface-container-high rounded-full"></div>
+<div class="space-y-2">
+<div class="p-3 bg-surface-container-high rounded-xl flex justify-between items-center">
+<div class="space-y-1">
+<div class="h-3 w-24 bg-surface-container-lowest rounded-full"></div>
+<div class="h-2 w-12 bg-surface-container-lowest/50 rounded-full"></div>
+</div>
+<div class="h-3 w-10 bg-surface-container-lowest rounded-full"></div>
+</div>
+<div class="p-3 bg-surface-container-high/50 rounded-xl flex justify-between items-center opacity-50">
+<div class="space-y-1">
+<div class="h-3 w-20 bg-surface-container-lowest rounded-full"></div>
+<div class="h-2 w-10 bg-surface-container-lowest/50 rounded-full"></div>
+</div>
+<div class="h-3 w-8 bg-surface-container-lowest rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action -->
+<div class="p-4 mt-auto">
+<div class="h-12 w-full bg-slate-100 rounded-xl flex items-center justify-center">
+<span class="text-xs font-bold text-slate-300">Agendar cita</span>
+</div>
+</div>
+</div>
+<div class="mt-8 bg-primary/5 rounded-xl p-4 flex gap-3">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+<p class="text-xs text-primary font-medium leading-relaxed">Tus servicios aparecerán listados aquí para que tus clientes elijan qué agendar.</p>
+</div>
+</div>
+</aside>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 bg-slate-50 flex flex-col items-center justify-center space-y-2 border-t border-slate-100">
+<p class="font-inter text-[10px] tracking-widest text-slate-400">© 2024 AGENDLY. TODOS LOS DERECHOS RESERVADOS.</p>
+<div class="flex gap-4">
+<a class="text-xs font-medium text-slate-400 hover:text-primary transition-colors" href="#">Privacidad</a>
+<a class="text-xs font-medium text-slate-400 hover:text-primary transition-colors" href="#">Soporte</a>
+</div>
+</footer>
+</body></html>

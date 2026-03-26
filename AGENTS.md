@@ -8,6 +8,15 @@ Agendly is a SaaS appointment scheduling platform for small beauty and aesthetic
 - `packages/frontend` — Nuxt 3 app with Nuxt UI 3, Tailwind CSS, and Pinia
 - `packages/shared` — TypeScript DTOs and types shared between backend and frontend
 
+## Engram Memory
+
+At the start of **every conversation** about this project:
+1. Call `mcp__engram__mem_session_start` with `id=agendly-{date}` and `project=agendly`
+2. Call `mcp__engram__mem_context` with `project=agendly` to recover context from previous sessions
+
+After completing significant work (architecture, decisions, bugs, config changes):
+- Call `mcp__engram__mem_save` **proactively**, without waiting to be asked
+
 ## Build & Test Commands
 
 ```bash

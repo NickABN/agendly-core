@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="es-MX"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agendly - Restablecer Contraseña</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#0076d3",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-container": "#00714d",
+                        "on-primary-fixed-variant": "#004884",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-container": "#edeeef",
+                        "on-surface": "#191c1d",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#765700",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-secondary-fixed": "#002113",
+                        "on-background": "#191c1d",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#956e00",
+                        "surface-tint": "#005fad",
+                        "primary-fixed": "#d4e3ff",
+                        "on-primary-container": "#fdfcff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "primary": "#005da9",
+                        "inverse-primary": "#a4c9ff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "outline-variant": "#c0c7d4",
+                        "secondary": "#006c49",
+                        "on-surface-variant": "#414752",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#717784",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-primary-fixed": "#001c39",
+                        "secondary-container": "#6cf8bb",
+                        "background": "#f8f9fa",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d9dadb",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .ghost-shadow {
+            box-shadow: 0px 4px 20px rgba(25, 28, 29, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex items-center justify-center p-6 overflow-hidden">
+<!-- Decorative Atmospheric Background Elements -->
+<div class="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary-fixed/30 blur-[100px] -z-10"></div>
+<div class="fixed bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-secondary-fixed/20 blur-[100px] -z-10"></div>
+<!-- Main Container: Asymmetric Editorial Layout -->
+<main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Column: Visual & Brand Context -->
+<div class="hidden lg:flex lg:col-span-7 flex-col space-y-8 pr-12">
+<div class="space-y-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="lock_reset">lock_reset</span>
+</div>
+<span class="text-2xl font-black tracking-tight text-primary">Agendly</span>
+</div>
+<h1 class="text-5xl font-extrabold tracking-tight text-on-surface leading-[1.1]">
+                    Calma Operativa <br/>
+<span class="text-primary-container">Comienza con Seguridad.</span>
+</h1>
+<p class="text-lg text-on-surface-variant max-w-md leading-relaxed">
+                    Nuestro concierge de alta gama para agendamiento garantiza que tus datos estén protegidos mientras te enfocas en lo que más importa: tu tiempo.
+                </p>
+</div>
+<!-- Asymmetric Card Graphic -->
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+<div class="relative bg-surface-container-lowest rounded-2xl p-6 ghost-shadow border border-outline-variant/15 flex items-center space-x-6">
+<img alt="Abstracción de seguridad" class="w-24 h-24 rounded-xl object-cover" data-alt="abstract soft liquid gradient in deep blue and turquoise tones representing digital security and calm workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJkMlNWtD0qYiQb0iyvpRrg7q_cpsvmzunTDvDL9U8juZC2jNlXomqubcVAurZJJyq3fxFeg_TtyonNsE3qz1D9YDY-SPfS94JK4KkDprl2Yu24bBRCTxC2exol-Z1J9sCUdP53C4AlxasfKaaAPSBDc44EUq2jDp35TDDy7lA9Xusp49JCUB2DL66uQhLI3rJtQ612RcFE9tbvc-HtJkQ76k4jJVfkQOLRYDQ1ZUit_DEWPsSDK5ppKZp2nvmDkmUjQLijWnf5cU"/>
+<div>
+<div class="text-sm font-bold text-primary tracking-wider mb-1">CONSEJO PROFESIONAL</div>
+<p class="text-on-surface text-sm leading-snug">
+                            Usa una contraseña única para cada cuenta para mantener la integridad de tu santuario digital.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: The Functional Card (Transactional Focus) -->
+<div class="col-span-1 lg:col-span-5 w-full">
+<div class="bg-surface-container-lowest rounded-2xl p-8 md:p-12 ghost-shadow border border-outline-variant/10 relative overflow-hidden">
+<!-- Brand Mobile Logo (Only visible on small screens) -->
+<div class="lg:hidden flex items-center justify-center mb-10">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-sm" data-icon="lock_reset">lock_reset</span>
+</div>
+<span class="text-xl font-black tracking-tight text-primary">Agendly</span>
+</div>
+</div>
+<!-- Header Section -->
+<div class="mb-10 text-center lg:text-left">
+<h2 class="text-2xl font-bold text-on-surface mb-3 tracking-tight">Restablecer Contraseña</h2>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                        Ingresa la dirección de correo electrónico asociada a tu cuenta y te enviaremos un enlace de recuperación a tu bandeja de entrada.
+                    </p>
+</div>
+<!-- Reset Form -->
+<form action="#" class="space-y-8" method="POST">
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-widest ml-1" for="email">
+                            Correo Electrónico
+                        </label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]" data-icon="mail">mail</span>
+</div>
+<input class="block w-full pl-11 pr-4 py-4 bg-surface-container-highest border-none rounded-xl text-on-surface focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-200 placeholder:text-outline" id="email" name="email" placeholder="nombre@empresa.com" required="" type="email"/>
+</div>
+</div>
+<div class="pt-4 space-y-6">
+<button class="w-full py-4 px-6 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold rounded-full shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 flex items-center justify-center space-x-2" type="submit">
+<span>Enviar enlace de recuperación</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center">
+<a class="flex items-center space-x-2 text-sm font-medium text-on-surface-variant hover:text-primary transition-colors group" href="/login">
+<span class="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform" data-icon="chevron_left">chevron_left</span>
+<span>Volver al Inicio de Sesión</span>
+</a>
+</div>
+</div>
+</form>
+<!-- Help Link Footer -->
+<div class="mt-12 pt-8 border-t border-surface-container text-center">
+<p class="text-xs text-on-surface-variant">
+                        ¿Aún tienes problemas? <a class="text-primary font-semibold hover:underline" href="#">Contactar a Soporte</a>
+</p>
+</div>
+<!-- Atmospheric Flare in the corner -->
+<div class="absolute -bottom-8 -right-8 w-24 h-24 bg-tertiary-fixed-dim/10 rounded-full blur-2xl"></div>
+</div>
+<!-- Mobile Accessibility/Legal Footer -->
+<div class="mt-8 flex justify-center space-x-6 text-[10px] text-outline font-medium uppercase tracking-widest lg:hidden">
+<a class="hover:text-on-surface" href="#">Política de Privacidad</a>
+<a class="hover:text-on-surface" href="#">Términos de Servicio</a>
+</div>
+</div>
+</main>
+<!-- Navigation suppression check: This is a task-focused Transactional screen, 
+         therefore no Global Nav shells are rendered to maintain focus. -->
+</body></html>

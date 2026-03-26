@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#002113",
+              "on-primary-fixed": "#001c39",
+              "on-tertiary-fixed": "#261a00",
+              "on-surface": "#191c1d",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#fdfcff",
+              "surface-container-highest": "#e1e3e4",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-primary-fixed-variant": "#004884",
+              "tertiary": "#765700",
+              "secondary-fixed": "#6ffbbe",
+              "secondary-container": "#6cf8bb",
+              "on-tertiary-container": "#fffbff",
+              "background": "#f8f9fa",
+              "tertiary-container": "#956e00",
+              "outline-variant": "#c0c7d4",
+              "on-secondary-container": "#00714d",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "inverse-primary": "#a4c9ff",
+              "on-surface-variant": "#414752",
+              "surface": "#f8f9fa",
+              "surface-tint": "#005fad",
+              "inverse-surface": "#2e3132",
+              "surface-container-high": "#e7e8e9",
+              "on-secondary": "#ffffff",
+              "surface-container": "#edeeef",
+              "primary-fixed": "#d4e3ff",
+              "primary-container": "#0076d3",
+              "surface-bright": "#f8f9fa",
+              "primary": "#005da9",
+              "outline": "#717784",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed-dim": "#f9bd22",
+              "secondary": "#006c49",
+              "on-secondary-fixed-variant": "#005236",
+              "on-error": "#ffffff",
+              "secondary-fixed-dim": "#4edea3",
+              "tertiary-fixed": "#ffdf9f",
+              "error": "#ba1a1a",
+              "primary-fixed-dim": "#a4c9ff",
+              "surface-variant": "#e1e3e4",
+              "surface-dim": "#d9dadb",
+              "on-background": "#191c1d",
+              "inverse-on-surface": "#f0f1f2",
+              "surface-container-low": "#f3f4f5"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8f9fa;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/85 dark:bg-slate-900/85 backdrop-blur-md shadow-[0px_4px_20px_rgba(25,28,29,0.06)]">
+<div class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform text-blue-700 dark:text-blue-400">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tighter text-blue-800 dark:text-blue-300">Agendly</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-fixed">
+<img alt="Salon Specialist" class="w-full h-full object-cover" data-alt="Professional smiling woman specialist with neutral office background, soft warm lighting, high quality portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYYGQZHUbglpY55KRPZAoUS5MqIc_znlw3OoRzEpIjZUEWS4WbOYRgKuWQ-TNNlphWD6pHuRiwMJv2KuUUTHHz1T27ocJQesuI_boDsR0zfA7KxNn8H9SkXOMA9ex5SbWQXIriY0g30rIXpb_iA2nrg1h4n6WSniP3wGx9ilXt6kJmIxC9UHELNnArP0iXPML385tD6pt8fxHBIOQQ_fMOItm5zmSx-EFnDdHkK4r92ZsdnNX-HdMRzL0yBydIt7EcBxbxJruGc6w"/>
+</div>
+</div>
+<div class="bg-slate-200/20 dark:bg-slate-800/20 h-px w-full"></div>
+</header>
+<main class="pt-24 pb-32 px-4 max-w-2xl mx-auto">
+<!-- Progress Bar Section -->
+<div class="mb-10">
+<div class="flex justify-between items-end mb-3">
+<span class="text-label text-on-surface-variant font-medium tracking-wide">Paso 2 de 4</span>
+<span class="text-headline-sm font-bold text-primary">Selección de especialista</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-2/4 rounded-full"></div>
+</div>
+</div>
+<!-- Appointment Context Bento-style Info -->
+<div class="mb-8">
+<div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">content_cut</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-medium">Servicio seleccionado</p>
+<p class="font-bold text-on-surface">Corte y Peinado Profesional</p>
+</div>
+</div>
+</div>
+<!-- Selection Grid -->
+<section class="space-y-4">
+<h2 class="text-on-surface-variant font-medium text-sm px-1 mb-4">ESPECIALISTAS DISPONIBLES</h2>
+<!-- Quick Auto-Assign Option (First Choice) -->
+<button class="w-full group focus:outline-none">
+<div class="bg-primary/5 hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 p-6 rounded-2xl flex items-center justify-between transition-all duration-300">
+<div class="flex items-center gap-5">
+<div class="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="text-left">
+<h3 class="font-bold text-lg text-primary">Cualquier empleada disponible</h3>
+<p class="text-on-surface-variant text-sm">Asignación automática más rápida</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</button>
+<!-- Specialist Grid -->
+<div class="grid grid-cols-1 gap-3">
+<!-- Specialist 1 -->
+<button class="w-full group focus:outline-none">
+<div class="bg-surface-container-lowest hover:bg-surface-container p-4 rounded-xl flex items-center justify-between shadow-[0px_4px_20px_rgba(25,28,29,0.04)] border border-outline-variant/5 transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-2xl overflow-hidden ring-4 ring-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a professional female hairstylist with red hair, artistic lighting, soft studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyi7jOKGYzowHUN3N-4igZAG6CeKnw7-MQYCcxc9R9Zx4KwbSDu3a-ibkxQwYpmzS_EpiPKAe0B0WhQdphndkHw0UXdsr48QuGdrWT86qq6xzAgFH-BOxl48CBAxi8gpI14P_C7GpShRTpZ-2udGbZ5dvW_dARQG_BfUSBE5ZMXdenXzvK2XMdjHifuydIOsEjWwRv7mSB_vvOP3JtYJIZZ_Kv91wJVXGl4HqZj9PembKWKVWa2yLpE7eNbqHmzHL4HhTBOfrQx5A"/>
+</div>
+<div class="text-left">
+<h3 class="font-bold text-on-surface text-lg">Carmen</h3>
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.9</span>
+<span class="text-on-surface-variant font-normal text-xs ml-1">(120+ reseñas)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold tracking-widest text-secondary bg-secondary-fixed/30 px-2 py-0.5 rounded-full uppercase">Experta</span>
+<span class="material-symbols-outlined text-on-surface-variant opacity-40">radio_button_unchecked</span>
+</div>
+</div>
+</button>
+<!-- Specialist 2 -->
+<button class="w-full group focus:outline-none">
+<div class="bg-surface-container-lowest hover:bg-surface-container p-4 rounded-xl flex items-center justify-between shadow-[0px_4px_20px_rgba(25,28,29,0.04)] border border-outline-variant/5 transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-2xl overflow-hidden ring-4 ring-surface-container">
+<img class="w-full h-full object-cover" data-alt="Friendly professional stylist with dark hair smiling warmly, soft daylight, minimalist salon background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbBnRfGVg7zQEIwYtfk5yZcMcQBvq3goqEkiwZjGCH5pyTfG6q38yvxdNH1LoKT_s8bTfndDMbao9bxxy3zdvba8aDQiMWzRBD9kzS_Ly7m_wrZH7vfavkWBAbJme-V3lHewJaEXxJs5F0kOniRxSGAZ8BU1HB3dZ3GKdFrCUQfgceIeIt3kLzQHdiSAxBT5fhnAHyn8XcE-WynHaLF4KSV2NUZtb0pQ0iT6sGma09_UFNP2c2GiCC7hQe_h3e_UPn4P7SP5DJyT0"/>
+</div>
+<div class="text-left">
+<h3 class="font-bold text-on-surface text-lg">Sofía</h3>
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.8</span>
+<span class="text-on-surface-variant font-normal text-xs ml-1">(85 reseñas)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold tracking-widest text-primary bg-primary-fixed/30 px-2 py-0.5 rounded-full uppercase">Peinado</span>
+<span class="material-symbols-outlined text-on-surface-variant opacity-40">radio_button_unchecked</span>
+</div>
+</div>
+</button>
+<!-- Specialist 3 -->
+<button class="w-full group focus:outline-none">
+<div class="bg-surface-container-lowest hover:bg-surface-container p-4 rounded-xl flex items-center justify-between shadow-[0px_4px_20px_rgba(25,28,29,0.04)] border border-outline-variant/5 transition-all duration-200">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-2xl overflow-hidden ring-4 ring-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional male barber with sharp styling, neutral background, cinematic soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABWqEEicQMrhdI6xNAanKHRKUxP2ZPBup9eWt2MVtlaZmGWiceY73GJdH0UWgyJnpSqlV_4Ab1KFUFVTU2VwDRzITXLOBDMlY9mEcFphNaYlMqwUMLO_rHlnLmCllgylRls0ceBc3yS3Gk5VR-AENKeZ6e5kQrn9XmLN-eri-ZuVIR2LMEsfrzVVgx3ui3aOFktQIO7VqddLhoXLhG0XakJba4_mTwTjrYCoDlXQMDUz5P9lF7yDJX_ChZu98CFoK3VSrfiiFysho"/>
+</div>
+<div class="text-left">
+<h3 class="font-bold text-on-surface text-lg">Mateo</h3>
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.7</span>
+<span class="text-on-surface-variant font-normal text-xs ml-1">(92 reseñas)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold tracking-widest text-on-tertiary-fixed-variant bg-tertiary-fixed/30 px-2 py-0.5 rounded-full uppercase">Colorista</span>
+<span class="material-symbols-outlined text-on-surface-variant opacity-40">radio_button_unchecked</span>
+</div>
+</div>
+</button>
+</div>
+</section>
+<!-- Advisory Footer -->
+<div class="mt-8 p-4 bg-tertiary/10 rounded-xl flex gap-3 items-start">
+<span class="material-symbols-outlined text-tertiary text-xl">info</span>
+<p class="text-xs text-on-tertiary-fixed-variant leading-relaxed">
+                Todas nuestras especialistas han sido certificadas en protocolos de seguridad e higiene. La selección de una especialista específica puede estar sujeta a disponibilidad de último minuto.
+            </p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg rounded-t-[24px] border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(25,28,29,0.04)]">
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200">
+<span class="material-symbols-outlined">content_cut</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Services</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-2xl px-5 py-2 transition-all duration-300">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 opacity-50">
+<span class="material-symbols-outlined">event</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Time</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 opacity-50">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Review</span>
+</div>
+</nav>
+<!-- FAB for confirmation -->
+<div class="fixed bottom-28 right-6">
+<button class="bg-primary text-on-primary h-14 w-14 rounded-full shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</body></html>

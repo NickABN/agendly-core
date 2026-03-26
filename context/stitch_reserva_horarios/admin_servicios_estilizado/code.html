@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#b9dffe',
+                            300: '#7cc2fd',
+                            400: '#36a1f9',
+                            500: '#2383E2', // Primary color from Agendly Calma
+                            600: '#0c66c2',
+                            700: '#0b529d',
+                            800: '#0e4680',
+                            900: '#113c6b',
+                        },
+                        neutral: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 text-neutral-900 antialiased flex min-h-screen">
+<!-- SideNavBar (Authority Source: COMPONENTS_15) -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-slate-50 dark:bg-slate-950 border-r border-slate-200/50 dark:border-slate-800/50 flex flex-col p-4 gap-2">
+<div class="mb-8 px-2">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center text-brand-600">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-slate-900 dark:text-white leading-tight">Admin Panel</h2>
+<p class="text-xs text-neutral-500 opacity-70 font-medium">Service Management</p>
+</div>
+</div>
+<button class="w-full py-3 px-4 bg-brand-500 text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-brand-600 transition-all duration-200 shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-sm">add</span>
+            Add New Service
+        </button>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 font-semibold rounded-lg flex items-center gap-3 px-3 py-2.5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">home_repair_service</span>
+<span class="text-sm font-medium">Services</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-sm font-medium">Staff</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">person_book</span>
+<span class="text-sm font-medium">Clients</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="text-sm font-medium">Locations</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-slate-200/50 pt-4 flex flex-col gap-1">
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="text-sm font-medium">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Wrapper -->
+<main class="flex-1 ml-64 min-h-screen flex flex-col bg-neutral-50">
+<!-- TopAppBar (Authority Source: COMPONENTS_15) -->
+<header class="w-full sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md shadow-sm dark:shadow-none font-inter antialiased tracking-tight">
+<div class="flex items-center justify-between px-6 h-16 w-full max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-slate-900 dark:text-slate-100">SchedulerPro</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-brand-600 dark:text-brand-400 border-b-2 border-brand-600 dark:border-brand-400 pb-1" href="#">Services</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-200" href="#">Schedule</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-200" href="#">Team</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-200" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 bg-neutral-200 border border-neutral-200">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpENUnoCy_RtTKavv9fsQLLh9x3uJLuBLtXXkdU74zIBsm49LhjKMjj3tvP7aT-lNqlQ-Ezeo72nhsy5e7BmJO7DC5F2KoabCfLcDXKNDpn0gNpew7WrJ8GsrDi9HOTdDmqkYygjJ4zew1NDoC7n4DIxuyS8C2kKr4xH2xihzMZckWgo8ULD5F7ADmcjNTYHNrmbuUYI7bKV62cexJxGyH6mxt1PBf14Ok5bvsAtbQfaMjemBmfrbTwVasTdmzT90mES1OsGki3G4"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 max-w-7xl mx-auto w-full">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-sm text-neutral-500 mb-6 font-medium">
+<span class="hover:text-brand-600 cursor-pointer transition-colors">Configuración</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-neutral-900">Servicios</span>
+</nav>
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div class="space-y-1">
+<h1 class="text-4xl font-extrabold tracking-tight text-neutral-900">Servicios</h1>
+<p class="text-neutral-600 max-w-xl">Gestiona el catálogo de servicios de tu negocio, establece duraciones y precios personalizados para tus clientes.</p>
+</div>
+<button class="inline-flex items-center justify-center gap-2 bg-brand-500 text-white px-8 py-3.5 rounded-lg font-bold shadow-sm hover:bg-brand-600 hover:translate-y-[-1px] transition-all duration-200 active:scale-95">
+<span class="material-symbols-outlined">add_circle</span>
+                Nuevo Servicio
+            </button>
+</div>
+<!-- Bento Grid of Services -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="group bg-white rounded-xl p-6 shadow-sm border border-neutral-200 transition-all duration-200 hover:shadow-md hover:border-brand-200 relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2.5 rounded-lg bg-emerald-50 text-emerald-600">
+<span class="material-symbols-outlined">content_cut</span>
+</div>
+<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-neutral-500 hover:bg-neutral-100 rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-neutral-900">Corte &amp; Peinado</h3>
+<span class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">Activo</span>
+</div>
+<p class="text-sm text-neutral-600 line-clamp-2 leading-relaxed">Incluye lavado profundo, corte de diseño y peinado con acabados profesionales.</p>
+<div class="pt-4 flex items-center justify-between border-t border-neutral-100">
+<div class="flex items-center gap-2 text-neutral-500">
+<span class="material-symbols-outlined text-lg">schedule</span>
+<span class="text-sm font-medium">45 min</span>
+</div>
+<div class="text-2xl font-black text-brand-600">$450</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-white rounded-xl p-6 shadow-sm border border-neutral-200 transition-all duration-200 hover:shadow-md hover:border-brand-200 relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2.5 rounded-lg bg-orange-50 text-orange-600">
+<span class="material-symbols-outlined">spa</span>
+</div>
+<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-neutral-500 hover:bg-neutral-100 rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-neutral-900">Manicure Spa</h3>
+<span class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">Activo</span>
+</div>
+<p class="text-sm text-neutral-600 line-clamp-2 leading-relaxed">Tratamiento completo de uñas, exfoliación con sales marinas y masaje relajante.</p>
+<div class="pt-4 flex items-center justify-between border-t border-neutral-100">
+<div class="flex items-center gap-2 text-neutral-500">
+<span class="material-symbols-outlined text-lg">schedule</span>
+<span class="text-sm font-medium">60 min</span>
+</div>
+<div class="text-2xl font-black text-brand-600">$650</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-white rounded-xl p-6 shadow-sm border border-neutral-200 transition-all duration-200 hover:shadow-md hover:border-brand-200 relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2.5 rounded-lg bg-brand-50 text-brand-600">
+<span class="material-symbols-outlined">face</span>
+</div>
+<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-neutral-500 hover:bg-neutral-100 rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-neutral-900">Barba Premium</h3>
+<span class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 bg-neutral-100 px-2.5 py-1 rounded-full">Pausado</span>
+</div>
+<p class="text-sm text-neutral-600 line-clamp-2 leading-relaxed">Perfilado con navaja, toalla caliente y aplicación de bálsamos orgánicos.</p>
+<div class="pt-4 flex items-center justify-between border-t border-neutral-100">
+<div class="flex items-center gap-2 text-neutral-500">
+<span class="material-symbols-outlined text-lg">schedule</span>
+<span class="text-sm font-medium">30 min</span>
+</div>
+<div class="text-2xl font-black text-brand-600">$300</div>
+</div>
+</div>
+</div>
+<!-- Card 4 (New / Add Action) -->
+<div class="group bg-white rounded-xl p-6 shadow-sm border-2 border-dashed border-neutral-200 hover:border-brand-400 hover:bg-brand-50/30 flex flex-col items-center justify-center text-center gap-4 cursor-pointer transition-all duration-200">
+<div class="w-14 h-14 rounded-full bg-neutral-50 flex items-center justify-center group-hover:bg-brand-100 transition-colors">
+<span class="material-symbols-outlined text-3xl text-neutral-400 group-hover:text-brand-600 transition-colors">add</span>
+</div>
+<div>
+<p class="font-bold text-neutral-900">Añadir nuevo servicio</p>
+<p class="text-sm text-neutral-500">Expande tu oferta comercial</p>
+</div>
+</div>
+</div>
+<!-- Empty State (Conditional Display) -->
+<div class="hidden flex-col items-center justify-center py-24 text-center space-y-6">
+<div class="w-48 h-48 bg-white rounded-full flex items-center justify-center shadow-sm border border-neutral-100">
+<span class="material-symbols-outlined text-7xl text-neutral-200">inventory_2</span>
+</div>
+<div class="space-y-2">
+<h2 class="text-2xl font-bold text-neutral-900">No tienes servicios aún</h2>
+<p class="text-neutral-500 max-w-sm mx-auto">Comienza creando tu primer servicio para que tus clientes puedan agendar y disfrutar de tus servicios.</p>
+</div>
+<button class="bg-brand-500 text-white px-10 py-3 rounded-lg font-bold shadow-sm hover:bg-brand-600 transition-all active:scale-95">
+                Crear mi primer servicio
+            </button>
+</div>
+<!-- Footer Stats / Insights -->
+<div class="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+<div class="p-6 bg-white rounded-xl shadow-sm border border-neutral-200">
+<p class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1">Total Servicios</p>
+<p class="text-3xl font-black text-neutral-900">12</p>
+</div>
+<div class="p-6 bg-white rounded-xl shadow-sm border border-neutral-200">
+<p class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1">Más Vendido</p>
+<p class="text-3xl font-black text-emerald-600">Corte</p>
+</div>
+<div class="p-6 bg-white rounded-xl shadow-sm border border-neutral-200">
+<p class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1">Duración Media</p>
+<p class="text-3xl font-black text-neutral-900">42m</p>
+</div>
+<div class="p-6 bg-white rounded-xl shadow-sm border border-neutral-200">
+<p class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1">Valor Promedio</p>
+<p class="text-3xl font-black text-brand-600">$480</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-brand-500 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 hover:bg-brand-600 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined">support_agent</span>
+</button>
+</body></html>

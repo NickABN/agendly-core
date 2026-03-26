@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#0076d3",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-container": "#00714d",
+                        "on-primary-fixed-variant": "#004884",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-container": "#edeeef",
+                        "on-surface": "#191c1d",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#765700",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-secondary-fixed": "#002113",
+                        "on-background": "#191c1d",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#956e00",
+                        "surface-tint": "#005fad",
+                        "primary-fixed": "#d4e3ff",
+                        "on-primary-container": "#fdfcff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "primary": "#005da9",
+                        "inverse-primary": "#a4c9ff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "outline-variant": "#c0c7d4",
+                        "secondary": "#006c49",
+                        "on-surface-variant": "#414752",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#717784",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-primary-fixed": "#001c39",
+                        "secondary-container": "#6cf8bb",
+                        "background": "#f8f9fa",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d9dadb",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/85 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
+<div class="text-xl font-bold text-blue-800 tracking-tight">Agendly</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:bg-slate-200/50 transition-colors duration-200 p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container">
+<img alt="User profile" data-alt="close-up portrait of a professional man with a friendly smile in soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDbCuaDuyxmmPoW39-nafuLw9m1HFormsY-YUjDRtuZwKLxSxqKkRqP29p3eroiSvnKml0PlYCEqwmwoKGy3J6u12P5UuXpD-5ligBKWELN1h-qalH50M-jtIGNbPUCYcy7QqGVAjF04ni6UQUQHseL6HHzOxRmoaL8rj7WvAtjOc-J8XpqLH0GwOekCD9ttL6XqtS3LH9Ia2FD4faWE2MJgR5WJn4mFlEf5X-XxWDh5tY4hXBIYez3KPnEBmnotdIDnjm-Ph0OhA"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center px-6 pt-24 pb-32">
+<div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+<!-- Visual Asymmetry / Illustration Side -->
+<div class="md:col-span-5 order-2 md:order-1">
+<div class="relative">
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-primary-fixed opacity-30 rounded-full blur-3xl"></div>
+<div class="relative z-10 glass-card rounded-[2.5rem] p-8 shadow-sm">
+<img alt="Calm environment" class="rounded-[1.5rem] w-full aspect-square object-cover" data-alt="minimalist clean office space with a comfortable chair, a green plant, and soft natural sunlight through a window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7olfc9I9ZiSNryKhS5wfMAt25R_KeGcQzAjbj3l4HSSCATs7BzBiUZnOdl9D7q9UOLo1YCy99bZTg3ssxnubgZDDwu-2XoLdm0KROS_eTF5hkguo8VgTgh5Ns_NuqcYzS2ed24iafy8yBbo3Qi-LUtG2pJCv8Fr9TlsTagnZFn1aJUbN1UGZpDqipfRgjwB2HOIdfqnENIncOA8BHEGBHCmY2_SKSKzt0yfo78yXxMMx25XL3JRFEGzcYXftlzlxab5VM8SF7Jzw"/>
+<div class="mt-6 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">support_agent</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface">Atención Personalizada</p>
+<p class="text-xs text-on-surface-variant">Estamos aquí para ayudarte</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Side -->
+<div class="md:col-span-7 order-1 md:order-2 space-y-8">
+<div class="space-y-4">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-error-container text-on-error-container text-xs font-bold uppercase tracking-wider">
+                        Sistema no disponible
+                    </span>
+<h1 class="text-5xl font-extrabold text-on-surface tracking-tighter leading-[1.1]">
+                        Algo no salió <br/>como esperábamos.
+                    </h1>
+<p class="text-lg text-on-surface-variant leading-relaxed max-w-md">
+                        Sentimos las molestias. El formulario de reserva está experimentando dificultades técnicas momentáneas, pero tu tiempo sigue siendo nuestra prioridad.
+                    </p>
+</div>
+<!-- Contact Bento Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Phone Card -->
+<a class="group flex flex-col p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/15 hover:shadow-lg transition-all duration-300" href="tel:+34900000000">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform mb-4">
+<span class="material-symbols-outlined">call</span>
+</div>
+<h3 class="font-bold text-on-surface mb-1">Llámanos</h3>
+<p class="text-sm text-on-surface-variant mb-3">Reserva por voz al instante.</p>
+<span class="text-primary font-semibold">+34 900 000 000</span>
+</a>
+<!-- WhatsApp Card -->
+<a class="group flex flex-col p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/15 hover:shadow-lg transition-all duration-300" href="https://wa.me/34000000000">
+<div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform mb-4">
+<span class="material-symbols-outlined">chat_bubble</span>
+</div>
+<h3 class="font-bold text-on-surface mb-1">WhatsApp</h3>
+<p class="text-sm text-on-surface-variant mb-3">Envíanos un mensaje rápido.</p>
+<span class="text-secondary font-semibold">Iniciar Chat</span>
+</a>
+</div>
+<div class="pt-4">
+<button class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-on-primary rounded-full font-bold shadow-md hover:bg-primary-container transition-all active:scale-95" onclick="window.location.reload()">
+<span class="material-symbols-outlined">refresh</span>
+                        Intentar de nuevo
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-6 mt-auto bg-slate-50 border-t border-slate-200/50">
+<div class="flex flex-col items-center gap-4 text-center w-full">
+<div class="font-black text-slate-800 tracking-tight">Agendly</div>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-blue-700 transition-all text-sm font-['Inter'] leading-relaxed" href="#">Privacidad</a>
+<a class="text-slate-500 hover:text-blue-700 transition-all text-sm font-['Inter'] leading-relaxed" href="#">Soporte</a>
+<a class="text-slate-500 hover:text-blue-700 transition-all text-sm font-['Inter'] leading-relaxed" href="#">Contacto</a>
+</div>
+<p class="text-slate-500 text-sm font-['Inter'] leading-relaxed mt-2">© 2024 Agendly. El Sanctuary Digital.</p>
+</div>
+</footer>
+<!-- BottomNavBar (Only visible on mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center pb-safe-offset-2 pt-2 bg-white/90 backdrop-blur-lg rounded-t-[24px] shadow-[0px_-4px_20px_rgba(25,28,29,0.06)]">
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[11px] font-medium font-['Inter']">Inicio</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2">
+<span class="material-symbols-outlined">event_available</span>
+<span class="text-[11px] font-medium font-['Inter']">Citas</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[11px] font-medium font-['Inter']">Calendario</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[11px] font-medium font-['Inter']">Perfil</span>
+</div>
+</nav>
+</body></html>

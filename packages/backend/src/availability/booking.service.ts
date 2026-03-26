@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import type { AppointmentChannel } from '@generated/prisma';
+import type { AppointmentChannel } from '../generated/prisma/client.js';
 
 @Injectable()
 export class BookingService {

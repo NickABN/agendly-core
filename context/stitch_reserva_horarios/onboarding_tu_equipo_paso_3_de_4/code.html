@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es-MX"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agendly - Configuración de Equipo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "inverse-surface": "#2e3132",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#d5e4f7",
+                        "on-secondary-container": "#586676",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed": "#001c39",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#8d4b00",
+                        "surface-container": "#edeeef",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#004884",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "outline": "#717784",
+                        "on-tertiary-container": "#fffbff",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "secondary-fixed-dim": "#b9c8da",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "primary": "#005da9",
+                        "background": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f3f4f5",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#a4c9ff",
+                        "on-surface-variant": "#414752",
+                        "surface-variant": "#e1e3e4",
+                        "on-secondary-fixed": "#0e1d2a",
+                        "on-tertiary-fixed": "#2f1500",
+                        "tertiary-fixed": "#ffdcc3",
+                        "secondary": "#526070",
+                        "primary-fixed": "#d4e3ff",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "on-secondary-fixed-variant": "#3a4857",
+                        "surface": "#f8f9fa",
+                        "surface-bright": "#f8f9fa",
+                        "tertiary-container": "#b15f00",
+                        "on-surface": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "secondary-fixed": "#d5e4f7",
+                        "surface-container-high": "#e7e8e9",
+                        "on-primary-container": "#fdfcff",
+                        "surface-tint": "#005fad",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c0c7d4",
+                        "primary-container": "#0076d3"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<div class="flex min-h-screen">
+<!-- Side Navigation (Shared Component Integration) -->
+<aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 dark:bg-slate-950 border-r border-slate-200/15 flex flex-col p-8 space-y-8 z-10">
+<div class="flex flex-col space-y-2">
+<span class="text-lg font-bold text-blue-600 tracking-tight">Agendly</span>
+<div class="pt-4">
+<h2 class="font-['Inter'] font-semibold text-slate-900 text-lg">Onboarding</h2>
+<p class="font-['Inter'] font-medium text-xs text-slate-500">Paso 3 de 4</p>
+</div>
+</div>
+<nav class="flex flex-col space-y-2">
+<!-- Step 1: Business (Completed) -->
+<div class="flex items-center space-x-3 p-3 text-slate-500 font-['Inter'] font-medium text-sm hover:bg-slate-100 rounded-lg transition-all">
+<span class="material-symbols-outlined text-blue-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Business</span>
+</div>
+<!-- Step 2: Services (Completed) -->
+<div class="flex items-center space-x-3 p-3 text-slate-500 font-['Inter'] font-medium text-sm hover:bg-slate-100 rounded-lg transition-all">
+<span class="material-symbols-outlined text-blue-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Services</span>
+</div>
+<!-- Step 3: Team (Active) -->
+<div class="flex items-center space-x-3 p-3 bg-blue-50 text-blue-600 font-['Inter'] font-medium text-sm rounded-lg transition-all translate-x-1">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Team</span>
+</div>
+<!-- Step 4: Hours (Pending) -->
+<div class="flex items-center space-x-3 p-3 text-slate-400 font-['Inter'] font-medium text-sm rounded-lg">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span>Hours</span>
+</div>
+</nav>
+<div class="mt-auto pt-8 border-t border-outline-variant/20">
+<div class="flex items-center space-x-3 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a smiling female business owner in a clean modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOEZ0hk1FMXQVJdflaElteAfExVNQLAoq1K3ToFUcFEoY398NDC4SkvHxbWjJm5AFHkvMhSa2wQNlVwrd-8_MM527-GdgZ8iedQSoUAbdTqs7m8MbmXei3lHxcpWRoHWd0-yKfARS3gVqgFembwn4g5324m4t6TSrmMGHZnhFvwNbFIXroAsb3Nrbq-TbXNQTxaln4V8NvE3hAGtomS6r7EeQfmuMazXz3jTKaVikzilNdi99Yi9uYi9-jBtmjyTmEjhng_CpZp7o"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Mariana Solís</span>
+<span class="text-xs text-on-surface-variant">Admin Mode</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-72 bg-surface min-h-screen">
+<!-- Header (Derived from TopNavBar Logic) -->
+<header class="w-full sticky top-0 bg-surface/80 backdrop-blur-md z-20">
+<div class="max-w-5xl mx-auto flex items-center justify-between px-12 py-6">
+<div class="flex items-center space-x-4">
+<button class="flex items-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined mr-2">arrow_back</span>
+<span class="text-sm font-medium">Atrás</span>
+</button>
+</div>
+<div class="flex items-center space-x-6">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="help">help</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="settings">settings</span>
+</div>
+</div>
+</header>
+<div class="max-w-5xl mx-auto px-12 py-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
+<!-- Form Section -->
+<section class="lg:col-span-7">
+<header class="mb-10">
+<h1 class="text-3xl font-semibold tracking-[-0.02em] text-on-surface mb-3">¿Quiénes forman tu equipo?</h1>
+<p class="text-on-surface-variant font-medium leading-relaxed">Si trabajas sola, solo confímanos tu nombre. Podrás añadir más colaboradores después.</p>
+</header>
+<form class="space-y-6">
+<!-- Staff Member Row 1 -->
+<div class="group grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-6 rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-high">
+<div class="md:col-span-7">
+<label class="block text-[10px] font-bold tracking-wider text-on-surface-variant uppercase mb-2 ml-1">NOMBRE COMPLETO</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant transition-all font-medium" placeholder="Ej. Ana García" type="text" value="Mariana Solís"/>
+</div>
+<div class="md:col-span-4">
+<label class="block text-[10px] font-bold tracking-wider text-on-surface-variant uppercase mb-2 ml-1">ROL / ESPECIALIDAD</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all font-medium appearance-none">
+<option>Administrador</option>
+<option>Especialista</option>
+<option>Recepcionista</option>
+</select>
+</div>
+<div class="md:col-span-1 flex justify-center pb-2">
+<button class="text-outline hover:text-error transition-colors" type="button">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Staff Member Row 2 (Empty) -->
+<div class="group grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-6 rounded-xl bg-surface-container-low transition-all border border-transparent hover:border-outline-variant/20">
+<div class="md:col-span-7">
+<label class="block text-[10px] font-bold tracking-wider text-on-surface-variant uppercase mb-2 ml-1">NOMBRE COMPLETO</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant transition-all font-medium" placeholder="Nombre del colaborador" type="text"/>
+</div>
+<div class="md:col-span-4">
+<label class="block text-[10px] font-bold tracking-wider text-on-surface-variant uppercase mb-2 ml-1">ROL / ESPECIALIDAD</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg py-3 px-4 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all font-medium appearance-none">
+<option disabled="" selected="">Seleccionar rol</option>
+<option>Especialista Senior</option>
+<option>Asistente</option>
+<option>Freelance</option>
+</select>
+</div>
+<div class="md:col-span-1 flex justify-center pb-2">
+<button class="text-outline-variant cursor-not-allowed" type="button">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Add Button -->
+<button class="flex items-center space-x-2 py-4 px-6 rounded-xl border-2 border-dashed border-outline-variant hover:border-primary hover:text-primary transition-all text-on-surface-variant font-semibold w-full justify-center group" type="button">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">add_circle</span>
+<span>Agregar especialista</span>
+</button>
+</form>
+<div class="mt-16 flex items-center justify-between">
+<div class="flex items-center space-x-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">info</span>
+<p class="text-xs">Tus datos están seguros y cifrados.</p>
+</div>
+<button class="bg-primary text-on-primary px-10 py-4 rounded-lg font-semibold shadow-lg shadow-primary/20 hover:bg-primary-container transition-all flex items-center space-x-2">
+<span>Siguiente paso</span>
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Visual Context / Tip Section -->
+<aside class="lg:col-span-5 flex flex-col space-y-8">
+<div class="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl shadow-on-surface/5">
+<img class="w-full h-full object-cover" data-alt="minimalist modern office meeting room with natural sunlight and plants creating a professional yet calm atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPS5__Mbh3BL9MQ0bwNaext14ISH6IGKRMCmP003Q3hbDaKI9gBAVBzvO70AnbFtrFK6wA-OZfABpQO_i0NSvg9otoeW7vVfqProcpKUDWZSJ7OGvkHmle4xDQbTPDrcwH579zu0KJ5NtjXmV7SekTz2zxN-WZtmnE0z3_HeMK39HEPc-hXsSq9yyN_ollUyx-XX2gLLl-bPMrQ66HV6eaEnnNUO-9LQX6f5_iJDNQo85eSC3RpctIG4WtkUZJJibb0ihFZF9Uw-8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-10 text-on-primary">
+<div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
+<span class="material-symbols-outlined mb-4 text-3xl" style="font-variation-settings: 'FILL' 1;">groups_3</span>
+<h3 class="text-xl font-bold mb-2">El poder de tu equipo</h3>
+<p class="text-sm leading-relaxed opacity-90 font-medium">Configurar a tu equipo correctamente permite que tus clientes elijan a su especialista favorito y optimiza tu calendario automáticamente.</p>
+</div>
+</div>
+</div>
+<!-- Bento-style Tip Card -->
+<div class="bg-secondary-container/30 p-8 rounded-3xl space-y-4">
+<div class="flex items-center space-x-3 text-on-secondary-container">
+<span class="material-symbols-outlined font-bold">lightbulb</span>
+<span class="text-xs font-bold tracking-widest uppercase">CONSEJO AGENDLY</span>
+</div>
+<p class="text-on-secondary-container font-medium leading-relaxed">
+                            "Asignar roles específicos te ayuda a filtrar servicios por persona en tu página de reservas."
+                        </p>
+<div class="flex -space-x-2 overflow-hidden">
+<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="close up of a professional man smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNSxSfX6uXPatpZzzNgp79Q-7aofU69nRdiO3_1hkg52QDIpjJ_JUtWnV80bRN8wq2dWQHzjIKvGgKrXvx8zJuJ8zO6MXGsOBEyvXecScDVzFMa3ccu-QC9Sc3F9I2_uOjP5m_ezZIY6lw7rXqMvFB6Zkl9iI47Jx5jidqAFaGoEbhrF6kvXSgtdpYzLJYlu0hcRA1FDx61BGWpD6b4OuYy9DvLu9C7XuNQDQJABZcm1Jms4u32NXc7xoCdoRNIOVpJ1s5-qyf2_I"/>
+<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="close up of a professional woman smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB12T_np2IvAH8gRgXxR36MCXtbJWvQGrOIhOTedXDvbUeNRB3nZvo3RwhhYn10igtpGRwuSYHGbjOWitCNjWOVdOj6mhK1FxxmVC6wYaLvSbv1ibaDtv6l1xzONhmOHYfSEvRcmtllvS54qAPhb7O_uMJ4_R0Kny412RLBx8EKIWqWFQvFCQom4QzDzYHjHQUWT_BIUifs9sSgvZ0of83auFDGKVeJWN3WzvQO6g29cQ1yIZaaNqeBH2AUSvobq1La18SS6uZKORM"/>
+<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="close up of a smiling professional of diverse background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnVi2sRjsAd8jQoTeT2cMR0yK0CugGFTeIeBrVW4PWRnrQDNaoM-z-YTon9g-hqADoe9y5hFqORzAZtm4rAqxuK05w815oBcZw9VS3WVxprwLKqkw0GqYb1HTz9gFh1pqLqNLHPu7CbHjydAdLu2MOJ4x6tEzz9LAzo3Rj9DolNhcO7fRX1rR27B8g0dTRFFt6iHKRsUhj4DCbREC6n12XV1c38u5X6AH6Lr2am_imhV9i84foRls-EddjQt_wrj4WUvPzYm6hu58"/>
+<div class="flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-white bg-surface-container text-[10px] font-bold text-on-surface-variant">+12</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+</body></html>

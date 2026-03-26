@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Business Profile Settings - Agendly</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#0076d3",
+              "surface-bright": "#f8f9fa",
+              "on-secondary-container": "#00714d",
+              "on-primary-fixed-variant": "#004884",
+              "on-tertiary-container": "#fffbff",
+              "surface-container": "#edeeef",
+              "on-surface": "#191c1d",
+              "on-error-container": "#93000a",
+              "tertiary": "#765700",
+              "surface-variant": "#e1e3e4",
+              "secondary-fixed": "#6ffbbe",
+              "on-secondary-fixed": "#002113",
+              "on-background": "#191c1d",
+              "error": "#ba1a1a",
+              "tertiary-container": "#956e00",
+              "surface-tint": "#005fad",
+              "primary-fixed": "#d4e3ff",
+              "on-primary-container": "#fdfcff",
+              "secondary-fixed-dim": "#4edea3",
+              "surface-container-high": "#e7e8e9",
+              "primary-fixed-dim": "#a4c9ff",
+              "surface": "#f8f9fa",
+              "on-secondary": "#ffffff",
+              "primary": "#005da9",
+              "inverse-primary": "#a4c9ff",
+              "inverse-on-surface": "#f0f1f2",
+              "tertiary-fixed-dim": "#f9bd22",
+              "outline-variant": "#c0c7d4",
+              "secondary": "#006c49",
+              "on-surface-variant": "#414752",
+              "surface-container-lowest": "#ffffff",
+              "outline": "#717784",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed": "#261a00",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "on-secondary-fixed-variant": "#005236",
+              "on-primary-fixed": "#001c39",
+              "secondary-container": "#6cf8bb",
+              "background": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary": "#ffffff",
+              "surface-dim": "#d9dadb",
+              "inverse-surface": "#2e3132",
+              "tertiary-fixed": "#ffdf9f",
+              "on-error": "#ffffff",
+              "surface-container-low": "#f3f4f5",
+              "on-primary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-64 z-50 bg-slate-50 border-r border-slate-200 flex flex-col p-4 space-y-2 h-screen">
+<div class="mb-8">
+<h1 class="text-2xl font-black text-blue-700 tracking-tight">Agendly</h1>
+<p class="text-xs font-medium text-slate-500 uppercase tracking-widest">Admin Console</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-all ease-out duration-200 hover:translate-x-1 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-blue-700">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-all ease-out duration-200 hover:translate-x-1 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-blue-700">calendar_today</span>
+<span class="text-sm font-medium">Schedule</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-all ease-out duration-200 hover:translate-x-1 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-blue-700">groups</span>
+<span class="text-sm font-medium">Clients</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-all ease-out duration-200 hover:translate-x-1 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-blue-700">payments</span>
+<span class="text-sm font-medium">Subscriptions</span>
+</a>
+<a class="flex items-center px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg transition-all ease-out duration-200 hover:translate-x-1 group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-blue-700">rocket_launch</span>
+<span class="text-sm font-medium">Onboarding</span>
+</a>
+<!-- Active State: Settings -->
+<a class="flex items-center px-4 py-2.5 bg-blue-50 text-blue-700 rounded-lg transition-all ease-out duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-sm font-bold">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-slate-200 space-y-1">
+<button class="w-full bg-primary text-on-primary rounded-full py-2.5 px-4 text-sm font-semibold shadow-sm hover:bg-primary-container transition-colors duration-200 mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined mr-2 text-lg">add</span>
+                New Appointment
+            </button>
+<a class="flex items-center px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">contact_support</span>
+<span class="text-sm font-medium">Support</span>
+</a>
+<a class="flex items-center px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">logout</span>
+<span class="text-sm font-medium">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 w-full z-40 bg-white/85 backdrop-blur-md flex justify-between items-center px-8 py-4 ml-64 shadow-sm" style="width: calc(100% - 16rem);">
+<div class="flex items-center">
+<h2 class="text-xl font-bold tracking-tight text-slate-900">Business Profile</h2>
+<div class="ml-4 h-4 w-[1px] bg-slate-200"></div>
+<span class="ml-4 text-sm font-medium text-slate-500">Workspace Settings</span>
+</div>
+<div class="flex items-center space-x-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="absolute -top-1 -right-1 block h-2 w-2 rounded-full bg-error"></span>
+</div>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-primary transition-colors">help</span>
+<div class="flex items-center space-x-3 cursor-pointer group">
+<img alt="Admin profile" class="h-8 w-8 rounded-full border-2 border-transparent group-hover:border-primary transition-all" data-alt="professional portrait of a business administrator in a light blue shirt with a clean minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAClxxPSP3Bt_NIwK9hPGimUdo3MUUnEYXKxySBlU0Mxpii160EhIwwO1iokD3O6gkDnChcwN3gNhVF9lK2exhq27SXxrKznrNFOW2kogbuhlhQeKZW0qOiF67DinV2nArGEjcb7rrhJi6xeWS1PHnTXJYSZaDxSX52tmvRUZnhHUXkgh__NmEIGtqa6K1nyKVQZrB1zqrDa6m73d4V_YoTUlVOsPjtMizuj8RQipI-sCeLychGDFLmUt-D2Df5U8WAP4PYlAqQ898"/>
+<span class="text-sm font-semibold text-slate-700">Alex Rivers</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 pb-12 px-12 min-h-screen">
+<div class="max-w-5xl mx-auto">
+<!-- Page Header -->
+<div class="mb-10">
+<h3 class="text-3xl font-extrabold text-on-surface tracking-tight mb-2">Operational Calm</h3>
+<p class="text-on-surface-variant text-lg max-w-2xl leading-relaxed">Customize how your business appears to clients and manage your availability for bookings.</p>
+</div>
+<!-- Settings Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Identity & Public Profile -->
+<div class="lg:col-span-7 space-y-8">
+<!-- Core Identity Card -->
+<section class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(25,28,29,0.04)] border border-outline-variant/15">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h4 class="text-xl font-bold text-on-surface">General Identity</h4>
+<p class="text-sm text-on-surface-variant">Core details seen across the platform.</p>
+</div>
+<div class="h-16 w-16 rounded-xl bg-surface-container-highest flex items-center justify-center relative overflow-hidden group cursor-pointer border border-dashed border-outline">
+<img alt="Agendly Logo" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="minimalist abstract geometric logo for a modern scheduling brand using blue and white tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJPDr6yU_1vk_18H4EPjGFtt5Mi16S4Z2LTnFh9olXF-0pZjlrjj88UZ3EYrO5vDuqZ-YqdbCMDeWJOiBUzeZ5C2Uaki-j61c2H39biCoBMfDn2k3_D1DdVlT19YWJSGQiQn_U1l_RWarLKG-S9aTy0aq7XoU50C1hHIH8azF3v2bZT0_3g-Xj7ndOQdRiwJpxDeeCMu7_sHOl2Bhn_mAOwR56UuIgDbhEeLAaWDDcAccLTsEe8OWi3q3Qj5ENwx6VqGxnSA78yjA"/>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white text-xl">upload</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Business Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all font-medium" type="text" value="Agendly Creative Studio"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Public Booking URL</label>
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-3 overflow-hidden">
+<span class="text-on-surface-variant text-sm font-medium mr-1">agendly.com/</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-on-surface font-semibold w-full" type="text" value="creative-studio"/>
+<span class="material-symbols-outlined text-secondary text-lg ml-2" title="Available">check_circle</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Timezone</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all font-medium appearance-none">
+<option>(GMT-05:00) Eastern Time</option>
+<option>(GMT-08:00) Pacific Time</option>
+<option>(GMT+00:00) London</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Language</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all font-medium appearance-none">
+<option>English (US)</option>
+<option>Spanish</option>
+<option>French</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+<!-- Advanced Display Section (Intentional Asymmetry) -->
+<div class="bg-primary/5 rounded-3xl p-8 border border-primary/10 flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1">
+<h4 class="text-lg font-bold text-primary mb-2">Premium Branding</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">Remove "Powered by Agendly" and add your own custom domain to ensure your clients have a fully white-labeled experience.</p>
+</div>
+<button class="whitespace-nowrap bg-primary text-on-primary px-6 py-3 rounded-full font-bold text-sm hover:shadow-lg transition-all active:scale-95">Upgrade Plan</button>
+</div>
+</div>
+<!-- Right Column: Business Hours (Bento Style) -->
+<div class="lg:col-span-5 space-y-8">
+<section class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(25,28,29,0.04)] border border-outline-variant/15">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h4 class="text-xl font-bold text-on-surface">Weekly Availability</h4>
+<p class="text-sm text-on-surface-variant">Standard business hours.</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/40">schedule</span>
+</div>
+<div class="space-y-4">
+<!-- Day Row -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl group transition-colors hover:bg-surface-container">
+<span class="text-sm font-bold text-on-surface w-12">MON</span>
+<div class="flex items-center space-x-2">
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="09:00 AM"/>
+<span class="text-xs text-on-surface-variant font-medium">—</span>
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="05:00 PM"/>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-4 bg-primary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-0 top-0 w-4 h-4 bg-primary rounded-full border-2 border-white"></div>
+</div>
+</div>
+</div>
+<!-- Day Row -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl group transition-colors hover:bg-surface-container">
+<span class="text-sm font-bold text-on-surface w-12">TUE</span>
+<div class="flex items-center space-x-2">
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="09:00 AM"/>
+<span class="text-xs text-on-surface-variant font-medium">—</span>
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="05:00 PM"/>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-4 bg-primary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-0 top-0 w-4 h-4 bg-primary rounded-full border-2 border-white"></div>
+</div>
+</div>
+</div>
+<!-- Day Row -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl group transition-colors hover:bg-surface-container">
+<span class="text-sm font-bold text-on-surface w-12">WED</span>
+<div class="flex items-center space-x-2">
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="09:00 AM"/>
+<span class="text-xs text-on-surface-variant font-medium">—</span>
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="05:00 PM"/>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-4 bg-primary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-0 top-0 w-4 h-4 bg-primary rounded-full border-2 border-white"></div>
+</div>
+</div>
+</div>
+<!-- Day Row -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl group transition-colors hover:bg-surface-container">
+<span class="text-sm font-bold text-on-surface w-12">THU</span>
+<div class="flex items-center space-x-2">
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="09:00 AM"/>
+<span class="text-xs text-on-surface-variant font-medium">—</span>
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="05:00 PM"/>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-4 bg-primary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-0 top-0 w-4 h-4 bg-primary rounded-full border-2 border-white"></div>
+</div>
+</div>
+</div>
+<!-- Day Row -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl group transition-colors hover:bg-surface-container">
+<span class="text-sm font-bold text-on-surface w-12">FRI</span>
+<div class="flex items-center space-x-2">
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="09:00 AM"/>
+<span class="text-xs text-on-surface-variant font-medium">—</span>
+<input class="w-20 bg-surface-container-lowest border-none rounded-lg text-xs font-bold text-center py-1.5 focus:ring-1 focus:ring-primary" type="text" value="01:00 PM"/>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-4 bg-primary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-0 top-0 w-4 h-4 bg-primary rounded-full border-2 border-white"></div>
+</div>
+</div>
+</div>
+<!-- Day Row (Closed) -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low/50 rounded-xl group transition-colors hover:bg-surface-container">
+<span class="text-sm font-bold text-on-surface-variant w-12">SAT</span>
+<div class="flex items-center space-x-2 opacity-30 pointer-events-none">
+<span class="text-xs font-bold px-4 py-1.5 bg-surface-container-lowest rounded-lg">CLOSED</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-4 bg-slate-200 rounded-full relative cursor-pointer">
+<div class="absolute left-0 top-0 w-4 h-4 bg-slate-400 rounded-full border-2 border-white"></div>
+</div>
+</div>
+</div>
+<!-- Day Row (Closed) -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low/50 rounded-xl group transition-colors hover:bg-surface-container">
+<span class="text-sm font-bold text-on-surface-variant w-12">SUN</span>
+<div class="flex items-center space-x-2 opacity-30 pointer-events-none">
+<span class="text-xs font-bold px-4 py-1.5 bg-surface-container-lowest rounded-lg">CLOSED</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-4 bg-slate-200 rounded-full relative cursor-pointer">
+<div class="absolute left-0 top-0 w-4 h-4 bg-slate-400 rounded-full border-2 border-white"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant/10">
+<button class="w-full bg-surface-container-high text-on-surface px-4 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-lg">event_busy</span>
+                                Set Holiday Dates
+                            </button>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Footer Action Bar -->
+<div class="fixed bottom-8 right-12 z-40 bg-white/90 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-[0px_8px_32px_rgba(0,0,0,0.12)] border border-white flex items-center space-x-4">
+<p class="text-sm font-medium text-on-surface-variant mr-4">Unsaved changes in workspace</p>
+<button class="px-6 py-2.5 text-on-surface font-bold text-sm hover:text-primary transition-colors">Discard</button>
+<button class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-bold text-sm shadow-md shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">Save Profile</button>
+</div>
+</div>
+</main>
+</body></html>

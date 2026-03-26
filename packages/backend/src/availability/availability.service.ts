@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { DayOfWeek } from '@generated/prisma';
+import type { DayOfWeek } from '../generated/prisma/client.js';
 
 export interface TimeSlot {
   start: string; // ISO 8601

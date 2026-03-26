@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-secondary-fixed": "#002113",
+            "on-primary-fixed": "#001c39",
+            "on-tertiary-fixed": "#261a00",
+            "on-surface": "#191c1d",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#fdfcff",
+            "surface-container-highest": "#e1e3e4",
+            "surface-container-lowest": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#004884",
+            "tertiary": "#765700",
+            "secondary-fixed": "#6ffbbe",
+            "secondary-container": "#6cf8bb",
+            "on-tertiary-container": "#fffbff",
+            "background": "#f8f9fa",
+            "tertiary-container": "#956e00",
+            "outline-variant": "#c0c7d4",
+            "on-secondary-container": "#00714d",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed-variant": "#5c4300",
+            "inverse-primary": "#a4c9ff",
+            "on-surface-variant": "#414752",
+            "surface": "#f8f9fa",
+            "surface-tint": "#005fad",
+            "inverse-surface": "#2e3132",
+            "surface-container-high": "#e7e8e9",
+            "on-secondary": "#ffffff",
+            "surface-container": "#edeeef",
+            "primary-fixed": "#d4e3ff",
+            "primary-container": "#0076d3",
+            "surface-bright": "#f8f9fa",
+            "primary": "#2383E2",
+            "outline": "#717784",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#f9bd22",
+            "secondary": "#006c49",
+            "on-secondary-fixed-variant": "#005236",
+            "on-error": "#ffffff",
+            "secondary-fixed-dim": "#4edea3",
+            "tertiary-fixed": "#ffdf9f",
+            "error": "#ba1a1a",
+            "primary-fixed-dim": "#a4c9ff",
+            "surface-variant": "#e1e3e4",
+            "surface-dim": "#d9dadb",
+            "on-background": "#191c1d",
+            "inverse-on-surface": "#f0f1f2",
+            "surface-container-low": "#f3f4f5"
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body { font-family: 'Inter', sans-serif; }
+    .glass-effect {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/85 dark:bg-slate-900/85 backdrop-blur-md shadow-[0px_4px_20px_rgba(25,28,29,0.06)]">
+<div class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-blue-700 dark:text-blue-400 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tighter text-blue-800 dark:text-blue-300">Agendly</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-[10px] text-white font-bold overflow-hidden border border-slate-200/20">
+<img alt="Salon Specialist" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8eZk0-J4QXz78fVi4fr1xijVp5t4qAcaQxO1WGq1dj6QwKTajOvfK9X6LvyUQXVSJV0b3QdhRV1TdxTnLGIyrtQtftMnpk1RRIVSvsBHj2DPuN4jrz6lvlmJG0JizpjtEVIw8J77f_D1ar9aq3i_mSf1FsgaBzMqr1LYJEuoyej8_dfXioLniSfYqigL6FombmvzrIeD9I2cBe1Ub7n8awjLs8emNmOGPk3Evynnb0J_lTEGXnPm5toA_tw2JSNfvIeIckdI8jpM"/>
+</div>
+</div>
+</div>
+<div class="bg-slate-200/20 dark:bg-slate-800/20 h-px w-full"></div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto">
+<!-- Progress Indicator -->
+<div class="mb-10">
+<div class="flex justify-between items-end mb-3">
+<div>
+<span class="text-primary font-bold text-sm tracking-widest uppercase">Paso 4 de 4</span>
+<h2 class="text-3xl font-extrabold tracking-tight mt-1 text-on-surface">Tus datos</h2>
+</div>
+<span class="text-secondary font-bold text-lg">100%</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-full rounded-full transition-all duration-1000"></div>
+</div>
+</div>
+<!-- Booking Summary Card -->
+<section class="mb-8">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(25,28,29,0.04)] border border-outline-variant/10">
+<h3 class="text-on-surface-variant font-semibold text-xs uppercase tracking-widest mb-6">Resumen de la cita</h3>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="p-3 bg-primary/5 rounded-xl text-primary">
+<span class="material-symbols-outlined">content_cut</span>
+</div>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium uppercase tracking-wider">Servicio</p>
+<p class="font-bold text-on-surface">Corte Estilo Moderno</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="p-3 bg-primary/5 rounded-xl text-primary">
+<span class="material-symbols-outlined">group</span>
+</div>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium uppercase tracking-wider">Especialista</p>
+<p class="font-bold text-on-surface">Salon Specialist</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="p-3 bg-primary/5 rounded-xl text-primary">
+<span class="material-symbols-outlined">event</span>
+</div>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium uppercase tracking-wider">Fecha y Hora</p>
+<p class="font-bold text-on-surface">Viernes, 24 Mayo • 14:30</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="p-3 bg-secondary/5 rounded-xl text-secondary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium uppercase tracking-wider">Precio estimado</p>
+<p class="font-bold text-on-surface">45.00 MXN</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Form -->
+<section class="space-y-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant ml-1" for="name">Nombre completo</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-5 py-4 text-on-surface focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-200 outline-none placeholder:text-outline" id="name" placeholder="Ej. Alex García" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant ml-1" for="phone">Teléfono móvil</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-5 py-4 text-on-surface focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-200 outline-none placeholder:text-outline" id="phone" placeholder="+52 000 000 0000" type="tel"/>
+</div>
+<div class="pt-6">
+<button class="w-full bg-primary text-on-primary font-bold py-5 rounded-full shadow-[0px_4px_20px_rgba(35,131,226,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-lg flex items-center justify-center gap-3">
+<span>Confirmar cita</span>
+<span class="material-symbols-outlined text-xl">check_circle</span>
+</button>
+<p class="text-center text-[11px] text-on-surface-variant mt-4 px-8 leading-relaxed">
+          Al confirmar, aceptas nuestras <span class="text-primary font-medium cursor-pointer">Políticas de Cancelación</span>, <span class="text-primary font-medium cursor-pointer">Términos de Servicio</span> y <span class="text-primary font-medium cursor-pointer">Aviso de Privacidad</span>.
+        </p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shared Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg rounded-t-[24px] border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(25,28,29,0.04)]">
+<!-- Services -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-600 dark:hover:text-blue-300 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">content_cut</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Services</span>
+</a>
+<!-- Staff -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-600 dark:hover:text-blue-300 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Staff</span>
+</a>
+<!-- Time -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-blue-600 dark:hover:text-blue-300 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">event</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Time</span>
+</a>
+<!-- Review (ACTIVE) -->
+<a class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-2xl px-5 py-2 transition-all duration-300" href="#">
+<span class="material-symbols-outlined mb-1">fact_check</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Review</span>
+</a>
+</nav>
+</body></html>

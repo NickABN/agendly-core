@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendly — Design Directions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand-50: #EFF6FF;
+      --brand-100: #DBEAFE;
+      --brand-500: #2383E2;
+      --brand-600: #1A6BC4;
+      --brand-700: #1256A0;
+      --celebrate: #FBBF24;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --neutral-50: #F9FAFB;
+      --neutral-100: #F3F4F6;
+      --neutral-200: #E5E7EB;
+      --neutral-300: #D1D5DB;
+      --neutral-400: #9CA3AF;
+      --neutral-500: #6B7280;
+      --neutral-600: #4B5563;
+      --neutral-700: #374151;
+      --neutral-900: #111827;
+    }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F0F4F8;
+      color: var(--neutral-900);
+      min-height: 100vh;
+    }
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--neutral-900);
+      color: white;
+      padding: 32px 48px;
+    }
+    .page-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .page-header p { color: var(--neutral-400); font-size: 14px; max-width: 640px; line-height: 1.6; }
+    .criteria-bar {
+      background: white;
+      border-bottom: 1px solid var(--neutral-200);
+      padding: 16px 48px;
+      display: flex; gap: 28px; flex-wrap: wrap;
+    }
+    .criterion { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--neutral-700); }
+    .criterion::before { content: "✦"; color: var(--brand-500); font-size: 10px; }
+    /* ── DIRECTIONS GRID ── */
+    .directions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 28px;
+      padding: 36px 48px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    .direction-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 6px 20px rgba(0,0,0,0.05);
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+    .direction-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.1);
+    }
+    .direction-header { padding: 20px 22px 14px; border-bottom: 1px solid var(--neutral-100); }
+    .direction-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neutral-400); margin-bottom: 4px; }
+    .direction-name { font-size: 17px; font-weight: 700; color: var(--neutral-900); margin-bottom: 5px; }
+    .direction-tagline { font-size: 12px; color: var(--neutral-500); line-height: 1.5; }
+    .direction-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+    .tag { font-size: 10px; padding: 3px 7px; border-radius: 4px; background: var(--neutral-100); color: var(--neutral-600); }
+    /* ── PHONE MOCKUP ── */
+    .mockup-area {
+      padding: 20px;
+      background: var(--neutral-50);
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    }
+    .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .phone-label { font-size: 10px; color: var(--neutral-400); text-align: center; }
+    .phone {
+      width: 210px;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px var(--neutral-200), 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .screen { min-height: 390px; position: relative; }
+    .statusbar {
+      height: 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px;
+      font-size: 9px;
+    }
+    /* ── CHARACTERISTICS ── */
+    .characteristics { padding: 14px 22px 18px; border-top: 1px solid var(--neutral-100); }
+    .characteristics h4 {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--neutral-400); margin-bottom: 8px;
+    }
+    .characteristics ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .characteristics li { font-size: 11px; color: var(--neutral-700); display: flex; gap: 6px; }
+    .characteristics li::before { content: "→"; color: var(--brand-500); flex-shrink: 0; }
+
+    /* ════════════════════════════════════════
+       DIRECTION A: TRANSPARENCIA
+    ════════════════════════════════════════ */
+    .dA { background: white; font-size: 12px; }
+    .dA .statusbar { background: white; color: var(--neutral-400); }
+    .dA-biz-header { padding: 10px 12px 8px; border-bottom: 1px solid var(--neutral-100); }
+    .dA-biz-name { font-size: 13px; font-weight: 700; color: var(--neutral-900); }
+    .dA-no-account { font-size: 9px; color: var(--brand-700); margin-top: 1px; }
+    .dA-dots { display: flex; gap: 4px; padding: 8px 12px 6px; }
+    .dA-dot { height: 3px; flex: 1; border-radius: 2px; background: var(--neutral-200); }
+    .dA-dot.done { background: #93C5FD; }
+    .dA-dot.active { background: var(--brand-500); }
+    .dA-section { padding: 6px 12px 4px; font-size: 9px; font-weight: 700; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.07em; }
+    .dA-daytabs { display: flex; gap: 5px; padding: 0 12px 8px; overflow-x: auto; }
+    .dA-daytab { flex-shrink: 0; padding: 4px 7px; border-radius: 6px; font-size: 9px; border: 1px solid var(--neutral-200); color: var(--neutral-600); text-align: center; line-height: 1.3; }
+    .dA-daytab.active { background: var(--brand-50); border-color: var(--brand-500); color: var(--brand-700); font-weight: 700; }
+    .dA-ts { font-size: 8px; color: var(--neutral-400); padding: 0 12px 6px; }
+    .dA-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; padding: 0 12px; }
+    .dA-slot { height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; }
+    .dA-slot.av { background: var(--brand-50); color: var(--brand-700); }
+    .dA-slot.oc { background: var(--neutral-100); color: var(--neutral-300); }
+    .dA-slot.sel { background: var(--brand-500); color: white; }
+    .dA-cta { margin: 12px 12px 6px; background: var(--brand-500); color: white; border-radius: 8px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+    .dA-badge { text-align: center; font-size: 8px; color: var(--neutral-400); padding: 4px 0 8px; }
+
+    /* ════════════════════════════════════════
+       DIRECTION B: CALIDEZ PROFESIONAL
+    ════════════════════════════════════════ */
+    .dB { background: var(--neutral-50); font-size: 12px; }
+    .dB .statusbar { background: var(--neutral-50); color: var(--neutral-400); }
+    .dB-biz-card { margin: 8px 10px 6px; background: white; border-radius: 10px; padding: 8px 11px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .dB-biz-name { font-size: 12px; font-weight: 700; color: var(--neutral-900); }
+    .dB-biz-sub { font-size: 9px; color: var(--neutral-500); margin-top: 1px; }
+    .dB-step-card { margin: 0 10px 8px; background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+    .dB-progress { height: 3px; background: var(--neutral-100); }
+    .dB-progress-fill { height: 100%; width: 50%; background: var(--brand-500); }
+    .dB-step-title { padding: 8px 10px 6px; font-size: 11px; font-weight: 700; color: var(--neutral-900); border-bottom: 1px solid var(--neutral-50); }
+    .dB-daytabs { display: flex; gap: 4px; padding: 6px 8px; overflow-x: auto; }
+    .dB-daytab { flex-shrink: 0; padding: 3px 6px; border-radius: 5px; font-size: 9px; border: 1px solid var(--neutral-200); color: var(--neutral-600); }
+    .dB-daytab.active { background: var(--brand-500); border-color: var(--brand-500); color: white; font-weight: 700; }
+    .dB-ts { font-size: 8px; color: var(--neutral-400); padding: 2px 10px 5px; }
+    .dB-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; padding: 0 8px 6px; }
+    .dB-slot { height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 500; }
+    .dB-slot.av { background: var(--brand-50); color: var(--brand-700); }
+    .dB-slot.oc { background: var(--neutral-100); color: var(--neutral-300); }
+    .dB-slot.sel { background: var(--brand-500); color: white; }
+    .dB-cta { margin: 6px 8px 8px; background: var(--brand-500); color: white; border-radius: 7px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+    .dB-badge { text-align: center; font-size: 8px; color: var(--neutral-400); padding: 4px 0 6px; }
+
+    /* ADMIN B */
+    .dB-admin { background: var(--neutral-50); font-size: 12px; min-height: 390px; }
+    .dB-admin-header { background: white; padding: 8px 12px; border-bottom: 1px solid var(--neutral-100); display: flex; align-items: center; justify-content: space-between; }
+    .dB-admin-title { font-size: 12px; font-weight: 700; color: var(--neutral-900); }
+    .dB-admin-date { font-size: 9px; color: var(--neutral-500); }
+    .dB-add-btn { background: var(--brand-50); border-radius: 5px; padding: 3px 7px; font-size: 9px; color: var(--brand-700); font-weight: 700; }
+    .dB-filters { display: flex; gap: 6px; padding: 6px 10px; overflow-x: auto; }
+    .dB-bubble { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: white; flex-shrink: 0; }
+    .dB-bubble.all { background: var(--neutral-200); color: var(--neutral-600); }
+    .dB-bubble.ca { background: #A78BFA; }
+    .dB-bubble.so { background: #34D399; }
+    .dB-bubble.me { background: #60A5FA; }
+    .dB-bubble.lu { background: #F97316; }
+    .dB-bubble.active { box-shadow: 0 0 0 2px white, 0 0 0 3.5px var(--brand-500); }
+    .dB-cita-list { padding: 0 8px; display: flex; flex-direction: column; gap: 5px; }
+    .dB-cita { background: white; border-radius: 9px; padding: 7px 9px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); display: flex; gap: 8px; align-items: flex-start; }
+    .dB-cita-time { font-size: 9px; font-weight: 800; color: var(--neutral-900); min-width: 28px; padding-top: 1px; }
+    .dB-cita-info { flex: 1; }
+    .dB-cita-client { font-size: 10px; font-weight: 700; color: var(--neutral-900); }
+    .dB-cita-service { font-size: 9px; color: var(--neutral-500); }
+    .dB-cita-badge { font-size: 8px; color: var(--brand-700); margin-top: 2px; }
+    .dB-cita-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; color: white; }
+
+    /* ════════════════════════════════════════
+       DIRECTION C: IDENTIDAD PRIMERO
+    ════════════════════════════════════════ */
+    .dC { background: white; font-size: 12px; }
+    .dC .statusbar { background: var(--brand-500); color: rgba(255,255,255,0.65); }
+    .dC-header { background: var(--brand-500); padding: 8px 12px 16px; }
+    .dC-biz { font-size: 14px; font-weight: 800; color: white; }
+    .dC-sub { font-size: 9px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+    .dC-content { background: white; border-radius: 14px 14px 0 0; margin-top: -8px; padding-top: 10px; }
+    .dC-step-label { padding: 0 12px 5px; font-size: 11px; font-weight: 700; color: var(--neutral-900); }
+    .dC-step-sub { display: block; font-size: 9px; color: var(--neutral-500); font-weight: 400; }
+    .dC-daytabs { display: flex; gap: 4px; padding: 0 12px 6px; overflow-x: auto; }
+    .dC-daytab { flex-shrink: 0; padding: 4px 7px; border-radius: 6px; font-size: 9px; background: var(--neutral-100); color: var(--neutral-700); }
+    .dC-daytab.active { background: var(--brand-700); color: white; font-weight: 700; }
+    .dC-ts { font-size: 8px; color: var(--neutral-400); padding: 0 12px 5px; }
+    .dC-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; padding: 0 12px; }
+    .dC-slot { height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; }
+    .dC-slot.av { background: var(--brand-50); color: var(--brand-700); }
+    .dC-slot.oc { background: var(--neutral-100); color: var(--neutral-300); }
+    .dC-slot.sel { background: var(--brand-500); color: white; }
+    .dC-cta { margin: 10px 12px 6px; background: var(--brand-500); color: white; border-radius: 8px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+    .dC-badge { text-align: center; font-size: 8px; color: var(--neutral-400); padding: 4px 0 8px; }
+
+    /* ════════════════════════════════════════
+       DIRECTION D: PASOS GUIADOS
+    ════════════════════════════════════════ */
+    .dD { background: var(--neutral-50); font-size: 12px; }
+    .dD .statusbar { background: var(--neutral-50); color: var(--neutral-400); }
+    .dD-nav { padding: 6px 10px; display: flex; align-items: center; gap: 8px; }
+    .dD-back { width: 22px; height: 22px; border-radius: 5px; background: white; border: 1px solid var(--neutral-200); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--neutral-600); flex-shrink: 0; }
+    .dD-track { flex: 1; height: 4px; background: var(--neutral-200); border-radius: 2px; overflow: hidden; }
+    .dD-fill { height: 100%; width: 50%; background: var(--brand-500); }
+    .dD-counter { font-size: 9px; color: var(--neutral-500); flex-shrink: 0; }
+    .dD-context { padding: 0 10px 6px; font-size: 9px; color: var(--neutral-500); }
+    .dD-card { margin: 0 10px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
+    .dD-card-title { padding: 10px 12px 8px; font-size: 11px; font-weight: 800; color: var(--neutral-900); border-bottom: 1px solid var(--neutral-50); }
+    .dD-dayrow { display: flex; gap: 4px; padding: 6px 8px; overflow-x: auto; }
+    .dD-daychip { flex-shrink: 0; padding: 4px 7px; border-radius: 7px; font-size: 9px; background: var(--neutral-50); color: var(--neutral-700); text-align: center; line-height: 1.3; border: 1.5px solid transparent; }
+    .dD-daychip.active { background: var(--brand-50); border-color: var(--brand-500); color: var(--brand-700); font-weight: 700; }
+    .dD-ts { font-size: 8px; color: var(--neutral-400); padding: 0 10px 5px; }
+    .dD-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; padding: 0 8px 8px; }
+    .dD-slot { height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 500; }
+    .dD-slot.av { background: var(--brand-50); color: var(--brand-700); border: 1px solid var(--brand-100); }
+    .dD-slot.oc { background: var(--neutral-50); color: var(--neutral-300); }
+    .dD-slot.sel { background: var(--brand-500); color: white; }
+    .dD-cta { margin: 8px; background: var(--brand-500); color: white; border-radius: 9px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+    .dD-footer { text-align: center; font-size: 8px; color: var(--neutral-400); padding: 5px 0 8px; }
+
+    /* ════════════════════════════════════════
+       DIRECTION E: GRILLA PROTAGONISTA
+    ════════════════════════════════════════ */
+    .dE { background: white; font-size: 12px; }
+    .dE .statusbar { background: white; color: var(--neutral-400); }
+    .dE-mini-header { padding: 7px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--neutral-100); }
+    .dE-service-chip { background: var(--brand-50); color: var(--brand-700); border-radius: 20px; padding: 3px 9px; font-size: 9px; font-weight: 600; }
+    .dE-change { font-size: 9px; color: var(--brand-500); }
+    .dE-heading { padding: 9px 12px 5px; font-size: 13px; font-weight: 800; color: var(--neutral-900); }
+    .dE-daytabs { display: flex; gap: 3px; padding: 0 12px 5px; overflow-x: auto; }
+    .dE-daytab { flex-shrink: 0; padding: 4px 6px; border-radius: 7px; font-size: 9px; background: var(--neutral-100); color: var(--neutral-700); text-align: center; min-width: 34px; line-height: 1.3; }
+    .dE-daytab.active { background: var(--brand-700); color: white; font-weight: 700; }
+    .dE-ts { font-size: 8px; color: var(--neutral-400); padding: 0 12px 5px; }
+    .dE-urgency { margin: 0 12px 6px; background: #FEF3C7; color: #92400E; border-radius: 6px; padding: 4px 8px; font-size: 9px; font-weight: 600; }
+    .dE-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 6px; padding: 0 12px; }
+    .dE-slot { height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+    .dE-slot.av { background: var(--brand-50); color: var(--brand-700); }
+    .dE-slot.oc { background: var(--neutral-100); color: var(--neutral-300); }
+    .dE-slot.sel { background: var(--brand-500); color: white; }
+    .dE-cta { margin: 9px 12px 5px; background: var(--brand-500); color: white; border-radius: 8px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+    .dE-badge { text-align: center; font-size: 8px; color: var(--neutral-400); padding: 3px 0 7px; }
+
+    /* ════════════════════════════════════════
+       DIRECTION F: CELEBRACIÓN LATENTE
+    ════════════════════════════════════════ */
+    .dF { background: white; font-size: 12px; }
+    .dF .statusbar { background: white; color: var(--neutral-400); }
+    .dF-celebrate-band { background: var(--celebrate); padding: 12px 12px; text-align: center; }
+    .dF-emoji { font-size: 20px; display: block; margin-bottom: 3px; }
+    .dF-title { font-size: 13px; font-weight: 800; color: var(--neutral-900); }
+    .dF-sub { font-size: 9px; color: rgba(0,0,0,0.55); margin-top: 2px; }
+    .dF-content { padding: 12px; }
+    .dF-link-card { background: var(--neutral-50); border: 1.5px solid var(--neutral-200); border-radius: 9px; padding: 8px 10px; margin-bottom: 8px; }
+    .dF-link-label { font-size: 8px; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
+    .dF-link-url { font-size: 11px; font-weight: 700; color: var(--brand-700); }
+    .dF-actions { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+    .dF-cta-primary { background: var(--brand-500); color: white; border-radius: 8px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+    .dF-cta-secondary { background: white; border: 1px solid var(--neutral-200); color: var(--neutral-700); border-radius: 8px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+    .dF-preview-card { background: white; border: 1px solid var(--neutral-200); border-radius: 9px; padding: 8px 10px; }
+    .dF-preview-label { font-size: 8px; color: var(--neutral-500); margin-bottom: 3px; }
+    .dF-preview-day { font-size: 10px; font-weight: 700; color: var(--neutral-900); margin-bottom: 5px; }
+    .dF-preview-cita { display: flex; align-items: center; gap: 6px; }
+    .dF-preview-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--celebrate); flex-shrink: 0; }
+    .dF-preview-text { font-size: 9px; color: var(--neutral-700); }
+    .dF-preview-note { font-size: 8px; color: var(--neutral-400); margin-top: 3px; }
+
+    /* ── DECISION GUIDE ── */
+    .decision-guide {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 48px 48px;
+    }
+    .decision-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .decision-card h2 { font-size: 17px; font-weight: 700; color: var(--neutral-900); margin-bottom: 10px; }
+    .decision-card > p { font-size: 13px; color: var(--neutral-600); line-height: 1.6; margin-bottom: 16px; }
+    .decision-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+    .decision-option { background: var(--neutral-50); border-radius: 9px; padding: 12px 14px; }
+    .decision-option strong { font-size: 11px; font-weight: 700; color: var(--neutral-900); display: block; margin-bottom: 4px; }
+    .decision-option span { font-size: 11px; color: var(--neutral-600); line-height: 1.5; }
+    .decision-option span em { color: var(--brand-700); font-style: normal; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Agendly — Design Directions</h1>
+  <p>6 direcciones visuales para Agendly, basadas en la fundación del Step 8. Cada una explora un enfoque diferente de jerarquía, densidad e identidad. Identificá cuál resona más — o qué elementos combinás.</p>
+</div>
+
+<div class="criteria-bar">
+  <div class="criterion">¿Cuál layout se siente más intuitivo para Daniela?</div>
+  <div class="criterion">¿Cuál transmite confianza antes del primer tap?</div>
+  <div class="criterion">¿Cuál refleja la identidad que Lupita quiere mostrar?</div>
+  <div class="criterion">¿Cuál densidad visual se siente correcta?</div>
+  <div class="criterion">¿Cuál preferiría Roberto navegar en desktop?</div>
+</div>
+
+<div class="directions-grid">
+
+  <!-- ════ DIRECTION A ════ -->
+  <div class="direction-card">
+    <div class="direction-header">
+      <div class="direction-label">Dirección A</div>
+      <div class="direction-name">Transparencia</div>
+      <div class="direction-tagline">Confianza a través de la neutralidad — el negocio habla, la UI se retira completamente</div>
+      <div class="direction-tags">
+        <span class="tag">Fondo blanco puro</span>
+        <span class="tag">Brand solo en activos</span>
+        <span class="tag">Progreso minimalista</span>
+        <span class="tag">Sin cartas</span>
+      </div>
+    </div>
+    <div class="mockup-area">
+      <div class="phone-wrap">
+        <div class="phone-label">Formulario — Paso 2: Horario</div>
+        <div class="phone">
+          <div class="screen dA">
+            <div class="statusbar dA"><span>9:41</span><span>●●●</span></div>
+            <div class="dA-biz-header">
+              <div class="dA-biz-name">Salón Lupita</div>
+              <div class="dA-no-account">Agenda sin crear cuenta</div>
+            </div>
+            <div class="dA-dots">
+              <div class="dA-dot done"></div>
+              <div class="dA-dot active"></div>
+              <div class="dA-dot"></div>
+              <div class="dA-dot"></div>
+            </div>
+            <div class="dA-section">Fecha y hora</div>
+            <div class="dA-daytabs">
+              <div class="dA-daytab active">Hoy<br>Mar 4</div>
+              <div class="dA-daytab">Mié<br>5</div>
+              <div class="dA-daytab">Jue<br>6</div>
+              <div class="dA-daytab">Vie<br>7</div>
+              <div class="dA-daytab">Sáb<br>8</div>
+            </div>
+            <div class="dA-ts">Disponibilidad actualizada · hace 4 seg</div>
+            <div class="dA-grid">
+              <div class="dA-slot oc">9:00</div>
+              <div class="dA-slot av">9:30</div>
+              <div class="dA-slot av">10:00</div>
+              <div class="dA-slot av">10:30</div>
+              <div class="dA-slot sel">11:00 ✓</div>
+              <div class="dA-slot av">11:30</div>
+              <div class="dA-slot oc">12:00</div>
+              <div class="dA-slot oc">12:30</div>
+              <div class="dA-slot av">13:00</div>
+            </div>
+            <div class="dA-cta">Confirmar horario →</div>
+            <div class="dA-badge">Hecho con ⬡ Agendly →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="characteristics">
+      <h4>Qué la define</h4>
+      <ul>
+        <li>Máximo whitespace — fondo blanco, sin cartas ni elevación</li>
+        <li>Progreso como 4 líneas delgadas — ultraminimalista</li>
+        <li>Brand color solo en slots disponibles/seleccionados y CTA</li>
+        <li>Sensación: fintech o app bancaria — seria y clara</li>
+        <li>El negocio se identifica solo por su nombre, nada más</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════ DIRECTION B ════ -->
+  <div class="direction-card">
+    <div class="direction-header">
+      <div class="direction-label">Dirección B</div>
+      <div class="direction-name">Calidez Profesional</div>
+      <div class="direction-tagline">neutral-50 como base, cartas blancas como contenido — incluye preview del admin con burbujas de empleada</div>
+      <div class="direction-tags">
+        <span class="tag">Fondo neutral-50</span>
+        <span class="tag">Cartas con shadow</span>
+        <span class="tag">Progress bar integrada</span>
+        <span class="tag">+ Vista admin</span>
+      </div>
+    </div>
+    <div class="mockup-area">
+      <div class="phone-wrap">
+        <div class="phone-label">Formulario — Paso 2</div>
+        <div class="phone">
+          <div class="screen dB">
+            <div class="statusbar dB"><span>9:41</span><span>●●●</span></div>
+            <div class="dB-biz-card">
+              <div class="dB-biz-name">Salón Lupita · Narvarte</div>
+              <div class="dB-biz-sub">Agenda sin crear cuenta</div>
+            </div>
+            <div class="dB-step-card">
+              <div class="dB-progress"><div class="dB-progress-fill"></div></div>
+              <div class="dB-step-title">Elige fecha y hora</div>
+              <div class="dB-daytabs">
+                <div class="dB-daytab active">Hoy</div>
+                <div class="dB-daytab">Mié 5</div>
+                <div class="dB-daytab">Jue 6</div>
+                <div class="dB-daytab">Vie 7</div>
+              </div>
+              <div class="dB-ts">Actualizada · hace 4 seg</div>
+              <div class="dB-grid">
+                <div class="dB-slot oc">9:00</div>
+                <div class="dB-slot av">9:30</div>
+                <div class="dB-slot av">10:00</div>
+                <div class="dB-slot av">10:30</div>
+                <div class="dB-slot sel">11:00 ✓</div>
+                <div class="dB-slot av">11:30</div>
+                <div class="dB-slot oc">12:00</div>
+                <div class="dB-slot av">13:00</div>
+                <div class="dB-slot av">13:30</div>
+              </div>
+              <div class="dB-cta">Confirmar horario →</div>
+            </div>
+            <div class="dB-badge">Hecho con ⬡ Agendly →</div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-wrap">
+        <div class="phone-label">Admin mobile — Vista de día</div>
+        <div class="phone">
+          <div class="screen dB-admin">
+            <div class="statusbar" style="background:white;color:var(--neutral-400)"><span>9:41</span><span>●●●</span></div>
+            <div class="dB-admin-header">
+              <div>
+                <div class="dB-admin-title">Martes 4 de marzo</div>
+                <div class="dB-admin-date">5 citas · Salón Lupita</div>
+              </div>
+              <div class="dB-add-btn">+ Cita</div>
+            </div>
+            <div class="dB-filters">
+              <div class="dB-bubble all">All</div>
+              <div class="dB-bubble ca active">CA</div>
+              <div class="dB-bubble so">SO</div>
+              <div class="dB-bubble me">ME</div>
+              <div class="dB-bubble lu">LU</div>
+            </div>
+            <div class="dB-cita-list">
+              <div class="dB-cita">
+                <div class="dB-cita-time">9:30</div>
+                <div class="dB-cita-info">
+                  <div class="dB-cita-client">Daniela Ruiz</div>
+                  <div class="dB-cita-service">Corte + color · 1h 30m</div>
+                </div>
+                <div class="dB-cita-av ca">CA</div>
+              </div>
+              <div class="dB-cita">
+                <div class="dB-cita-time">11:00</div>
+                <div class="dB-cita-info">
+                  <div class="dB-cita-client">María González</div>
+                  <div class="dB-cita-service">Manicure · 45m</div>
+                  <div class="dB-cita-badge">⭐ Cliente nueva · llegó por tu link</div>
+                </div>
+                <div class="dB-cita-av so">SO</div>
+              </div>
+              <div class="dB-cita">
+                <div class="dB-cita-time">13:00</div>
+                <div class="dB-cita-info">
+                  <div class="dB-cita-client">Ana López</div>
+                  <div class="dB-cita-service">Peinado · 1h</div>
+                </div>
+                <div class="dB-cita-av ca">CA</div>
+              </div>
+              <div class="dB-cita" style="opacity:0.45">
+                <div class="dB-cita-time">15:00</div>
+                <div class="dB-cita-info">
+                  <div class="dB-cita-client">Rosa Martínez</div>
+                  <div class="dB-cita-service">Tinte · 2h</div>
+                </div>
+                <div class="dB-cita-av ca">CA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="characteristics">
+      <h4>Qué la define</h4>
+      <ul>
+        <li>neutral-50 como superficie base — se siente "app nativa", no "web form"</li>
+        <li>Barra de progreso fina integrada en la tarjeta del paso</li>
+        <li>Admin con burbujas de empleada (avatares con iniciales + colores determinísticos)</li>
+        <li>Badge "cliente nueva · llegó por tu link" como momento de orgullo</li>
+        <li>Equilibrio óptimo entre calidez y profesionalismo — candidata a dirección base</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════ DIRECTION C ════ -->
+  <div class="direction-card">
+    <div class="direction-header">
+      <div class="direction-label">Dirección C</div>
+      <div class="direction-name">Identidad Primero</div>
+      <div class="direction-tagline">El color de marca encabeza cada pantalla — el cliente sabe dónde está desde el primer píxel</div>
+      <div class="direction-tags">
+        <span class="tag">Header brand-500</span>
+        <span class="tag">Nombre en blanco</span>
+        <span class="tag">Contenido en carta blanca</span>
+        <span class="tag">Mayor presencia de marca</span>
+      </div>
+    </div>
+    <div class="mockup-area">
+      <div class="phone-wrap">
+        <div class="phone-label">Formulario — Paso 2</div>
+        <div class="phone">
+          <div class="screen dC">
+            <div class="statusbar dC"><span>9:41</span><span>●●●</span></div>
+            <div class="dC-header">
+              <div class="dC-biz">Salón Lupita</div>
+              <div class="dC-sub">Agenda sin crear cuenta · Paso 2 de 4</div>
+            </div>
+            <div class="dC-content">
+              <div class="dC-step-label">
+                Elige fecha y hora
+                <span class="dC-step-sub">Corte y color · 1h 30m</span>
+              </div>
+              <div class="dC-daytabs">
+                <div class="dC-daytab active">Hoy · Mar 4</div>
+                <div class="dC-daytab">Mié 5</div>
+                <div class="dC-daytab">Jue 6</div>
+                <div class="dC-daytab">Vie 7</div>
+              </div>
+              <div class="dC-ts">Actualizada · hace 4 seg</div>
+              <div class="dC-grid">
+                <div class="dC-slot oc">9:00</div>
+                <div class="dC-slot av">9:30</div>
+                <div class="dC-slot av">10:00</div>
+                <div class="dC-slot av">10:30</div>
+                <div class="dC-slot sel">11:00 ✓</div>
+                <div class="dC-slot av">11:30</div>
+                <div class="dC-slot oc">12:00</div>
+                <div class="dC-slot oc">12:30</div>
+                <div class="dC-slot av">13:00</div>
+              </div>
+              <div class="dC-cta">Confirmar horario →</div>
+              <div class="dC-badge">Hecho con ⬡ Agendly →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="characteristics">
+      <h4>Qué la define</h4>
+      <ul>
+        <li>Header brand-500 full-bleed — identidad de marca establecida en el primer frame</li>
+        <li>Nombre del negocio y paso del flujo en blanco sobre color de marca</li>
+        <li>Contenido en carta blanca que emerge del header (border-radius en la parte superior)</li>
+        <li>Se siente como si el negocio tuviera su propia app — refuerza el orgullo externo</li>
+        <li>Riesgo: todos los negocios en Agendly se ven iguales si no personalizan colores en V2</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════ DIRECTION D ════ -->
+  <div class="direction-card">
+    <div class="direction-header">
+      <div class="direction-label">Dirección D</div>
+      <div class="direction-name">Pasos Guiados</div>
+      <div class="direction-tagline">El progreso es prominente — el usuario siempre sabe dónde está y que puede volver atrás</div>
+      <div class="direction-tags">
+        <span class="tag">Progress bar prominente</span>
+        <span class="tag">Botón atrás explícito</span>
+        <span class="tag">Tarjeta de paso elevada</span>
+        <span class="tag">Contexto persistente</span>
+      </div>
+    </div>
+    <div class="mockup-area">
+      <div class="phone-wrap">
+        <div class="phone-label">Formulario — Paso 2</div>
+        <div class="phone">
+          <div class="screen dD">
+            <div class="statusbar dD"><span>9:41</span><span>●●●</span></div>
+            <div class="dD-nav">
+              <div class="dD-back">←</div>
+              <div class="dD-track"><div class="dD-fill"></div></div>
+              <div class="dD-counter">2/4</div>
+            </div>
+            <div class="dD-context">Salón Lupita · Corte y color</div>
+            <div class="dD-card">
+              <div class="dD-card-title">Elige fecha y hora</div>
+              <div class="dD-dayrow">
+                <div class="dD-daychip active">Hoy<br>Mar 4</div>
+                <div class="dD-daychip">Mié<br>5</div>
+                <div class="dD-daychip">Jue<br>6</div>
+                <div class="dD-daychip">Vie<br>7</div>
+                <div class="dD-daychip">Sáb<br>8</div>
+              </div>
+              <div class="dD-ts">Actualizada · hace 4 seg</div>
+              <div class="dD-grid">
+                <div class="dD-slot oc">9:00</div>
+                <div class="dD-slot av">9:30</div>
+                <div class="dD-slot av">10:00</div>
+                <div class="dD-slot av">10:30</div>
+                <div class="dD-slot sel">11:00 ✓</div>
+                <div class="dD-slot av">11:30</div>
+                <div class="dD-slot oc">12:00</div>
+                <div class="dD-slot oc">12:30</div>
+                <div class="dD-slot av">13:00</div>
+              </div>
+              <div class="dD-cta">Confirmar horario →</div>
+            </div>
+            <div class="dD-footer">Hecho con ⬡ Agendly →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="characteristics">
+      <h4>Qué la define</h4>
+      <ul>
+        <li>Barra de progreso + contador "2/4" — orientación explícita en todo momento</li>
+        <li>Botón atrás visible — reduce ansiedad de "¿puedo cambiar algo?"</li>
+        <li>Todo el contenido del paso en una tarjeta elevada con shadow</li>
+        <li>Contexto del servicio visible como subtitle encima de la tarjeta</li>
+        <li>Más adecuada para Lupita (low-tech) o Don Marco que necesitan guía explícita</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════ DIRECTION E ════ -->
+  <div class="direction-card">
+    <div class="direction-header">
+      <div class="direction-label">Dirección E</div>
+      <div class="direction-name">Grilla Protagonista</div>
+      <div class="direction-tagline">El grid de slots ocupa el máximo de pantalla — la disponibilidad es la hero UI del formulario</div>
+      <div class="direction-tags">
+        <span class="tag">Grid 2 columnas</span>
+        <span class="tag">Slots 38px de alto</span>
+        <span class="tag">Urgency label visible</span>
+        <span class="tag">Servicio como chip compacto</span>
+      </div>
+    </div>
+    <div class="mockup-area">
+      <div class="phone-wrap">
+        <div class="phone-label">Formulario — Paso 2</div>
+        <div class="phone">
+          <div class="screen dE">
+            <div class="statusbar dE"><span>9:41</span><span>●●●</span></div>
+            <div class="dE-mini-header">
+              <div class="dE-service-chip">✓ Corte y color · 1h 30m</div>
+              <div class="dE-change">cambiar</div>
+            </div>
+            <div class="dE-heading">¿Cuándo?</div>
+            <div class="dE-daytabs">
+              <div class="dE-daytab active">Hoy<br>Mar 4</div>
+              <div class="dE-daytab">Mié<br>5</div>
+              <div class="dE-daytab">Jue<br>6</div>
+              <div class="dE-daytab">Vie<br>7</div>
+              <div class="dE-daytab">Sáb<br>8</div>
+            </div>
+            <div class="dE-ts">Disponibilidad actualizada · hace 4 seg</div>
+            <div class="dE-urgency">⚠ Quedan 2 horarios disponibles hoy</div>
+            <div class="dE-grid">
+              <div class="dE-slot oc">9:00 AM</div>
+              <div class="dE-slot av">9:30 AM</div>
+              <div class="dE-slot av">10:00 AM</div>
+              <div class="dE-slot av">10:30 AM</div>
+              <div class="dE-slot sel">11:00 AM ✓</div>
+              <div class="dE-slot av">11:30 AM</div>
+            </div>
+            <div class="dE-cta">Confirmar horario →</div>
+            <div class="dE-badge">Hecho con ⬡ Agendly →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="characteristics">
+      <h4>Qué la define</h4>
+      <ul>
+        <li>Grid de 2 columnas — slots el doble de grandes que en otras direcciones</li>
+        <li>Servicio ya elegido como chip compacto en header — no repite espacio</li>
+        <li>Urgency label encima de la grilla cuando aplica (≤2 slots disponibles)</li>
+        <li>Título "¿Cuándo?" — pregunta directa, no label técnico "Fecha y hora"</li>
+        <li>Maximiza velocidad de selección — ideal para Daniela en alta distracción</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════ DIRECTION F ════ -->
+  <div class="direction-card">
+    <div class="direction-header">
+      <div class="direction-label">Dirección F</div>
+      <div class="direction-name">Celebración Latente</div>
+      <div class="direction-tagline">Neutral en el flujo, explosiva en los hitos — --celebrate solo aparece en los momentos que importan</div>
+      <div class="direction-tags">
+        <span class="tag">Wizard finale como héroe</span>
+        <span class="tag">--celebrate en hitos</span>
+        <span class="tag">Test booking visible</span>
+        <span class="tag">Deleite diseñado</span>
+      </div>
+    </div>
+    <div class="mockup-area">
+      <div class="phone-wrap">
+        <div class="phone-label">Wizard — Estado final (Lupita)</div>
+        <div class="phone">
+          <div class="screen dF">
+            <div class="statusbar dF"><span>9:41</span><span>●●●</span></div>
+            <div class="dF-celebrate-band">
+              <span class="dF-emoji">🎉</span>
+              <div class="dF-title">¡Lo lograste, Lupita!</div>
+              <div class="dF-sub">Tu salón ya tiene agenda profesional</div>
+            </div>
+            <div class="dF-content">
+              <div class="dF-link-card">
+                <div class="dF-link-label">Tu link de agenda</div>
+                <div class="dF-link-url">agendly.com/salon-lupita</div>
+              </div>
+              <div class="dF-actions">
+                <div class="dF-cta-primary">📋 Copiar link y compartir</div>
+                <div class="dF-cta-secondary">Prueba tu formulario como cliente →</div>
+              </div>
+              <div class="dF-preview-card">
+                <div class="dF-preview-label">Preview de tu admin</div>
+                <div class="dF-preview-day">Martes 4 de marzo</div>
+                <div class="dF-preview-cita">
+                  <div class="dF-preview-dot"></div>
+                  <div class="dF-preview-text">10:00 · Cita de prueba · Eliminar</div>
+                </div>
+                <div class="dF-preview-note">Tu primera cita ya está en el admin</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="characteristics">
+      <h4>Qué la define</h4>
+      <ul>
+        <li>Banner --celebrate (#FBBF24) solo en este estado — jamás en el flujo normal del cliente</li>
+        <li>"¡Lo lograste, Lupita!" — celebra a la persona, no al producto</li>
+        <li>Preview del admin con la cita de prueba visible — confianza sin necesidad de fe</li>
+        <li>CTA dual: compartir link + probar el formulario (test booking del Step 7)</li>
+        <li>El flujo de booking (Dirs A–E) y los hitos de deleite (Dir F) se combinan — no son excluyentes</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── DECISION GUIDE ── -->
+<div class="decision-guide">
+  <div class="decision-card">
+    <h2>¿Cómo elegir?</h2>
+    <p>Podés elegir una dirección como base, combinar elementos de varias, o pedir variaciones. Lo más común: una dirección dominante para el flujo del cliente + elementos de F para los hitos emocionales de Lupita.</p>
+    <div class="decision-grid">
+      <div class="decision-option">
+        <strong>Si priorizás conversión de Daniela</strong>
+        <span>→ <em>Dirección E</em> (Grilla Protagonista) — slots más grandes, selección más rápida en alta distracción</span>
+      </div>
+      <div class="decision-option">
+        <strong>Si priorizás orgullo y retención de Lupita</strong>
+        <span>→ <em>Dirección C</em> (Identidad Primero) + <em>F</em> (Celebración) — presencia de marca + hitos de deleite</span>
+      </div>
+      <div class="decision-option">
+        <strong>Si buscás el mejor equilibrio general</strong>
+        <span>→ <em>Dirección B</em> (Calidez Profesional) + elementos de <em>F</em> para wizard finale y primera cita</span>
+      </div>
+      <div class="decision-option">
+        <strong>Si priorizás usuarios low-tech (Don Marco)</strong>
+        <span>→ <em>Dirección D</em> (Pasos Guiados) — orientación explícita, botón atrás visible, contexto siempre presente</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agendly | Recupera el control de tu tiempo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary": "#ffffff",
+              "surface-container-low": "#f3f4f5",
+              "secondary-container": "#6cf8bb",
+              "primary-fixed": "#d4e3ff",
+              "inverse-on-surface": "#f0f1f2",
+              "error": "#ba1a1a",
+              "secondary-fixed": "#6ffbbe",
+              "on-background": "#191c1d",
+              "tertiary-fixed": "#ffdf9f",
+              "on-primary-fixed": "#001c39",
+              "outline": "#717784",
+              "surface-container-lowest": "#ffffff",
+              "surface": "#f8f9fa",
+              "surface-container": "#edeeef",
+              "on-secondary-container": "#00714d",
+              "on-error": "#ffffff",
+              "secondary": "#006c49",
+              "inverse-surface": "#2e3132",
+              "background": "#f8f9fa",
+              "on-secondary-fixed": "#002113",
+              "surface-container-highest": "#e1e3e4",
+              "tertiary": "#765700",
+              "error-container": "#ffdad6",
+              "on-tertiary-container": "#fffbff",
+              "on-primary-container": "#fdfcff",
+              "on-primary": "#ffffff",
+              "surface-bright": "#f8f9fa",
+              "tertiary-fixed-dim": "#f9bd22",
+              "on-error-container": "#93000a",
+              "tertiary-container": "#956e00",
+              "surface-variant": "#e1e3e4",
+              "on-primary-fixed-variant": "#004884",
+              "primary-container": "#0076d3",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "surface-tint": "#005fad",
+              "on-secondary": "#ffffff",
+              "on-surface": "#191c1d",
+              "outline-variant": "#c0c7d4",
+              "on-tertiary-fixed": "#261a00",
+              "on-surface-variant": "#414752",
+              "surface-dim": "#d9dadb",
+              "inverse-primary": "#a4c9ff",
+              "secondary-fixed-dim": "#4edea3",
+              "on-secondary-fixed-variant": "#005236",
+              "surface-container-high": "#e7e8e9",
+              "primary-fixed-dim": "#a4c9ff",
+              "primary": "#005da9"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #191c1d; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .ghost-shadow { box-shadow: 0px 4px 20px rgba(25, 28, 29, 0.06); }
+        .hero-gradient { background: linear-gradient(180deg, rgba(248, 249, 250, 0) 0%, rgba(243, 244, 245, 1) 100%); }
+        .cta-gradient { background: linear-gradient(135deg, #005da9 0%, #0076d3 100%); }
+    </style>
+</head>
+<body class="selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/85 backdrop-blur-md shadow-sm dark:shadow-none font-inter antialiased tracking-tight">
+<div class="max-w-7xl mx-auto w-full flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-blue-800 tracking-tighter">Agendly</span>
+<div class="hidden md:flex gap-6">
+<a class="text-slate-600 hover:text-blue-600 transition-colors" href="#beneficios">Beneficios</a>
+<a class="text-slate-600 hover:text-blue-600 transition-colors" href="#precios">Precios</a>
+<a class="text-slate-600 hover:text-blue-600 transition-colors" href="#testimonios">Testimonios</a>
+<a class="text-slate-600 hover:text-blue-600 transition-colors" href="#">Soporte</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden sm:block text-slate-600 font-medium hover:text-blue-600 transition-all opacity-80 hover:opacity-100">Iniciar Sesión</button>
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-full font-semibold scale-95 active:scale-90 transition-transform shadow-sm">Empezar gratis</button>
+</div>
+</div>
+</nav>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-16 pb-24 md:pt-24 md:pb-32 hero-gradient">
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="max-w-2xl">
+<span class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wider text-on-secondary-container bg-secondary-container rounded-full uppercase">SaaS de agendamiento para salones</span>
+<h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-on-surface mb-6 leading-[1.1]">
+                        Recupera el control de tu tiempo. <span class="text-primary">Dile adiós al caos de WhatsApp.</span>
+</h1>
+<p class="text-lg md:text-xl text-on-surface-variant mb-10 leading-relaxed max-w-xl">
+                        Sistema de agendamiento autónomo diseñado para negocios de belleza en México. Permite que tus clientes agenden solos mientras tú te enfocas en tu arte.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="cta-gradient text-on-primary px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition-all scale-100 active:scale-95">Prueba 14 días gratis</button>
+<button class="bg-surface-container-high text-on-surface px-8 py-4 rounded-full font-bold text-lg hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">play_circle</span> Ver demo
+                        </button>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute -inset-4 bg-primary/5 rounded-[2.5rem] blur-2xl group-hover:bg-primary/10 transition-colors duration-500"></div>
+<div class="relative bg-surface-container-lowest p-4 rounded-[2.5rem] ghost-shadow transform hover:-rotate-1 transition-transform duration-500">
+<img alt="Agendly Admin Dashboard" class="rounded-[1.5rem] w-full h-auto" data-alt="Modern smartphone interface showing a clean calendar dashboard with booking appointments in soft blue and white colors on a minimal desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrh1IcoAdsjV2Yb0RVIQ1OmEc66GRRJIuSo44hlcGQm2_mBGkRmyXZQO2ZMgu7j8N9hT5UJo6_woaHECGro4RiLLJDCR_RAf5XoFsiA__m8CZQ95b_43KWtFr4h3XqVcZmUIww52riwIPXXKOpqV-GhJ7lNWQyq3c_gf5ZImZQnBndAiAGEg3QHxobuY6lnnlokIYc3Ddijfl_8rwH7jgY4lrtZ2lr8XhzCc1ou2tXuPXkCKEiBh99XdPjuMiaj2x6nsISEH8ij0Y"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Proof Logos -->
+<section class="py-12 bg-surface">
+<div class="max-w-7xl mx-auto px-6">
+<p class="text-center text-sm font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-10">Más de 500 negocios en México ya confían en Agendly</p>
+<div class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+<div class="flex items-center gap-2 font-bold text-xl text-slate-600"><span class="material-symbols-outlined text-3xl">spa</span> SPA GLOW</div>
+<div class="flex items-center gap-2 font-bold text-xl text-slate-600"><span class="material-symbols-outlined text-3xl">content_cut</span> BARBER PRO</div>
+<div class="flex items-center gap-2 font-bold text-xl text-slate-600"><span class="material-symbols-outlined text-3xl">brush</span> NAIL STUDIO</div>
+<div class="flex items-center gap-2 font-bold text-xl text-slate-600"><span class="material-symbols-outlined text-3xl">face</span> SKIN CARE</div>
+<div class="flex items-center gap-2 font-bold text-xl text-slate-600"><span class="material-symbols-outlined text-3xl">face_3</span> LUXE HAIR</div>
+</div>
+</div>
+</section>
+<!-- Beneficios (Asymmetric Grid) -->
+<section class="py-24 bg-surface" id="beneficios">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center mb-20">
+<h2 class="text-3xl md:text-4xl font-extrabold text-on-surface mb-4">Diseñado para la calma operativa</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Elimina la fricción entre tú y tus clientes con herramientas intuitivas.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Benefit 1 -->
+<div class="md:col-span-7 bg-surface-container-lowest p-10 rounded-xl ghost-shadow border border-outline-variant/10 hover:border-primary/20 transition-all flex flex-col justify-between group">
+<div>
+<div class="w-14 h-14 bg-primary-fixed flex items-center justify-center rounded-2xl mb-8 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">bolt</span>
+</div>
+<h3 class="text-2xl font-bold text-on-surface mb-4">Cero fricción</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed">Tus clientes agendan sin crear cuenta, sin descargar apps y sin fricciones. Un enlace, tres clics y listo.</p>
+</div>
+<div class="mt-8 pt-8 border-t border-surface-container">
+<img alt="Customer booking interface" class="w-full h-48 object-cover rounded-xl" data-alt="Clean mobile booking screen showing available time slots for a hair salon with a clear confirm button" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGRMqVdLUfQ4RgQf6qpyGbfgLRownCvDDvYyPz22HJxjAhb9gyWzl1vO3ZxZam3x5XE037Nr6cukRuzu6kwB7Uerc3cx5nYn8A33sLT39y8BuUOdTzieAIVblLfbP3TvdUOi1u4Z81saUgtw-YUbnaiZUSvcLJGgErZA2Ur-wXpN9fhQqD0TrV7ncRqUL1gPeWy4EhAv0sVOz77NJiDlQrz-GO7iSCDMWKlOUdVxs2GbW9mYmlDJ219LtdFx1kJlgK4hsX3J8wkZ8"/>
+</div>
+</div>
+<!-- Benefit 2 -->
+<div class="md:col-span-5 bg-surface-container-lowest p-10 rounded-xl ghost-shadow border border-outline-variant/10 hover:border-primary/20 transition-all group">
+<div class="w-14 h-14 bg-secondary-container flex items-center justify-center rounded-2xl mb-8 group-hover:rotate-12 transition-transform">
+<span class="material-symbols-outlined text-on-secondary-container text-3xl">dashboard_customize</span>
+</div>
+<h3 class="text-2xl font-bold text-on-surface mb-4">Panel de control calmante</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed mb-6">Mira todo lo que pasa en tu día en 5 segundos. Sin saturación visual, solo lo que importa.</p>
+<ul class="space-y-3">
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-secondary text-xl">check_circle</span> Agenda del día clara
+                            </li>
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-secondary text-xl">check_circle</span> Métricas de ingresos
+                            </li>
+</ul>
+</div>
+<!-- Benefit 3 -->
+<div class="md:col-span-12 bg-surface-container-low p-10 rounded-xl flex flex-col md:flex-row items-center gap-10 hover:bg-surface-container transition-colors">
+<div class="w-full md:w-1/2">
+<div class="w-14 h-14 bg-tertiary-fixed flex items-center justify-center rounded-2xl mb-8">
+<span class="material-symbols-outlined text-on-tertiary-fixed text-3xl">notifications_active</span>
+</div>
+<h3 class="text-2xl font-bold text-on-surface mb-4">Notificaciones automáticas</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed">Confirmaciones y recordatorios por email sin que muevas un dedo. Reduce inasistencias en un 40% automáticamente.</p>
+</div>
+<div class="w-full md:w-1/2 grid grid-cols-2 gap-4">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/15">
+<span class="text-xs font-bold text-secondary uppercase mb-2 block">Enviado</span>
+<p class="text-sm font-semibold">Cita confirmada para Mañana</p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/15 translate-y-4">
+<span class="text-xs font-bold text-tertiary uppercase mb-2 block">Recordatorio</span>
+<p class="text-sm font-semibold">Tu sesión inicia en 2 horas</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonial (Social Proof) -->
+<section class="py-24 bg-surface-container-lowest" id="testimonios">
+<div class="max-w-4xl mx-auto px-6 text-center">
+<div class="mb-8">
+<span class="material-symbols-outlined text-6xl text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+</div>
+<p class="text-2xl md:text-3xl font-medium italic text-on-surface leading-snug mb-10">
+                    "Antes pasaba 4 horas al día en WhatsApp coordinando citas. Ahora mi negocio se agenda solo y mis clientes están más felices con la rapidez del proceso."
+                </p>
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-primary-fixed">
+<img alt="Lupita Studio Glow" class="w-full h-full object-cover" data-alt="Portrait of a friendly young Mexican female business owner in a modern brightly lit hair studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWEZL7jV8h_kbyH4aX78Ghbez8X8JSZdLwyQFQiKMXAwD_g6xv-tFHcRQ-BSfIl9_ltfYX4iu02_hEreIDS6uh3sg9SDmKVtXpMK3yU9PLbZZaQYZSM3K-qH1NEo89Pvlo9FHC_Rpq59YWQ5nwboPEkAKNW4X7ufT0r7up1MZgakV5eZsensx88GH7_tEqWSQO5mIQVuGXFiUDiR4P4xxeOiMz8Z9_G6etHwglwNnmQWvYRv-QAATxEu9ureHc4HyxJ-zCfNmx3YM"/>
+</div>
+<h4 class="font-bold text-lg">Lupita</h4>
+<p class="text-on-surface-variant font-medium">Fundadora de Studio Glow</p>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="py-24 bg-surface" id="precios">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-extrabold text-on-surface mb-4">Precios transparentes</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Sin letras chiquitas, sin módulos adicionales. Todo incluido.</p>
+</div>
+<div class="max-w-lg mx-auto bg-surface-container-lowest p-10 rounded-[2rem] ghost-shadow border-2 border-primary-fixed relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-primary text-on-primary px-6 py-2 rounded-bl-2xl font-bold text-sm tracking-wide">EL MÁS POPULAR</div>
+<div class="mb-8">
+<h3 class="text-2xl font-bold mb-2">Plan Todo Incluido</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-5xl font-black text-on-surface">$249</span>
+<span class="text-lg text-on-surface-variant font-medium">MXN/mes</span>
+</div>
+</div>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Citas ilimitadas</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Notificaciones automáticas</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Panel de administración Pro</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Soporte prioritario en español</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Sin comisión por cita</span>
+</li>
+</ul>
+<button class="w-full cta-gradient text-on-primary py-4 rounded-full font-bold text-lg shadow-md hover:scale-[1.02] transition-transform">
+                        Empezar 14 días gratis
+                    </button>
+<p class="text-center text-xs text-on-surface-variant mt-4 font-medium italic">No se requiere tarjeta de crédito</p>
+</div>
+</div>
+</section>
+<!-- CTA Final -->
+<section class="py-24 px-6">
+<div class="max-w-5xl mx-auto bg-on-background text-inverse-on-surface rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
+<div class="absolute bottom-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-[100px] translate-x-1/2 translate-y-1/2"></div>
+<h2 class="text-4xl md:text-5xl font-black mb-6 relative z-10">¿Listo para recuperar tu tranquilidad?</h2>
+<p class="text-xl text-surface-container-highest mb-12 max-w-2xl mx-auto relative z-10 opacity-90">Únete a cientos de salones que ya profesionalizaron su agendamiento. Empieza hoy mismo.</p>
+<div class="flex flex-col sm:flex-row gap-6 justify-center items-center relative z-10">
+<button class="bg-primary text-on-primary px-10 py-5 rounded-full font-bold text-xl hover:bg-primary-container transition-all hover:scale-105 active:scale-95 shadow-xl">Empieza hoy gratis</button>
+<button class="text-inverse-on-surface font-bold text-xl hover:underline underline-offset-8">Ver historias de éxito</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 border-t border-slate-200">
+<div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-bold text-lg text-slate-900">Agendly</span>
+<p class="text-sm font-inter text-slate-500">© 2024 Agendly. Hecho en México con amor.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-sm font-inter text-slate-500 hover:text-blue-500 hover:underline transition-all" href="#">Términos de Servicio</a>
+<a class="text-sm font-inter text-slate-500 hover:text-blue-500 hover:underline transition-all" href="#">Privacidad</a>
+<a class="text-sm font-inter text-slate-500 hover:text-blue-500 hover:underline transition-all" href="#">Cookies</a>
+<a class="text-sm font-inter text-slate-500 hover:text-blue-500 hover:underline transition-all" href="#">Instagram</a>
+<a class="text-sm font-inter text-slate-500 hover:text-blue-500 hover:underline transition-all" href="#">Facebook</a>
+<a class="text-sm font-inter text-slate-500 hover:text-blue-500 hover:underline transition-all" href="#">LinkedIn</a>
+</div>
+</div>
+</footer>
+</body></html>

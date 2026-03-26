@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reserva - Agendly</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#0076d3",
+              "surface-bright": "#f8f9fa",
+              "on-secondary-container": "#00714d",
+              "on-primary-fixed-variant": "#004884",
+              "on-tertiary-container": "#fffbff",
+              "surface-container": "#edeeef",
+              "on-surface": "#191c1d",
+              "on-error-container": "#93000a",
+              "tertiary": "#765700",
+              "surface-variant": "#e1e3e4",
+              "secondary-fixed": "#6ffbbe",
+              "on-secondary-fixed": "#002113",
+              "on-background": "#191c1d",
+              "error": "#ba1a1a",
+              "tertiary-container": "#956e00",
+              "surface-tint": "#005fad",
+              "primary-fixed": "#d4e3ff",
+              "on-primary-container": "#fdfcff",
+              "secondary-fixed-dim": "#4edea3",
+              "surface-container-high": "#e7e8e9",
+              "primary-fixed-dim": "#a4c9ff",
+              "surface": "#f8f9fa",
+              "on-secondary": "#ffffff",
+              "primary": "#005da9",
+              "inverse-primary": "#a4c9ff",
+              "inverse-on-surface": "#f0f1f2",
+              "tertiary-fixed-dim": "#f9bd22",
+              "outline-variant": "#c0c7d4",
+              "secondary": "#006c49",
+              "on-surface-variant": "#414752",
+              "surface-container-lowest": "#ffffff",
+              "outline": "#717784",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed": "#261a00",
+              "on-tertiary-fixed-variant": "#5c4300",
+              "on-secondary-fixed-variant": "#005236",
+              "on-primary-fixed": "#001c39",
+              "secondary-container": "#6cf8bb",
+              "background": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary": "#ffffff",
+              "surface-dim": "#d9dadb",
+              "inverse-surface": "#2e3132",
+              "tertiary-fixed": "#ffdf9f",
+              "on-error": "#ffffff",
+              "surface-container-low": "#f3f4f5",
+              "on-primary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/85 dark:bg-slate-900/85 backdrop-blur-md shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
+<div class="text-xl font-bold text-blue-800 dark:text-blue-300 font-headline tracking-tight">Agendly</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-200/50 transition-colors text-slate-500">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User profile" class="h-full w-full object-cover" data-alt="Stylized minimalist avatar of a professional person with glasses and a friendly expression on a soft blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd6dLLWGi3-iRsXEl-62NamUm__A18AKnZkSdNwsRqOrw7HjKoBSEJwy_8j9VYQ4Zm7DmNXU8RhCRbBBWgv7B5tUdm4ExZMeazo3YraWZU3x14x0Yhb-slrQaOKAfSWLozWEGHK3mVaDl7FebXlq36orlST7XIp03hOrlTdAcS5dwo4D95BKkpjooM0HPdKkzl_J0eFgrZeu3aV4fsloo9E_qFNrp6L_lQZCDmhM8ngaJtELNJH2DYj4wJc9_MacwdAE18tBkFiCE"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow pt-24 pb-32 px-6 max-w-5xl mx-auto w-full">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Service Summary -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10">
+<div class="aspect-square w-full rounded-lg mb-4 overflow-hidden">
+<img alt="Consultation Space" class="w-full h-full object-cover" data-alt="Modern bright consultation office with wooden desk, soft natural lighting through large windows, and clean minimalist decor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK8eEt3BUD19ikD0S6A5FpVGV1n_wv_kcX-6SfRie_zExhNa6th4BgfKSxlijH6LQu2MaoLdRq4LQQtkN968a37ZvLtl48VhvPlEUht8pF2f6QDZtAFdlmuHtMowLFQxnyhn5OpQ8vfghsH9vHGRhG-G_nPFIpHYFjaEB-j5oAkqM18kHgjzzaoaCJ_0AS15jpZyfCNasQDJNeVWy9losJLcnOsUvAHD9Uy05zF_Zvh792J_8wQ1UpEmj42KuZXYL-mMS8q_dqnUA"/>
+</div>
+<h2 class="text-xl font-bold font-headline text-on-surface">Consultoría Estratégica</h2>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Sesión personalizada de 60 minutos para definir los objetivos del próximo trimestre.</p>
+<div class="mt-6 flex flex-col gap-3">
+<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">schedule</span>
+                            60 minutos
+                        </div>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">videocam</span>
+                            Google Meet
+                        </div>
+</div>
+</div>
+</div>
+<!-- Right Column: Booking Form with Error State -->
+<div class="lg:col-span-8">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+<!-- FR30: Slot Occupied Error Notice -->
+<div class="bg-error-container/30 border-b border-error/10 p-6 flex gap-4">
+<div class="flex-shrink-0">
+<span class="material-symbols-outlined text-error text-3xl">error</span>
+</div>
+<div>
+<h3 class="text-on-error-container font-bold text-lg leading-tight">Vaya, ese horario se acaba de ocupar</h3>
+<p class="text-on-surface-variant text-sm mt-1">Mientras completabas el formulario, otro cliente reservó la cita para el <strong>viernes, 24 de mayo a las 10:00 AM</strong>. No te preocupes, tenemos otras opciones para ti.</p>
+</div>
+</div>
+<div class="p-8">
+<h4 class="text-on-surface font-semibold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+                            Alternativas disponibles para hoy
+                        </h4>
+<!-- Asymmetric Bento-style Slot Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Alternative Slot 1: Highlighted -->
+<button class="flex items-center justify-between p-5 rounded-xl border border-primary/20 bg-primary-fixed/30 hover:bg-primary-fixed/50 transition-all duration-200 text-left group">
+<div>
+<span class="text-xs font-bold text-primary uppercase tracking-wider block mb-1">Más cercano</span>
+<span class="text-lg font-bold text-on-primary-fixed">11:30 AM</span>
+<span class="text-sm text-on-surface-variant block">Hoy, 24 de mayo</span>
+</div>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<!-- Alternative Slot 2 -->
+<button class="flex items-center justify-between p-5 rounded-xl border border-outline-variant/20 hover:bg-surface-container-low transition-all duration-200 text-left group">
+<div>
+<span class="text-lg font-bold text-on-surface">14:00 PM</span>
+<span class="text-sm text-on-surface-variant block">Hoy, 24 de mayo</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<!-- Alternative Slot 3 -->
+<button class="flex items-center justify-between p-5 rounded-xl border border-outline-variant/20 hover:bg-surface-container-low transition-all duration-200 text-left group">
+<div>
+<span class="text-lg font-bold text-on-surface">15:30 PM</span>
+<span class="text-sm text-on-surface-variant block">Hoy, 24 de mayo</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<!-- Alternative Slot 4: Different Day -->
+<button class="flex items-center justify-between p-5 rounded-xl border border-outline-variant/20 bg-surface-container-low/50 hover:bg-surface-container-low transition-all duration-200 text-left group">
+<div>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Mañana</span>
+<span class="text-lg font-bold text-on-surface">09:00 AM</span>
+<span class="text-sm text-on-surface-variant block">Sábado, 25 de mayo</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+</div>
+<div class="mt-10 pt-8 border-t border-outline-variant/10 flex flex-col md:flex-row items-center justify-between gap-6">
+<button class="text-primary font-semibold text-sm hover:underline flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">event</span>
+                                Ver calendario completo
+                            </button>
+<button class="w-full md:w-auto px-8 py-3 bg-primary text-on-primary rounded-full font-bold shadow-md hover:shadow-lg transition-all active:scale-95">
+                                Continuar con 11:30 AM
+                            </button>
+</div>
+</div>
+</div>
+<p class="mt-6 text-center text-xs text-on-surface-variant/60 italic">
+                    Para evitar perder su lugar, el nuevo horario seleccionado se bloqueará temporalmente durante 10 minutos.
+                </p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center pb-6 pt-2 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg rounded-t-[24px] shadow-[0px_-4px_20px_rgba(25,28,29,0.06)]">
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[11px] font-medium font-['Inter'] mt-1">Inicio</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-2xl px-5 py-2">
+<span class="material-symbols-outlined">event_available</span>
+<span class="text-[11px] font-medium font-['Inter'] mt-1">Citas</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[11px] font-medium font-['Inter'] mt-1">Calendario</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[11px] font-medium font-['Inter'] mt-1">Perfil</span>
+</div>
+</nav>
+<!-- Footer -->
+<footer class="w-full py-12 px-6 mt-auto bg-slate-50 dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-800/50">
+<div class="flex flex-col items-center gap-4 text-center w-full max-w-5xl mx-auto">
+<div class="font-black text-slate-800 dark:text-slate-200 text-lg">Agendly</div>
+<div class="flex gap-6">
+<a class="text-sm font-['Inter'] text-slate-500 hover:text-blue-700 transition-all" href="#">Privacidad</a>
+<a class="text-sm font-['Inter'] text-slate-500 hover:text-blue-700 transition-all" href="#">Soporte</a>
+<a class="text-sm font-['Inter'] text-slate-500 hover:text-blue-700 transition-all" href="#">Contacto</a>
+</div>
+<p class="text-sm font-['Inter'] leading-relaxed text-slate-500 mt-2">© 2024 Agendly. El Sanctuary Digital.</p>
+</div>
+</footer>
+</body></html>

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
-import type { AppointmentStatus } from '@generated/prisma';
+import type { AppointmentStatus } from '../generated/prisma/client.js';
 
 @Injectable()
 export class AppointmentsService {

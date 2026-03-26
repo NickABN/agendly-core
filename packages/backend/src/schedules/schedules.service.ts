@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { BulkScheduleDto } from './dto/bulk-schedule.dto';
-import type { DayOfWeek } from '@generated/prisma';
+import type { DayOfWeek } from '../generated/prisma/client.js';
 
 @Injectable()
 export class SchedulesService {

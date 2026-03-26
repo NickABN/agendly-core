@@ -14,10 +14,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "paths": {
-      "@generated/prisma": ["./generated/prisma/client.ts"],
-      "@generated/prisma/*": ["./generated/prisma/*"]
-    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -25,5 +21,6 @@
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true
-  }
+  },
+  "exclude": ["prisma/seed.ts", "src/generated"]
 }
