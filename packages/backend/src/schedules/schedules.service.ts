@@ -11,13 +11,14 @@ export class SchedulesService {
   async findByEmployee(tenantId: string, employeeId: string) {
     const schedules = await this.prisma.schedule.findMany({
       where: { tenantId, employeeId },
-      orderBy: { dayOfWeek: 'asc' },
+      orderBy: [{ dayOfWeek: 'asc' }, { blockIndex: 'asc' }],
     });
 
     return schedules.map((s) => ({
       id: s.id,
       employeeId: s.employeeId,
       dayOfWeek: s.dayOfWeek,
+      blockIndex: s.blockIndex,
       startTime: s.startTime,
       endTime: s.endTime,
       isActive: s.isActive,
@@ -27,13 +28,14 @@ export class SchedulesService {
   async findAllByTenant(tenantId: string) {
     const schedules = await this.prisma.schedule.findMany({
       where: { tenantId },
-      orderBy: [{ employeeId: 'asc' }, { dayOfWeek: 'asc' }],
+      orderBy: [{ employeeId: 'asc' }, { dayOfWeek: 'asc' }, { blockIndex: 'asc' }],
     });
 
     return schedules.map((s) => ({
       id: s.id,
       employeeId: s.employeeId,
       dayOfWeek: s.dayOfWeek,
+      blockIndex: s.blockIndex,
       startTime: s.startTime,
       endTime: s.endTime,
       isActive: s.isActive,
@@ -41,11 +43,13 @@ export class SchedulesService {
   }
 
   async create(tenantId: string, dto: CreateScheduleDto) {
+    const blockIndex = dto.blockIndex ?? 0;
     const schedule = await this.prisma.schedule.upsert({
       where: {
-        employeeId_dayOfWeek: {
+        employeeId_dayOfWeek_blockIndex: {
           employeeId: dto.employeeId,
           dayOfWeek: dto.dayOfWeek as DayOfWeek,
+          blockIndex,
         },
       },
       update: {
@@ -57,6 +61,7 @@ export class SchedulesService {
         tenantId,
         employeeId: dto.employeeId,
         dayOfWeek: dto.dayOfWeek as DayOfWeek,
+        blockIndex,
         startTime: dto.startTime,
         endTime: dto.endTime,
       },
@@ -66,6 +71,7 @@ export class SchedulesService {
       id: schedule.id,
       employeeId: schedule.employeeId,
       dayOfWeek: schedule.dayOfWeek,
+      blockIndex: schedule.blockIndex,
       startTime: schedule.startTime,
       endTime: schedule.endTime,
       isActive: schedule.isActive,
@@ -73,7 +79,6 @@ export class SchedulesService {
   }
 
   async bulkSet(tenantId: string, dto: BulkScheduleDto) {
-    // Delete existing schedules for this employee, then create new ones
     await this.prisma.$transaction(async (tx) => {
       await tx.schedule.deleteMany({
         where: { tenantId, employeeId: dto.employeeId },
@@ -85,6 +90,7 @@ export class SchedulesService {
             tenantId,
             employeeId: dto.employeeId,
             dayOfWeek: d.dayOfWeek as DayOfWeek,
+            blockIndex: d.blockIndex ?? 0,
             startTime: d.startTime,
             endTime: d.endTime,
           })),

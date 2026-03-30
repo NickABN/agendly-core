@@ -388,6 +388,7 @@ export const ModelName = {
   User: 'User',
   Employee: 'Employee',
   Service: 'Service',
+  ServiceAvailability: 'ServiceAvailability',
   EmployeeService: 'EmployeeService',
   Schedule: 'Schedule',
   ScheduleException: 'ScheduleException',
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tenant" | "user" | "employee" | "service" | "employeeService" | "schedule" | "scheduleException" | "appointment" | "privacyConsent"
+    modelProps: "tenant" | "user" | "employee" | "service" | "serviceAvailability" | "employeeService" | "schedule" | "scheduleException" | "appointment" | "privacyConsent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -705,6 +706,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ServiceCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ServiceCountAggregateOutputType> | number
+        }
+      }
+    }
+    ServiceAvailability: {
+      payload: Prisma.$ServiceAvailabilityPayload<ExtArgs>
+      fields: Prisma.ServiceAvailabilityFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ServiceAvailabilityFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ServiceAvailabilityFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>
+        }
+        findFirst: {
+          args: Prisma.ServiceAvailabilityFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ServiceAvailabilityFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>
+        }
+        findMany: {
+          args: Prisma.ServiceAvailabilityFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>[]
+        }
+        create: {
+          args: Prisma.ServiceAvailabilityCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>
+        }
+        createMany: {
+          args: Prisma.ServiceAvailabilityCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ServiceAvailabilityCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>[]
+        }
+        delete: {
+          args: Prisma.ServiceAvailabilityDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>
+        }
+        update: {
+          args: Prisma.ServiceAvailabilityUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>
+        }
+        deleteMany: {
+          args: Prisma.ServiceAvailabilityDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ServiceAvailabilityUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ServiceAvailabilityUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>[]
+        }
+        upsert: {
+          args: Prisma.ServiceAvailabilityUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceAvailabilityPayload>
+        }
+        aggregate: {
+          args: Prisma.ServiceAvailabilityAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateServiceAvailability>
+        }
+        groupBy: {
+          args: Prisma.ServiceAvailabilityGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServiceAvailabilityGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ServiceAvailabilityCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServiceAvailabilityCountAggregateOutputType> | number
         }
       }
     }
@@ -1123,6 +1198,9 @@ export const TenantScalarFieldEnum = {
   slug: 'slug',
   phone: 'phone',
   address: 'address',
+  logoUrl: 'logoUrl',
+  latitude: 'latitude',
+  longitude: 'longitude',
   timezone: 'timezone',
   onboardedAt: 'onboardedAt',
   trialEndsAt: 'trialEndsAt',
@@ -1179,6 +1257,17 @@ export const ServiceScalarFieldEnum = {
 export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
 
 
+export const ServiceAvailabilityScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  dayOfWeek: 'dayOfWeek',
+  startTime: 'startTime',
+  endTime: 'endTime'
+} as const
+
+export type ServiceAvailabilityScalarFieldEnum = (typeof ServiceAvailabilityScalarFieldEnum)[keyof typeof ServiceAvailabilityScalarFieldEnum]
+
+
 export const EmployeeServiceScalarFieldEnum = {
   employeeId: 'employeeId',
   serviceId: 'serviceId'
@@ -1192,6 +1281,7 @@ export const ScheduleScalarFieldEnum = {
   tenantId: 'tenantId',
   employeeId: 'employeeId',
   dayOfWeek: 'dayOfWeek',
+  blockIndex: 'blockIndex',
   startTime: 'startTime',
   endTime: 'endTime',
   isActive: 'isActive',
@@ -1294,6 +1384,20 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1339,20 +1443,6 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal'
- */
-export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -1510,6 +1600,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   employee?: Prisma.EmployeeOmit
   service?: Prisma.ServiceOmit
+  serviceAvailability?: Prisma.ServiceAvailabilityOmit
   employeeService?: Prisma.EmployeeServiceOmit
   schedule?: Prisma.ScheduleOmit
   scheduleException?: Prisma.ScheduleExceptionOmit

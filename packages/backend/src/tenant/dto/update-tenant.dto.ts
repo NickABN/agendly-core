@@ -1,4 +1,4 @@
-import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
 export class UpdateTenantDto {
   @IsOptional()
@@ -27,4 +27,12 @@ export class UpdateTenantDto {
   @IsOptional()
   @IsString()
   timezone?: string;
+
+  @IsOptional()
+  @IsNumber()
+  latitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  longitude?: number;
 }

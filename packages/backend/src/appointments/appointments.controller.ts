@@ -17,6 +17,24 @@ import { AppointmentsService } from './appointments.service';
 export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 
+  @Get('clients')
+  findClients(@CurrentTenant() tenantId: string) {
+    return this.appointmentsService.findClients(tenantId);
+  }
+
+  @Get('month')
+  findByMonth(
+    @CurrentTenant() tenantId: string,
+    @Query('year') year: string,
+    @Query('month') month: string,
+  ) {
+    return this.appointmentsService.findByMonth(
+      tenantId,
+      parseInt(year),
+      parseInt(month),
+    );
+  }
+
   @Get('day')
   findByDate(
     @CurrentTenant() tenantId: string,

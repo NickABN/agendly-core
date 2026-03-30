@@ -49,12 +49,24 @@ export class TenantService {
     return this.toDto(tenant);
   }
 
+  async updateLogoUrl(tenantId: string, logoUrl: string) {
+    const tenant = await this.prisma.tenant.update({
+      where: { id: tenantId },
+      data: { logoUrl },
+    });
+
+    return this.toDto(tenant);
+  }
+
   private toDto(tenant: {
     id: string;
     name: string;
     slug: string;
     phone: string | null;
     address: string | null;
+    logoUrl: string | null;
+    latitude: unknown;
+    longitude: unknown;
     timezone: string;
     onboardedAt: Date | null;
     trialEndsAt: Date;
@@ -66,6 +78,9 @@ export class TenantService {
       slug: tenant.slug,
       phone: tenant.phone,
       address: tenant.address,
+      logoUrl: tenant.logoUrl,
+      latitude: tenant.latitude ? Number(tenant.latitude) : null,
+      longitude: tenant.longitude ? Number(tenant.longitude) : null,
       timezone: tenant.timezone,
       onboardedAt: tenant.onboardedAt?.toISOString() ?? null,
       trialEndsAt: tenant.trialEndsAt.toISOString(),

@@ -60,6 +60,11 @@ export type Employee = Prisma.EmployeeModel
  */
 export type Service = Prisma.ServiceModel
 /**
+ * Model ServiceAvailability
+ * 
+ */
+export type ServiceAvailability = Prisma.ServiceAvailabilityModel
+/**
  * Model EmployeeService
  * 
  */

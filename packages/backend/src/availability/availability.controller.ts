@@ -48,6 +48,7 @@ export class AvailabilityController {
     return this.availabilityService.getAvailableSlots({
       tenantId: tenant.id,
       employeeId,
+      serviceId,
       date,
       serviceDurationMinutes: service.durationMinutes,
       bufferMinutes: service.bufferMinutes,

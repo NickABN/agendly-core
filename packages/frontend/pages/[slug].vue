@@ -60,12 +60,8 @@ const selectedEmployeeName = computed(() => {
 });
 
 function formatTime(isoString: string) {
-  const [, time] = isoString.split('T');
-  const [h, m] = time.split(':');
-  const hour = parseInt(h);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const hour12 = hour % 12 || 12;
-  return `${hour12}:${m} ${ampm}`;
+  const d = new Date(isoString);
+  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
 function formatDate(dateStr: string) {
@@ -264,7 +260,7 @@ const progressStep = computed(() => Math.min(step.value, 4));
           <button
             v-if="selectedServiceId"
             class="w-full mt-6 soul-gradient text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all"
-            @click="step === 2 ? null : selectService(selectedServiceId)"
+            @click="selectService(selectedServiceId)"
           >
             Elegir Especialista
             <span class="material-symbols-outlined">arrow_forward</span>

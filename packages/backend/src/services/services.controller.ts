@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -59,5 +60,22 @@ export class ServicesController {
     @Param('id') id: string,
   ) {
     return this.servicesService.remove(tenantId, id);
+  }
+
+  @Get(':id/availability')
+  getAvailability(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+  ) {
+    return this.servicesService.getAvailability(tenantId, id);
+  }
+
+  @Put(':id/availability')
+  setAvailability(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+    @Body() items: Array<{ dayOfWeek: string; startTime?: string; endTime?: string }>,
+  ) {
+    return this.servicesService.setAvailability(tenantId, id, items);
   }
 }

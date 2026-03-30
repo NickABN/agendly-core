@@ -1,4 +1,4 @@
-import { IsEnum, IsString, Matches } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Matches, Max, Min } from 'class-validator';
 
 enum DayOfWeek {
   MONDAY = 'MONDAY',
@@ -16,6 +16,12 @@ export class CreateScheduleDto {
 
   @IsEnum(DayOfWeek)
   dayOfWeek: DayOfWeek;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(2)
+  blockIndex?: number;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):[0-5]\d$/, { message: 'startTime debe tener formato HH:mm' })

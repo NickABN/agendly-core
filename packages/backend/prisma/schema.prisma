@@ -46,6 +46,9 @@ model Tenant {
   slug        String    @unique
   phone       String?
   address     String?
+  logoUrl     String?
+  latitude    Decimal?  @db.Decimal(10, 7)
+  longitude   Decimal?  @db.Decimal(10, 7)
   timezone    String    @default("America/Mexico_City")
   onboardedAt DateTime?
   trialEndsAt DateTime
@@ -114,11 +117,27 @@ model Service {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant       Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   employees    EmployeeService[]
   appointments Appointment[]
+  availability ServiceAvailability[]
 
   @@index([tenantId])
+}
+
+// ─── Service Availability (optional day/time restrictions) ─
+
+model ServiceAvailability {
+  id        String    @id @default(cuid())
+  serviceId String
+  dayOfWeek DayOfWeek
+  startTime String?   // HH:mm, null = all day
+  endTime   String?   // HH:mm, null = all day
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, dayOfWeek])
+  @@index([serviceId])
 }
 
 // ─── Employee ↔ Service (many-to-many) ──────────────────
@@ -141,6 +160,7 @@ model Schedule {
   tenantId   String
   employeeId String
   dayOfWeek  DayOfWeek
+  blockIndex Int       @default(0) // 0, 1, 2 — multiple blocks per day for breaks
   startTime  String    // HH:mm format (e.g. "09:00")
   endTime    String    // HH:mm format (e.g. "19:00")
   isActive   Boolean   @default(true)
@@ -150,7 +170,7 @@ model Schedule {
   tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
-  @@unique([employeeId, dayOfWeek])
+  @@unique([employeeId, dayOfWeek, blockIndex])
   @@index([tenantId])
 }
 

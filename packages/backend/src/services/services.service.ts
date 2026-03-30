@@ -58,6 +58,40 @@ export class ServicesService {
     });
   }
 
+  async getAvailability(tenantId: string, serviceId: string) {
+    await this.ensureExists(tenantId, serviceId);
+
+    return this.prisma.serviceAvailability.findMany({
+      where: { serviceId },
+      orderBy: { dayOfWeek: 'asc' },
+    });
+  }
+
+  async setAvailability(
+    tenantId: string,
+    serviceId: string,
+    items: Array<{ dayOfWeek: string; startTime?: string; endTime?: string }>,
+  ) {
+    await this.ensureExists(tenantId, serviceId);
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.serviceAvailability.deleteMany({ where: { serviceId } });
+
+      if (items.length > 0) {
+        await tx.serviceAvailability.createMany({
+          data: items.map((item) => ({
+            serviceId,
+            dayOfWeek: item.dayOfWeek as any,
+            startTime: item.startTime ?? null,
+            endTime: item.endTime ?? null,
+          })),
+        });
+      }
+    });
+
+    return this.getAvailability(tenantId, serviceId);
+  }
+
   private async ensureExists(tenantId: string, serviceId: string) {
     const service = await this.prisma.service.findFirst({
       where: { id: serviceId, tenantId, deletedAt: null },

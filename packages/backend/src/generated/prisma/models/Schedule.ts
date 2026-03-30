@@ -20,8 +20,18 @@ export type ScheduleModel = runtime.Types.Result.DefaultSelection<Prisma.$Schedu
 
 export type AggregateSchedule = {
   _count: ScheduleCountAggregateOutputType | null
+  _avg: ScheduleAvgAggregateOutputType | null
+  _sum: ScheduleSumAggregateOutputType | null
   _min: ScheduleMinAggregateOutputType | null
   _max: ScheduleMaxAggregateOutputType | null
+}
+
+export type ScheduleAvgAggregateOutputType = {
+  blockIndex: number | null
+}
+
+export type ScheduleSumAggregateOutputType = {
+  blockIndex: number | null
 }
 
 export type ScheduleMinAggregateOutputType = {
@@ -29,6 +39,7 @@ export type ScheduleMinAggregateOutputType = {
   tenantId: string | null
   employeeId: string | null
   dayOfWeek: $Enums.DayOfWeek | null
+  blockIndex: number | null
   startTime: string | null
   endTime: string | null
   isActive: boolean | null
@@ -41,6 +52,7 @@ export type ScheduleMaxAggregateOutputType = {
   tenantId: string | null
   employeeId: string | null
   dayOfWeek: $Enums.DayOfWeek | null
+  blockIndex: number | null
   startTime: string | null
   endTime: string | null
   isActive: boolean | null
@@ -53,6 +65,7 @@ export type ScheduleCountAggregateOutputType = {
   tenantId: number
   employeeId: number
   dayOfWeek: number
+  blockIndex: number
   startTime: number
   endTime: number
   isActive: number
@@ -62,11 +75,20 @@ export type ScheduleCountAggregateOutputType = {
 }
 
 
+export type ScheduleAvgAggregateInputType = {
+  blockIndex?: true
+}
+
+export type ScheduleSumAggregateInputType = {
+  blockIndex?: true
+}
+
 export type ScheduleMinAggregateInputType = {
   id?: true
   tenantId?: true
   employeeId?: true
   dayOfWeek?: true
+  blockIndex?: true
   startTime?: true
   endTime?: true
   isActive?: true
@@ -79,6 +101,7 @@ export type ScheduleMaxAggregateInputType = {
   tenantId?: true
   employeeId?: true
   dayOfWeek?: true
+  blockIndex?: true
   startTime?: true
   endTime?: true
   isActive?: true
@@ -91,6 +114,7 @@ export type ScheduleCountAggregateInputType = {
   tenantId?: true
   employeeId?: true
   dayOfWeek?: true
+  blockIndex?: true
   startTime?: true
   endTime?: true
   isActive?: true
@@ -137,6 +161,18 @@ export type ScheduleAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ScheduleAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ScheduleSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ScheduleMinAggregateInputType
@@ -167,6 +203,8 @@ export type ScheduleGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: ScheduleCountAggregateInputType | true
+  _avg?: ScheduleAvgAggregateInputType
+  _sum?: ScheduleSumAggregateInputType
   _min?: ScheduleMinAggregateInputType
   _max?: ScheduleMaxAggregateInputType
 }
@@ -176,12 +214,15 @@ export type ScheduleGroupByOutputType = {
   tenantId: string
   employeeId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex: number
   startTime: string
   endTime: string
   isActive: boolean
   createdAt: Date
   updatedAt: Date
   _count: ScheduleCountAggregateOutputType | null
+  _avg: ScheduleAvgAggregateOutputType | null
+  _sum: ScheduleSumAggregateOutputType | null
   _min: ScheduleMinAggregateOutputType | null
   _max: ScheduleMaxAggregateOutputType | null
 }
@@ -209,6 +250,7 @@ export type ScheduleWhereInput = {
   tenantId?: Prisma.StringFilter<"Schedule"> | string
   employeeId?: Prisma.StringFilter<"Schedule"> | string
   dayOfWeek?: Prisma.EnumDayOfWeekFilter<"Schedule"> | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFilter<"Schedule"> | number
   startTime?: Prisma.StringFilter<"Schedule"> | string
   endTime?: Prisma.StringFilter<"Schedule"> | string
   isActive?: Prisma.BoolFilter<"Schedule"> | boolean
@@ -223,6 +265,7 @@ export type ScheduleOrderByWithRelationInput = {
   tenantId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
+  blockIndex?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -234,13 +277,14 @@ export type ScheduleOrderByWithRelationInput = {
 
 export type ScheduleWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  employeeId_dayOfWeek?: Prisma.ScheduleEmployeeIdDayOfWeekCompoundUniqueInput
+  employeeId_dayOfWeek_blockIndex?: Prisma.ScheduleEmployeeIdDayOfWeekBlockIndexCompoundUniqueInput
   AND?: Prisma.ScheduleWhereInput | Prisma.ScheduleWhereInput[]
   OR?: Prisma.ScheduleWhereInput[]
   NOT?: Prisma.ScheduleWhereInput | Prisma.ScheduleWhereInput[]
   tenantId?: Prisma.StringFilter<"Schedule"> | string
   employeeId?: Prisma.StringFilter<"Schedule"> | string
   dayOfWeek?: Prisma.EnumDayOfWeekFilter<"Schedule"> | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFilter<"Schedule"> | number
   startTime?: Prisma.StringFilter<"Schedule"> | string
   endTime?: Prisma.StringFilter<"Schedule"> | string
   isActive?: Prisma.BoolFilter<"Schedule"> | boolean
@@ -248,21 +292,24 @@ export type ScheduleWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Schedule"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
-}, "id" | "employeeId_dayOfWeek">
+}, "id" | "employeeId_dayOfWeek_blockIndex">
 
 export type ScheduleOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
+  blockIndex?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ScheduleCountOrderByAggregateInput
+  _avg?: Prisma.ScheduleAvgOrderByAggregateInput
   _max?: Prisma.ScheduleMaxOrderByAggregateInput
   _min?: Prisma.ScheduleMinOrderByAggregateInput
+  _sum?: Prisma.ScheduleSumOrderByAggregateInput
 }
 
 export type ScheduleScalarWhereWithAggregatesInput = {
@@ -273,6 +320,7 @@ export type ScheduleScalarWhereWithAggregatesInput = {
   tenantId?: Prisma.StringWithAggregatesFilter<"Schedule"> | string
   employeeId?: Prisma.StringWithAggregatesFilter<"Schedule"> | string
   dayOfWeek?: Prisma.EnumDayOfWeekWithAggregatesFilter<"Schedule"> | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntWithAggregatesFilter<"Schedule"> | number
   startTime?: Prisma.StringWithAggregatesFilter<"Schedule"> | string
   endTime?: Prisma.StringWithAggregatesFilter<"Schedule"> | string
   isActive?: Prisma.BoolWithAggregatesFilter<"Schedule"> | boolean
@@ -283,6 +331,7 @@ export type ScheduleScalarWhereWithAggregatesInput = {
 export type ScheduleCreateInput = {
   id?: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -297,6 +346,7 @@ export type ScheduleUncheckedCreateInput = {
   tenantId: string
   employeeId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -307,6 +357,7 @@ export type ScheduleUncheckedCreateInput = {
 export type ScheduleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -321,6 +372,7 @@ export type ScheduleUncheckedUpdateInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -333,6 +385,7 @@ export type ScheduleCreateManyInput = {
   tenantId: string
   employeeId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -343,6 +396,7 @@ export type ScheduleCreateManyInput = {
 export type ScheduleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -355,6 +409,7 @@ export type ScheduleUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -372,9 +427,10 @@ export type ScheduleOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ScheduleEmployeeIdDayOfWeekCompoundUniqueInput = {
+export type ScheduleEmployeeIdDayOfWeekBlockIndexCompoundUniqueInput = {
   employeeId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex: number
 }
 
 export type ScheduleCountOrderByAggregateInput = {
@@ -382,6 +438,7 @@ export type ScheduleCountOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
+  blockIndex?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -389,11 +446,16 @@ export type ScheduleCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type ScheduleAvgOrderByAggregateInput = {
+  blockIndex?: Prisma.SortOrder
+}
+
 export type ScheduleMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
+  blockIndex?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -406,11 +468,16 @@ export type ScheduleMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   dayOfWeek?: Prisma.SortOrder
+  blockIndex?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type ScheduleSumOrderByAggregateInput = {
+  blockIndex?: Prisma.SortOrder
 }
 
 export type ScheduleCreateNestedManyWithoutTenantInput = {
@@ -497,13 +564,10 @@ export type ScheduleUncheckedUpdateManyWithoutEmployeeNestedInput = {
   deleteMany?: Prisma.ScheduleScalarWhereInput | Prisma.ScheduleScalarWhereInput[]
 }
 
-export type EnumDayOfWeekFieldUpdateOperationsInput = {
-  set?: $Enums.DayOfWeek
-}
-
 export type ScheduleCreateWithoutTenantInput = {
   id?: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -516,6 +580,7 @@ export type ScheduleUncheckedCreateWithoutTenantInput = {
   id?: string
   employeeId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -557,6 +622,7 @@ export type ScheduleScalarWhereInput = {
   tenantId?: Prisma.StringFilter<"Schedule"> | string
   employeeId?: Prisma.StringFilter<"Schedule"> | string
   dayOfWeek?: Prisma.EnumDayOfWeekFilter<"Schedule"> | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFilter<"Schedule"> | number
   startTime?: Prisma.StringFilter<"Schedule"> | string
   endTime?: Prisma.StringFilter<"Schedule"> | string
   isActive?: Prisma.BoolFilter<"Schedule"> | boolean
@@ -567,6 +633,7 @@ export type ScheduleScalarWhereInput = {
 export type ScheduleCreateWithoutEmployeeInput = {
   id?: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -579,6 +646,7 @@ export type ScheduleUncheckedCreateWithoutEmployeeInput = {
   id?: string
   tenantId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -616,6 +684,7 @@ export type ScheduleCreateManyTenantInput = {
   id?: string
   employeeId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -626,6 +695,7 @@ export type ScheduleCreateManyTenantInput = {
 export type ScheduleUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -638,6 +708,7 @@ export type ScheduleUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -649,6 +720,7 @@ export type ScheduleUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -660,6 +732,7 @@ export type ScheduleCreateManyEmployeeInput = {
   id?: string
   tenantId: string
   dayOfWeek: $Enums.DayOfWeek
+  blockIndex?: number
   startTime: string
   endTime: string
   isActive?: boolean
@@ -670,6 +743,7 @@ export type ScheduleCreateManyEmployeeInput = {
 export type ScheduleUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -682,6 +756,7 @@ export type ScheduleUncheckedUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -693,6 +768,7 @@ export type ScheduleUncheckedUpdateManyWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   dayOfWeek?: Prisma.EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+  blockIndex?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -707,6 +783,7 @@ export type ScheduleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   tenantId?: boolean
   employeeId?: boolean
   dayOfWeek?: boolean
+  blockIndex?: boolean
   startTime?: boolean
   endTime?: boolean
   isActive?: boolean
@@ -721,6 +798,7 @@ export type ScheduleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   tenantId?: boolean
   employeeId?: boolean
   dayOfWeek?: boolean
+  blockIndex?: boolean
   startTime?: boolean
   endTime?: boolean
   isActive?: boolean
@@ -735,6 +813,7 @@ export type ScheduleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   tenantId?: boolean
   employeeId?: boolean
   dayOfWeek?: boolean
+  blockIndex?: boolean
   startTime?: boolean
   endTime?: boolean
   isActive?: boolean
@@ -749,6 +828,7 @@ export type ScheduleSelectScalar = {
   tenantId?: boolean
   employeeId?: boolean
   dayOfWeek?: boolean
+  blockIndex?: boolean
   startTime?: boolean
   endTime?: boolean
   isActive?: boolean
@@ -756,7 +836,7 @@ export type ScheduleSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ScheduleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "employeeId" | "dayOfWeek" | "startTime" | "endTime" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["schedule"]>
+export type ScheduleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "employeeId" | "dayOfWeek" | "blockIndex" | "startTime" | "endTime" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["schedule"]>
 export type ScheduleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
@@ -781,6 +861,7 @@ export type $SchedulePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     tenantId: string
     employeeId: string
     dayOfWeek: $Enums.DayOfWeek
+    blockIndex: number
     startTime: string
     endTime: string
     isActive: boolean
@@ -1215,6 +1296,7 @@ export interface ScheduleFieldRefs {
   readonly tenantId: Prisma.FieldRef<"Schedule", 'String'>
   readonly employeeId: Prisma.FieldRef<"Schedule", 'String'>
   readonly dayOfWeek: Prisma.FieldRef<"Schedule", 'DayOfWeek'>
+  readonly blockIndex: Prisma.FieldRef<"Schedule", 'Int'>
   readonly startTime: Prisma.FieldRef<"Schedule", 'String'>
   readonly endTime: Prisma.FieldRef<"Schedule", 'String'>
   readonly isActive: Prisma.FieldRef<"Schedule", 'Boolean'>

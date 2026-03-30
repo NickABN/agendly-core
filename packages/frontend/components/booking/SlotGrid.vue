@@ -11,12 +11,10 @@ const emit = defineEmits<{
 }>();
 
 function formatTime(isoString: string) {
-  const [, time] = isoString.split('T');
-  const [h, m] = time.split(':');
-  const hour = parseInt(h);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const hour12 = hour % 12 || 12;
-  return `${hour12}:${m} ${ampm}`;
+  // Slots come as 'YYYY-MM-DDTHH:mm:00' (Mexico local time, no Z suffix)
+  // Parse without timezone to keep the intended local time
+  const d = new Date(isoString);
+  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
 const lowAvailability = computed(() => {

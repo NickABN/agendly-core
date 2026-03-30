@@ -31,49 +31,27 @@ export class AvailabilityService {
     date: string; // YYYY-MM-DD
     serviceDurationMinutes: number;
     bufferMinutes: number;
+    serviceId?: string;
   }): Promise<TimeSlot[]> {
-    const { tenantId, employeeId, date, serviceDurationMinutes, bufferMinutes } = params;
+    const { tenantId, employeeId, date, serviceDurationMinutes, bufferMinutes, serviceId } = params;
 
-    const targetDate = new Date(date + 'T00:00:00');
-    const dayOfWeek = DAY_MAP[targetDate.getDay()];
+    // Use Mexico City timezone for correct day-of-week and date range
+    const dayStart = this.toMexicoCityUTC(date, '00:00:00');
+    const dayEnd = this.toMexicoCityUTC(date, '23:59:59');
+
+    // Get day of week in Mexico timezone
+    const [y, m, d] = date.split('-').map(Number);
+    const localDate = new Date(y, m - 1, d); // local midnight, just for getDay()
+    const dayOfWeek = DAY_MAP[localDate.getDay()];
 
     // 1. Check for schedule exception on this date
     const exception = await this.prisma.scheduleException.findUnique({
       where: {
-        employeeId_date: { employeeId, date: targetDate },
+        employeeId_date: { employeeId, date: dayStart },
       },
     });
 
-    let workStart: string | null = null;
-    let workEnd: string | null = null;
-
-    if (exception) {
-      // Exception exists: day off (null times) or modified hours
-      if (!exception.startTime || !exception.endTime) {
-        return []; // Day off
-      }
-      workStart = exception.startTime;
-      workEnd = exception.endTime;
-    } else {
-      // 2. Get regular schedule for this day
-      const schedule = await this.prisma.schedule.findUnique({
-        where: {
-          employeeId_dayOfWeek: { employeeId, dayOfWeek },
-        },
-      });
-
-      if (!schedule || !schedule.isActive) {
-        return []; // Not working this day
-      }
-
-      workStart = schedule.startTime;
-      workEnd = schedule.endTime;
-    }
-
-    // 3. Get existing appointments for this employee on this date
-    const dayStart = new Date(date + 'T00:00:00');
-    const dayEnd = new Date(date + 'T23:59:59');
-
+    // 3. Get existing appointments for this employee on this date (UTC range for Mexico day)
     const appointments = await this.prisma.appointment.findMany({
       where: {
         tenantId,
@@ -85,18 +63,91 @@ export class AvailabilityService {
       orderBy: { startTime: 'asc' },
     });
 
-    // 4. Generate slots
-    return this.generateSlots(
+    const bookedSlots = appointments.map((a) => ({
+      start: a.startTime,
+      end: a.endTime,
+    }));
+
+    if (exception) {
+      // Exception exists: day off (null times) or modified hours
+      if (!exception.startTime || !exception.endTime) {
+        return []; // Day off
+      }
+      return this.generateSlotsForBlocks(
+        date,
+        [{ startTime: exception.startTime, endTime: exception.endTime }],
+        serviceDurationMinutes,
+        bufferMinutes,
+        bookedSlots,
+      );
+    }
+
+    // 2. Get regular schedule for this day (multiple blocks)
+    const schedules = await this.prisma.schedule.findMany({
+      where: { employeeId, dayOfWeek, isActive: true },
+      orderBy: { startTime: 'asc' },
+    });
+
+    if (schedules.length === 0) {
+      return []; // Not working this day
+    }
+
+    const blocks = schedules.map((s) => ({ startTime: s.startTime, endTime: s.endTime }));
+    let slots = this.generateSlotsForBlocks(
       date,
-      workStart,
-      workEnd,
+      blocks,
       serviceDurationMinutes,
       bufferMinutes,
-      appointments.map((a) => ({
-        start: a.startTime,
-        end: a.endTime,
-      })),
+      bookedSlots,
     );
+
+    // 4. Filter by service availability if serviceId provided
+    if (serviceId) {
+      const serviceAvail = await this.prisma.serviceAvailability.findMany({
+        where: { serviceId, dayOfWeek },
+      });
+      if (serviceAvail.length > 0) {
+        slots = slots.filter((slot) => {
+          const timePart = slot.start.split('T')[1];
+          const [h, min] = timePart.split(':').map(Number);
+          const slotMinutes = h * 60 + min;
+          return serviceAvail.some((sa) => {
+            if (!sa.startTime || !sa.endTime) return true;
+            const [saH, saM] = sa.startTime.split(':').map(Number);
+            const [saEH, saEM] = sa.endTime.split(':').map(Number);
+            return slotMinutes >= saH * 60 + saM && slotMinutes < saEH * 60 + saEM;
+          });
+        });
+      }
+    }
+
+    return slots;
+  }
+
+  /**
+   * Generates available time slots across multiple schedule blocks.
+   */
+  generateSlotsForBlocks(
+    date: string,
+    blocks: Array<{ startTime: string; endTime: string }>,
+    durationMinutes: number,
+    bufferMinutes: number,
+    bookedSlots: Array<{ start: Date; end: Date }>,
+  ): TimeSlot[] {
+    const allSlots: TimeSlot[] = [];
+    for (const block of blocks) {
+      allSlots.push(
+        ...this.generateSlots(
+          date,
+          block.startTime,
+          block.endTime,
+          durationMinutes,
+          bufferMinutes,
+          bookedSlots,
+        ),
+      );
+    }
+    return allSlots;
   }
 
   /**
@@ -120,10 +171,10 @@ export class AvailabilityService {
     const workStartMinutes = startH * 60 + startM;
     const workEndMinutes = endH * 60 + endM;
 
-    // Convert booked slots to minute ranges
+    // Convert booked slots to minute ranges using Mexico City timezone
     const booked = bookedSlots.map((slot) => ({
-      start: slot.start.getHours() * 60 + slot.start.getMinutes(),
-      end: slot.end.getHours() * 60 + slot.end.getMinutes(),
+      start: this.toMexicoCityMinutes(slot.start),
+      end: this.toMexicoCityMinutes(slot.end),
     }));
 
     let cursor = workStartMinutes;
@@ -153,5 +204,40 @@ export class AvailabilityService {
     }
 
     return slots;
+  }
+
+  /**
+   * Convert a date + time string meant as Mexico City local time into a UTC Date.
+   * Handles DST automatically via Intl.
+   */
+  private toMexicoCityUTC(date: string, time: string): Date {
+    const [y, m, d] = date.split('-').map(Number);
+    const [hh, mm, ss] = time.split(':').map(Number);
+
+    // Get Mexico City's UTC offset for this date
+    const ref = new Date(Date.UTC(y, m - 1, d, 12));
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Mexico_City',
+      timeZoneName: 'shortOffset',
+    }).formatToParts(ref);
+    const tzPart = parts.find((p) => p.type === 'timeZoneName')?.value || 'GMT-6';
+    const offsetMatch = tzPart.match(/GMT([+-]\d+)/);
+    const offsetHours = offsetMatch ? parseInt(offsetMatch[1]) : -6;
+
+    return new Date(Date.UTC(y, m - 1, d, hh - offsetHours, mm, ss || 0));
+  }
+
+  /**
+   * Extract hours:minutes in Mexico City timezone from a UTC Date, as total minutes since midnight.
+   */
+  private toMexicoCityMinutes(utcDate: Date): number {
+    const timeStr = utcDate.toLocaleTimeString('en-US', {
+      timeZone: 'America/Mexico_City',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
   }
 }

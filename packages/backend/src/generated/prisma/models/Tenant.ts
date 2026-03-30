@@ -20,8 +20,20 @@ export type TenantModel = runtime.Types.Result.DefaultSelection<Prisma.$TenantPa
 
 export type AggregateTenant = {
   _count: TenantCountAggregateOutputType | null
+  _avg: TenantAvgAggregateOutputType | null
+  _sum: TenantSumAggregateOutputType | null
   _min: TenantMinAggregateOutputType | null
   _max: TenantMaxAggregateOutputType | null
+}
+
+export type TenantAvgAggregateOutputType = {
+  latitude: runtime.Decimal | null
+  longitude: runtime.Decimal | null
+}
+
+export type TenantSumAggregateOutputType = {
+  latitude: runtime.Decimal | null
+  longitude: runtime.Decimal | null
 }
 
 export type TenantMinAggregateOutputType = {
@@ -30,6 +42,9 @@ export type TenantMinAggregateOutputType = {
   slug: string | null
   phone: string | null
   address: string | null
+  logoUrl: string | null
+  latitude: runtime.Decimal | null
+  longitude: runtime.Decimal | null
   timezone: string | null
   onboardedAt: Date | null
   trialEndsAt: Date | null
@@ -44,6 +59,9 @@ export type TenantMaxAggregateOutputType = {
   slug: string | null
   phone: string | null
   address: string | null
+  logoUrl: string | null
+  latitude: runtime.Decimal | null
+  longitude: runtime.Decimal | null
   timezone: string | null
   onboardedAt: Date | null
   trialEndsAt: Date | null
@@ -58,6 +76,9 @@ export type TenantCountAggregateOutputType = {
   slug: number
   phone: number
   address: number
+  logoUrl: number
+  latitude: number
+  longitude: number
   timezone: number
   onboardedAt: number
   trialEndsAt: number
@@ -68,12 +89,25 @@ export type TenantCountAggregateOutputType = {
 }
 
 
+export type TenantAvgAggregateInputType = {
+  latitude?: true
+  longitude?: true
+}
+
+export type TenantSumAggregateInputType = {
+  latitude?: true
+  longitude?: true
+}
+
 export type TenantMinAggregateInputType = {
   id?: true
   name?: true
   slug?: true
   phone?: true
   address?: true
+  logoUrl?: true
+  latitude?: true
+  longitude?: true
   timezone?: true
   onboardedAt?: true
   trialEndsAt?: true
@@ -88,6 +122,9 @@ export type TenantMaxAggregateInputType = {
   slug?: true
   phone?: true
   address?: true
+  logoUrl?: true
+  latitude?: true
+  longitude?: true
   timezone?: true
   onboardedAt?: true
   trialEndsAt?: true
@@ -102,6 +139,9 @@ export type TenantCountAggregateInputType = {
   slug?: true
   phone?: true
   address?: true
+  logoUrl?: true
+  latitude?: true
+  longitude?: true
   timezone?: true
   onboardedAt?: true
   trialEndsAt?: true
@@ -149,6 +189,18 @@ export type TenantAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: TenantAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: TenantSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: TenantMinAggregateInputType
@@ -179,6 +231,8 @@ export type TenantGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: TenantCountAggregateInputType | true
+  _avg?: TenantAvgAggregateInputType
+  _sum?: TenantSumAggregateInputType
   _min?: TenantMinAggregateInputType
   _max?: TenantMaxAggregateInputType
 }
@@ -189,6 +243,9 @@ export type TenantGroupByOutputType = {
   slug: string
   phone: string | null
   address: string | null
+  logoUrl: string | null
+  latitude: runtime.Decimal | null
+  longitude: runtime.Decimal | null
   timezone: string
   onboardedAt: Date | null
   trialEndsAt: Date
@@ -196,6 +253,8 @@ export type TenantGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   _count: TenantCountAggregateOutputType | null
+  _avg: TenantAvgAggregateOutputType | null
+  _sum: TenantSumAggregateOutputType | null
   _min: TenantMinAggregateOutputType | null
   _max: TenantMaxAggregateOutputType | null
 }
@@ -224,6 +283,9 @@ export type TenantWhereInput = {
   slug?: Prisma.StringFilter<"Tenant"> | string
   phone?: Prisma.StringNullableFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  latitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFilter<"Tenant"> | string
   onboardedAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -245,6 +307,9 @@ export type TenantOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
@@ -269,6 +334,9 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Tenant"> | string
   phone?: Prisma.StringNullableFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  latitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFilter<"Tenant"> | string
   onboardedAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -290,6 +358,9 @@ export type TenantOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
@@ -297,8 +368,10 @@ export type TenantOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TenantCountOrderByAggregateInput
+  _avg?: Prisma.TenantAvgOrderByAggregateInput
   _max?: Prisma.TenantMaxOrderByAggregateInput
   _min?: Prisma.TenantMinOrderByAggregateInput
+  _sum?: Prisma.TenantSumOrderByAggregateInput
 }
 
 export type TenantScalarWhereWithAggregatesInput = {
@@ -310,6 +383,9 @@ export type TenantScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  logoUrl?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  latitude?: Prisma.DecimalNullableWithAggregatesFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.DecimalNullableWithAggregatesFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
   onboardedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
@@ -324,6 +400,9 @@ export type TenantCreateInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -345,6 +424,9 @@ export type TenantUncheckedCreateInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -366,6 +448,9 @@ export type TenantUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -387,6 +472,9 @@ export type TenantUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -408,6 +496,9 @@ export type TenantCreateManyInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -422,6 +513,9 @@ export type TenantUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -436,6 +530,9 @@ export type TenantUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -450,6 +547,9 @@ export type TenantCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardedAt?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
@@ -458,12 +558,20 @@ export type TenantCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type TenantAvgOrderByAggregateInput = {
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+}
+
 export type TenantMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardedAt?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
@@ -478,12 +586,20 @@ export type TenantMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   onboardedAt?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type TenantSumOrderByAggregateInput = {
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
 }
 
 export type TenantScalarRelationFilter = {
@@ -497,6 +613,14 @@ export type StringFieldUpdateOperationsInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -615,6 +739,9 @@ export type TenantCreateWithoutUsersInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -635,6 +762,9 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -671,6 +801,9 @@ export type TenantUpdateWithoutUsersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -691,6 +824,9 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -711,6 +847,9 @@ export type TenantCreateWithoutEmployeesInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -731,6 +870,9 @@ export type TenantUncheckedCreateWithoutEmployeesInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -767,6 +909,9 @@ export type TenantUpdateWithoutEmployeesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -787,6 +932,9 @@ export type TenantUncheckedUpdateWithoutEmployeesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -807,6 +955,9 @@ export type TenantCreateWithoutServicesInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -827,6 +978,9 @@ export type TenantUncheckedCreateWithoutServicesInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -863,6 +1017,9 @@ export type TenantUpdateWithoutServicesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -883,6 +1040,9 @@ export type TenantUncheckedUpdateWithoutServicesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -903,6 +1063,9 @@ export type TenantCreateWithoutSchedulesInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -923,6 +1086,9 @@ export type TenantUncheckedCreateWithoutSchedulesInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -959,6 +1125,9 @@ export type TenantUpdateWithoutSchedulesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -979,6 +1148,9 @@ export type TenantUncheckedUpdateWithoutSchedulesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -999,6 +1171,9 @@ export type TenantCreateWithoutScheduleExceptionsInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -1019,6 +1194,9 @@ export type TenantUncheckedCreateWithoutScheduleExceptionsInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -1055,6 +1233,9 @@ export type TenantUpdateWithoutScheduleExceptionsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1075,6 +1256,9 @@ export type TenantUncheckedUpdateWithoutScheduleExceptionsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1095,6 +1279,9 @@ export type TenantCreateWithoutAppointmentsInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -1115,6 +1302,9 @@ export type TenantUncheckedCreateWithoutAppointmentsInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -1151,6 +1341,9 @@ export type TenantUpdateWithoutAppointmentsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1171,6 +1364,9 @@ export type TenantUncheckedUpdateWithoutAppointmentsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1191,6 +1387,9 @@ export type TenantCreateWithoutPrivacyConsentsInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -1211,6 +1410,9 @@ export type TenantUncheckedCreateWithoutPrivacyConsentsInput = {
   slug: string
   phone?: string | null
   address?: string | null
+  logoUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
@@ -1247,6 +1449,9 @@ export type TenantUpdateWithoutPrivacyConsentsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1267,6 +1472,9 @@ export type TenantUncheckedUpdateWithoutPrivacyConsentsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1372,6 +1580,9 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   slug?: boolean
   phone?: boolean
   address?: boolean
+  logoUrl?: boolean
+  latitude?: boolean
+  longitude?: boolean
   timezone?: boolean
   onboardedAt?: boolean
   trialEndsAt?: boolean
@@ -1394,6 +1605,9 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   slug?: boolean
   phone?: boolean
   address?: boolean
+  logoUrl?: boolean
+  latitude?: boolean
+  longitude?: boolean
   timezone?: boolean
   onboardedAt?: boolean
   trialEndsAt?: boolean
@@ -1408,6 +1622,9 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   slug?: boolean
   phone?: boolean
   address?: boolean
+  logoUrl?: boolean
+  latitude?: boolean
+  longitude?: boolean
   timezone?: boolean
   onboardedAt?: boolean
   trialEndsAt?: boolean
@@ -1422,6 +1639,9 @@ export type TenantSelectScalar = {
   slug?: boolean
   phone?: boolean
   address?: boolean
+  logoUrl?: boolean
+  latitude?: boolean
+  longitude?: boolean
   timezone?: boolean
   onboardedAt?: boolean
   trialEndsAt?: boolean
@@ -1430,7 +1650,7 @@ export type TenantSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "logoUrl" | "latitude" | "longitude" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   employees?: boolean | Prisma.Tenant$employeesArgs<ExtArgs>
@@ -1461,6 +1681,9 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     slug: string
     phone: string | null
     address: string | null
+    logoUrl: string | null
+    latitude: runtime.Decimal | null
+    longitude: runtime.Decimal | null
     timezone: string
     onboardedAt: Date | null
     trialEndsAt: Date
@@ -1902,6 +2125,9 @@ export interface TenantFieldRefs {
   readonly slug: Prisma.FieldRef<"Tenant", 'String'>
   readonly phone: Prisma.FieldRef<"Tenant", 'String'>
   readonly address: Prisma.FieldRef<"Tenant", 'String'>
+  readonly logoUrl: Prisma.FieldRef<"Tenant", 'String'>
+  readonly latitude: Prisma.FieldRef<"Tenant", 'Decimal'>
+  readonly longitude: Prisma.FieldRef<"Tenant", 'Decimal'>
   readonly timezone: Prisma.FieldRef<"Tenant", 'String'>
   readonly onboardedAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly trialEndsAt: Prisma.FieldRef<"Tenant", 'DateTime'>

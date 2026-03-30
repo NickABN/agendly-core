@@ -7,6 +7,13 @@ const emit = defineEmits<{
   'update:modelValue': [value: string];
 }>();
 
+function toLocalDateStr(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 const days = computed(() => {
   const result: Array<{ date: string; dayName: string; dayNumber: string; monthName: string; isToday: boolean }> = [];
   const today = new Date();
@@ -16,9 +23,8 @@ const days = computed(() => {
   for (let i = 0; i < 7; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
     result.push({
-      date: dateStr,
+      date: toLocalDateStr(d),
       dayName: i === 0 ? 'Hoy' : dayNames[d.getDay()],
       dayNumber: String(d.getDate()),
       monthName: monthNames[d.getMonth()],

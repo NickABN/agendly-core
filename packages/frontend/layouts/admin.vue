@@ -32,18 +32,33 @@ const tenantName = computed(() => store.tenant?.name || '');
           <span class="material-symbols-outlined text-xl">calendar_today</span>
           Agenda
         </NuxtLink>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-on-surface-variant)] hover:bg-slate-200/40 transition-colors font-medium text-sm">
+        <NuxtLink
+          to="/admin/clients"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm"
+          :class="'text-[var(--color-on-surface-variant)] hover:bg-slate-200/40'"
+          active-class="bg-slate-200/60 !text-[var(--color-primary)] font-semibold"
+        >
           <span class="material-symbols-outlined text-xl">groups</span>
           Clientes
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-on-surface-variant)] hover:bg-slate-200/40 transition-colors font-medium text-sm">
+        </NuxtLink>
+        <NuxtLink
+          to="/admin/services"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm"
+          :class="'text-[var(--color-on-surface-variant)] hover:bg-slate-200/40'"
+          active-class="bg-slate-200/60 !text-[var(--color-primary)] font-semibold"
+        >
           <span class="material-symbols-outlined text-xl">content_cut</span>
           Servicios
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--color-on-surface-variant)] hover:bg-slate-200/40 transition-colors font-medium text-sm">
+        </NuxtLink>
+        <NuxtLink
+          to="/admin/staff"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm"
+          :class="'text-[var(--color-on-surface-variant)] hover:bg-slate-200/40'"
+          active-class="bg-slate-200/60 !text-[var(--color-primary)] font-semibold"
+        >
           <span class="material-symbols-outlined text-xl">badge</span>
           Personal
-        </a>
+        </NuxtLink>
         <NuxtLink
           to="/admin/config"
           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm"

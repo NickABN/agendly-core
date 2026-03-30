@@ -55,6 +55,7 @@ export const ModelName = {
   User: 'User',
   Employee: 'Employee',
   Service: 'Service',
+  ServiceAvailability: 'ServiceAvailability',
   EmployeeService: 'EmployeeService',
   Schedule: 'Schedule',
   ScheduleException: 'ScheduleException',
@@ -84,6 +85,9 @@ export const TenantScalarFieldEnum = {
   slug: 'slug',
   phone: 'phone',
   address: 'address',
+  logoUrl: 'logoUrl',
+  latitude: 'latitude',
+  longitude: 'longitude',
   timezone: 'timezone',
   onboardedAt: 'onboardedAt',
   trialEndsAt: 'trialEndsAt',
@@ -140,6 +144,17 @@ export const ServiceScalarFieldEnum = {
 export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
 
 
+export const ServiceAvailabilityScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  dayOfWeek: 'dayOfWeek',
+  startTime: 'startTime',
+  endTime: 'endTime'
+} as const
+
+export type ServiceAvailabilityScalarFieldEnum = (typeof ServiceAvailabilityScalarFieldEnum)[keyof typeof ServiceAvailabilityScalarFieldEnum]
+
+
 export const EmployeeServiceScalarFieldEnum = {
   employeeId: 'employeeId',
   serviceId: 'serviceId'
@@ -153,6 +168,7 @@ export const ScheduleScalarFieldEnum = {
   tenantId: 'tenantId',
   employeeId: 'employeeId',
   dayOfWeek: 'dayOfWeek',
+  blockIndex: 'blockIndex',
   startTime: 'startTime',
   endTime: 'endTime',
   isActive: 'isActive',
