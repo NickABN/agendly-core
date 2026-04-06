@@ -15,7 +15,7 @@ export function useApi() {
     });
   }
 
-  async function post<T>(path: string, body?: Record<string, unknown> | unknown[]) {
+  async function post<T>(path: string, body?: Record<string, unknown> | unknown[] | FormData) {
     return $fetch<T>(`${apiUrl}${path}`, {
       method: 'POST',
       body: body as Record<string, unknown>,
@@ -23,7 +23,7 @@ export function useApi() {
     });
   }
 
-  async function patch<T>(path: string, body?: Record<string, unknown> | unknown[]) {
+  async function patch<T>(path: string, body?: Record<string, unknown> | unknown[] | FormData) {
     return $fetch<T>(`${apiUrl}${path}`, {
       method: 'PATCH',
       body: body as Record<string, unknown>,
@@ -31,7 +31,7 @@ export function useApi() {
     });
   }
 
-  async function put<T>(path: string, body?: Record<string, unknown> | unknown[]) {
+  async function put<T>(path: string, body?: Record<string, unknown> | unknown[] | FormData) {
     return $fetch<T>(`${apiUrl}${path}`, {
       method: 'PUT',
       body: body as Record<string, unknown>,
