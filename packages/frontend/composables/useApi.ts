@@ -5,10 +5,8 @@ export function useApi() {
   const store = useAuthStore();
   const apiUrl = config.public.apiUrl;
 
-  function authHeaders() {
-    return store.token
-      ? { Authorization: `Bearer ${store.token}` }
-      : {};
+  function authHeaders(): Record<string, string> {
+    return store.token ? { Authorization: `Bearer ${store.token}` } : {};
   }
 
   async function get<T>(path: string) {
@@ -17,26 +15,26 @@ export function useApi() {
     });
   }
 
-  async function post<T>(path: string, body?: unknown) {
+  async function post<T>(path: string, body?: Record<string, unknown> | unknown[]) {
     return $fetch<T>(`${apiUrl}${path}`, {
       method: 'POST',
-      body,
+      body: body as Record<string, unknown>,
       headers: authHeaders(),
     });
   }
 
-  async function patch<T>(path: string, body?: unknown) {
+  async function patch<T>(path: string, body?: Record<string, unknown> | unknown[]) {
     return $fetch<T>(`${apiUrl}${path}`, {
       method: 'PATCH',
-      body,
+      body: body as Record<string, unknown>,
       headers: authHeaders(),
     });
   }
 
-  async function put<T>(path: string, body?: unknown) {
+  async function put<T>(path: string, body?: Record<string, unknown> | unknown[]) {
     return $fetch<T>(`${apiUrl}${path}`, {
       method: 'PUT',
-      body,
+      body: body as Record<string, unknown>,
       headers: authHeaders(),
     });
   }
