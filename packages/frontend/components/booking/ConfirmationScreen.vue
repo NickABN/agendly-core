@@ -1,22 +1,45 @@
 <script setup lang="ts">
-defineProps<{
+import { formatDate, formatTime } from '@agendly/shared';
+import type { BookingResponse } from '@agendly/shared';
+
+const props = defineProps<{
+  booking: BookingResponse;
   serviceName: string;
   employeeName: string;
-  date: string;
-  time: string;
   tenantName: string;
 }>();
 
-const formatDate = (dateStr: string) => {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  const d = new Date(year, month - 1, day);
-  const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-  const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-  return `${dayNames[d.getDay()]} ${d.getDate()} de ${monthNames[d.getMonth()]}`;
-};
+/** Short human reference derived from the REAL appointment id. */
+const reference = computed(() => `AG-${props.booking.id.slice(-6).toUpperCase()}`);
 
-function getInitials(name: string) {
-  return name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
+function toIcsStamp(iso: string): string {
+  return iso.replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+/** Generates and downloads a real .ics calendar event — no backend needed. */
+function addToCalendar() {
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Agendly//Booking//ES',
+    'BEGIN:VEVENT',
+    `UID:${props.booking.id}@agendly.mx`,
+    `DTSTAMP:${toIcsStamp(new Date().toISOString())}`,
+    `DTSTART:${toIcsStamp(props.booking.startTime)}`,
+    `DTEND:${toIcsStamp(props.booking.endTime)}`,
+    `SUMMARY:${props.serviceName} — ${props.tenantName}`,
+    `DESCRIPTION:Cita con ${props.employeeName} en ${props.tenantName}. Referencia ${reference.value}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `cita-${reference.value}.ics`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 </script>
 
@@ -31,7 +54,7 @@ function getInitials(name: string) {
     <div class="flex flex-col items-center px-6 py-8 text-center">
       <div class="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mb-6 animate-scale-in">
         <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center">
-          <span class="material-symbols-outlined text-[var(--color-primary)] text-4xl" style="font-variation-settings: 'FILL' 1">check_circle</span>
+          <span class="material-symbols-outlined text-[var(--color-primary)] text-4xl" style="font-variation-settings: 'FILL' 1" aria-hidden="true">check_circle</span>
         </div>
       </div>
       <h1 class="text-2xl font-black text-white mb-2">¡Tu cita está confirmada!</h1>
@@ -44,7 +67,7 @@ function getInitials(name: string) {
       <div class="p-6 pb-4">
         <div class="flex items-center gap-3 mb-6">
           <div class="w-10 h-10 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center">
-            <span class="material-symbols-outlined text-[var(--color-primary)] text-xl">content_cut</span>
+            <span class="material-symbols-outlined text-[var(--color-primary)] text-xl" aria-hidden="true">content_cut</span>
           </div>
           <div>
             <p class="font-bold text-[var(--color-on-surface)] text-lg leading-tight">{{ serviceName }}</p>
@@ -57,7 +80,7 @@ function getInitials(name: string) {
           <div>
             <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-1">Especialista</p>
             <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-full bg-violet-400 flex items-center justify-center text-white text-[10px] font-bold">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold" :class="colorForName(employeeName)">
                 {{ getInitials(employeeName) }}
               </div>
               <p class="font-semibold text-sm text-[var(--color-on-surface)]">{{ employeeName }}</p>
@@ -65,11 +88,11 @@ function getInitials(name: string) {
           </div>
           <div>
             <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-1">Fecha</p>
-            <p class="font-semibold text-sm text-[var(--color-on-surface)]">{{ formatDate(date) }}</p>
+            <p class="font-semibold text-sm text-[var(--color-on-surface)] capitalize">{{ formatDate(booking.startTime) }}</p>
           </div>
           <div>
             <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-1">Hora</p>
-            <p class="font-semibold text-sm text-[var(--color-on-surface)]">{{ time }}</p>
+            <p class="font-semibold text-sm text-[var(--color-on-surface)]">{{ formatTime(booking.startTime) }}</p>
           </div>
           <div>
             <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-1">Lugar</p>
@@ -79,7 +102,7 @@ function getInitials(name: string) {
       </div>
 
       <!-- Ticket perforation effect -->
-      <div class="relative flex items-center my-2">
+      <div class="relative flex items-center my-2" aria-hidden="true">
         <div class="w-5 h-5 rounded-full bg-[var(--color-primary)] -ml-2.5"></div>
         <div class="flex-1 border-t-2 border-dashed border-[var(--color-outline-variant)]/40 mx-2"></div>
         <div class="w-5 h-5 rounded-full bg-[var(--color-primary)] -mr-2.5"></div>
@@ -87,20 +110,17 @@ function getInitials(name: string) {
 
       <!-- Ticket footer -->
       <div class="p-6 pt-4 space-y-4">
-        <button class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container-high)] transition-colors font-semibold text-sm text-[var(--color-on-surface)]">
-          <span class="material-symbols-outlined text-lg">calendar_add_on</span>
+        <button
+          class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container-high)] transition-colors font-semibold text-sm text-[var(--color-on-surface)]"
+          @click="addToCalendar"
+        >
+          <span class="material-symbols-outlined text-lg" aria-hidden="true">calendar_add_on</span>
           Agregar al calendario
         </button>
 
-        <div class="flex items-center justify-between text-xs">
-          <div class="flex items-center gap-1 text-[var(--color-on-surface-variant)]">
-            <span class="material-symbols-outlined text-sm text-emerald-600" style="font-variation-settings: 'FILL' 1">verified</span>
-            <span>Referencia: #AG-{{ Math.floor(Math.random() * 9000 + 1000) }}</span>
-          </div>
-          <button class="text-[var(--color-primary)] font-semibold flex items-center gap-1">
-            <span class="material-symbols-outlined text-sm">download</span>
-            Descargar PDF
-          </button>
+        <div class="flex items-center gap-1 text-xs text-[var(--color-on-surface-variant)]">
+          <span class="material-symbols-outlined text-sm text-emerald-600" style="font-variation-settings: 'FILL' 1" aria-hidden="true">verified</span>
+          <span>Referencia: {{ reference }}</span>
         </div>
       </div>
     </div>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { addDays, dayOfWeekOf, todayKey } from '@agendly/shared';
+
 const props = defineProps<{
   modelValue: string;
 }>();
@@ -7,36 +9,37 @@ const emit = defineEmits<{
   'update:modelValue': [value: string];
 }>();
 
-function toLocalDateStr(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
+const DAY_NAMES: Record<string, string> = {
+  MONDAY: 'Lun',
+  TUESDAY: 'Mar',
+  WEDNESDAY: 'Mié',
+  THURSDAY: 'Jue',
+  FRIDAY: 'Vie',
+  SATURDAY: 'Sáb',
+  SUNDAY: 'Dom',
+};
+const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
+// The 7-day window starts at "today" in the BUSINESS timezone, not the
+// visitor's — a customer browsing from another country sees the salon's days.
 const days = computed(() => {
-  const result: Array<{ date: string; dayName: string; dayNumber: string; monthName: string; isToday: boolean }> = [];
-  const today = new Date();
-  const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-  const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    result.push({
-      date: toLocalDateStr(d),
-      dayName: i === 0 ? 'Hoy' : dayNames[d.getDay()],
-      dayNumber: String(d.getDate()),
-      monthName: monthNames[d.getMonth()],
+  const start = todayKey();
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = addDays(start, i);
+    const [, month, day] = date.split('-').map(Number);
+    return {
+      date,
+      dayName: i === 0 ? 'Hoy' : DAY_NAMES[dayOfWeekOf(date)],
+      dayNumber: String(day),
+      monthName: MONTH_NAMES[month - 1],
       isToday: i === 0,
-    });
-  }
-  return result;
+    };
+  });
 });
 </script>
 
 <template>
-  <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+  <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide" role="group" aria-label="Elegir día">
     <button
       v-for="day in days"
       :key="day.date"
@@ -44,6 +47,7 @@ const days = computed(() => {
       :class="modelValue === day.date
         ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
         : 'bg-white border border-[var(--color-outline-variant)]/30 text-[var(--color-on-surface)] hover:border-[var(--color-primary)]/40'"
+      :aria-pressed="modelValue === day.date"
       @click="emit('update:modelValue', day.date)"
     >
       <span

@@ -21,8 +21,8 @@ const lowAvailability = computed(() => {
 
 <template>
   <!-- Loading -->
-  <div v-if="loading" class="flex items-center justify-center py-8 gap-3">
-    <div class="w-5 h-5 border-2 border-[var(--color-surface-container-high)] border-t-[var(--color-primary)] rounded-full animate-spin" />
+  <div v-if="loading" class="flex items-center justify-center py-8 gap-3" role="status">
+    <div class="w-5 h-5 border-2 border-[var(--color-surface-container-high)] border-t-[var(--color-primary)] rounded-full animate-spin" aria-hidden="true" />
     <span class="text-sm text-[var(--color-on-surface-variant)]">Cargando horarios...</span>
   </div>
 
@@ -48,6 +48,7 @@ const lowAvailability = computed(() => {
         :class="modelValue === slot.start
           ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
           : 'bg-white border-[var(--color-outline-variant)]/30 hover:border-[var(--color-primary)]/40'"
+        :aria-pressed="modelValue === slot.start"
         @click="emit('update:modelValue', slot.start)"
       >
         <!-- Selected checkmark badge -->
