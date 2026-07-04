@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { ensureExists } from '../common/prisma/ensure-exists';
+import type { DayOfWeek } from '../generated/prisma/client.js';
 
 @Injectable()
 export class ServicesService {
@@ -13,7 +15,7 @@ export class ServicesService {
       orderBy: { createdAt: 'asc' },
     });
 
-    return services.map(this.toDto);
+    return services.map((s) => this.toDto(s));
   }
 
   async create(tenantId: string, dto: CreateServiceDto) {
@@ -31,11 +33,20 @@ export class ServicesService {
   }
 
   async createMany(tenantId: string, dtos: CreateServiceDto[]) {
-    const results = [];
-    for (const dto of dtos) {
-      results.push(await this.create(tenantId, dto));
-    }
-    return results;
+    const created = await this.prisma.$transaction(
+      dtos.map((dto) =>
+        this.prisma.service.create({
+          data: {
+            tenantId,
+            name: dto.name,
+            durationMinutes: dto.durationMinutes,
+            bufferMinutes: dto.bufferMinutes ?? 0,
+            priceMXN: dto.priceMXN,
+          },
+        }),
+      ),
+    );
+    return created.map((s) => this.toDto(s));
   }
 
   async update(tenantId: string, serviceId: string, dto: UpdateServiceDto) {
@@ -81,7 +92,7 @@ export class ServicesService {
         await tx.serviceAvailability.createMany({
           data: items.map((item) => ({
             serviceId,
-            dayOfWeek: item.dayOfWeek as any,
+            dayOfWeek: item.dayOfWeek as DayOfWeek,
             startTime: item.startTime ?? null,
             endTime: item.endTime ?? null,
           })),
@@ -93,15 +104,12 @@ export class ServicesService {
   }
 
   private async ensureExists(tenantId: string, serviceId: string) {
-    const service = await this.prisma.service.findFirst({
-      where: { id: serviceId, tenantId, deletedAt: null },
-    });
-
-    if (!service) {
-      throw new NotFoundException('Servicio no encontrado');
-    }
-
-    return service;
+    return ensureExists(
+      await this.prisma.service.findFirst({
+        where: { id: serviceId, tenantId, deletedAt: null },
+      }),
+      'Servicio no encontrado',
+    );
   }
 
   private toDto(service: {

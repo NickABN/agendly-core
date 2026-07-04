@@ -27,7 +27,7 @@ description: Scaffold a new NestJS API module with controller, service, DTOs, an
 - **Protected endpoints:** `@UseGuards(JwtAuthGuard, TenantGuard)` + `@CurrentTenant() tenantId: string` (decorator in `src/common/decorators/current-tenant.decorator.ts`). Do not read `request.tenantId` by hand.
 - **Every query filters `tenantId`**; soft-deletable models also filter `deletedAt: null` (and `isActive: true` for public/bookable flows).
 - **ESM imports:** relative imports need the `.js` extension; Prisma types come from `../generated/prisma/client.js`.
-- **Transactions:** batch mode only — `$transaction([op1, op2])`. Interactive `$transaction(async (tx) => …)` fails with `@prisma/adapter-pg`.
+- **Transactions:** batch and interactive both work with `@prisma/adapter-pg`. Concurrency invariants live in DB constraints, not check-then-insert.
 - **Errors:** Nest HTTP exceptions with Spanish messages; use `ensureExists` from `src/common/prisma/ensure-exists.ts` for load-or-404.
 - **Query params** are validated with a DTO class too, not raw `@Query('x') x: string`.
 - Return shared DTOs (map via a dedicated mapper function), never raw Prisma models.

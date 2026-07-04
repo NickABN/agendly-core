@@ -11,15 +11,21 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantGuard } from '../common/guards/tenant.guard';
 import { CurrentTenant } from '../common/decorators/current-tenant.decorator';
 import { AppointmentsService } from './appointments.service';
+import { ClientsService } from './clients.service';
+import { UpdateStatusDto } from './dto/update-status.dto';
+import type { AppointmentStatus } from '../generated/prisma/client.js';
 
 @Controller('appointments')
 @UseGuards(JwtAuthGuard, TenantGuard)
 export class AppointmentsController {
-  constructor(private readonly appointmentsService: AppointmentsService) {}
+  constructor(
+    private readonly appointmentsService: AppointmentsService,
+    private readonly clientsService: ClientsService,
+  ) {}
 
   @Get('clients')
   findClients(@CurrentTenant() tenantId: string) {
-    return this.appointmentsService.findClients(tenantId);
+    return this.clientsService.findClients(tenantId);
   }
 
   @Get('month')
@@ -36,10 +42,7 @@ export class AppointmentsController {
   }
 
   @Get('day')
-  findByDate(
-    @CurrentTenant() tenantId: string,
-    @Query('date') date: string,
-  ) {
+  findByDate(@CurrentTenant() tenantId: string, @Query('date') date: string) {
     return this.appointmentsService.findByDate(tenantId, date);
   }
 
@@ -55,12 +58,12 @@ export class AppointmentsController {
   updateStatus(
     @CurrentTenant() tenantId: string,
     @Param('id') id: string,
-    @Body() body: { status: string; cancellationReason?: string },
+    @Body() body: UpdateStatusDto,
   ) {
     return this.appointmentsService.updateStatus(
       tenantId,
       id,
-      body.status,
+      body.status as unknown as AppointmentStatus,
       body.cancellationReason,
     );
   }

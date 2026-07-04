@@ -27,20 +27,22 @@ function makePrismaWithInteractiveTransactionError() {
   const mock = {
     user: {
       findUnique: jest.fn().mockResolvedValue(null),
-      create: jest.fn().mockImplementation(({ data }: { data: Record<string, unknown> }) =>
-        Promise.resolve({
-          id: 'mock-user-id',
-          email: data['email'] ?? 'mock@example.com',
-          name: data['name'] ?? 'Mock User',
-          role: data['role'] ?? 'OWNER',
-          tenantId: data['tenantId'] ?? 'mock-tenant-id',
-          passwordHash: data['passwordHash'] ?? null,
-          isActive: true,
-          googleId: data['googleId'] ?? null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-      ),
+      create: jest
+        .fn()
+        .mockImplementation(({ data }: { data: Record<string, unknown> }) =>
+          Promise.resolve({
+            id: 'mock-user-id',
+            email: data['email'] ?? 'mock@example.com',
+            name: data['name'] ?? 'Mock User',
+            role: data['role'] ?? 'OWNER',
+            tenantId: data['tenantId'] ?? 'mock-tenant-id',
+            passwordHash: data['passwordHash'] ?? null,
+            isActive: true,
+            googleId: data['googleId'] ?? null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }),
+        ),
       update: jest.fn(),
     },
     tenant: {
@@ -58,7 +60,9 @@ function makePrismaWithInteractiveTransactionError() {
     },
     $transaction: jest.fn().mockImplementation(async (arg: unknown) => {
       if (typeof arg === 'function') {
-        throw new Error('Interactive transactions are not supported with driver adapters');
+        throw new Error(
+          'Interactive transactions are not supported with driver adapters',
+        );
       }
       // Batch mode — resolve each Prisma operation promise and return results
       if (Array.isArray(arg)) {
@@ -116,7 +120,11 @@ describe('AuthService — Property 1: Bug Condition (unfixed code)', () => {
     await fc.assert(
       fc.asyncProperty(validRegisterDto, async (dto) => {
         const prisma = makePrismaWithInteractiveTransactionError();
-        const service = new AuthService(prisma, makeJwtService(), makeConfigService());
+        const service = new AuthService(
+          prisma,
+          makeJwtService(),
+          makeConfigService(),
+        );
 
         const result = await service.register(dto);
 
@@ -146,7 +154,11 @@ describe('AuthService — Property 1: Bug Condition (unfixed code)', () => {
           const prisma = makePrismaWithInteractiveTransactionError();
           // No existing user by googleId or email
           prisma.user.findUnique.mockResolvedValue(null);
-          const service = new AuthService(prisma, makeJwtService(), makeConfigService());
+          const service = new AuthService(
+            prisma,
+            makeJwtService(),
+            makeConfigService(),
+          );
 
           const result = await service.findOrCreateGoogleUser(profile);
 
@@ -188,7 +200,11 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
           updatedAt: new Date(),
         });
 
-        const service = new AuthService(prisma, makeJwtService(), makeConfigService());
+        const service = new AuthService(
+          prisma,
+          makeJwtService(),
+          makeConfigService(),
+        );
 
         await expect(service.register(dto)).rejects.toThrow(ConflictException);
         await expect(service.register(dto)).rejects.toThrow(
@@ -240,7 +256,8 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
             occupied.add(`${baseSlug}-${i}`);
           }
           // The first free slug
-          const expectedSlug = collisions === 1 ? baseSlug : `${baseSlug}-${collisions - 1}`;
+          const expectedSlug =
+            collisions === 1 ? baseSlug : `${baseSlug}-${collisions - 1}`;
 
           // Build a prisma mock that supports BOTH interactive (throws) and batch modes
           const tenantCreateMock = jest.fn().mockResolvedValue({
@@ -258,7 +275,9 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
           const tenantFindUniqueMock = jest
             .fn()
             .mockImplementation(({ where }: { where: { slug: string } }) =>
-              Promise.resolve(occupied.has(where.slug) ? { id: 'x', slug: where.slug } : null),
+              Promise.resolve(
+                occupied.has(where.slug) ? { id: 'x', slug: where.slug } : null,
+              ),
             );
 
           const prisma = {
@@ -289,7 +308,11 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
             }),
           } as any;
 
-          const service = new AuthService(prisma, makeJwtService(), makeConfigService());
+          const service = new AuthService(
+            prisma,
+            makeJwtService(),
+            makeConfigService(),
+          );
 
           await service.register({
             businessName,
@@ -353,7 +376,11 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
           // First findUnique (by googleId) returns the existing user
           prisma.user.findUnique.mockResolvedValue(existingUser);
 
-          const service = new AuthService(prisma, makeJwtService(), makeConfigService());
+          const service = new AuthService(
+            prisma,
+            makeJwtService(),
+            makeConfigService(),
+          );
           const result = await service.findOrCreateGoogleUser(profile);
 
           expect(result.accessToken).toBeTruthy();

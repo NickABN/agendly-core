@@ -1,54 +1,15 @@
-import {
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-} from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Controller, Get, Param } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
+import { PublicService } from './public.service';
 
 @Controller('public')
 export class PublicController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly publicService: PublicService) {}
 
   /** GET /public/:slug — returns tenant info, services, and employees */
   @Get(':slug')
-  async getTenantBySlug(@Param('slug') slug: string) {
-    const tenant = await this.prisma.tenant.findUnique({
-      where: { slug },
-    });
-
-    if (!tenant || !tenant.isActive) {
-      throw new NotFoundException('Negocio no encontrado');
-    }
-
-    const [services, employees] = await Promise.all([
-      this.prisma.service.findMany({
-        where: { tenantId: tenant.id, deletedAt: null, isActive: true },
-        orderBy: { createdAt: 'asc' },
-      }),
-      this.prisma.employee.findMany({
-        where: { tenantId: tenant.id, deletedAt: null, isActive: true },
-        include: { services: { select: { serviceId: true } } },
-        orderBy: { createdAt: 'asc' },
-      }),
-    ]);
-
-    return {
-      tenant: {
-        name: tenant.name,
-        slug: tenant.slug,
-      },
-      services: services.map((s) => ({
-        id: s.id,
-        name: s.name,
-        durationMinutes: s.durationMinutes,
-        priceMXN: String(s.priceMXN),
-      })),
-      employees: employees.map((e) => ({
-        id: e.id,
-        name: e.name,
-        serviceIds: e.services.map((s) => s.serviceId),
-      })),
-    };
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
+  getTenantBySlug(@Param('slug') slug: string) {
+    return this.publicService.getTenantBySlug(slug);
   }
 }

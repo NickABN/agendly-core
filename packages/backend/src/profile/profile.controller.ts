@@ -19,7 +19,12 @@ import { ProfileService } from './profile.service';
 import { UploadService } from './upload.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
-import type { ProfileDto, ImageVersionDto, UploadResponseDto, LocationUpdateResponseDto } from '@agendly/shared';
+import type {
+  ProfileDto,
+  ImageVersionDto,
+  UploadResponseDto,
+  LocationUpdateResponseDto,
+} from '@agendly/shared';
 
 @Controller('profile')
 @UseGuards(JwtAuthGuard, TenantGuard)
@@ -77,7 +82,9 @@ export class ProfileController {
   }
 
   @Get('images')
-  getImageHistory(@CurrentTenant() tenantId: string): Promise<ImageVersionDto[]> {
+  getImageHistory(
+    @CurrentTenant() tenantId: string,
+  ): Promise<ImageVersionDto[]> {
     return this.profileService.getImageHistory(tenantId);
   }
 }

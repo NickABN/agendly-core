@@ -33,18 +33,12 @@ export class SchedulesController {
   }
 
   @Post()
-  create(
-    @CurrentTenant() tenantId: string,
-    @Body() dto: CreateScheduleDto,
-  ) {
+  create(@CurrentTenant() tenantId: string, @Body() dto: CreateScheduleDto) {
     return this.schedulesService.create(tenantId, dto);
   }
 
   @Put('bulk')
-  bulkSet(
-    @CurrentTenant() tenantId: string,
-    @Body() dto: BulkScheduleDto,
-  ) {
+  bulkSet(@CurrentTenant() tenantId: string, @Body() dto: BulkScheduleDto) {
     return this.schedulesService.bulkSet(tenantId, dto);
   }
 

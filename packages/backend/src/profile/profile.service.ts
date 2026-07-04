@@ -5,6 +5,8 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { ImageVersionDto } from './dto/image-version.dto';
 import type { ProfileDto, LocationUpdateResponseDto } from '@agendly/shared';
+import { mapTenantToProfileDto } from '../tenant/tenant.mapper';
+import type { Tenant } from '../generated/prisma/client.js';
 
 @Injectable()
 export class ProfileService {
@@ -21,7 +23,10 @@ export class ProfileService {
     return this.mapToProfileDto(tenant);
   }
 
-  async updateProfile(tenantId: string, dto: UpdateProfileDto): Promise<ProfileDto> {
+  async updateProfile(
+    tenantId: string,
+    dto: UpdateProfileDto,
+  ): Promise<ProfileDto> {
     // Build update data with only the fields present in dto (PATCH semantics)
     const data: Record<string, unknown> = {};
     if (dto.name !== undefined) data['name'] = dto.name;
@@ -82,7 +87,8 @@ export class ProfileService {
         latitude = result.latitude;
         longitude = result.longitude;
       } else {
-        geocodingWarning = 'No se encontraron coordenadas para la dirección proporcionada';
+        geocodingWarning =
+          'No se encontraron coordenadas para la dirección proporcionada';
       }
     } catch {
       geocodingWarning = 'No se pudo geocodificar la dirección';
@@ -121,26 +127,7 @@ export class ProfileService {
     }));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapToProfileDto(tenant: any): ProfileDto {
-    return {
-      id: tenant.id,
-      name: tenant.name,
-      slug: tenant.slug,
-      phone: tenant.phone ?? null,
-      address: tenant.address ?? null,
-      logoUrl: tenant.logoUrl ?? null,
-      bannerUrl: tenant.bannerUrl ?? null,
-      latitude: tenant.latitude !== null && tenant.latitude !== undefined
-        ? Number(tenant.latitude)
-        : null,
-      longitude: tenant.longitude !== null && tenant.longitude !== undefined
-        ? Number(tenant.longitude)
-        : null,
-      timezone: tenant.timezone,
-      onboardedAt: tenant.onboardedAt ? tenant.onboardedAt.toISOString() : null,
-      trialEndsAt: tenant.trialEndsAt.toISOString(),
-      isActive: tenant.isActive,
-    };
+  private mapToProfileDto(tenant: Tenant): ProfileDto {
+    return mapTenantToProfileDto(tenant);
   }
 }

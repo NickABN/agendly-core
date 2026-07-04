@@ -65,7 +65,10 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(
+      dto.password,
+      user.passwordHash,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -185,7 +188,10 @@ export class AuthService {
       .replace(/^-|-$/g, '');
   }
 
-  private async ensureUniqueSlug(prisma: PrismaService, baseSlug: string): Promise<string> {
+  private async ensureUniqueSlug(
+    prisma: PrismaService,
+    baseSlug: string,
+  ): Promise<string> {
     let slug = baseSlug;
     let counter = 1;
     while (await prisma.tenant.findUnique({ where: { slug } })) {

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatTime } from '@agendly/shared';
+
 const props = defineProps<{
   slots: Array<{ start: string; end: string }>;
   modelValue: string;
@@ -9,13 +11,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: string];
 }>();
-
-function formatTime(isoString: string) {
-  // Slots come as 'YYYY-MM-DDTHH:mm:00' (Mexico local time, no Z suffix)
-  // Parse without timezone to keep the intended local time
-  const d = new Date(isoString);
-  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
-}
 
 const lowAvailability = computed(() => {
   if (!props.slots.length) return null;

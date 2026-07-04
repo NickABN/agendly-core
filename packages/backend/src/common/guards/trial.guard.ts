@@ -26,7 +26,9 @@ export class TrialGuard implements CanActivate {
     }
 
     if (new Date() > tenant.trialEndsAt) {
-      throw new ForbiddenException('Tu período de prueba ha terminado. Actualiza tu plan para continuar.');
+      throw new ForbiddenException(
+        'Tu período de prueba ha terminado. Actualiza tu plan para continuar.',
+      );
     }
 
     return true;

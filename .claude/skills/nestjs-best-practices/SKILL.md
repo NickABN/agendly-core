@@ -70,8 +70,9 @@ this.emailService.sendBookingConfirmation(payload).catch((err) =>
 
 ## Prisma
 
-### prisma-batch-transactions-only
-`@prisma/adapter-pg` does NOT support interactive transactions (`$transaction(async (tx) => …)` fails at runtime — this broke `register()` once already). Use batch mode only: `$transaction([op1, op2])`. Cross-row invariants (e.g., no double-booking) are enforced by DB constraints, not check-then-insert.
+### prisma-transactions
+Both batch (`$transaction([op1, op2])`) and interactive (`$transaction(async (tx) => …)`) transactions work with `@prisma/adapter-pg` (verified empirically 2026-07-03 on v7.5). Prefer batch when operations are independent. Cross-row invariants under concurrency (e.g., no double-booking) are enforced by DB constraints — a check-then-insert inside a transaction is a UX nicety, not a correctness guarantee.
+⚠️ Testing gotcha: the backend jest config maps `../generated/prisma/client.js` to `test/__mocks__/prisma.ts` — a spec instantiating `PrismaClient` gets the mock. For real-DB probes use `npx tsx script.ts`, never jest.
 
 ### prisma-esm-imports
 Generated client lives at `src/generated/prisma` (custom output). Import types from `../generated/prisma/client.js` — note the `.js` extension; all relative imports in this ESM package need it.

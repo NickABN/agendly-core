@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatTime } from '@agendly/shared';
+
 definePageMeta({ layout: 'public' });
 
 const route = useRoute();
@@ -30,7 +32,7 @@ const selectedServiceId = ref('');
 const selectedEmployeeId = ref('');
 const selectedDate = ref('');
 const selectedSlot = ref('');
-const availableSlots = ref<Array<{ start: string; end: string }>>([]);
+const availableSlots = ref<Array<{ start: string; end: string; employeeId?: string }>>([]);
 
 // Client form
 const clientForm = reactive({
@@ -59,11 +61,6 @@ const selectedEmployeeName = computed(() => {
   return selectedEmployee.value?.name ?? '';
 });
 
-function formatTime(isoString: string) {
-  const d = new Date(isoString);
-  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
-}
-
 function formatDate(dateStr: string) {
   const [year, month, day] = dateStr.split('-').map(Number);
   const d = new Date(year, month - 1, day);
@@ -72,24 +69,24 @@ function formatDate(dateStr: string) {
   return `${dayNames[d.getDay()]} ${d.getDate()} ${monthNames[d.getMonth()]}`;
 }
 
-const resolvedEmployeeId = computed(() => {
-  if (selectedEmployeeId.value === 'any' && filteredEmployees.value.length > 0) {
-    return filteredEmployees.value[0].id;
-  }
-  return selectedEmployeeId.value;
+// The backend resolves "any" server-side: slots come back tagged with the
+// concrete employeeId that is actually free at that time.
+const selectedSlotEmployeeId = computed(() => {
+  const slot = availableSlots.value.find((s) => s.start === selectedSlot.value);
+  return slot?.employeeId ?? selectedEmployeeId.value;
 });
 
 async function fetchSlots() {
-  if (!resolvedEmployeeId.value || !selectedDate.value || !selectedServiceId.value) return;
+  if (!selectedEmployeeId.value || !selectedDate.value || !selectedServiceId.value) return;
   loading.value = true;
   selectedSlot.value = '';
   try {
-    availableSlots.value = await $fetch<Array<{ start: string; end: string }>>(
+    availableSlots.value = await $fetch<Array<{ start: string; end: string; employeeId?: string }>>(
       `${apiUrl}/availability/slots`,
       {
         params: {
           tenantSlug: slug,
-          employeeId: resolvedEmployeeId.value,
+          employeeId: selectedEmployeeId.value,
           serviceId: selectedServiceId.value,
           date: selectedDate.value,
         },
@@ -145,7 +142,7 @@ async function submitBooking() {
     await $fetch(`${apiUrl}/availability/book?tenantSlug=${slug}`, {
       method: 'POST',
       body: {
-        employeeId: resolvedEmployeeId.value,
+        employeeId: selectedSlotEmployeeId.value,
         serviceId: selectedServiceId.value,
         startTime: selectedSlot.value,
         clientName: clientForm.name,

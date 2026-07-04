@@ -1,64 +1,163 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { DayOfWeek } from '../generated/prisma/client.js';
+import {
+  dayBoundsUtc,
+  dayOfWeekOf,
+  isPast,
+  minutesToTime,
+  timeToMinutes,
+  todayKey,
+  utcToZonedMinutes,
+  zonedToUtc,
+} from '@agendly/shared';
+import type { CheckAvailabilityRequest, TimeSlotDto } from '@agendly/shared';
+import type { DayOfWeek, Service } from '../generated/prisma/client.js';
 
-export interface TimeSlot {
-  start: string; // ISO 8601
-  end: string;   // ISO 8601
-}
-
-const DAY_MAP: Record<number, DayOfWeek> = {
-  0: 'SUNDAY' as DayOfWeek,
-  1: 'MONDAY' as DayOfWeek,
-  2: 'TUESDAY' as DayOfWeek,
-  3: 'WEDNESDAY' as DayOfWeek,
-  4: 'THURSDAY' as DayOfWeek,
-  5: 'FRIDAY' as DayOfWeek,
-  6: 'SATURDAY' as DayOfWeek,
-};
+/** Sentinel employeeId for "cualquier disponible" searches. */
+export const ANY_EMPLOYEE = 'any';
 
 @Injectable()
 export class AvailabilityService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Returns available time slots for a given employee on a given date.
-   * Considers: schedule, exceptions, existing appointments, and service duration + buffer.
+   * Public slot search for the booking form. Resolves the tenant by slug,
+   * validates that the service/employee belong to it and are active, and
+   * supports employeeId = "any" (union across active employees offering
+   * the service, each slot tagged with a concrete employeeId).
+   */
+  async getPublicSlots(
+    params: CheckAvailabilityRequest,
+  ): Promise<TimeSlotDto[]> {
+    const { tenantSlug, serviceId, employeeId, date } = params;
+
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { slug: tenantSlug },
+    });
+    if (!tenant || !tenant.isActive) {
+      throw new NotFoundException('Negocio no encontrado');
+    }
+
+    const service = await this.prisma.service.findFirst({
+      where: {
+        id: serviceId,
+        tenantId: tenant.id,
+        deletedAt: null,
+        isActive: true,
+      },
+    });
+    if (!service) {
+      throw new NotFoundException('Servicio no encontrado');
+    }
+
+    if (employeeId === ANY_EMPLOYEE) {
+      return this.getSlotsForAnyEmployee(tenant.id, service, date);
+    }
+
+    const employee = await this.prisma.employee.findFirst({
+      where: {
+        id: employeeId,
+        tenantId: tenant.id,
+        deletedAt: null,
+        isActive: true,
+      },
+    });
+    if (!employee) {
+      throw new NotFoundException('Empleado no encontrado');
+    }
+
+    const slots = await this.getAvailableSlots({
+      tenantId: tenant.id,
+      employeeId,
+      serviceId,
+      date,
+      serviceDurationMinutes: service.durationMinutes,
+      bufferMinutes: service.bufferMinutes,
+    });
+    return slots.map((slot) => ({ ...slot, employeeId }));
+  }
+
+  /**
+   * Union of slots across every active employee that offers the service.
+   * When several employees share a start time, the first one found keeps it.
+   */
+  private async getSlotsForAnyEmployee(
+    tenantId: string,
+    service: Pick<Service, 'id' | 'durationMinutes' | 'bufferMinutes'>,
+    date: string,
+  ): Promise<TimeSlotDto[]> {
+    const employees = await this.prisma.employee.findMany({
+      where: {
+        tenantId,
+        deletedAt: null,
+        isActive: true,
+        services: { some: { serviceId: service.id } },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    const byStart = new Map<string, TimeSlotDto>();
+    for (const employee of employees) {
+      const slots = await this.getAvailableSlots({
+        tenantId,
+        employeeId: employee.id,
+        serviceId: service.id,
+        date,
+        serviceDurationMinutes: service.durationMinutes,
+        bufferMinutes: service.bufferMinutes,
+      });
+      for (const slot of slots) {
+        if (!byStart.has(slot.start)) {
+          byStart.set(slot.start, { ...slot, employeeId: employee.id });
+        }
+      }
+    }
+
+    return [...byStart.values()].sort((a, b) => a.start.localeCompare(b.start));
+  }
+
+  /**
+   * Returns available time slots for a given employee on a given business-TZ date.
+   * Considers: schedule, exceptions, existing appointments, service duration + buffer,
+   * service availability windows, and (for today) already-past times.
+   * Slot instants are UTC ISO strings with `Z`.
    */
   async getAvailableSlots(params: {
     tenantId: string;
     employeeId: string;
-    date: string; // YYYY-MM-DD
+    date: string; // YYYY-MM-DD (business-TZ day)
     serviceDurationMinutes: number;
     bufferMinutes: number;
     serviceId?: string;
-  }): Promise<TimeSlot[]> {
-    const { tenantId, employeeId, date, serviceDurationMinutes, bufferMinutes, serviceId } = params;
+  }): Promise<TimeSlotDto[]> {
+    const {
+      tenantId,
+      employeeId,
+      date,
+      serviceDurationMinutes,
+      bufferMinutes,
+      serviceId,
+    } = params;
 
-    // Use Mexico City timezone for correct day-of-week and date range
-    const dayStart = this.toMexicoCityUTC(date, '00:00:00');
-    const dayEnd = this.toMexicoCityUTC(date, '23:59:59');
+    const { start: dayStart, end: dayEnd } = dayBoundsUtc(date);
+    const dayOfWeek = dayOfWeekOf(date) as DayOfWeek;
 
-    // Get day of week in Mexico timezone
-    const [y, m, d] = date.split('-').map(Number);
-    const localDate = new Date(y, m - 1, d); // local midnight, just for getDay()
-    const dayOfWeek = DAY_MAP[localDate.getDay()];
-
-    // 1. Check for schedule exception on this date
+    // 1. Schedule exception for this date takes precedence over the weekly schedule
     const exception = await this.prisma.scheduleException.findUnique({
       where: {
         employeeId_date: { employeeId, date: dayStart },
       },
     });
 
-    // 3. Get existing appointments for this employee on this date (UTC range for Mexico day)
+    // 2. Existing CONFIRMED appointments that OVERLAP the day (an appointment
+    //    ending after midnight still blocks its share of this day)
     const appointments = await this.prisma.appointment.findMany({
       where: {
         tenantId,
         employeeId,
-        startTime: { gte: dayStart },
-        endTime: { lte: dayEnd },
-        status: { in: ['CONFIRMED'] },
+        startTime: { lt: dayEnd },
+        endTime: { gt: dayStart },
+        status: 'CONFIRMED',
       },
       orderBy: { startTime: 'asc' },
     });
@@ -68,57 +167,60 @@ export class AvailabilityService {
       end: a.endTime,
     }));
 
+    let slots: TimeSlotDto[];
+
     if (exception) {
-      // Exception exists: day off (null times) or modified hours
+      // Day off (null times) or modified hours
       if (!exception.startTime || !exception.endTime) {
-        return []; // Day off
+        return [];
       }
-      return this.generateSlotsForBlocks(
+      slots = this.generateSlotsForBlocks(
         date,
         [{ startTime: exception.startTime, endTime: exception.endTime }],
         serviceDurationMinutes,
         bufferMinutes,
         bookedSlots,
       );
+    } else {
+      const schedules = await this.prisma.schedule.findMany({
+        where: { employeeId, dayOfWeek, isActive: true },
+        orderBy: { startTime: 'asc' },
+      });
+
+      if (schedules.length === 0) {
+        return []; // Not working this day
+      }
+
+      slots = this.generateSlotsForBlocks(
+        date,
+        schedules.map((s) => ({ startTime: s.startTime, endTime: s.endTime })),
+        serviceDurationMinutes,
+        bufferMinutes,
+        bookedSlots,
+      );
     }
 
-    // 2. Get regular schedule for this day (multiple blocks)
-    const schedules = await this.prisma.schedule.findMany({
-      where: { employeeId, dayOfWeek, isActive: true },
-      orderBy: { startTime: 'asc' },
-    });
-
-    if (schedules.length === 0) {
-      return []; // Not working this day
-    }
-
-    const blocks = schedules.map((s) => ({ startTime: s.startTime, endTime: s.endTime }));
-    let slots = this.generateSlotsForBlocks(
-      date,
-      blocks,
-      serviceDurationMinutes,
-      bufferMinutes,
-      bookedSlots,
-    );
-
-    // 4. Filter by service availability if serviceId provided
+    // 3. Filter by service availability windows if configured
     if (serviceId) {
       const serviceAvail = await this.prisma.serviceAvailability.findMany({
         where: { serviceId, dayOfWeek },
       });
       if (serviceAvail.length > 0) {
         slots = slots.filter((slot) => {
-          const timePart = slot.start.split('T')[1];
-          const [h, min] = timePart.split(':').map(Number);
-          const slotMinutes = h * 60 + min;
+          const slotMinutes = utcToZonedMinutes(slot.start);
           return serviceAvail.some((sa) => {
             if (!sa.startTime || !sa.endTime) return true;
-            const [saH, saM] = sa.startTime.split(':').map(Number);
-            const [saEH, saEM] = sa.endTime.split(':').map(Number);
-            return slotMinutes >= saH * 60 + saM && slotMinutes < saEH * 60 + saEM;
+            const from = timeToMinutes(sa.startTime);
+            const to = timeToMinutes(sa.endTime);
+            return slotMinutes >= from && slotMinutes < to;
           });
         });
       }
+    }
+
+    // 4. Never offer slots that already started (today only)
+    if (date === todayKey()) {
+      slots = slots.filter((slot) => !isPast(slot.start));
     }
 
     return slots;
@@ -133,8 +235,8 @@ export class AvailabilityService {
     durationMinutes: number,
     bufferMinutes: number,
     bookedSlots: Array<{ start: Date; end: Date }>,
-  ): TimeSlot[] {
-    const allSlots: TimeSlot[] = [];
+  ): TimeSlotDto[] {
+    const allSlots: TimeSlotDto[] = [];
     for (const block of blocks) {
       allSlots.push(
         ...this.generateSlots(
@@ -151,30 +253,29 @@ export class AvailabilityService {
   }
 
   /**
-   * Pure function that generates available time slots.
+   * Pure function that generates available time slots as UTC ISO instants.
    * Exposed for testing.
    */
   generateSlots(
     date: string,
-    workStart: string, // HH:mm
-    workEnd: string,   // HH:mm
+    workStart: string, // HH:mm (business-TZ wall time)
+    workEnd: string, // HH:mm
     durationMinutes: number,
     bufferMinutes: number,
     bookedSlots: Array<{ start: Date; end: Date }>,
-  ): TimeSlot[] {
-    const slots: TimeSlot[] = [];
+  ): TimeSlotDto[] {
+    const slots: TimeSlotDto[] = [];
     const totalMinutes = durationMinutes + bufferMinutes;
 
-    const [startH, startM] = workStart.split(':').map(Number);
-    const [endH, endM] = workEnd.split(':').map(Number);
+    const workStartMinutes = timeToMinutes(workStart);
+    const workEndMinutes = timeToMinutes(workEnd);
 
-    const workStartMinutes = startH * 60 + startM;
-    const workEndMinutes = endH * 60 + endM;
-
-    // Convert booked slots to minute ranges using Mexico City timezone
+    // Booked ranges as minutes relative to the business-TZ midnight of `date`,
+    // clamped to the day so cross-midnight appointments still block correctly.
+    const dayStartMs = zonedToUtc(date, '00:00').getTime();
     const booked = bookedSlots.map((slot) => ({
-      start: this.toMexicoCityMinutes(slot.start),
-      end: this.toMexicoCityMinutes(slot.end),
+      start: Math.max(0, (slot.start.getTime() - dayStartMs) / 60_000),
+      end: Math.min(24 * 60, (slot.end.getTime() - dayStartMs) / 60_000),
     }));
 
     let cursor = workStartMinutes;
@@ -182,62 +283,20 @@ export class AvailabilityService {
     while (cursor + durationMinutes <= workEndMinutes) {
       const slotEnd = cursor + durationMinutes;
 
-      // Check if this slot overlaps with any booked appointment
       const isOverlapping = booked.some(
         (b) => cursor < b.end && slotEnd > b.start,
       );
 
       if (!isOverlapping) {
-        const startHour = String(Math.floor(cursor / 60)).padStart(2, '0');
-        const startMin = String(cursor % 60).padStart(2, '0');
-        const endHour = String(Math.floor(slotEnd / 60)).padStart(2, '0');
-        const endMin = String(slotEnd % 60).padStart(2, '0');
-
         slots.push({
-          start: `${date}T${startHour}:${startMin}:00`,
-          end: `${date}T${endHour}:${endMin}:00`,
+          start: zonedToUtc(date, minutesToTime(cursor)).toISOString(),
+          end: zonedToUtc(date, minutesToTime(slotEnd)).toISOString(),
         });
       }
 
-      // Advance by buffer after the slot
       cursor += totalMinutes;
     }
 
     return slots;
-  }
-
-  /**
-   * Convert a date + time string meant as Mexico City local time into a UTC Date.
-   * Handles DST automatically via Intl.
-   */
-  private toMexicoCityUTC(date: string, time: string): Date {
-    const [y, m, d] = date.split('-').map(Number);
-    const [hh, mm, ss] = time.split(':').map(Number);
-
-    // Get Mexico City's UTC offset for this date
-    const ref = new Date(Date.UTC(y, m - 1, d, 12));
-    const parts = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Mexico_City',
-      timeZoneName: 'shortOffset',
-    }).formatToParts(ref);
-    const tzPart = parts.find((p) => p.type === 'timeZoneName')?.value || 'GMT-6';
-    const offsetMatch = tzPart.match(/GMT([+-]\d+)/);
-    const offsetHours = offsetMatch ? parseInt(offsetMatch[1]) : -6;
-
-    return new Date(Date.UTC(y, m - 1, d, hh - offsetHours, mm, ss || 0));
-  }
-
-  /**
-   * Extract hours:minutes in Mexico City timezone from a UTC Date, as total minutes since midnight.
-   */
-  private toMexicoCityMinutes(utcDate: Date): number {
-    const timeStr = utcDate.toLocaleTimeString('en-US', {
-      timeZone: 'America/Mexico_City',
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-    const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + m;
   }
 }

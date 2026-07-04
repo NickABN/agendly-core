@@ -29,10 +29,7 @@ export class TenantController {
   }
 
   @Patch()
-  update(
-    @CurrentTenant() tenantId: string,
-    @Body() dto: UpdateTenantDto,
-  ) {
+  update(@CurrentTenant() tenantId: string, @Body() dto: UpdateTenantDto) {
     return this.tenantService.update(tenantId, dto);
   }
 
@@ -49,7 +46,12 @@ export class TenantController {
       limits: { fileSize: 2 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/^image\/(jpeg|png|webp)$/)) {
-          cb(new BadRequestException('Solo se permiten imágenes (JPEG, PNG, WebP)'), false);
+          cb(
+            new BadRequestException(
+              'Solo se permiten imágenes (JPEG, PNG, WebP)',
+            ),
+            false,
+          );
           return;
         }
         cb(null, true);

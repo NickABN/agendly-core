@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { ensureExists } from '../common/prisma/ensure-exists';
 
 @Injectable()
 export class EmployeesService {
@@ -45,11 +46,26 @@ export class EmployeesService {
   }
 
   async createMany(tenantId: string, dtos: CreateEmployeeDto[]) {
-    const results = [];
-    for (const dto of dtos) {
-      results.push(await this.create(tenantId, dto));
-    }
-    return results;
+    const created = await this.prisma.$transaction(
+      dtos.map((dto) =>
+        this.prisma.employee.create({
+          data: {
+            tenantId,
+            name: dto.name,
+            services: dto.serviceIds?.length
+              ? { create: dto.serviceIds.map((serviceId) => ({ serviceId })) }
+              : undefined,
+          },
+          include: { services: { select: { serviceId: true } } },
+        }),
+      ),
+    );
+    return created.map((employee) => ({
+      id: employee.id,
+      name: employee.name,
+      isActive: employee.isActive,
+      serviceIds: employee.services.map((s) => s.serviceId),
+    }));
   }
 
   async update(tenantId: string, employeeId: string, dto: UpdateEmployeeDto) {
@@ -97,14 +113,11 @@ export class EmployeesService {
   }
 
   private async ensureExists(tenantId: string, employeeId: string) {
-    const employee = await this.prisma.employee.findFirst({
-      where: { id: employeeId, tenantId, deletedAt: null },
-    });
-
-    if (!employee) {
-      throw new NotFoundException('Empleado no encontrado');
-    }
-
-    return employee;
+    return ensureExists(
+      await this.prisma.employee.findFirst({
+        where: { id: employeeId, tenantId, deletedAt: null },
+      }),
+      'Empleado no encontrado',
+    );
   }
 }

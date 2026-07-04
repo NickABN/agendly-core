@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
+import { mapTenantToProfileDto } from './tenant.mapper';
+import type { Tenant } from '../generated/prisma/client.js';
 
 @Injectable()
 export class TenantService {
@@ -58,33 +60,7 @@ export class TenantService {
     return this.toDto(tenant);
   }
 
-  private toDto(tenant: {
-    id: string;
-    name: string;
-    slug: string;
-    phone: string | null;
-    address: string | null;
-    logoUrl: string | null;
-    latitude: unknown;
-    longitude: unknown;
-    timezone: string;
-    onboardedAt: Date | null;
-    trialEndsAt: Date;
-    isActive: boolean;
-  }) {
-    return {
-      id: tenant.id,
-      name: tenant.name,
-      slug: tenant.slug,
-      phone: tenant.phone,
-      address: tenant.address,
-      logoUrl: tenant.logoUrl,
-      latitude: tenant.latitude ? Number(tenant.latitude) : null,
-      longitude: tenant.longitude ? Number(tenant.longitude) : null,
-      timezone: tenant.timezone,
-      onboardedAt: tenant.onboardedAt?.toISOString() ?? null,
-      trialEndsAt: tenant.trialEndsAt.toISOString(),
-      isActive: tenant.isActive,
-    };
+  private toDto(tenant: Tenant) {
+    return mapTenantToProfileDto(tenant);
   }
 }

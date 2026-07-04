@@ -24,7 +24,9 @@ export class EmailService {
     this.resend = apiKey ? new Resend(apiKey) : null;
 
     if (!this.resend) {
-      this.logger.warn('RESEND_API_KEY not configured — emails will be logged only');
+      this.logger.warn(
+        'RESEND_API_KEY not configured — emails will be logged only',
+      );
     }
   }
 
@@ -35,7 +37,9 @@ export class EmailService {
     await this.send(data.clientEmail, subject, html);
   }
 
-  async sendBookingCancellation(data: AppointmentEmailData & { reason?: string }) {
+  async sendBookingCancellation(
+    data: AppointmentEmailData & { reason?: string },
+  ) {
     const subject = `Cita cancelada — ${data.serviceName} en ${data.businessName}`;
     const html = this.cancellationTemplate(data);
 
@@ -79,7 +83,9 @@ export class EmailService {
     </div>`;
   }
 
-  private cancellationTemplate(data: AppointmentEmailData & { reason?: string }): string {
+  private cancellationTemplate(
+    data: AppointmentEmailData & { reason?: string },
+  ): string {
     return `
     <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
       <h2 style="color: #111;">Tu cita ha sido cancelada</h2>

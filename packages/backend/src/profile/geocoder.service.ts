@@ -7,7 +7,9 @@ interface NominatimResult {
 
 @Injectable()
 export class GeocoderService {
-  async geocode(address: string): Promise<{ latitude: number; longitude: number } | null> {
+  async geocode(
+    address: string,
+  ): Promise<{ latitude: number; longitude: number } | null> {
     try {
       const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
       const response = await fetch(url, {

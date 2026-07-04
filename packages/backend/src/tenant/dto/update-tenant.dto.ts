@@ -1,4 +1,10 @@
-import { IsNumber, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+} from 'class-validator';
 
 export class UpdateTenantDto {
   @IsOptional()

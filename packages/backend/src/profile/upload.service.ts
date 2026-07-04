@@ -1,4 +1,8 @@
-import { BadGatewayException, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from './storage.service';
 import { ImageVersionDto } from './dto/image-version.dto';
@@ -15,7 +19,9 @@ export class UploadService {
 
   private validateFile(file: Express.Multer.File, maxSizeMb: number): void {
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      throw new UnprocessableEntityException('Solo se permiten archivos JPEG o PNG');
+      throw new UnprocessableEntityException(
+        'Solo se permiten archivos JPEG o PNG',
+      );
     }
 
     const maxSizeBytes = maxSizeMb * 1024 * 1024;
@@ -26,7 +32,10 @@ export class UploadService {
     }
   }
 
-  async uploadLogo(tenantId: string, file: Express.Multer.File): Promise<UploadResponseDto> {
+  async uploadLogo(
+    tenantId: string,
+    file: Express.Multer.File,
+  ): Promise<UploadResponseDto> {
     this.validateFile(file, 5);
 
     const key = `tenants/${tenantId}/logos/${Date.now()}-${file.originalname}`;
@@ -35,7 +44,9 @@ export class UploadService {
     try {
       url = await this.storageService.upload(key, file.buffer, file.mimetype);
     } catch {
-      throw new BadGatewayException('Error al subir el archivo al almacenamiento');
+      throw new BadGatewayException(
+        'Error al subir el archivo al almacenamiento',
+      );
     }
 
     const [, imageVersion] = await this.prisma.$transaction([
@@ -65,7 +76,10 @@ export class UploadService {
     return { url, imageVersion: versionDto };
   }
 
-  async uploadBanner(tenantId: string, file: Express.Multer.File): Promise<UploadResponseDto> {
+  async uploadBanner(
+    tenantId: string,
+    file: Express.Multer.File,
+  ): Promise<UploadResponseDto> {
     this.validateFile(file, 8);
 
     const key = `tenants/${tenantId}/banners/${Date.now()}-${file.originalname}`;
@@ -74,7 +88,9 @@ export class UploadService {
     try {
       url = await this.storageService.upload(key, file.buffer, file.mimetype);
     } catch {
-      throw new BadGatewayException('Error al subir el archivo al almacenamiento');
+      throw new BadGatewayException(
+        'Error al subir el archivo al almacenamiento',
+      );
     }
 
     const [, imageVersion] = await this.prisma.$transaction([

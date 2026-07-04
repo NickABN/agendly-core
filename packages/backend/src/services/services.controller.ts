@@ -29,10 +29,7 @@ export class ServicesController {
   }
 
   @Post()
-  create(
-    @CurrentTenant() tenantId: string,
-    @Body() dto: CreateServiceDto,
-  ) {
+  create(@CurrentTenant() tenantId: string, @Body() dto: CreateServiceDto) {
     return this.servicesService.create(tenantId, dto);
   }
 
@@ -55,18 +52,12 @@ export class ServicesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(
-    @CurrentTenant() tenantId: string,
-    @Param('id') id: string,
-  ) {
+  remove(@CurrentTenant() tenantId: string, @Param('id') id: string) {
     return this.servicesService.remove(tenantId, id);
   }
 
   @Get(':id/availability')
-  getAvailability(
-    @CurrentTenant() tenantId: string,
-    @Param('id') id: string,
-  ) {
+  getAvailability(@CurrentTenant() tenantId: string, @Param('id') id: string) {
     return this.servicesService.getAvailability(tenantId, id);
   }
 
@@ -74,7 +65,8 @@ export class ServicesController {
   setAvailability(
     @CurrentTenant() tenantId: string,
     @Param('id') id: string,
-    @Body() items: Array<{ dayOfWeek: string; startTime?: string; endTime?: string }>,
+    @Body()
+    items: Array<{ dayOfWeek: string; startTime?: string; endTime?: string }>,
   ) {
     return this.servicesService.setAvailability(tenantId, id, items);
   }

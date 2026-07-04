@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatTime as formatTimeTz, utcToZonedMinutes } from '@agendly/shared';
+
 definePageMeta({ layout: 'admin' });
 
 const { store, logout } = useAuth();
@@ -256,8 +258,7 @@ async function updateStatus(id: string, status: string, reason?: string) {
 }
 
 function formatTime(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+  return formatTimeTz(iso);
 }
 
 const formattedDate = computed(() => {
@@ -379,7 +380,7 @@ const slotsByPeriod = computed(() => {
   const afternoon: TimeSlot[] = [];
   const evening: TimeSlot[] = [];
   for (const slot of availableSlots.value) {
-    const hour = new Date(slot.start).getHours();
+    const hour = Math.floor(utcToZonedMinutes(slot.start) / 60);
     if (hour < 12) morning.push(slot);
     else if (hour < 17) afternoon.push(slot);
     else evening.push(slot);
@@ -388,7 +389,7 @@ const slotsByPeriod = computed(() => {
 });
 
 function formatSlotTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+  return formatTimeTz(iso);
 }
 
 function goToStep2() {

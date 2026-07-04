@@ -1,4 +1,7 @@
-import { BadGatewayException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import * as fc from 'fast-check';
 import { UploadService } from './upload.service';
 
@@ -6,7 +9,9 @@ import { UploadService } from './upload.service';
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeFile(overrides: Partial<Express.Multer.File> = {}): Express.Multer.File {
+function makeFile(
+  overrides: Partial<Express.Multer.File> = {},
+): Express.Multer.File {
   return {
     fieldname: 'file',
     originalname: 'test.jpg',
@@ -24,20 +29,26 @@ function makeFile(overrides: Partial<Express.Multer.File> = {}): Express.Multer.
 
 function makeStorageService(uploadImpl?: () => Promise<string>) {
   return {
-    upload: jest.fn().mockImplementation(
-      uploadImpl ?? ((_key: string, _buf: Buffer, _ct: string) => Promise.resolve('https://cdn.example.com/test.jpg')),
-    ),
+    upload: jest
+      .fn()
+      .mockImplementation(
+        uploadImpl ??
+          ((_key: string, _buf: Buffer, _ct: string) =>
+            Promise.resolve('https://cdn.example.com/test.jpg')),
+      ),
   };
 }
 
-function makeImageVersionRecord(overrides: Partial<{
-  id: string;
-  tenantId: string;
-  url: string;
-  fileSize: number;
-  imageType: string;
-  createdAt: Date;
-}> = {}) {
+function makeImageVersionRecord(
+  overrides: Partial<{
+    id: string;
+    tenantId: string;
+    url: string;
+    fileSize: number;
+    imageType: string;
+    createdAt: Date;
+  }> = {},
+) {
   return {
     id: 'img-version-id',
     tenantId: 'tenant-123',
@@ -49,13 +60,16 @@ function makeImageVersionRecord(overrides: Partial<{
   };
 }
 
-function makePrisma(overrides: {
-  tenantUpdate?: jest.Mock;
-  imageVersionCreate?: jest.Mock;
-  imageVersionFindMany?: jest.Mock;
-  transactionImpl?: (ops: unknown[]) => Promise<unknown[]>;
-} = {}) {
-  const tenantUpdate = overrides.tenantUpdate ?? jest.fn().mockResolvedValue({ id: 'tenant-123' });
+function makePrisma(
+  overrides: {
+    tenantUpdate?: jest.Mock;
+    imageVersionCreate?: jest.Mock;
+    imageVersionFindMany?: jest.Mock;
+    transactionImpl?: (ops: unknown[]) => Promise<unknown[]>;
+  } = {},
+) {
+  const tenantUpdate =
+    overrides.tenantUpdate ?? jest.fn().mockResolvedValue({ id: 'tenant-123' });
   const imageVersionCreate =
     overrides.imageVersionCreate ??
     jest.fn().mockResolvedValue(makeImageVersionRecord());
@@ -113,33 +127,37 @@ describe('UploadService — unit tests', () => {
     it('accepts a valid PNG', async () => {
       const { service } = makeService();
       const file = makeFile({ mimetype: 'image/png', size: 500 });
-      await expect(service.uploadLogo('tenant-123', file)).resolves.toBeDefined();
+      await expect(
+        service.uploadLogo('tenant-123', file),
+      ).resolves.toBeDefined();
     });
 
     it('rejects image/gif with 422', async () => {
       const { service } = makeService();
       const file = makeFile({ mimetype: 'image/gif' });
-      await expect(service.uploadLogo('tenant-123', file)).rejects.toBeInstanceOf(
-        UnprocessableEntityException,
-      );
+      await expect(
+        service.uploadLogo('tenant-123', file),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
     });
 
     it('rejects a logo file of 5.1 MB with 422', async () => {
       const { service } = makeService();
       const file = makeFile({ size: 5.1 * 1024 * 1024 });
-      await expect(service.uploadLogo('tenant-123', file)).rejects.toBeInstanceOf(
-        UnprocessableEntityException,
-      );
+      await expect(
+        service.uploadLogo('tenant-123', file),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
     });
 
     it('returns 502 when StorageService throws', async () => {
-      const storage = makeStorageService(() => Promise.reject(new Error('R2 down')));
+      const storage = makeStorageService(() =>
+        Promise.reject(new Error('R2 down')),
+      );
       const { service, prisma } = makeService(storage);
       const file = makeFile();
 
-      await expect(service.uploadLogo('tenant-123', file)).rejects.toBeInstanceOf(
-        BadGatewayException,
-      );
+      await expect(
+        service.uploadLogo('tenant-123', file),
+      ).rejects.toBeInstanceOf(BadGatewayException);
       expect(prisma.$transaction).not.toHaveBeenCalled();
     });
   });
@@ -148,25 +166,29 @@ describe('UploadService — unit tests', () => {
     it('accepts a valid JPEG banner under 8 MB', async () => {
       const { service } = makeService();
       const file = makeFile({ mimetype: 'image/jpeg', size: 4 * 1024 * 1024 });
-      await expect(service.uploadBanner('tenant-123', file)).resolves.toBeDefined();
+      await expect(
+        service.uploadBanner('tenant-123', file),
+      ).resolves.toBeDefined();
     });
 
     it('rejects a banner file of 8.1 MB with 422', async () => {
       const { service } = makeService();
       const file = makeFile({ size: 8.1 * 1024 * 1024 });
-      await expect(service.uploadBanner('tenant-123', file)).rejects.toBeInstanceOf(
-        UnprocessableEntityException,
-      );
+      await expect(
+        service.uploadBanner('tenant-123', file),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
     });
 
     it('returns 502 when StorageService throws for banner', async () => {
-      const storage = makeStorageService(() => Promise.reject(new Error('R2 down')));
+      const storage = makeStorageService(() =>
+        Promise.reject(new Error('R2 down')),
+      );
       const { service, prisma } = makeService(storage);
       const file = makeFile();
 
-      await expect(service.uploadBanner('tenant-123', file)).rejects.toBeInstanceOf(
-        BadGatewayException,
-      );
+      await expect(
+        service.uploadBanner('tenant-123', file),
+      ).rejects.toBeInstanceOf(BadGatewayException);
       expect(prisma.$transaction).not.toHaveBeenCalled();
     });
   });
@@ -189,14 +211,16 @@ describe('UploadService — property tests', () => {
     it('rejects all invalid MIME types with 422 without calling StorageService (logo)', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 100 }).filter((m) => !VALID_MIME_TYPES.has(m)),
+          fc
+            .string({ minLength: 1, maxLength: 100 })
+            .filter((m) => !VALID_MIME_TYPES.has(m)),
           async (mimeType) => {
             const { service, storage } = makeService();
             const file = makeFile({ mimetype: mimeType, size: 1024 });
 
-            await expect(service.uploadLogo('tenant-123', file)).rejects.toBeInstanceOf(
-              UnprocessableEntityException,
-            );
+            await expect(
+              service.uploadLogo('tenant-123', file),
+            ).rejects.toBeInstanceOf(UnprocessableEntityException);
             expect(storage.upload).not.toHaveBeenCalled();
           },
         ),
@@ -207,14 +231,16 @@ describe('UploadService — property tests', () => {
     it('rejects all invalid MIME types with 422 without calling StorageService (banner)', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.string({ minLength: 1, maxLength: 100 }).filter((m) => !VALID_MIME_TYPES.has(m)),
+          fc
+            .string({ minLength: 1, maxLength: 100 })
+            .filter((m) => !VALID_MIME_TYPES.has(m)),
           async (mimeType) => {
             const { service, storage } = makeService();
             const file = makeFile({ mimetype: mimeType, size: 1024 });
 
-            await expect(service.uploadBanner('tenant-123', file)).rejects.toBeInstanceOf(
-              UnprocessableEntityException,
-            );
+            await expect(
+              service.uploadBanner('tenant-123', file),
+            ).rejects.toBeInstanceOf(UnprocessableEntityException);
             expect(storage.upload).not.toHaveBeenCalled();
           },
         ),
@@ -240,9 +266,9 @@ describe('UploadService — property tests', () => {
             const { service, storage } = makeService();
             const file = makeFile({ size });
 
-            await expect(service.uploadLogo('tenant-123', file)).rejects.toBeInstanceOf(
-              UnprocessableEntityException,
-            );
+            await expect(
+              service.uploadLogo('tenant-123', file),
+            ).rejects.toBeInstanceOf(UnprocessableEntityException);
             expect(storage.upload).not.toHaveBeenCalled();
           },
         ),
@@ -258,9 +284,9 @@ describe('UploadService — property tests', () => {
             const { service, storage } = makeService();
             const file = makeFile({ size });
 
-            await expect(service.uploadBanner('tenant-123', file)).rejects.toBeInstanceOf(
-              UnprocessableEntityException,
-            );
+            await expect(
+              service.uploadBanner('tenant-123', file),
+            ).rejects.toBeInstanceOf(UnprocessableEntityException);
             expect(storage.upload).not.toHaveBeenCalled();
           },
         ),
@@ -281,12 +307,16 @@ describe('UploadService — property tests', () => {
       await fc.assert(
         fc.asyncProperty(
           fc.uuid(),
-          fc.string({ minLength: 1, maxLength: 50 }).map((s) => s.replace(/[^a-zA-Z0-9._-]/g, 'x') + '.jpg'),
+          fc
+            .string({ minLength: 1, maxLength: 50 })
+            .map((s) => s.replace(/[^a-zA-Z0-9._-]/g, 'x') + '.jpg'),
           fc.integer({ min: 1, max: 5 * 1024 * 1024 }),
           fc.constantFrom('image/jpeg', 'image/png'),
           async (tenantId, filename, fileSize, mimeType) => {
             const expectedUrl = `https://cdn.example.com/${tenantId}/logo.jpg`;
-            const storage = makeStorageService(() => Promise.resolve(expectedUrl));
+            const storage = makeStorageService(() =>
+              Promise.resolve(expectedUrl),
+            );
 
             const createdVersion = makeImageVersionRecord({
               tenantId,
@@ -294,12 +324,20 @@ describe('UploadService — property tests', () => {
               fileSize,
               imageType: 'LOGO',
             });
-            const imageVersionCreate = jest.fn().mockResolvedValue(createdVersion);
-            const tenantUpdate = jest.fn().mockResolvedValue({ id: tenantId, logoUrl: expectedUrl });
+            const imageVersionCreate = jest
+              .fn()
+              .mockResolvedValue(createdVersion);
+            const tenantUpdate = jest
+              .fn()
+              .mockResolvedValue({ id: tenantId, logoUrl: expectedUrl });
             const prisma = makePrisma({ tenantUpdate, imageVersionCreate });
 
             const { service } = makeService(storage, prisma);
-            const file = makeFile({ originalname: filename, size: fileSize, mimetype: mimeType });
+            const file = makeFile({
+              originalname: filename,
+              size: fileSize,
+              mimetype: mimeType,
+            });
 
             const result = await service.uploadLogo(tenantId, file);
 
@@ -335,12 +373,16 @@ describe('UploadService — property tests', () => {
       await fc.assert(
         fc.asyncProperty(
           fc.uuid(),
-          fc.string({ minLength: 1, maxLength: 50 }).map((s) => s.replace(/[^a-zA-Z0-9._-]/g, 'x') + '.png'),
+          fc
+            .string({ minLength: 1, maxLength: 50 })
+            .map((s) => s.replace(/[^a-zA-Z0-9._-]/g, 'x') + '.png'),
           fc.integer({ min: 1, max: 8 * 1024 * 1024 }),
           fc.constantFrom('image/jpeg', 'image/png'),
           async (tenantId, filename, fileSize, mimeType) => {
             const expectedUrl = `https://cdn.example.com/${tenantId}/banner.png`;
-            const storage = makeStorageService(() => Promise.resolve(expectedUrl));
+            const storage = makeStorageService(() =>
+              Promise.resolve(expectedUrl),
+            );
 
             const createdVersion = makeImageVersionRecord({
               tenantId,
@@ -348,12 +390,20 @@ describe('UploadService — property tests', () => {
               fileSize,
               imageType: 'BANNER',
             });
-            const imageVersionCreate = jest.fn().mockResolvedValue(createdVersion);
-            const tenantUpdate = jest.fn().mockResolvedValue({ id: tenantId, bannerUrl: expectedUrl });
+            const imageVersionCreate = jest
+              .fn()
+              .mockResolvedValue(createdVersion);
+            const tenantUpdate = jest
+              .fn()
+              .mockResolvedValue({ id: tenantId, bannerUrl: expectedUrl });
             const prisma = makePrisma({ tenantUpdate, imageVersionCreate });
 
             const { service } = makeService(storage, prisma);
-            const file = makeFile({ originalname: filename, size: fileSize, mimetype: mimeType });
+            const file = makeFile({
+              originalname: filename,
+              size: fileSize,
+              mimetype: mimeType,
+            });
 
             const result = await service.uploadBanner(tenantId, file);
 
@@ -394,14 +444,16 @@ describe('UploadService — property tests', () => {
           fc.uuid(),
           fc.string({ minLength: 1, maxLength: 100 }),
           async (tenantId, errorMessage) => {
-            const storage = makeStorageService(() => Promise.reject(new Error(errorMessage)));
+            const storage = makeStorageService(() =>
+              Promise.reject(new Error(errorMessage)),
+            );
             const prisma = makePrisma();
             const { service } = makeService(storage, prisma);
             const file = makeFile();
 
-            await expect(service.uploadLogo(tenantId, file)).rejects.toBeInstanceOf(
-              BadGatewayException,
-            );
+            await expect(
+              service.uploadLogo(tenantId, file),
+            ).rejects.toBeInstanceOf(BadGatewayException);
             expect(prisma.$transaction).not.toHaveBeenCalled();
           },
         ),
@@ -415,14 +467,16 @@ describe('UploadService — property tests', () => {
           fc.uuid(),
           fc.string({ minLength: 1, maxLength: 100 }),
           async (tenantId, errorMessage) => {
-            const storage = makeStorageService(() => Promise.reject(new Error(errorMessage)));
+            const storage = makeStorageService(() =>
+              Promise.reject(new Error(errorMessage)),
+            );
             const prisma = makePrisma();
             const { service } = makeService(storage, prisma);
             const file = makeFile();
 
-            await expect(service.uploadBanner(tenantId, file)).rejects.toBeInstanceOf(
-              BadGatewayException,
-            );
+            await expect(
+              service.uploadBanner(tenantId, file),
+            ).rejects.toBeInstanceOf(BadGatewayException);
             expect(prisma.$transaction).not.toHaveBeenCalled();
           },
         ),
@@ -473,7 +527,9 @@ describe('UploadService — property tests', () => {
             );
 
             // Mock findMany to return sorted records (simulating DB ORDER BY createdAt DESC)
-            const imageVersionFindMany = jest.fn().mockResolvedValue(sortedDesc);
+            const imageVersionFindMany = jest
+              .fn()
+              .mockResolvedValue(sortedDesc);
             const prisma = makePrisma({ imageVersionFindMany });
 
             // Verify the mock returns exactly N records
@@ -493,7 +549,9 @@ describe('UploadService — property tests', () => {
             }
 
             // All original IDs are present (append-only: none missing)
-            const returnedIds = new Set(history.map((h: { id: string }) => h.id));
+            const returnedIds = new Set(
+              history.map((h: { id: string }) => h.id),
+            );
             for (const record of versionRecords) {
               expect(returnedIds.has(record.id)).toBe(true);
             }
@@ -505,29 +563,28 @@ describe('UploadService — property tests', () => {
 
     it('uploadLogo calls imageVersion.create (not delete) — append-only', async () => {
       await fc.assert(
-        fc.asyncProperty(
-          fc.integer({ min: 1, max: 10 }),
-          async (n) => {
-            // Simulate N consecutive logo uploads for the same tenant
-            const tenantId = 'tenant-append-test';
-            const imageVersionCreate = jest.fn().mockImplementation(() =>
+        fc.asyncProperty(fc.integer({ min: 1, max: 10 }), async (n) => {
+          // Simulate N consecutive logo uploads for the same tenant
+          const tenantId = 'tenant-append-test';
+          const imageVersionCreate = jest
+            .fn()
+            .mockImplementation(() =>
               Promise.resolve(makeImageVersionRecord({ tenantId })),
             );
-            const prisma = makePrisma({ imageVersionCreate });
-            const storage = makeStorageService();
-            const { service } = makeService(storage, prisma);
+          const prisma = makePrisma({ imageVersionCreate });
+          const storage = makeStorageService();
+          const { service } = makeService(storage, prisma);
 
-            for (let i = 0; i < n; i++) {
-              const file = makeFile({ originalname: `logo-${i}.jpg` });
-              await service.uploadLogo(tenantId, file);
-            }
+          for (let i = 0; i < n; i++) {
+            const file = makeFile({ originalname: `logo-${i}.jpg` });
+            await service.uploadLogo(tenantId, file);
+          }
 
-            // imageVersion.create called N times (one per upload)
-            expect(imageVersionCreate).toHaveBeenCalledTimes(n);
-            // No delete was ever called
-            expect((prisma.imageVersion as any).delete).toBeUndefined();
-          },
-        ),
+          // imageVersion.create called N times (one per upload)
+          expect(imageVersionCreate).toHaveBeenCalledTimes(n);
+          // No delete was ever called
+          expect(prisma.imageVersion.delete).toBeUndefined();
+        }),
         { numRuns: 50 },
       );
     });

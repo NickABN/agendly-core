@@ -13,11 +13,16 @@ import { map } from 'rxjs/operators';
  */
 @Injectable()
 export class SoftDeleteInterceptor implements NestInterceptor {
-  intercept(_context: ExecutionContext, next: CallHandler): Observable<unknown> {
+  intercept(
+    _context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<unknown> {
     return next.handle().pipe(
       map((data) => {
         if (Array.isArray(data)) {
-          return data.filter((item) => item.deletedAt === null || item.deletedAt === undefined);
+          return data.filter(
+            (item) => item.deletedAt === null || item.deletedAt === undefined,
+          );
         }
         return data;
       }),

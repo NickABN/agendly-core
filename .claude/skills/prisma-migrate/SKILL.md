@@ -35,6 +35,6 @@ Precedent in this repo: the `Appointment` anti-double-booking exclusion constrai
 - **Always** add `@@index([tenantId])` for tenant-scoped queries
 - Use `deletedAt DateTime?` for soft-deletable models (Employee, Service)
 - `DateTime` columns store UTC instants; wall-clock interpretation (`America/Mexico_City`) happens only via `@agendly/shared` datetime utils
-- **Transactions in app code are batch-only** (`$transaction([...])`) — `@prisma/adapter-pg` does not support interactive transactions. Design invariants as DB constraints, not check-then-insert.
+- Batch and interactive transactions both work with `@prisma/adapter-pg`. Still design concurrency invariants as DB constraints (exclusion/unique), not check-then-insert.
 - Use descriptive migration names: `add-employee-model`, `add-appointment-no-overlap-constraint`
 - After migration, verify with `npx prisma studio` if needed

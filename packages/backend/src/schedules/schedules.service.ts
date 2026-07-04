@@ -28,7 +28,11 @@ export class SchedulesService {
   async findAllByTenant(tenantId: string) {
     const schedules = await this.prisma.schedule.findMany({
       where: { tenantId },
-      orderBy: [{ employeeId: 'asc' }, { dayOfWeek: 'asc' }, { blockIndex: 'asc' }],
+      orderBy: [
+        { employeeId: 'asc' },
+        { dayOfWeek: 'asc' },
+        { blockIndex: 'asc' },
+      ],
     });
 
     return schedules.map((s) => ({

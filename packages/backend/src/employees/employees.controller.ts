@@ -28,10 +28,7 @@ export class EmployeesController {
   }
 
   @Post()
-  create(
-    @CurrentTenant() tenantId: string,
-    @Body() dto: CreateEmployeeDto,
-  ) {
+  create(@CurrentTenant() tenantId: string, @Body() dto: CreateEmployeeDto) {
     return this.employeesService.create(tenantId, dto);
   }
 
@@ -54,10 +51,7 @@ export class EmployeesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(
-    @CurrentTenant() tenantId: string,
-    @Param('id') id: string,
-  ) {
+  remove(@CurrentTenant() tenantId: string, @Param('id') id: string) {
     return this.employeesService.remove(tenantId, id);
   }
 }

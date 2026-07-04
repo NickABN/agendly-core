@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -35,7 +43,6 @@ export class AuthController {
   @Get('google')
   googleAuth() {
     // Guard redirects to Google
-    
   }
 
   @UseGuards(GoogleAuthGuard)
@@ -45,7 +52,10 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const result = await this.authService.findOrCreateGoogleUser(req.user);
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3001');
+    const frontendUrl = this.configService.get<string>(
+      'FRONTEND_URL',
+      'http://localhost:3001',
+    );
     res.redirect(`${frontendUrl}/auth/callback?token=${result.accessToken}`);
   }
 }
