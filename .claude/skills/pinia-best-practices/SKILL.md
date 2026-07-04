@@ -1,59 +1,42 @@
 ---
 name: pinia
-description: Pinia official Vue state management library, type-safe and extensible. Use when defining stores, working with state/getters/actions, or implementing store patterns in Vue apps.
+description: Pinia conventions for the Agendly frontend. Use when defining stores, working with state/getters/actions, or deciding store vs composable in packages/frontend.
 metadata:
-  author: Anthony Fu
-  version: "2026.1.28"
-  source: Generated from https://github.com/vuejs/pinia, scripts located at https://github.com/antfu/skills
+  version: "2.0.0"
+  scope: packages/frontend
 ---
 
-# Pinia
+# Agendly Pinia Rules
 
-Pinia is the official state management library for Vue, designed to be intuitive and type-safe. It supports both Options API and Composition API styles, with first-class TypeScript support and devtools integration.
+Self-contained project guide. No external references.
 
-> The skill is based on Pinia v3.0.4, generated at 2026-01-28.
+## When a store, when a composable
 
-## Core References
+- **Pinia store**: state shared across multiple pages/components that must survive navigation (auth session, business profile).
+- **Composable**: per-page data fetching and CRUD (`use<Feature>.ts`). Most features here need a composable, NOT a store. Don't create stores for page-local calendar/list state.
 
-| Topic | Description | Reference |
-|-------|-------------|-----------|
-| Stores | Defining stores, state, getters, actions, storeToRefs, subscriptions | [core-stores](references/core-stores.md) |
+## Store style: setup stores only
 
-## Features
+```ts
+export const useProfileStore = defineStore('profile', () => {
+  const profile = ref<TenantProfileDto | null>(null);
+  const pending = ref(false);
 
-### Extensibility
+  const isOnboarded = computed(() => !!profile.value?.onboardedAt);
 
-| Topic | Description | Reference |
-|-------|-------------|-----------|
-| Plugins | Extend stores with custom properties, state, and behavior | [features-plugins](references/features-plugins.md) |
+  async function load() { /* ... */ }
 
-### Composability
+  return { profile, pending, isOnboarded, load };
+});
+```
 
-| Topic | Description | Reference |
-|-------|-------------|-----------|
-| Composables | Using Vue composables within stores (VueUse, etc.) | [features-composables](references/features-composables.md) |
-| Composing Stores | Store-to-store communication, avoiding circular dependencies | [features-composing-stores](references/features-composing-stores.md) |
+- No Options-API stores (`{ state, getters, actions }`) in new code; migrate old ones when touched.
+- Instantiate dependencies (e.g. `useProfileApi()`) ONCE at store setup, not inside every action.
+- Reading store state in components: destructure via `storeToRefs(store)` to keep reactivity; actions can be destructured directly.
 
-## Best Practices
+## Rules
 
-| Topic | Description | Reference |
-|-------|-------------|-----------|
-| Testing | Unit testing with @pinia/testing, mocking, stubbing | [best-practices-testing](references/best-practices-testing.md) |
-| Outside Components | Using stores in navigation guards, plugins, middlewares | [best-practices-outside-component](references/best-practices-outside-component.md) |
-
-## Advanced
-
-| Topic | Description | Reference |
-|-------|-------------|-----------|
-| SSR | Server-side rendering, state hydration | [advanced-ssr](references/advanced-ssr.md) |
-| Nuxt | Nuxt integration, auto-imports, SSR best practices | [advanced-nuxt](references/advanced-nuxt.md) |
-| HMR | Hot module replacement for development | [advanced-hmr](references/advanced-hmr.md) |
-
-## Key Recommendations
-
-- **Prefer Setup Stores** for complex logic, composables, and watchers
-- **Use `storeToRefs()`** when destructuring state/getters to preserve reactivity
-- **Actions can be destructured directly** - they're bound to the store
-- **Call stores inside functions** not at module scope, especially for SSR
-- **Add HMR support** to each store for better development experience
-- **Use `@pinia/testing`** for component tests with mocked stores
+- Types from `@agendly/shared`; no anonymous state shapes.
+- Stores never touch `$fetch` directly — they call the feature's API composable.
+- SSR: stores are safe (Pinia + Nuxt module handles hydration); never share state via module-scope variables.
+- Testing: `@pinia/testing`'s `createTestingPinia()` with spies; see `stores/profile.spec.ts` for the in-repo pattern.

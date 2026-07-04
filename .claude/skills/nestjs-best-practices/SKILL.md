@@ -1,130 +1,93 @@
 ---
 name: nestjs-best-practices
-description: NestJS best practices and architecture patterns for building production-ready applications. This skill should be used when writing, reviewing, or refactoring NestJS code to ensure proper patterns for modules, dependency injection, security, and performance.
-license: MIT
+description: NestJS architecture rules for the Agendly backend. Use when writing, reviewing, or refactoring code in packages/backend to enforce SOLID, multi-tenancy, and error-handling conventions.
 metadata:
-  author: Kadajett
-  version: "1.1.0"
+  version: "2.0.0"
+  scope: packages/backend
 ---
 
-# NestJS Best Practices
+# Agendly NestJS Rules
 
-Comprehensive best practices guide for NestJS applications. Contains 40 rules across 10 categories, prioritized by impact to guide automated refactoring and code generation.
+Project-specific rules distilled for this codebase (NestJS 11 + Prisma 7 + PostgreSQL, ESM, multi-tenant). Every rule below is enforced — cite the rule name in reviews.
 
-## When to Apply
+## Architecture
 
-Reference these guidelines when:
+### arch-controllers-never-touch-prisma
+Controllers do routing, guards, and DTO validation ONLY. They never inject `PrismaService` and never contain business logic. All data access lives in a service.
 
-- Writing new NestJS modules, controllers, or services
-- Implementing authentication and authorization
-- Reviewing code for architecture and security issues
-- Refactoring existing NestJS codebases
-- Optimizing performance or database queries
-- Building microservices architectures
+```ts
+// ❌ WRONG — controller querying the database
+@Controller('public')
+export class PublicController {
+  constructor(private readonly prisma: PrismaService) {}
+}
 
-## Rule Categories by Priority
-
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-| 1 | Architecture | CRITICAL | `arch-` |
-| 2 | Dependency Injection | CRITICAL | `di-` |
-| 3 | Error Handling | HIGH | `error-` |
-| 4 | Security | HIGH | `security-` |
-| 5 | Performance | HIGH | `perf-` |
-| 6 | Testing | MEDIUM-HIGH | `test-` |
-| 7 | Database & ORM | MEDIUM-HIGH | `db-` |
-| 8 | API Design | MEDIUM | `api-` |
-| 9 | Microservices | MEDIUM | `micro-` |
-| 10 | DevOps & Deployment | LOW-MEDIUM | `devops-` |
-
-## Quick Reference
-
-### 1. Architecture (CRITICAL)
-
-- `arch-avoid-circular-deps` - Avoid circular module dependencies
-- `arch-feature-modules` - Organize by feature, not technical layer
-- `arch-module-sharing` - Proper module exports/imports, avoid duplicate providers
-- `arch-single-responsibility` - Focused services over "god services"
-- `arch-use-repository-pattern` - Abstract database logic for testability
-- `arch-use-events` - Event-driven architecture for decoupling
-
-### 2. Dependency Injection (CRITICAL)
-
-- `di-avoid-service-locator` - Avoid service locator anti-pattern
-- `di-interface-segregation` - Interface Segregation Principle (ISP)
-- `di-liskov-substitution` - Liskov Substitution Principle (LSP)
-- `di-prefer-constructor-injection` - Constructor over property injection
-- `di-scope-awareness` - Understand singleton/request/transient scopes
-- `di-use-interfaces-tokens` - Use injection tokens for interfaces
-
-### 3. Error Handling (HIGH)
-
-- `error-use-exception-filters` - Centralized exception handling
-- `error-throw-http-exceptions` - Use NestJS HTTP exceptions
-- `error-handle-async-errors` - Handle async errors properly
-
-### 4. Security (HIGH)
-
-- `security-auth-jwt` - Secure JWT authentication
-- `security-validate-all-input` - Validate with class-validator
-- `security-use-guards` - Authentication and authorization guards
-- `security-sanitize-output` - Prevent XSS attacks
-- `security-rate-limiting` - Implement rate limiting
-
-### 5. Performance (HIGH)
-
-- `perf-async-hooks` - Proper async lifecycle hooks
-- `perf-use-caching` - Implement caching strategies
-- `perf-optimize-database` - Optimize database queries
-- `perf-lazy-loading` - Lazy load modules for faster startup
-
-### 6. Testing (MEDIUM-HIGH)
-
-- `test-use-testing-module` - Use NestJS testing utilities
-- `test-e2e-supertest` - E2E testing with Supertest
-- `test-mock-external-services` - Mock external dependencies
-
-### 7. Database & ORM (MEDIUM-HIGH)
-
-- `db-use-transactions` - Transaction management
-- `db-avoid-n-plus-one` - Avoid N+1 query problems
-- `db-use-migrations` - Use migrations for schema changes
-
-### 8. API Design (MEDIUM)
-
-- `api-use-dto-serialization` - DTO and response serialization
-- `api-use-interceptors` - Cross-cutting concerns
-- `api-versioning` - API versioning strategies
-- `api-use-pipes` - Input transformation with pipes
-
-### 9. Microservices (MEDIUM)
-
-- `micro-use-patterns` - Message and event patterns
-- `micro-use-health-checks` - Health checks for orchestration
-- `micro-use-queues` - Background job processing
-
-### 10. DevOps & Deployment (LOW-MEDIUM)
-
-- `devops-use-config-module` - Environment configuration
-- `devops-use-logging` - Structured logging
-- `devops-graceful-shutdown` - Zero-downtime deployments
-
-## How to Use
-
-Read individual rule files for detailed explanations and code examples:
-
-```
-rules/arch-avoid-circular-deps.md
-rules/security-validate-all-input.md
-rules/_sections.md
+// ✅ RIGHT — controller delegates to a service
+@Controller('public')
+export class PublicController {
+  constructor(private readonly publicService: PublicService) {}
+}
 ```
 
-Each rule file contains:
-- Brief explanation of why it matters
-- Incorrect code example with explanation
-- Correct code example with explanation
-- Additional context and references
+### arch-services-own-prisma (no repository layer)
+Services inject `PrismaService` directly. This project deliberately does NOT use a repository/interface layer: one ORM, one DB, and Nest's DI already lets specs mock `PrismaService` (see `src/auth/auth.service.spec.ts`). Revisit only if a second data source appears.
 
-## Full Compiled Document
+### arch-single-responsibility
+A service handles ONE domain concern. Split when a service exceeds ~200 lines or mixes concerns (e.g., calendar reads + CRM aggregation + notifications). Pure domain logic (slot generation, timezone math, DTO mappers) goes in plain exported functions or small classes so it can be unit-tested without the Nest testing module.
 
-For the complete guide with all rules expanded: `AGENTS.md`
+### arch-shared-helpers
+Never re-implement a helper that exists. Known shared locations:
+- `@agendly/shared` → datetime utils (`zonedToUtc`, `formatTime`, `utcToDateKey`, …), DTOs, enums.
+- `src/common/prisma/ensure-exists.ts` → load-or-404 helper.
+- `src/tenant/tenant.mapper.ts` → the single Tenant→DTO mapper.
+
+## Multi-tenancy (non-negotiable)
+
+### tenant-guard-everywhere
+Every authenticated route: `@UseGuards(JwtAuthGuard, TenantGuard)` + `@CurrentTenant() tenantId: string` (decorator at `src/common/decorators/current-tenant.decorator.ts`). Public routes resolve the tenant by slug in the service and must verify `tenant.isActive`.
+
+### tenant-scope-every-query
+Every Prisma query on tenant-scoped tables filters `tenantId`. Soft-deletable models (Employee, Service) also filter `deletedAt: null`, and bookable/visible flows additionally check `isActive: true`. Ownership of related IDs (employeeId, serviceId) must be validated against the same tenant before use.
+
+## Datetime & wire format
+
+### dates-utc-on-the-wire
+All appointment/slot instants cross the API as ISO-8601 UTC with `Z` (`2026-07-03T15:00:00.000Z`). Date-only params are `YYYY-MM-DD` and always mean a day in `America/Mexico_City`. Never emit zoneless datetime strings; never call `new Date()` on a zoneless string. All timezone math uses `@agendly/shared` datetime — do not write local `Intl` conversions in services.
+
+## Errors & side effects
+
+### error-nest-exceptions-only
+Throw Nest HTTP exceptions (`NotFoundException`, `ConflictException`, `BadRequestException`) with Spanish user-facing messages. Never `throw new Error(...)` in a request path — it surfaces as a 500.
+
+### side-effects-outside-tx-with-catch
+Emails/notifications run AFTER the transaction, fire-and-forget, but always with `.catch()` into a `Logger`:
+
+```ts
+this.emailService.sendBookingConfirmation(payload).catch((err) =>
+  this.logger.error(`Fallo al enviar confirmación: ${err.message}`),
+);
+```
+
+## Prisma
+
+### prisma-batch-transactions-only
+`@prisma/adapter-pg` does NOT support interactive transactions (`$transaction(async (tx) => …)` fails at runtime — this broke `register()` once already). Use batch mode only: `$transaction([op1, op2])`. Cross-row invariants (e.g., no double-booking) are enforced by DB constraints, not check-then-insert.
+
+### prisma-esm-imports
+Generated client lives at `src/generated/prisma` (custom output). Import types from `../generated/prisma/client.js` — note the `.js` extension; all relative imports in this ESM package need it.
+
+### prisma-no-sequential-writes
+Never `await` inside a `for` loop for inserts. Use `createMany` or a batch `$transaction([...])`.
+
+## Validation & security
+
+### validate-at-the-boundary
+Every input goes through a class-validator DTO — including `@Query()` params (use a DTO class, not raw strings). Strings get `@IsNotEmpty`/`@MinLength`/`@MaxLength`; enums use `@IsEnum` importing from `@agendly/shared` (never redeclare enums locally). Global pipe runs `whitelist + forbidNonWhitelisted + transform`.
+
+### throttle-public-endpoints
+Public endpoints (booking, slots, tenant lookup) carry explicit `@Throttle` limits on top of the global `ThrottlerModule` default.
+
+## Testing
+
+### test-business-logic-mandatory
+Availability, booking, and any money-path logic ships with a `.spec.ts` (CLAUDE.md mandate). Pure functions are tested directly; services via `Test.createTestingModule` with `PrismaService` mocked. Cover timezone edges (day boundaries, cross-midnight appointments) explicitly.
