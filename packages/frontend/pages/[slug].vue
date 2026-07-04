@@ -234,7 +234,7 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
                 required
                 type="tel"
                 inputmode="tel"
-                pattern="\+?[\d\s()-]{8,20}"
+                pattern="[+]?[0-9\s\(\)\-]{8,20}"
                 title="Ingresa un teléfono válido de 8 a 20 dígitos"
                 placeholder="+52 000 000 0000"
                 autocomplete="tel"

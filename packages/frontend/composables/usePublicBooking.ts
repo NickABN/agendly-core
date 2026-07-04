@@ -13,6 +13,10 @@ export async function usePublicBooking(slug: string) {
   const config = useRuntimeConfig();
   const apiUrl = config.public.apiUrl;
 
+  // Nuxt-instance-dependent composables MUST run before the first await:
+  // after an await boundary the instance context is gone.
+  const { slots, loading: loadingSlots, fetchSlots, reset: resetSlots } = useAvailability();
+
   // ── Tenant payload (SSR) ──
   const { data: tenantData, error: fetchError } = await useAsyncData(`public-${slug}`, () =>
     $fetch<PublicTenantResponse>(`${apiUrl}/public/${slug}`),
@@ -39,8 +43,6 @@ export async function usePublicBooking(slug: string) {
     email: '',
     privacyAccepted: false,
   });
-
-  const { slots, loading: loadingSlots, fetchSlots, reset: resetSlots } = useAvailability();
 
   // ── Derived ──
   const filteredEmployees = computed(() => {

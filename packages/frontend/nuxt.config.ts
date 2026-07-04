@@ -1,9 +1,17 @@
+import { fileURLToPath } from 'node:url';
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-03-19',
   devtools: { enabled: true },
 
   modules: ['@nuxt/ui', '@pinia/nuxt'],
+
+  // Consume @agendly/shared from SOURCE: its dist is CommonJS and Vite can't
+  // expose named value exports from it (types alone never hit this).
+  alias: {
+    '@agendly/shared': fileURLToPath(new URL('../shared/src/index.ts', import.meta.url)),
+  },
 
   app: {
     head: {
