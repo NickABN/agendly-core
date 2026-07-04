@@ -61,5 +61,19 @@ export function useServices() {
     items.value = items.value.filter((s) => s.id !== id);
   }
 
-  return { items, pending, error, load, create, update, remove };
+  async function getAvailability(id: string) {
+    return api.get<ServiceAvailabilityItem[]>(`/services/${id}/availability`);
+  }
+
+  async function setAvailability(id: string, availability: ServiceAvailabilityItem[]) {
+    return api.put(`/services/${id}/availability`, availability);
+  }
+
+  return { items, pending, error, load, create, update, remove, getAvailability, setAvailability };
+}
+
+export interface ServiceAvailabilityItem {
+  dayOfWeek: string;
+  startTime: string | null;
+  endTime: string | null;
 }

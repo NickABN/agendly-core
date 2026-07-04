@@ -1,114 +1,21 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin' });
 
-const api = useApi();
+const {
+  form: businessForm,
+  saving: businessLoading,
+  saved: businessSuccess,
+  logoFile,
+  logoUploading,
+  logoSrc,
+  mapSrc,
+  load,
+  save: saveBusiness,
+  onLogoSelect,
+  uploadLogo,
+} = useTenantConfig();
 
-// ─── Business Info ──────────────────────────
-interface TenantData {
-  id: string;
-  name: string;
-  slug: string;
-  phone: string | null;
-  address: string | null;
-  logoUrl: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  timezone: string;
-}
-
-const businessForm = reactive({
-  name: '',
-  slug: '',
-  phone: '',
-  address: '',
-  latitude: null as number | null,
-  longitude: null as number | null,
-});
-const businessLoading = ref(false);
-const businessSuccess = ref(false);
-const currentLogoUrl = ref<string | null>(null);
-
-// ─── Logo Upload ──────────────────────────
-const logoFile = ref<File | null>(null);
-const logoPreview = ref<string | null>(null);
-const logoUploading = ref(false);
-
-function onLogoSelect(event: Event) {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-  logoFile.value = file;
-  logoPreview.value = URL.createObjectURL(file);
-}
-
-async function uploadLogo() {
-  if (!logoFile.value) return;
-  logoUploading.value = true;
-  try {
-    const formData = new FormData();
-    formData.append('logo', logoFile.value);
-    const result = await api.post<TenantData>('/tenant/logo', formData);
-    currentLogoUrl.value = result.logoUrl;
-    logoFile.value = null;
-    logoPreview.value = null;
-  } finally {
-    logoUploading.value = false;
-  }
-}
-
-// ─── Data Loading ──────────────────────────
-async function loadTenant() {
-  const tenant = await api.get<TenantData>('/tenant');
-  businessForm.name = tenant.name;
-  businessForm.slug = tenant.slug;
-  businessForm.phone = tenant.phone || '';
-  businessForm.address = tenant.address || '';
-  businessForm.latitude = tenant.latitude;
-  businessForm.longitude = tenant.longitude;
-  currentLogoUrl.value = tenant.logoUrl;
-}
-
-async function saveBusiness() {
-  businessLoading.value = true;
-  businessSuccess.value = false;
-  try {
-    const payload: Record<string, unknown> = {
-      name: businessForm.name,
-      slug: businessForm.slug,
-      phone: businessForm.phone,
-      address: businessForm.address,
-    };
-    if (businessForm.latitude != null) payload.latitude = businessForm.latitude;
-    if (businessForm.longitude != null) payload.longitude = businessForm.longitude;
-    await api.patch('/tenant', payload);
-    businessSuccess.value = true;
-    setTimeout(() => (businessSuccess.value = false), 3000);
-  } finally {
-    businessLoading.value = false;
-  }
-}
-
-const runtimeConfig = useRuntimeConfig();
-const backendUrl = (runtimeConfig.public.apiUrl as string || 'http://localhost:3000').replace(/\/api$/, '');
-const logoSrc = computed(() => {
-  if (logoPreview.value) return logoPreview.value;
-  if (currentLogoUrl.value) return `${backendUrl}${currentLogoUrl.value}`;
-  return null;
-});
-
-const mapSrc = computed(() => {
-  if (businessForm.latitude && businessForm.longitude) {
-    return `https://maps.google.com/maps?q=${businessForm.latitude},${businessForm.longitude}&z=16&output=embed`;
-  }
-  if (businessForm.address) {
-    return `https://maps.google.com/maps?q=${encodeURIComponent(businessForm.address)}&z=16&output=embed`;
-  }
-  return null;
-});
-
-onMounted(() => {
-  loadTenant();
-});
+onMounted(() => void load());
 </script>
 
 <template>
