@@ -47,3 +47,11 @@ export const DayOfWeek = {
 } as const
 
 export type DayOfWeek = (typeof DayOfWeek)[keyof typeof DayOfWeek]
+
+
+export const ImageType = {
+  LOGO: 'LOGO',
+  BANNER: 'BANNER'
+} as const
+
+export type ImageType = (typeof ImageType)[keyof typeof ImageType]

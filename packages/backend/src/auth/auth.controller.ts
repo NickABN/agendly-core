@@ -35,6 +35,7 @@ export class AuthController {
   @Get('google')
   googleAuth() {
     // Guard redirects to Google
+    
   }
 
   @UseGuards(GoogleAuthGuard)

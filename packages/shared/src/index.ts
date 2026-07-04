@@ -8,3 +8,4 @@ export * from './dto/service.dto';
 export * from './dto/employee.dto';
 export * from './dto/appointment.dto';
 export * from './dto/schedule.dto';
+export * from './dto/profile.dto';

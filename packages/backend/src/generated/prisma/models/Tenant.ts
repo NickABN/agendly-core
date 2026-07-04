@@ -43,6 +43,7 @@ export type TenantMinAggregateOutputType = {
   phone: string | null
   address: string | null
   logoUrl: string | null
+  bannerUrl: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   timezone: string | null
@@ -60,6 +61,7 @@ export type TenantMaxAggregateOutputType = {
   phone: string | null
   address: string | null
   logoUrl: string | null
+  bannerUrl: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   timezone: string | null
@@ -77,6 +79,7 @@ export type TenantCountAggregateOutputType = {
   phone: number
   address: number
   logoUrl: number
+  bannerUrl: number
   latitude: number
   longitude: number
   timezone: number
@@ -106,6 +109,7 @@ export type TenantMinAggregateInputType = {
   phone?: true
   address?: true
   logoUrl?: true
+  bannerUrl?: true
   latitude?: true
   longitude?: true
   timezone?: true
@@ -123,6 +127,7 @@ export type TenantMaxAggregateInputType = {
   phone?: true
   address?: true
   logoUrl?: true
+  bannerUrl?: true
   latitude?: true
   longitude?: true
   timezone?: true
@@ -140,6 +145,7 @@ export type TenantCountAggregateInputType = {
   phone?: true
   address?: true
   logoUrl?: true
+  bannerUrl?: true
   latitude?: true
   longitude?: true
   timezone?: true
@@ -244,6 +250,7 @@ export type TenantGroupByOutputType = {
   phone: string | null
   address: string | null
   logoUrl: string | null
+  bannerUrl: string | null
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   timezone: string
@@ -284,6 +291,7 @@ export type TenantWhereInput = {
   phone?: Prisma.StringNullableFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableFilter<"Tenant"> | string | null
   logoUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  bannerUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFilter<"Tenant"> | string
@@ -299,6 +307,7 @@ export type TenantWhereInput = {
   appointments?: Prisma.AppointmentListRelationFilter
   privacyConsents?: Prisma.PrivacyConsentListRelationFilter
   scheduleExceptions?: Prisma.ScheduleExceptionListRelationFilter
+  imageVersions?: Prisma.ImageVersionListRelationFilter
 }
 
 export type TenantOrderByWithRelationInput = {
@@ -308,6 +317,7 @@ export type TenantOrderByWithRelationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
@@ -323,6 +333,7 @@ export type TenantOrderByWithRelationInput = {
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
   privacyConsents?: Prisma.PrivacyConsentOrderByRelationAggregateInput
   scheduleExceptions?: Prisma.ScheduleExceptionOrderByRelationAggregateInput
+  imageVersions?: Prisma.ImageVersionOrderByRelationAggregateInput
 }
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -335,6 +346,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableFilter<"Tenant"> | string | null
   logoUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  bannerUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
   latitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFilter<"Tenant"> | string
@@ -350,6 +362,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   appointments?: Prisma.AppointmentListRelationFilter
   privacyConsents?: Prisma.PrivacyConsentListRelationFilter
   scheduleExceptions?: Prisma.ScheduleExceptionListRelationFilter
+  imageVersions?: Prisma.ImageVersionListRelationFilter
 }, "id" | "slug">
 
 export type TenantOrderByWithAggregationInput = {
@@ -359,6 +372,7 @@ export type TenantOrderByWithAggregationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
@@ -384,6 +398,7 @@ export type TenantScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   logoUrl?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  bannerUrl?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   latitude?: Prisma.DecimalNullableWithAggregatesFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableWithAggregatesFilter<"Tenant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
@@ -401,6 +416,7 @@ export type TenantCreateInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -416,6 +432,7 @@ export type TenantCreateInput = {
   appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateInput = {
@@ -425,6 +442,7 @@ export type TenantUncheckedCreateInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -440,6 +458,7 @@ export type TenantUncheckedCreateInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUpdateInput = {
@@ -449,6 +468,7 @@ export type TenantUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -464,6 +484,7 @@ export type TenantUpdateInput = {
   appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateInput = {
@@ -473,6 +494,7 @@ export type TenantUncheckedUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -488,6 +510,7 @@ export type TenantUncheckedUpdateInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateManyInput = {
@@ -497,6 +520,7 @@ export type TenantCreateManyInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -514,6 +538,7 @@ export type TenantUpdateManyMutationInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -531,6 +556,7 @@ export type TenantUncheckedUpdateManyInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -548,6 +574,7 @@ export type TenantCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
@@ -570,6 +597,7 @@ export type TenantMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
@@ -587,6 +615,7 @@ export type TenantMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
   logoUrl?: Prisma.SortOrder
+  bannerUrl?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
@@ -733,6 +762,20 @@ export type TenantUpdateOneRequiredWithoutPrivacyConsentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutPrivacyConsentsInput, Prisma.TenantUpdateWithoutPrivacyConsentsInput>, Prisma.TenantUncheckedUpdateWithoutPrivacyConsentsInput>
 }
 
+export type TenantCreateNestedOneWithoutImageVersionsInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutImageVersionsInput, Prisma.TenantUncheckedCreateWithoutImageVersionsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutImageVersionsInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutImageVersionsNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutImageVersionsInput, Prisma.TenantUncheckedCreateWithoutImageVersionsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutImageVersionsInput
+  upsert?: Prisma.TenantUpsertWithoutImageVersionsInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutImageVersionsInput, Prisma.TenantUpdateWithoutImageVersionsInput>, Prisma.TenantUncheckedUpdateWithoutImageVersionsInput>
+}
+
 export type TenantCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -740,6 +783,7 @@ export type TenantCreateWithoutUsersInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -754,6 +798,7 @@ export type TenantCreateWithoutUsersInput = {
   appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutUsersInput = {
@@ -763,6 +808,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -777,6 +823,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutUsersInput = {
@@ -802,6 +849,7 @@ export type TenantUpdateWithoutUsersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -816,6 +864,7 @@ export type TenantUpdateWithoutUsersInput = {
   appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutUsersInput = {
@@ -825,6 +874,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -839,6 +889,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutEmployeesInput = {
@@ -848,6 +899,7 @@ export type TenantCreateWithoutEmployeesInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -862,6 +914,7 @@ export type TenantCreateWithoutEmployeesInput = {
   appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutEmployeesInput = {
@@ -871,6 +924,7 @@ export type TenantUncheckedCreateWithoutEmployeesInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -885,6 +939,7 @@ export type TenantUncheckedCreateWithoutEmployeesInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutEmployeesInput = {
@@ -910,6 +965,7 @@ export type TenantUpdateWithoutEmployeesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -924,6 +980,7 @@ export type TenantUpdateWithoutEmployeesInput = {
   appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutEmployeesInput = {
@@ -933,6 +990,7 @@ export type TenantUncheckedUpdateWithoutEmployeesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -947,6 +1005,7 @@ export type TenantUncheckedUpdateWithoutEmployeesInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutServicesInput = {
@@ -956,6 +1015,7 @@ export type TenantCreateWithoutServicesInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -970,6 +1030,7 @@ export type TenantCreateWithoutServicesInput = {
   appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutServicesInput = {
@@ -979,6 +1040,7 @@ export type TenantUncheckedCreateWithoutServicesInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -993,6 +1055,7 @@ export type TenantUncheckedCreateWithoutServicesInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutServicesInput = {
@@ -1018,6 +1081,7 @@ export type TenantUpdateWithoutServicesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1032,6 +1096,7 @@ export type TenantUpdateWithoutServicesInput = {
   appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutServicesInput = {
@@ -1041,6 +1106,7 @@ export type TenantUncheckedUpdateWithoutServicesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1055,6 +1121,7 @@ export type TenantUncheckedUpdateWithoutServicesInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutSchedulesInput = {
@@ -1064,6 +1131,7 @@ export type TenantCreateWithoutSchedulesInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1078,6 +1146,7 @@ export type TenantCreateWithoutSchedulesInput = {
   appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutSchedulesInput = {
@@ -1087,6 +1156,7 @@ export type TenantUncheckedCreateWithoutSchedulesInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1101,6 +1171,7 @@ export type TenantUncheckedCreateWithoutSchedulesInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutSchedulesInput = {
@@ -1126,6 +1197,7 @@ export type TenantUpdateWithoutSchedulesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1140,6 +1212,7 @@ export type TenantUpdateWithoutSchedulesInput = {
   appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutSchedulesInput = {
@@ -1149,6 +1222,7 @@ export type TenantUncheckedUpdateWithoutSchedulesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1163,6 +1237,7 @@ export type TenantUncheckedUpdateWithoutSchedulesInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutScheduleExceptionsInput = {
@@ -1172,6 +1247,7 @@ export type TenantCreateWithoutScheduleExceptionsInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1186,6 +1262,7 @@ export type TenantCreateWithoutScheduleExceptionsInput = {
   schedules?: Prisma.ScheduleCreateNestedManyWithoutTenantInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutScheduleExceptionsInput = {
@@ -1195,6 +1272,7 @@ export type TenantUncheckedCreateWithoutScheduleExceptionsInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1209,6 +1287,7 @@ export type TenantUncheckedCreateWithoutScheduleExceptionsInput = {
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutTenantInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutScheduleExceptionsInput = {
@@ -1234,6 +1313,7 @@ export type TenantUpdateWithoutScheduleExceptionsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1248,6 +1328,7 @@ export type TenantUpdateWithoutScheduleExceptionsInput = {
   schedules?: Prisma.ScheduleUpdateManyWithoutTenantNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutScheduleExceptionsInput = {
@@ -1257,6 +1338,7 @@ export type TenantUncheckedUpdateWithoutScheduleExceptionsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1271,6 +1353,7 @@ export type TenantUncheckedUpdateWithoutScheduleExceptionsInput = {
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutTenantNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutAppointmentsInput = {
@@ -1280,6 +1363,7 @@ export type TenantCreateWithoutAppointmentsInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1294,6 +1378,7 @@ export type TenantCreateWithoutAppointmentsInput = {
   schedules?: Prisma.ScheduleCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutAppointmentsInput = {
@@ -1303,6 +1388,7 @@ export type TenantUncheckedCreateWithoutAppointmentsInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1317,6 +1403,7 @@ export type TenantUncheckedCreateWithoutAppointmentsInput = {
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutTenantInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutAppointmentsInput = {
@@ -1342,6 +1429,7 @@ export type TenantUpdateWithoutAppointmentsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1356,6 +1444,7 @@ export type TenantUpdateWithoutAppointmentsInput = {
   schedules?: Prisma.ScheduleUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutAppointmentsInput = {
@@ -1365,6 +1454,7 @@ export type TenantUncheckedUpdateWithoutAppointmentsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1379,6 +1469,7 @@ export type TenantUncheckedUpdateWithoutAppointmentsInput = {
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutTenantNestedInput
   privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutPrivacyConsentsInput = {
@@ -1388,6 +1479,7 @@ export type TenantCreateWithoutPrivacyConsentsInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1402,6 +1494,7 @@ export type TenantCreateWithoutPrivacyConsentsInput = {
   schedules?: Prisma.ScheduleCreateNestedManyWithoutTenantInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutPrivacyConsentsInput = {
@@ -1411,6 +1504,7 @@ export type TenantUncheckedCreateWithoutPrivacyConsentsInput = {
   phone?: string | null
   address?: string | null
   logoUrl?: string | null
+  bannerUrl?: string | null
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: string
@@ -1425,6 +1519,7 @@ export type TenantUncheckedCreateWithoutPrivacyConsentsInput = {
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutTenantInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+  imageVersions?: Prisma.ImageVersionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutPrivacyConsentsInput = {
@@ -1450,6 +1545,7 @@ export type TenantUpdateWithoutPrivacyConsentsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1464,6 +1560,7 @@ export type TenantUpdateWithoutPrivacyConsentsInput = {
   schedules?: Prisma.ScheduleUpdateManyWithoutTenantNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutPrivacyConsentsInput = {
@@ -1473,6 +1570,7 @@ export type TenantUncheckedUpdateWithoutPrivacyConsentsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1486,6 +1584,123 @@ export type TenantUncheckedUpdateWithoutPrivacyConsentsInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutTenantNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
+  imageVersions?: Prisma.ImageVersionUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutImageVersionsInput = {
+  id?: string
+  name: string
+  slug: string
+  phone?: string | null
+  address?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timezone?: string
+  onboardedAt?: Date | string | null
+  trialEndsAt: Date | string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  schedules?: Prisma.ScheduleCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
+  privacyConsents?: Prisma.PrivacyConsentCreateNestedManyWithoutTenantInput
+  scheduleExceptions?: Prisma.ScheduleExceptionCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutImageVersionsInput = {
+  id?: string
+  name: string
+  slug: string
+  phone?: string | null
+  address?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timezone?: string
+  onboardedAt?: Date | string | null
+  trialEndsAt: Date | string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
+  privacyConsents?: Prisma.PrivacyConsentUncheckedCreateNestedManyWithoutTenantInput
+  scheduleExceptions?: Prisma.ScheduleExceptionUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutImageVersionsInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutImageVersionsInput, Prisma.TenantUncheckedCreateWithoutImageVersionsInput>
+}
+
+export type TenantUpsertWithoutImageVersionsInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutImageVersionsInput, Prisma.TenantUncheckedUpdateWithoutImageVersionsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutImageVersionsInput, Prisma.TenantUncheckedCreateWithoutImageVersionsInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutImageVersionsInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutImageVersionsInput, Prisma.TenantUncheckedUpdateWithoutImageVersionsInput>
+}
+
+export type TenantUpdateWithoutImageVersionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  schedules?: Prisma.ScheduleUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
+  privacyConsents?: Prisma.PrivacyConsentUpdateManyWithoutTenantNestedInput
+  scheduleExceptions?: Prisma.ScheduleExceptionUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutImageVersionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  privacyConsents?: Prisma.PrivacyConsentUncheckedUpdateManyWithoutTenantNestedInput
   scheduleExceptions?: Prisma.ScheduleExceptionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
@@ -1502,6 +1717,7 @@ export type TenantCountOutputType = {
   appointments: number
   privacyConsents: number
   scheduleExceptions: number
+  imageVersions: number
 }
 
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1512,6 +1728,7 @@ export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   appointments?: boolean | TenantCountOutputTypeCountAppointmentsArgs
   privacyConsents?: boolean | TenantCountOutputTypeCountPrivacyConsentsArgs
   scheduleExceptions?: boolean | TenantCountOutputTypeCountScheduleExceptionsArgs
+  imageVersions?: boolean | TenantCountOutputTypeCountImageVersionsArgs
 }
 
 /**
@@ -1573,6 +1790,13 @@ export type TenantCountOutputTypeCountScheduleExceptionsArgs<ExtArgs extends run
   where?: Prisma.ScheduleExceptionWhereInput
 }
 
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountImageVersionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ImageVersionWhereInput
+}
+
 
 export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1581,6 +1805,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   phone?: boolean
   address?: boolean
   logoUrl?: boolean
+  bannerUrl?: boolean
   latitude?: boolean
   longitude?: boolean
   timezone?: boolean
@@ -1596,6 +1821,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   appointments?: boolean | Prisma.Tenant$appointmentsArgs<ExtArgs>
   privacyConsents?: boolean | Prisma.Tenant$privacyConsentsArgs<ExtArgs>
   scheduleExceptions?: boolean | Prisma.Tenant$scheduleExceptionsArgs<ExtArgs>
+  imageVersions?: boolean | Prisma.Tenant$imageVersionsArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tenant"]>
 
@@ -1606,6 +1832,7 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   phone?: boolean
   address?: boolean
   logoUrl?: boolean
+  bannerUrl?: boolean
   latitude?: boolean
   longitude?: boolean
   timezone?: boolean
@@ -1623,6 +1850,7 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   phone?: boolean
   address?: boolean
   logoUrl?: boolean
+  bannerUrl?: boolean
   latitude?: boolean
   longitude?: boolean
   timezone?: boolean
@@ -1640,6 +1868,7 @@ export type TenantSelectScalar = {
   phone?: boolean
   address?: boolean
   logoUrl?: boolean
+  bannerUrl?: boolean
   latitude?: boolean
   longitude?: boolean
   timezone?: boolean
@@ -1650,7 +1879,7 @@ export type TenantSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "logoUrl" | "latitude" | "longitude" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "logoUrl" | "bannerUrl" | "latitude" | "longitude" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   employees?: boolean | Prisma.Tenant$employeesArgs<ExtArgs>
@@ -1659,6 +1888,7 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   appointments?: boolean | Prisma.Tenant$appointmentsArgs<ExtArgs>
   privacyConsents?: boolean | Prisma.Tenant$privacyConsentsArgs<ExtArgs>
   scheduleExceptions?: boolean | Prisma.Tenant$scheduleExceptionsArgs<ExtArgs>
+  imageVersions?: boolean | Prisma.Tenant$imageVersionsArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TenantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1674,6 +1904,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
     privacyConsents: Prisma.$PrivacyConsentPayload<ExtArgs>[]
     scheduleExceptions: Prisma.$ScheduleExceptionPayload<ExtArgs>[]
+    imageVersions: Prisma.$ImageVersionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1682,6 +1913,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     phone: string | null
     address: string | null
     logoUrl: string | null
+    bannerUrl: string | null
     latitude: runtime.Decimal | null
     longitude: runtime.Decimal | null
     timezone: string
@@ -2091,6 +2323,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   appointments<T extends Prisma.Tenant$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   privacyConsents<T extends Prisma.Tenant$privacyConsentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$privacyConsentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrivacyConsentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   scheduleExceptions<T extends Prisma.Tenant$scheduleExceptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$scheduleExceptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduleExceptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  imageVersions<T extends Prisma.Tenant$imageVersionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$imageVersionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImageVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2126,6 +2359,7 @@ export interface TenantFieldRefs {
   readonly phone: Prisma.FieldRef<"Tenant", 'String'>
   readonly address: Prisma.FieldRef<"Tenant", 'String'>
   readonly logoUrl: Prisma.FieldRef<"Tenant", 'String'>
+  readonly bannerUrl: Prisma.FieldRef<"Tenant", 'String'>
   readonly latitude: Prisma.FieldRef<"Tenant", 'Decimal'>
   readonly longitude: Prisma.FieldRef<"Tenant", 'Decimal'>
   readonly timezone: Prisma.FieldRef<"Tenant", 'String'>
@@ -2692,6 +2926,30 @@ export type Tenant$scheduleExceptionsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.ScheduleExceptionScalarFieldEnum | Prisma.ScheduleExceptionScalarFieldEnum[]
+}
+
+/**
+ * Tenant.imageVersions
+ */
+export type Tenant$imageVersionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ImageVersion
+   */
+  select?: Prisma.ImageVersionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ImageVersion
+   */
+  omit?: Prisma.ImageVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageVersionInclude<ExtArgs> | null
+  where?: Prisma.ImageVersionWhereInput
+  orderBy?: Prisma.ImageVersionOrderByWithRelationInput | Prisma.ImageVersionOrderByWithRelationInput[]
+  cursor?: Prisma.ImageVersionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ImageVersionScalarFieldEnum | Prisma.ImageVersionScalarFieldEnum[]
 }
 
 /**

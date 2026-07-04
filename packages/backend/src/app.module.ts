@@ -12,6 +12,7 @@ import { AvailabilityModule } from './availability/availability.module';
 import { PublicModule } from './public/public.module';
 import { EmailModule } from './email/email.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { ProfileModule } from './profile/profile.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -30,6 +31,7 @@ import { validate } from './config/env.validation';
     PublicModule,
     EmailModule,
     AppointmentsModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

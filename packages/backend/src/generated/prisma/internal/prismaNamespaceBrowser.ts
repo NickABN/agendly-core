@@ -60,7 +60,8 @@ export const ModelName = {
   Schedule: 'Schedule',
   ScheduleException: 'ScheduleException',
   Appointment: 'Appointment',
-  PrivacyConsent: 'PrivacyConsent'
+  PrivacyConsent: 'PrivacyConsent',
+  ImageVersion: 'ImageVersion'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -86,6 +87,7 @@ export const TenantScalarFieldEnum = {
   phone: 'phone',
   address: 'address',
   logoUrl: 'logoUrl',
+  bannerUrl: 'bannerUrl',
   latitude: 'latitude',
   longitude: 'longitude',
   timezone: 'timezone',
@@ -224,6 +226,18 @@ export const PrivacyConsentScalarFieldEnum = {
 } as const
 
 export type PrivacyConsentScalarFieldEnum = (typeof PrivacyConsentScalarFieldEnum)[keyof typeof PrivacyConsentScalarFieldEnum]
+
+
+export const ImageVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  url: 'url',
+  fileSize: 'fileSize',
+  imageType: 'imageType',
+  createdAt: 'createdAt'
+} as const
+
+export type ImageVersionScalarFieldEnum = (typeof ImageVersionScalarFieldEnum)[keyof typeof ImageVersionScalarFieldEnum]
 
 
 export const SortOrder = {

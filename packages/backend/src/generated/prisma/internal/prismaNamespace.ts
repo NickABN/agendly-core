@@ -393,7 +393,8 @@ export const ModelName = {
   Schedule: 'Schedule',
   ScheduleException: 'ScheduleException',
   Appointment: 'Appointment',
-  PrivacyConsent: 'PrivacyConsent'
+  PrivacyConsent: 'PrivacyConsent',
+  ImageVersion: 'ImageVersion'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tenant" | "user" | "employee" | "service" | "serviceAvailability" | "employeeService" | "schedule" | "scheduleException" | "appointment" | "privacyConsent"
+    modelProps: "tenant" | "user" | "employee" | "service" | "serviceAvailability" | "employeeService" | "schedule" | "scheduleException" | "appointment" | "privacyConsent" | "imageVersion"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1153,6 +1154,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ImageVersion: {
+      payload: Prisma.$ImageVersionPayload<ExtArgs>
+      fields: Prisma.ImageVersionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ImageVersionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ImageVersionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>
+        }
+        findFirst: {
+          args: Prisma.ImageVersionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ImageVersionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>
+        }
+        findMany: {
+          args: Prisma.ImageVersionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>[]
+        }
+        create: {
+          args: Prisma.ImageVersionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>
+        }
+        createMany: {
+          args: Prisma.ImageVersionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ImageVersionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>[]
+        }
+        delete: {
+          args: Prisma.ImageVersionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>
+        }
+        update: {
+          args: Prisma.ImageVersionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ImageVersionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ImageVersionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ImageVersionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ImageVersionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageVersionPayload>
+        }
+        aggregate: {
+          args: Prisma.ImageVersionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateImageVersion>
+        }
+        groupBy: {
+          args: Prisma.ImageVersionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ImageVersionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ImageVersionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ImageVersionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1199,6 +1274,7 @@ export const TenantScalarFieldEnum = {
   phone: 'phone',
   address: 'address',
   logoUrl: 'logoUrl',
+  bannerUrl: 'bannerUrl',
   latitude: 'latitude',
   longitude: 'longitude',
   timezone: 'timezone',
@@ -1337,6 +1413,18 @@ export const PrivacyConsentScalarFieldEnum = {
 } as const
 
 export type PrivacyConsentScalarFieldEnum = (typeof PrivacyConsentScalarFieldEnum)[keyof typeof PrivacyConsentScalarFieldEnum]
+
+
+export const ImageVersionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  url: 'url',
+  fileSize: 'fileSize',
+  imageType: 'imageType',
+  createdAt: 'createdAt'
+} as const
+
+export type ImageVersionScalarFieldEnum = (typeof ImageVersionScalarFieldEnum)[keyof typeof ImageVersionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1489,6 +1577,20 @@ export type ListEnumAppointmentChannelFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'ImageType'
+ */
+export type EnumImageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ImageType'>
+    
+
+
+/**
+ * Reference to a field of type 'ImageType[]'
+ */
+export type ListEnumImageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ImageType[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1606,6 +1708,7 @@ export type GlobalOmitConfig = {
   scheduleException?: Prisma.ScheduleExceptionOmit
   appointment?: Prisma.AppointmentOmit
   privacyConsent?: Prisma.PrivacyConsentOmit
+  imageVersion?: Prisma.ImageVersionOmit
 }
 
 /* Types for Logging */

@@ -89,3 +89,8 @@ export type Appointment = Prisma.AppointmentModel
  * 
  */
 export type PrivacyConsent = Prisma.PrivacyConsentModel
+/**
+ * Model ImageVersion
+ * 
+ */
+export type ImageVersion = Prisma.ImageVersionModel

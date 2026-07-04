@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
@@ -29,30 +30,30 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const slug = this.generateSlug(dto.businessName);
+    const tenantId = randomUUID();
+    const uniqueSlug = await this.ensureUniqueSlug(this.prisma, slug);
 
-    const result = await this.prisma.$transaction(async (tx) => {
-      const tenant = await tx.tenant.create({
+    const [tenant, user] = await this.prisma.$transaction([
+      this.prisma.tenant.create({
         data: {
+          id: tenantId,
           name: dto.businessName,
-          slug: await this.ensureUniqueSlug(tx, slug),
+          slug: uniqueSlug,
           trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
         },
-      });
-
-      const user = await tx.user.create({
+      }),
+      this.prisma.user.create({
         data: {
-          tenantId: tenant.id,
+          tenantId,
           email: dto.email,
           passwordHash,
           name: dto.ownerName,
           role: 'OWNER',
         },
-      });
+      }),
+    ]);
 
-      return { tenant, user };
-    });
-
-    return this.buildAuthResponse(result.user, result.tenant.id);
+    return this.buildAuthResponse(user, tenant.id);
   }
 
   async login(dto: LoginDto) {
@@ -132,29 +133,30 @@ export class AuthService {
 
     // New user — create tenant + user
     const slug = this.generateSlug(profile.name);
-    const result = await this.prisma.$transaction(async (tx) => {
-      const tenant = await tx.tenant.create({
+    const tenantId = randomUUID();
+    const uniqueSlug = await this.ensureUniqueSlug(this.prisma, slug);
+
+    const [tenant, newUser] = await this.prisma.$transaction([
+      this.prisma.tenant.create({
         data: {
+          id: tenantId,
           name: profile.name,
-          slug: await this.ensureUniqueSlug(tx, slug),
+          slug: uniqueSlug,
           trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
         },
-      });
-
-      const newUser = await tx.user.create({
+      }),
+      this.prisma.user.create({
         data: {
-          tenantId: tenant.id,
+          tenantId,
           email: profile.email,
           name: profile.name,
           googleId: profile.googleId,
           role: 'OWNER',
         },
-      });
+      }),
+    ]);
 
-      return { tenant, user: newUser };
-    });
-
-    return this.buildAuthResponse(result.user, result.tenant.id);
+    return this.buildAuthResponse(newUser, tenant.id);
   }
 
   private buildAuthResponse(
@@ -183,13 +185,10 @@ export class AuthService {
       .replace(/^-|-$/g, '');
   }
 
-  private async ensureUniqueSlug(
-    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
-    baseSlug: string,
-  ): Promise<string> {
+  private async ensureUniqueSlug(prisma: PrismaService, baseSlug: string): Promise<string> {
     let slug = baseSlug;
     let counter = 1;
-    while (await tx.tenant.findUnique({ where: { slug } })) {
+    while (await prisma.tenant.findUnique({ where: { slug } })) {
       slug = `${baseSlug}-${counter}`;
       counter++;
     }

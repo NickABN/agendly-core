@@ -38,6 +38,11 @@ enum DayOfWeek {
   SUNDAY
 }
 
+enum ImageType {
+  LOGO
+  BANNER
+}
+
 // ─── Tenant ──────────────────────────────────────────────
 
 model Tenant {
@@ -47,6 +52,7 @@ model Tenant {
   phone       String?
   address     String?
   logoUrl     String?
+  bannerUrl   String?
   latitude    Decimal?  @db.Decimal(10, 7)
   longitude   Decimal?  @db.Decimal(10, 7)
   timezone    String    @default("America/Mexico_City")
@@ -63,6 +69,7 @@ model Tenant {
   appointments       Appointment[]
   privacyConsents    PrivacyConsent[]
   scheduleExceptions ScheduleException[]
+  imageVersions      ImageVersion[]
 }
 
 // ─── User (Business Owner / Admin) ──────────────────────
@@ -234,4 +241,20 @@ model PrivacyConsent {
 
   @@index([tenantId])
   @@index([clientPhone])
+}
+
+// ─── Image Version (upload history) ─────────────────────
+
+model ImageVersion {
+  id        String    @id @default(cuid())
+  tenantId  String
+  url       String
+  fileSize  Int       // bytes
+  imageType ImageType
+  createdAt DateTime  @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, imageType])
+  @@index([tenantId, createdAt(sort: Desc)])
 }

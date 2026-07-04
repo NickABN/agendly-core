@@ -297,6 +297,23 @@ export type EnumAppointmentChannelWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumAppointmentChannelFilter<$PrismaModel>
 }
 
+export type EnumImageTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ImageType | Prisma.EnumImageTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumImageTypeFilter<$PrismaModel> | $Enums.ImageType
+}
+
+export type EnumImageTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ImageType | Prisma.EnumImageTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumImageTypeWithAggregatesFilter<$PrismaModel> | $Enums.ImageType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumImageTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumImageTypeFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -591,6 +608,23 @@ export type NestedEnumAppointmentChannelWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumAppointmentChannelFilter<$PrismaModel>
   _max?: Prisma.NestedEnumAppointmentChannelFilter<$PrismaModel>
+}
+
+export type NestedEnumImageTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ImageType | Prisma.EnumImageTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumImageTypeFilter<$PrismaModel> | $Enums.ImageType
+}
+
+export type NestedEnumImageTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ImageType | Prisma.EnumImageTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ImageType[] | Prisma.ListEnumImageTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumImageTypeWithAggregatesFilter<$PrismaModel> | $Enums.ImageType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumImageTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumImageTypeFilter<$PrismaModel>
 }
 
 
