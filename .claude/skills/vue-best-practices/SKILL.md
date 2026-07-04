@@ -23,6 +23,7 @@ For any non-trivial feature, map components first:
 - Route/page components are thin composition surfaces (≤ ~150 lines): navigation state + child wiring.
 - Split when: 3+ distinct UI sections, >1 modal, repeated template blocks, or any section with its own fetch concern.
 - Feature folder layout: `components/<feature>/...` + `composables/use<Feature>.ts`.
+- ⚠️ Auto-import naming: Nuxt prefixes the directory and only dedupes EXACT segment overlap. `services/ServicesFormModal.vue` → `<ServicesFormModal>`, but `services/ServiceFormModal.vue` → `<ServicesServiceFormModal>` (singular ≠ plural — the component silently fails to resolve if you guess wrong). Name files starting with the exact PascalCase directory name.
 - Good in-repo examples: `components/booking/*`, `components/profile/*`, `components/calendar/*`. Anti-example (historical): the old 1122-line `pages/admin/index.vue`.
 
 ## Data flow & logic placement

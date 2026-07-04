@@ -79,8 +79,8 @@ onMounted(() => void servicesStore.load());
           </button>
         </div>
 
-        <ServiceFormModal v-model:open="showForm" :editing="editing" @submit="onSubmit" />
-        <ServiceAvailabilityModal :service="availabilityService" @close="availabilityService = null" />
+        <ServicesFormModal v-model:open="showForm" :editing="editing" @submit="onSubmit" />
+        <ServicesAvailabilityModal :service="availabilityService" @close="availabilityService = null" />
 
         <!-- Loading skeleton -->
         <div v-if="loading && services.length === 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label="Cargando servicios">
@@ -119,7 +119,7 @@ onMounted(() => void servicesStore.load());
 
         <!-- Service cards grid -->
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ServiceAdminCard
+          <ServicesAdminCard
             v-for="(s, idx) in services"
             :key="s.id"
             :service="s"

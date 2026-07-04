@@ -102,7 +102,7 @@ onMounted(() => void clients.load());
 
         <!-- Client list -->
         <div v-else class="space-y-3">
-          <ClientListItem
+          <ClientsListItem
             v-for="(c, idx) in clients.filtered.value"
             :key="c.phone"
             :client="c"

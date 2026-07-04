@@ -1,6 +1,6 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { Ref } from 'vue';
-import { utcToDateKey } from '@agendly/shared';
+import { formatTime, utcToDateKey } from '@agendly/shared';
 import type { CalendarView } from './useCalendarNav';
 
 export interface CalendarAppointment {
@@ -96,7 +96,7 @@ export function useAppointmentsCalendar(nav: {
 
   async function poll() {
     await refresh();
-    announcement.value = `Agenda actualizada a las ${new Date().toLocaleTimeString('es-MX')}`;
+    announcement.value = `Agenda actualizada a las ${formatTime(new Date())}`;
   }
 
   function startPolling() {
