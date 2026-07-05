@@ -19,7 +19,7 @@ const previewUrl = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 // ─── Computed ──────────────────────────────────────────────────────────────────
 const displayUrl = computed(() => previewUrl.value ?? props.currentUrl);
@@ -34,7 +34,7 @@ const aspectClass = computed(() =>
 // ─── Validation ────────────────────────────────────────────────────────────────
 function validateFile(file: File): string | null {
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    return 'Solo se permiten archivos JPEG o PNG.';
+    return 'Solo se permiten archivos JPEG, PNG o WebP.';
   }
   const maxBytes = props.maxSizeMb * 1024 * 1024;
   if (file.size > maxBytes) {
@@ -181,7 +181,7 @@ onUnmounted(() => {
       <input
         ref="fileInputRef"
         type="file"
-        accept="image/jpeg,image/png"
+        accept="image/jpeg,image/png,image/webp"
         class="sr-only"
         :aria-hidden="true"
         @change="onFileInputChange"

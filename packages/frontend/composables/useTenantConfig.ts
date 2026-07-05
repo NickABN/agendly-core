@@ -94,8 +94,12 @@ export function useTenantConfig() {
 
   const logoSrc = computed(() => {
     if (logoPreview.value) return logoPreview.value;
-    if (currentLogoUrl.value) return `${backendUrl}${currentLogoUrl.value}`;
-    return null;
+    if (!currentLogoUrl.value) return null;
+    // URLs nuevas (R2) son absolutas; solo los datos legacy /uploads/... locales
+    // necesitan el prefijo del backend.
+    return currentLogoUrl.value.startsWith('/')
+      ? `${backendUrl}${currentLogoUrl.value}`
+      : currentLogoUrl.value;
   });
 
   const mapSrc = computed(() => {

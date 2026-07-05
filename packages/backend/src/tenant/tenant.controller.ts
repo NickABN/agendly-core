@@ -10,18 +10,20 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantGuard } from '../common/guards/tenant.guard';
 import { CurrentTenant } from '../common/decorators/current-tenant.decorator';
 import { TenantService } from './tenant.service';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
+import { UploadService } from '../profile/upload.service';
 
 @Controller('tenant')
 @UseGuards(JwtAuthGuard, TenantGuard)
 export class TenantController {
-  constructor(private readonly tenantService: TenantService) {}
+  constructor(
+    private readonly tenantService: TenantService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   @Get()
   findCurrent(@CurrentTenant() tenantId: string) {
@@ -33,31 +35,13 @@ export class TenantController {
     return this.tenantService.update(tenantId, dto);
   }
 
+  /**
+   * Sube el logo vía el mismo pipeline que /profile/logo: optimización con
+   * sharp (resize + WebP) y almacenamiento en R2 (URL absoluta persistente).
+   * Antes escribía a disco local — efímero en contenedores.
+   */
   @Post('logo')
-  @UseInterceptors(
-    FileInterceptor('logo', {
-      storage: diskStorage({
-        destination: './uploads/logos',
-        filename: (_req, file, cb) => {
-          const uniqueSuffix = Date.now().toString(36);
-          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
-      limits: { fileSize: 2 * 1024 * 1024 },
-      fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/^image\/(jpeg|png|webp)$/)) {
-          cb(
-            new BadRequestException(
-              'Solo se permiten imágenes (JPEG, PNG, WebP)',
-            ),
-            false,
-          );
-          return;
-        }
-        cb(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('logo'))
   async uploadLogo(
     @CurrentTenant() tenantId: string,
     @UploadedFile() file: Express.Multer.File,
@@ -65,8 +49,9 @@ export class TenantController {
     if (!file) {
       throw new BadRequestException('No se recibió ningún archivo');
     }
-    const logoUrl = `/uploads/logos/${file.filename}`;
-    return this.tenantService.updateLogoUrl(tenantId, logoUrl);
+    await this.uploadService.uploadLogo(tenantId, file);
+    // Mantiene el shape de respuesta previo (el tenant completo con logoUrl)
+    return this.tenantService.findById(tenantId);
   }
 
   @Post('complete-onboarding')

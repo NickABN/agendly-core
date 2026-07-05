@@ -23,6 +23,9 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionsFilter());
 
+  // DEPRECADO: solo sirve logos legacy subidos a disco antes de migrar a R2.
+  // Los uploads nuevos van a R2 (URL absoluta). Quitar cuando no queden
+  // registros con logoUrl relativo /uploads/... en la base.
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
   });

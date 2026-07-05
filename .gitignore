@@ -34,3 +34,4 @@ prisma/*.db
 .claude/settings.local.json
 packages/backend/uploads/
 .playwright-cli/
+.netlify/

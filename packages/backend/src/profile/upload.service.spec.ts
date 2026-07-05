@@ -5,6 +5,21 @@ import {
 import * as fc from 'fast-check';
 import { UploadService } from './upload.service';
 
+// El pipeline de optimización real (sharp) se cubre en image-processor.spec.ts;
+// acá se mockea para que los buffers sintéticos del spec no sean rechazados y
+// el foco quede en la orquestación (validación, storage, transacción).
+jest.mock('./image-processor', () => ({
+  ...jest.requireActual<typeof import('./image-processor')>('./image-processor'),
+  processImage: jest.fn().mockImplementation((input: Buffer) =>
+    Promise.resolve({
+      buffer: input,
+      contentType: 'image/webp',
+      width: 512,
+      height: 512,
+    }),
+  ),
+}));
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -355,7 +370,8 @@ describe('UploadService — property tests', () => {
                 data: expect.objectContaining({
                   tenantId,
                   url: expectedUrl,
-                  fileSize,
+                  // Se persiste el tamaño PROCESADO (post-optimización), no el original
+                  fileSize: file.buffer.length,
                 }),
               }),
             );
@@ -417,7 +433,8 @@ describe('UploadService — property tests', () => {
                 data: expect.objectContaining({
                   tenantId,
                   url: expectedUrl,
-                  fileSize,
+                  // Se persiste el tamaño PROCESADO (post-optimización), no el original
+                  fileSize: file.buffer.length,
                 }),
               }),
             );
