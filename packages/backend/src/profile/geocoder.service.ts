@@ -16,7 +16,7 @@ export class GeocoderService {
         headers: { 'User-Agent': 'Agendly/1.0' },
       });
 
-      const results: NominatimResult[] = await response.json();
+      const results = (await response.json()) as NominatimResult[];
 
       if (!results || results.length === 0) {
         return null;

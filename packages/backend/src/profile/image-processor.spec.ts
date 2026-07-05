@@ -52,7 +52,9 @@ describe('processImage', () => {
   it('rejects buffers that are not images', async () => {
     const notAnImage = Buffer.from('esto no es una imagen');
 
-    await expect(processImage(notAnImage, IMAGE_PRESETS.logo)).rejects.toThrow();
+    await expect(
+      processImage(notAnImage, IMAGE_PRESETS.logo),
+    ).rejects.toThrow();
   });
 });
 
@@ -70,6 +72,8 @@ describe('safeBaseName', () => {
   });
 
   it('caps length at 60 chars', () => {
-    expect(safeBaseName(`${'a'.repeat(100)}.png`).length).toBeLessThanOrEqual(60);
+    expect(safeBaseName(`${'a'.repeat(100)}.png`).length).toBeLessThanOrEqual(
+      60,
+    );
   });
 });

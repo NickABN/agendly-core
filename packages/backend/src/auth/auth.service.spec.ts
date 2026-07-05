@@ -2,7 +2,6 @@ import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as fc from 'fast-check';
-import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 
 // ---------------------------------------------------------------------------

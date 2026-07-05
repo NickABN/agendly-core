@@ -50,3 +50,7 @@ jobs:
         run: pnpm test
         env:
           DATABASE_URL: postgresql://agendly:agendly_test@localhost:5432/agendly_test
+
+      # Atrapa builds rotos antes de que Render/Netlify los descubran en deploy
+      - name: Build
+        run: pnpm build

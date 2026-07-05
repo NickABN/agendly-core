@@ -18,9 +18,9 @@ export class SoftDeleteInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Observable<unknown> {
     return next.handle().pipe(
-      map((data) => {
+      map((data: unknown) => {
         if (Array.isArray(data)) {
-          return data.filter(
+          return (data as Array<{ deletedAt?: Date | null }>).filter(
             (item) => item.deletedAt === null || item.deletedAt === undefined,
           );
         }

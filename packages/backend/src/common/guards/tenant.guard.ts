@@ -4,11 +4,12 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from '../types/authenticated-request';
 
 @Injectable()
 export class TenantGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const user = request.user;
 
     if (!user?.tenantId) {

@@ -108,8 +108,42 @@ El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEN
 
 ---
 
+## Cloudflare R2 (imágenes: logos y banners)
+
+**¿Vale la pena?** Sí: el código ya está escrito para R2 (`storage.service.ts`, S3-compatible), el free tier da **10 GB de storage, 10M lecturas/mes, 1M escrituras/mes**, y el **egreso es $0** — servir las imágenes a los clientes no cuesta nunca (a diferencia de S3). Además el backend optimiza cada imagen antes de subir (sharp: resize + WebP), así que 10 GB alcanzan para decenas de miles de negocios.
+
+Pasos (una sola vez):
+
+1. Crear cuenta en https://dash.cloudflare.com (el plan free alcanza). Al activar **R2 Object Storage** pide una tarjeta de verificación — **no cobra** mientras estés dentro del free tier.
+2. R2 → **Create bucket** → nombre `agendly-media`, ubicación automática.
+3. Acceso público para servir las imágenes: en el bucket → **Settings → Public access → R2.dev subdomain → Allow**. La URL que te da (ej. `https://pub-xxxx.r2.dev`) es tu `R2_PUBLIC_URL`.
+   - Para producción real conviene un **custom domain** (ej. `media.agendly.mx`) con caché CDN de Cloudflare; para el PoC el subdominio r2.dev alcanza.
+4. Credenciales: R2 → **Manage R2 API Tokens → Create API Token** → permiso **Object Read & Write**, scoped al bucket `agendly-media` → te da `R2_ACCESS_KEY_ID` y `R2_SECRET_ACCESS_KEY`. El `R2_ACCOUNT_ID` aparece en la home del dashboard de R2.
+5. Setear las 5 variables:
+   - **Render**: Environment → agregar `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME=agendly-media`, `R2_PUBLIC_URL`.
+   - **Local**: en un `.env` en la raíz del repo (compose las inyecta al backend).
+
+Sin estas variables todo funciona igual, excepto subir logo/banner (falla con error controlado al intentarlo).
+
+**Optimización automática:** toda imagen subida pasa por sharp (`packages/backend/src/profile/image-processor.ts`): rotación EXIF, resize (logo máx 512×512, banner máx 1600×900, sin agrandar) y conversión a **WebP** — típicamente 70-90% menos peso que el original sin pérdida visible. Se aceptan JPEG, PNG y WebP de entrada.
+
+---
+
+## Auto-deploy (sin GitHub Actions de deploy — $0)
+
+Las integraciones git nativas hacen todo; no hay que escribir workflows de deploy:
+
+- **Render**: en el servicio → Settings → **Auto-Deploy: On Commit** para la rama `main`. Opcional y recomendado: **"Wait for CI to pass"** — Render espera el check verde de GitHub Actions antes de deployar. Push a main → CI → deploy automático.
+- **Netlify**: auto-deploy on push viene activado por defecto al conectar el repo. Activá también **Deploy Previews** (Site configuration → Build & deploy → Deploy Previews) — cada PR obtiene una URL de preview gratis.
+- **Protección de la rama main**: en repo **público** es gratis (Settings → Branches → require status checks antes de merge). En repo **privado** free no está disponible — el "Wait for CI" de Render cubre lo esencial (nunca se deploya un build con CI rojo).
+- Si algún día se quiere deploy orquestado desde Actions (por ejemplo, para correr migraciones como paso separado): Render y Netlify exponen **Deploy Hooks** (una URL a la que se hace POST) — se agrega un job al final del CI que los llama. No hace falta para el PoC.
+
+El CI (`.github/workflows/ci.yml`) corre en cada push/PR a `main`: typecheck + lint + tests (backend con Postgres real) + build de los tres packages. Costo: $0 (repo público ilimitado; privado 2,000 min/mes vs ~5 min/run).
+
+---
+
 ## Limitaciones conocidas (PoC)
 
-- **Ruta legacy `/tenant/logo`** usa disco local (multer `diskStorage`) → efímero en Render (se pierde en cada redeploy). La ruta nueva `/profile/logo` y `/profile/banner` usa R2 (persistente). El panel de configuración vieja usa la legacy; la de settings usa R2.
-- **`forgot-password`** pega a `/api/auth/forgot-password` (ruta relativa que no existe) → falla en silencio. Pendiente.
+- **`forgot-password`** pega a `/api/auth/forgot-password` (ruta relativa que no existe) → falla en silencio. Pendiente (ver `ROADMAP.md`).
 - **Migraciones en el arranque:** OK con un solo contenedor. Si escalás a múltiples instancias en Render, mover `prisma migrate deploy` a un job de release separado.
+- **Datos legacy de logo:** tenants que subieron logo antes de la migración a R2 tienen `logoUrl` relativo (`/uploads/...`) servido por el static mount deprecado del backend; basta resubir el logo para migrarlos.

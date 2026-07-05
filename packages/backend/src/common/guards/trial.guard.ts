@@ -5,13 +5,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import type { AuthenticatedRequest } from '../types/authenticated-request';
 
 @Injectable()
 export class TrialGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const tenantId = request.user?.tenantId;
 
     if (!tenantId) return false;

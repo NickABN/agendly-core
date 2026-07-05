@@ -9,7 +9,9 @@ import { UploadService } from './upload.service';
 // acá se mockea para que los buffers sintéticos del spec no sean rechazados y
 // el foco quede en la orquestación (validación, storage, transacción).
 jest.mock('./image-processor', () => ({
-  ...jest.requireActual<typeof import('./image-processor')>('./image-processor'),
+  ...jest.requireActual<typeof import('./image-processor')>(
+    './image-processor',
+  ),
   processImage: jest.fn().mockImplementation((input: Buffer) =>
     Promise.resolve({
       buffer: input,
@@ -221,7 +223,7 @@ describe('UploadService — property tests', () => {
    * Validates: Requirements 2.1, 2.3, 3.1, 3.3
    */
   describe('Property 3: MIME type validation', () => {
-    const VALID_MIME_TYPES = new Set(['image/jpeg', 'image/png']);
+    const VALID_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
     it('rejects all invalid MIME types with 422 without calling StorageService (logo)', async () => {
       await fc.assert(
