@@ -29,6 +29,11 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-side base for SSR fetches. In local Docker the Nuxt server reaches
+    // the backend over the compose network (http://backend:3000); the browser
+    // uses `public.apiUrl` instead. Empty in prod → falls back to public.apiUrl.
+    // Key `apiUrlInternal` maps to env NUXT_API_URL_INTERNAL at runtime.
+    apiUrlInternal: process.env.NUXT_API_URL_INTERNAL || '',
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3000',
     },

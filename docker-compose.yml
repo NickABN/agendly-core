@@ -2,13 +2,57 @@ services:
   db:
     image: postgres:16-alpine
     ports:
-      - '5433:5432'
+      - '5433:5432' # host tooling (prisma studio, psql). Internal services use db:5432
     environment:
       POSTGRES_DB: agendly
       POSTGRES_USER: agendly
       POSTGRES_PASSWORD: agendly_dev
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U agendly -d agendly']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Internal service name + internal port (NOT the host 5433 mapping)
+      DATABASE_URL: postgresql://agendly:agendly_dev@db:5432/agendly
+      JWT_SECRET: ${JWT_SECRET:-dev-only-insecure-secret-change-me}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-7d}
+      FRONTEND_URL: http://localhost:3001
+      PORT: '3000'
+      # Optional — uploads to Cloudflare R2. Without these, everything works
+      # except logo/banner upload (which fails lazily at request time).
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-}
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+    ports:
+      - '3000:3000'
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    depends_on:
+      - backend
+    environment:
+      # Browser-facing URL (must be reachable from the host browser)
+      NUXT_PUBLIC_API_URL: http://localhost:3000
+      # SSR server-side URL (Nuxt server → backend over the compose network)
+      NUXT_API_URL_INTERNAL: http://backend:3000
+    ports:
+      - '3001:3000'
 
 volumes:
   pgdata:

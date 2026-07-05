@@ -11,15 +11,17 @@ import type {
  */
 export async function usePublicBooking(slug: string) {
   const config = useRuntimeConfig();
-  const apiUrl = config.public.apiUrl;
+  const apiUrl = config.public.apiUrl; // browser-facing, for client-side calls (submit)
 
-  // Nuxt-instance-dependent composables MUST run before the first await:
+  // Nuxt-instance-dependent composables/utils MUST run before the first await:
   // after an await boundary the instance context is gone.
   const { slots, loading: loadingSlots, fetchSlots, reset: resetSlots } = useAvailability();
+  // SSR-safe base: internal URL when rendering on the server (Docker), public on the client.
+  const ssrBase = apiBase();
 
   // ── Tenant payload (SSR) ──
   const { data: tenantData, error: fetchError } = await useAsyncData(`public-${slug}`, () =>
-    $fetch<PublicTenantResponse>(`${apiUrl}/public/${slug}`),
+    $fetch<PublicTenantResponse>(`${ssrBase}/public/${slug}`),
   );
 
   const tenantName = computed(() => tenantData.value?.tenant.name ?? '');
