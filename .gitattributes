@@ -1,0 +1,7 @@
+# Shell scripts and Docker files MUST use LF, or they break inside Linux containers
+# (a CRLF shebang → "/bin/sh\r: no such file or directory"). Critical for fresh
+# clones on Render/CI where the working tree is checked out from scratch.
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
+docker-entrypoint.sh text eol=lf
