@@ -3,8 +3,13 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MinLength,
+  NotEquals,
   validateSync,
 } from 'class-validator';
+
+/** Valor default local — jamás debe llegar a un entorno real (OWASP A05). */
+const INSECURE_JWT_DEFAULT = 'dev-only-insecure-secret-change-me';
 
 class EnvironmentVariables {
   @IsString()
@@ -13,6 +18,14 @@ class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(32, {
+    message:
+      'JWT_SECRET debe tener al menos 32 caracteres (usa: openssl rand -hex 32)',
+  })
+  @NotEquals(INSECURE_JWT_DEFAULT, {
+    message:
+      'JWT_SECRET no puede ser el valor default inseguro; genera uno con openssl rand -hex 32',
+  })
   JWT_SECRET!: string;
 
   @IsString()

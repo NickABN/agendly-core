@@ -25,7 +25,8 @@ services:
     environment:
       # Internal service name + internal port (NOT the host 5433 mapping)
       DATABASE_URL: postgresql://agendly:agendly_dev@db:5432/agendly
-      JWT_SECRET: ${JWT_SECRET:-dev-only-insecure-secret-change-me}
+      # Secreto SOLO para local (32+ chars, no el banned default). En Render setea uno propio: openssl rand -hex 32
+      JWT_SECRET: ${JWT_SECRET:-local-dev-a1b2c3d4e5f60718293a4b5c6d7e8f90}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-7d}
       FRONTEND_URL: http://localhost:3001
       PORT: '3000'

@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseArrayPipe,
   Patch,
   Post,
   Put,
@@ -17,6 +18,7 @@ import { CurrentTenant } from '../common/decorators/current-tenant.decorator';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { ServiceAvailabilityItemDto } from './dto/set-availability.dto';
 
 @Controller('services')
 @UseGuards(JwtAuthGuard, TenantGuard)
@@ -65,8 +67,8 @@ export class ServicesController {
   setAvailability(
     @CurrentTenant() tenantId: string,
     @Param('id') id: string,
-    @Body()
-    items: Array<{ dayOfWeek: string; startTime?: string; endTime?: string }>,
+    @Body(new ParseArrayPipe({ items: ServiceAvailabilityItemDto }))
+    items: ServiceAvailabilityItemDto[],
   ) {
     return this.servicesService.setAvailability(tenantId, id, items);
   }

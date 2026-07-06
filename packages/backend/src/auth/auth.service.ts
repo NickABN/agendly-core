@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -11,8 +12,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
+/** Coste bcrypt: 12 rondas (recomendado actual; 10 era el mínimo aceptable). */
+const BCRYPT_ROUNDS = 12;
+
 @Injectable()
 export class AuthService {
+  // Audit log de eventos de auth (OWASP A09). El logger de request (pino, Fase O)
+  // adjunta IP + requestId automáticamente a cada línea.
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -28,7 +36,7 @@ export class AuthService {
       throw new ConflictException('Ya existe una cuenta con este email');
     }
 
-    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
     const slug = this.generateSlug(dto.businessName);
     const tenantId = randomUUID();
     const uniqueSlug = await this.ensureUniqueSlug(this.prisma, slug);
@@ -53,6 +61,7 @@ export class AuthService {
       }),
     ]);
 
+    this.logger.log(`Registro exitoso: ${dto.email}`);
     return this.buildAuthResponse(user, tenant.id);
   }
 
@@ -62,6 +71,7 @@ export class AuthService {
     });
 
     if (!user || !user.passwordHash) {
+      this.logger.warn(`Login fallido (usuario inexistente): ${dto.email}`);
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
@@ -70,13 +80,16 @@ export class AuthService {
       user.passwordHash,
     );
     if (!isPasswordValid) {
+      this.logger.warn(`Login fallido (contraseña incorrecta): ${dto.email}`);
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
     if (!user.isActive) {
+      this.logger.warn(`Login rechazado (cuenta desactivada): ${dto.email}`);
       throw new UnauthorizedException('Cuenta desactivada');
     }
 
+    this.logger.log(`Login exitoso: ${dto.email}`);
     return this.buildAuthResponse(user, user.tenantId);
   }
 

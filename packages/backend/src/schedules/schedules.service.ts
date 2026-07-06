@@ -2,11 +2,29 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { BulkScheduleDto } from './dto/bulk-schedule.dto';
+import { ensureExists } from '../common/prisma/ensure-exists';
 import type { DayOfWeek } from '../generated/prisma/client.js';
 
 @Injectable()
 export class SchedulesService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Verifica que el empleado pertenezca al tenant antes de escribir horarios.
+   * Sin esto, un tenant podía sobrescribir el horario de un empleado ajeno
+   * (la clave única de Schedule no incluye tenantId). OWASP A01 (IDOR).
+   */
+  private async ensureEmployeeInTenant(
+    tenantId: string,
+    employeeId: string,
+  ): Promise<void> {
+    ensureExists(
+      await this.prisma.employee.findFirst({
+        where: { id: employeeId, tenantId, deletedAt: null },
+      }),
+      'Empleado no encontrado',
+    );
+  }
 
   async findByEmployee(tenantId: string, employeeId: string) {
     const schedules = await this.prisma.schedule.findMany({
@@ -47,6 +65,7 @@ export class SchedulesService {
   }
 
   async create(tenantId: string, dto: CreateScheduleDto) {
+    await this.ensureEmployeeInTenant(tenantId, dto.employeeId);
     const blockIndex = dto.blockIndex ?? 0;
     const schedule = await this.prisma.schedule.upsert({
       where: {
@@ -83,6 +102,7 @@ export class SchedulesService {
   }
 
   async bulkSet(tenantId: string, dto: BulkScheduleDto) {
+    await this.ensureEmployeeInTenant(tenantId, dto.employeeId);
     await this.prisma.$transaction(async (tx) => {
       await tx.schedule.deleteMany({
         where: { tenantId, employeeId: dto.employeeId },
@@ -107,6 +127,7 @@ export class SchedulesService {
 
   /** Creates default Mon-Sat 09:00-19:00 schedule for an employee */
   async createDefault(tenantId: string, employeeId: string) {
+    await this.ensureEmployeeInTenant(tenantId, employeeId);
     const defaultDays: DayOfWeek[] = [
       'MONDAY' as DayOfWeek,
       'TUESDAY' as DayOfWeek,

@@ -31,6 +31,7 @@ export class BookingService {
   async createPublicBooking(
     tenantSlug: string,
     dto: CreateBookingDto,
+    clientIp?: string,
   ): Promise<BookingResponse> {
     const tenant = await this.prisma.tenant.findUnique({
       where: { slug: tenantSlug },
@@ -38,12 +39,13 @@ export class BookingService {
     if (!tenant || !tenant.isActive) {
       throw new NotFoundException('Negocio no encontrado');
     }
-    return this.createBooking(tenant.id, dto);
+    return this.createBooking(tenant.id, dto, clientIp);
   }
 
   async createBooking(
     tenantId: string,
     dto: CreateBookingDto,
+    clientIp?: string,
   ): Promise<BookingResponse> {
     // 1. Service and employee must exist, belong to the tenant, and be active
     const service = await this.prisma.service.findFirst({
@@ -115,13 +117,14 @@ export class BookingService {
             channel: (dto.channel as AppointmentChannel) || 'WEB',
           },
         }),
-        // Record privacy consent (LFPDPPP)
+        // Record privacy consent (LFPDPPP) — con IP como evidencia de origen
         this.prisma.privacyConsent.create({
           data: {
             tenantId,
             clientPhone: dto.clientPhone,
             clientEmail: dto.clientEmail,
             consentType: 'booking',
+            ipAddress: clientIp ?? null,
           },
         }),
       ]);

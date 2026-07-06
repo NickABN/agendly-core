@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -7,6 +7,26 @@ import { ensureExists } from '../common/prisma/ensure-exists';
 @Injectable()
 export class EmployeesService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Verifica que todos los serviceIds pertenezcan al tenant antes de asociarlos.
+   * Evita que un tenant vincule su empleado a un servicio ajeno (OWASP A01).
+   */
+  private async assertServicesInTenant(
+    tenantId: string,
+    serviceIds: string[],
+  ): Promise<void> {
+    if (serviceIds.length === 0) return;
+    const unique = [...new Set(serviceIds)];
+    const count = await this.prisma.service.count({
+      where: { id: { in: unique }, tenantId, deletedAt: null },
+    });
+    if (count !== unique.length) {
+      throw new BadRequestException(
+        'Uno o más servicios no pertenecen a tu negocio',
+      );
+    }
+  }
 
   async findAll(tenantId: string) {
     const employees = await this.prisma.employee.findMany({
@@ -24,6 +44,7 @@ export class EmployeesService {
   }
 
   async create(tenantId: string, dto: CreateEmployeeDto) {
+    await this.assertServicesInTenant(tenantId, dto.serviceIds ?? []);
     const employee = await this.prisma.employee.create({
       data: {
         tenantId,
@@ -46,6 +67,10 @@ export class EmployeesService {
   }
 
   async createMany(tenantId: string, dtos: CreateEmployeeDto[]) {
+    await this.assertServicesInTenant(
+      tenantId,
+      dtos.flatMap((d) => d.serviceIds ?? []),
+    );
     const created = await this.prisma.$transaction(
       dtos.map((dto) =>
         this.prisma.employee.create({
@@ -73,6 +98,7 @@ export class EmployeesService {
 
     // Update service associations if provided
     if (dto.serviceIds !== undefined) {
+      await this.assertServicesInTenant(tenantId, dto.serviceIds);
       await this.prisma.employeeService.deleteMany({
         where: { employeeId },
       });

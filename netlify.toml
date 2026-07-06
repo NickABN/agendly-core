@@ -18,3 +18,13 @@
 # Set NUXT_PUBLIC_API_URL in the Netlify UI (Site settings → Environment) to the
 # public Render backend URL, e.g. https://agendly-api.onrender.com
 # Do NOT set NUXT_API_URL_INTERNAL in prod — it's a local-Docker-only override.
+
+# Cabeceras de seguridad para el frontend (OWASP A05). Netlify termina TLS.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=()"

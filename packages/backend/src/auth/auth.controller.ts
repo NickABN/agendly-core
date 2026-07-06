@@ -7,6 +7,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -23,12 +24,15 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  // Anti fuerza-bruta: 5 intentos/min por IP en las rutas de credenciales (OWASP A07)
   @Post('register')
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
   @Post('login')
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }

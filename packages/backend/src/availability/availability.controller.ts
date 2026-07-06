@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Ip,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantGuard } from '../common/guards/tenant.guard';
@@ -34,8 +42,9 @@ export class AvailabilityController {
   publicBook(
     @Query('tenantSlug') tenantSlug: string,
     @Body() dto: CreateBookingDto,
+    @Ip() clientIp: string,
   ) {
-    return this.bookingService.createPublicBooking(tenantSlug, dto);
+    return this.bookingService.createPublicBooking(tenantSlug, dto, clientIp);
   }
 
   /**
