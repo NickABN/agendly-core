@@ -10,6 +10,7 @@ import {
 import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantGuard } from '../common/guards/tenant.guard';
+import { SubscriptionGuard } from '../common/guards/subscription.guard';
 import { CurrentTenant } from '../common/decorators/current-tenant.decorator';
 import { AvailabilityService } from './availability.service';
 import { BookingService } from './booking.service';
@@ -51,7 +52,7 @@ export class AvailabilityController {
    * Authenticated endpoint — admin creates a booking (walk-in / manual).
    */
   @Post('admin/book')
-  @UseGuards(JwtAuthGuard, TenantGuard)
+  @UseGuards(JwtAuthGuard, TenantGuard, SubscriptionGuard)
   adminBook(@CurrentTenant() tenantId: string, @Body() dto: CreateBookingDto) {
     return this.bookingService.createBooking(tenantId, {
       ...dto,

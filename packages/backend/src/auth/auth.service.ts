@@ -116,6 +116,8 @@ export class AuthService {
         onboardedAt: user.tenant.onboardedAt?.toISOString() ?? null,
         trialEndsAt: user.tenant.trialEndsAt.toISOString(),
         isActive: user.tenant.isActive,
+        subscriptionStatus: user.tenant.subscriptionStatus,
+        currentPeriodEnd: user.tenant.currentPeriodEnd?.toISOString() ?? null,
       },
     };
   }

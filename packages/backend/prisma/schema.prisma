@@ -43,6 +43,14 @@ enum ImageType {
   BANNER
 }
 
+enum SubscriptionStatus {
+  TRIALING // en período de prueba
+  ACTIVE // suscripción pagada al día
+  PAST_DUE // pago fallido, en gracia
+  CANCELED // cancelada o prueba vencida sin pago
+  INCOMPLETE // checkout iniciado, sin confirmar
+}
+
 // ─── Tenant ──────────────────────────────────────────────
 
 model Tenant {
@@ -61,6 +69,12 @@ model Tenant {
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  // Suscripción SaaS (Stripe)
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?
+  subscriptionStatus   SubscriptionStatus @default(TRIALING)
+  currentPeriodEnd     DateTime?
 
   users              User[]
   employees          Employee[]

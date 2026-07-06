@@ -12,6 +12,8 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
+    // Preserva el body crudo para verificar la firma del webhook de Stripe
+    rawBody: true,
   });
 
   // Logger estructurado (pino) para toda la app

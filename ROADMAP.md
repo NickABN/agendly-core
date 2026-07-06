@@ -13,7 +13,7 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | 3 | **`forgot-password` backend** (`POST /auth/forgot-password`: token + email con Resend + página de reset). Hoy la UI existe pero pega a un endpoint inexistente y "miente" éxito | Usuarios que olvidan su contraseña quedan afuera para siempre | Medio | 🟡 Media |
 | 4 | **`/admin/subscription`**: el banner de prueba linkea a una página que no existe (404). Crear placeholder o quitar el link hasta tener billing | Confunde en el momento más sensible (fin del trial) | Bajo | 🟡 Media |
 | 5 | **`/arco`** (página de derechos ARCO): está en la allowlist del middleware pero no existe. Obligatoria junto al aviso de privacidad (LFPDPPP) si se opera en México | Cumplimiento legal | Bajo | 🟡 Media |
-| 6 | **Billing / suscripciones** (Stripe/Conekta + plan por tenant + bloquear tras trial). El `trialEndsAt` existe pero nada lo hace cumplir | Sin esto no hay ingresos | Alto | 🟡 Media (antes de cobrar) |
+| 6 | ~~Billing / suscripciones~~ (Stripe: schema, checkout, portal, webhooks, enforcement del trial) | — | — | ✅ Hecho (falta cuenta Stripe + tarjeta real para producción) |
 | 7 | Recordatorios de cita (email/WhatsApp N horas antes; el enum `WHATSAPP` existe sin integración — Twilio/Meta API tiene costo) | Reduce inasistencias — la propuesta de valor central | Alto | 🟢 Post-PoC |
 | 8 | Split del template de `onboarding.vue` (761 líneas; la lógica ya está limpia en `useOnboarding`) | Solo mantenibilidad | Bajo | 🟢 Baja |
 | 9 | Mover `prisma migrate deploy` del entrypoint a un release job | Solo relevante con múltiples instancias | Bajo | 🟢 Cuando escale |

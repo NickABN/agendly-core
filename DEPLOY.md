@@ -109,6 +109,31 @@ El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEN
 | `NUXT_API_URL_INTERNAL` | solo local | `http://backend:3000` (ya en compose) | **no setear** |
 | `NUXT_PUBLIC_SENTRY_DSN` | ○ | — | error tracking frontend (ver OBSERVABILITY.md) |
 
+Vars de Stripe (backend, opcionales; sin ellas billing responde 503 y la UI muestra "contáctanos"):
+
+| Var | Dónde obtenerla |
+|---|---|
+| `STRIPE_SECRET_KEY` | Stripe → Developers → API keys (usa la **test** `sk_test_...`) |
+| `STRIPE_PRICE_ID` | Stripe → Products → tu plan → Price ID (`price_...`) |
+| `STRIPE_WEBHOOK_SECRET` | del endpoint de webhook (`whsec_...`, ver abajo) |
+
+---
+
+## Stripe (suscripción SaaS)
+
+Modelo: un plan mensual flat (el precio se define en Stripe, no en el código). Trial de 14 días automático al registrarse; al vencer sin pago, el admin se bloquea (redirige a `/admin/subscription`) y el negocio deja de tomar reservas públicas.
+
+**Setup (test mode, una sola vez):**
+1. Crear cuenta en https://stripe.com (modo **Test** activado, sin verificación de negocio para probar).
+2. **Product + Price**: Products → Add product → nombre "Agendly Profesional" → precio **recurrente mensual** en MXN (ej. $299) → guardar → copiar el **Price ID** (`price_...`) → `STRIPE_PRICE_ID`.
+3. **API key**: Developers → API keys → copiar la **Secret key** de test (`sk_test_...`) → `STRIPE_SECRET_KEY`.
+4. **Webhook**:
+   - **Prod (Render)**: Developers → Webhooks → Add endpoint → URL `https://<tu-backend>.onrender.com/billing/webhook` → eventos: `customer.subscription.*`, `invoice.paid`, `invoice.payment_failed` → copiar el **Signing secret** (`whsec_...`) → `STRIPE_WEBHOOK_SECRET` en Render.
+   - **Local**: instalar [Stripe CLI](https://stripe.com/docs/stripe-cli) → `stripe listen --forward-to localhost:3000/billing/webhook` → imprime el `whsec_...` → ponerlo en el `.env` de compose.
+5. **Probar el flujo**: login → `/admin/subscription` → Suscribirme → Checkout de Stripe (tarjeta test `4242 4242 4242 4242`, cualquier fecha futura/CVC) → el webhook activa la suscripción (`ACTIVE`). Probar fallo con `stripe trigger invoice.payment_failed`.
+
+El webhook verifica la firma sobre el body crudo; el resto de la API valida DTOs normalmente. El "Customer Portal" (gestionar/cancelar) se habilita en Stripe → Settings → Billing → Customer portal.
+
 ---
 
 ## Cloudflare R2 (imágenes: logos y banners)

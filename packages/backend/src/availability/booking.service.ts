@@ -10,6 +10,7 @@ import { EmailService } from '../email/email.service';
 import { AvailabilityService } from './availability.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { formatDate, formatTime, isPast, utcToDateKey } from '@agendly/shared';
+import { hasActiveAccess } from '../common/subscription-access';
 import type {
   AppointmentChannel as SharedChannel,
   AppointmentStatus as SharedStatus,
@@ -36,7 +37,7 @@ export class BookingService {
     const tenant = await this.prisma.tenant.findUnique({
       where: { slug: tenantSlug },
     });
-    if (!tenant || !tenant.isActive) {
+    if (!tenant || !hasActiveAccess(tenant)) {
       throw new NotFoundException('Negocio no encontrado');
     }
     return this.createBooking(tenant.id, dto, clientIp);

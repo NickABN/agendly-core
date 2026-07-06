@@ -38,15 +38,26 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
     <p class="sr-only" role="status" aria-live="polite">{{ calendar.announcement.value }}</p>
 
     <div class="flex-1 overflow-y-auto p-3 md:p-6">
-      <!-- Trial banner -->
+      <!-- Trial por vencer (últimos 7 días) -->
       <div
-        v-if="store.trialDaysRemaining > 0 && store.trialDaysRemaining <= 7"
+        v-if="store.hasAccess && store.trialDaysRemaining > 0 && store.trialDaysRemaining <= 7"
         class="mb-6 flex items-center gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200"
       >
         <span class="material-symbols-outlined text-amber-600" aria-hidden="true">schedule</span>
         <p class="text-sm text-amber-700">
           Te quedan <strong>{{ store.trialDaysRemaining }}</strong> días de prueba.
-          <NuxtLink to="/admin/subscription" class="font-bold underline ml-1">Actualizar plan →</NuxtLink>
+          <NuxtLink to="/admin/subscription" class="font-bold underline ml-1">Suscribirme →</NuxtLink>
+        </p>
+      </div>
+      <!-- Sin acceso vigente (prueba vencida sin pago) -->
+      <div
+        v-else-if="!store.hasAccess"
+        class="mb-6 flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200"
+      >
+        <span class="material-symbols-outlined text-red-600" aria-hidden="true">lock</span>
+        <p class="text-sm text-red-700">
+          Tu período de prueba terminó. Suscríbete para volver a recibir reservas.
+          <NuxtLink to="/admin/subscription" class="font-bold underline ml-1">Suscribirme →</NuxtLink>
         </p>
       </div>
 

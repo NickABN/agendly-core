@@ -60,6 +60,19 @@ class EnvironmentVariables {
   @IsString()
   @IsOptional()
   SENTRY_DSN?: string;
+
+  // Stripe (opcionales; sin ellas los endpoints de billing responden 503)
+  @IsString()
+  @IsOptional()
+  STRIPE_SECRET_KEY?: string;
+
+  @IsString()
+  @IsOptional()
+  STRIPE_WEBHOOK_SECRET?: string;
+
+  @IsString()
+  @IsOptional()
+  STRIPE_PRICE_ID?: string;
 }
 
 export function validate(config: Record<string, unknown>) {

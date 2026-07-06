@@ -9,13 +9,14 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantGuard } from '../common/guards/tenant.guard';
+import { SubscriptionGuard } from '../common/guards/subscription.guard';
 import { CurrentTenant } from '../common/decorators/current-tenant.decorator';
 import { SchedulesService } from './schedules.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { BulkScheduleDto } from './dto/bulk-schedule.dto';
 
 @Controller('schedules')
-@UseGuards(JwtAuthGuard, TenantGuard)
+@UseGuards(JwtAuthGuard, TenantGuard, SubscriptionGuard)
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 

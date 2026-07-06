@@ -39,6 +39,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
           onboardedAt: string | null;
           trialEndsAt: string;
           isActive: boolean;
+          subscriptionStatus?:
+            | 'TRIALING'
+            | 'ACTIVE'
+            | 'PAST_DUE'
+            | 'CANCELED'
+            | 'INCOMPLETE';
+          currentPeriodEnd?: string | null;
         };
       }>(`${config.public.apiUrl}/auth/me`, {
         headers: { Authorization: `Bearer ${store.token}` },
@@ -59,5 +66,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // If not onboarded, redirect to onboarding (unless already there)
   if (!store.isOnboarded && !to.path.startsWith('/onboarding')) {
     return navigateTo('/onboarding');
+  }
+
+  // Sin acceso vigente (prueba vencida y sin suscripción): forzar a pagar.
+  // Se permite la propia página de suscripción para no dejar al tenant encerrado.
+  if (!store.hasAccess && !to.path.startsWith('/admin/subscription')) {
+    return navigateTo('/admin/subscription');
   }
 });

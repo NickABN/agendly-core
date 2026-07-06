@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { hasActiveAccess } from '../common/subscription-access';
 
 @Injectable()
 export class PublicService {
@@ -11,7 +12,7 @@ export class PublicService {
       where: { slug },
     });
 
-    if (!tenant || !tenant.isActive) {
+    if (!tenant || !hasActiveAccess(tenant)) {
       throw new NotFoundException('Negocio no encontrado');
     }
 

@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantGuard } from '../common/guards/tenant.guard';
+import { SubscriptionGuard } from '../common/guards/subscription.guard';
 import { CurrentTenant } from '../common/decorators/current-tenant.decorator';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -21,7 +22,7 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { ServiceAvailabilityItemDto } from './dto/set-availability.dto';
 
 @Controller('services')
-@UseGuards(JwtAuthGuard, TenantGuard)
+@UseGuards(JwtAuthGuard, TenantGuard, SubscriptionGuard)
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 

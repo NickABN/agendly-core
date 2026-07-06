@@ -11,6 +11,7 @@ import {
   zonedToUtc,
 } from '@agendly/shared';
 import type { CheckAvailabilityRequest, TimeSlotDto } from '@agendly/shared';
+import { hasActiveAccess } from '../common/subscription-access';
 import type { DayOfWeek, Service } from '../generated/prisma/client.js';
 
 /** Sentinel employeeId for "cualquier disponible" searches. */
@@ -34,7 +35,7 @@ export class AvailabilityService {
     const tenant = await this.prisma.tenant.findUnique({
       where: { slug: tenantSlug },
     });
-    if (!tenant || !tenant.isActive) {
+    if (!tenant || !hasActiveAccess(tenant)) {
       throw new NotFoundException('Negocio no encontrado');
     }
 

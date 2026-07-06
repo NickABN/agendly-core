@@ -2,6 +2,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
 
+interface PaymentReceiptData {
+  to: string;
+  businessName: string;
+  amount: string;
+  currency: string;
+  invoiceUrl?: string;
+}
+
+interface PaymentFailedData {
+  to: string;
+  businessName: string;
+  manageUrl: string;
+}
+
 /** "ana@gmail.com" → "a***@gmail.com" para no loguear PII completa. */
 function maskEmail(email: string): string {
   const [user, domain] = email.split('@');
@@ -70,6 +84,34 @@ export class EmailService {
     } catch (err) {
       this.logger.error(`Fallo al enviar email a ${maskEmail(to)}`, err);
     }
+  }
+
+  // ── Billing (SaaS) ──────────────────────────────────────
+
+  async sendPaymentReceipt(data: PaymentReceiptData): Promise<void> {
+    const html = `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #111;">Recibo de pago</h2>
+      <p>Gracias por tu suscripción a Agendly para <strong>${data.businessName}</strong>.</p>
+      <div style="background: #f0fdf4; border-radius: 8px; padding: 16px; margin: 16px 0;">
+        <p style="margin: 4px 0;"><strong>Monto:</strong> $${data.amount} ${data.currency}</p>
+      </div>
+      ${data.invoiceUrl ? `<p><a href="${data.invoiceUrl}" style="color: #6366f1;">Ver factura</a></p>` : ''}
+      <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">Agendly</p>
+    </div>`;
+    await this.send(data.to, 'Recibo de pago — Agendly', html);
+  }
+
+  async sendPaymentFailed(data: PaymentFailedData): Promise<void> {
+    const html = `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #b91c1c;">No pudimos procesar tu pago</h2>
+      <p>Hubo un problema al cobrar la suscripción de <strong>${data.businessName}</strong>.</p>
+      <p>Actualiza tu método de pago para no perder el acceso:</p>
+      <p><a href="${data.manageUrl}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;">Gestionar suscripción</a></p>
+      <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">Agendly</p>
+    </div>`;
+    await this.send(data.to, 'Problema con tu pago — Agendly', html);
   }
 
   private confirmationTemplate(data: AppointmentEmailData): string {

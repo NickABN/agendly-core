@@ -9,6 +9,13 @@ interface User {
   tenantId: string;
 }
 
+type SubscriptionStatus =
+  | 'TRIALING'
+  | 'ACTIVE'
+  | 'PAST_DUE'
+  | 'CANCELED'
+  | 'INCOMPLETE';
+
 interface Tenant {
   id: string;
   name: string;
@@ -16,6 +23,8 @@ interface Tenant {
   onboardedAt: string | null;
   trialEndsAt: string;
   isActive: boolean;
+  subscriptionStatus?: SubscriptionStatus;
+  currentPeriodEnd?: string | null;
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -31,6 +40,15 @@ export const useAuthStore = defineStore('auth', () => {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   });
   const isTrialExpired = computed(() => trialDaysRemaining.value <= 0);
+
+  /** Acceso vigente: suscrito (ACTIVE/PAST_DUE) o en prueba no vencida. */
+  const hasAccess = computed(() => {
+    const status = tenant.value?.subscriptionStatus;
+    if (status === 'ACTIVE' || status === 'PAST_DUE') return true;
+    if (status === 'CANCELED' || status === 'INCOMPLETE') return false;
+    // TRIALING (o legacy sin status): depende de la prueba
+    return !isTrialExpired.value;
+  });
 
   function setAuth(newToken: string, newUser: User, newTenant?: Tenant) {
     token.value = newToken;
@@ -72,6 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
     isOnboarded,
     trialDaysRemaining,
     isTrialExpired,
+    hasAccess,
     setAuth,
     setTenant,
     logout,
