@@ -20,8 +20,8 @@ Estado: ✅ arreglado en esta iteración · 🟡 pendiente (con recomendación) 
 | A03-1 | A03 Injection | 🟡 Media | `setAvailability`/bulks sin DTO validado | ✅ |
 | A07-3 | A07 Auth | 🟢 Baja | Política de contraseña débil, bcrypt 10 rondas | ✅ (bcrypt→12) |
 | A09-1 | A09 Logging | 🟡 Media | Sin audit log de eventos de auth | ✅ (parcial) |
+| A07-4 | A07 Auth | 🟡 Media | Token en localStorage + en URL del callback OAuth | ✅ |
 | A07-1 | A07 Auth | 🟡 Media | JWT 7d no revocable, sin refresh | 🟡 |
-| A07-4 | A07 Auth | 🟡 Media | Token en localStorage + en URL del callback OAuth | 🟡 |
 | A01-5 | A01 Access | 🟡 Media | RolesGuard casi sin uso (RBAC latente) | 🟡 |
 | A07-5 | A07 Auth | 🟢 Baja | Enumeración de usuarios en /register (409) | 🟡 |
 | A10-1 | A10 SSRF | 🟢 Baja | Geocoder a host fijo (riesgo mínimo) | ℹ️ |
@@ -59,14 +59,20 @@ Estado: ✅ arreglado en esta iteración · 🟡 pendiente (con recomendación) 
 ### A07-3 / A09-1 — Password + audit log (Bajo/Medio)
 **Fix:** bcrypt subido a **12 rondas**. Audit log de eventos de auth en `auth.service` (login OK/fallido, register) a nivel `log`/`warn` — el logger de request (Fase O, pino) adjunta IP + requestId automáticamente.
 
+### A07-4 — Token en localStorage y en URL (Medio)
+**Antes:** el JWT vivía en `localStorage` (exfiltrable por XSS) y viajaba en la URL del callback de Google (queda en historial/logs/referer). Además la recarga dura de una ruta protegida rebotaba a `/login` (el token no existía server-side).
+**Fix:** el JWT ahora vive en una **cookie httpOnly + Secure + SameSite** (invisible a JS). El backend la setea en login/register/OAuth y la borra en `POST /auth/logout`; el `JwtStrategy` la lee de la cookie (con fallback a Bearer para API/tests). El frontend ya no guarda token: deriva la sesión de `/auth/me` (la cookie viaja automáticamente, y en SSR se reenvía). Esto **también arregla el rebote en F5**. El token ya NO viaja en la URL del OAuth. Verificado end-to-end (cookie con flags correctos, /auth/me 401 sin cookie, F5 en ruta protegida renderiza, logout limpia).
+
+**CSRF (residual):** con `SameSite=None` (necesario para el deploy cross-site Netlify+Render), la cookie viaja en requests cross-site. La mitigación vigente: la API solo acepta el origen del frontend (CORS con `credentials`) y las mutaciones son `application/json` → disparan preflight CORS que bloquea orígenes no permitidos; un CSRF clásico (form POST) no puede mandar `application/json` ni leer la respuesta. **Recomendación para prod real:** desplegar frontend+backend bajo el mismo dominio registrable (`app.agendly.mx` / `api.agendly.mx`) → `SameSite=Lax`, cookie de primera parte, sin cookies de terceros.
+
 ---
 
 ## Pendiente (recomendaciones — ver ROADMAP.md)
 
-- **A07-1 / A07-4 (Medio) — Sesiones:** JWT de 7 días no revocable, guardado en `localStorage` (exfiltrable por XSS) y pasado en la URL del callback de Google (queda en historial/logs). **Recomendación:** migrar a cookie `httpOnly`+`Secure`+`SameSite`, agregar refresh token con rotación, y pasar el token de Google por POST/fragment en vez de query. (Excluido de esta iteración por decisión; también arreglaría el bug de recarga dura → login.)
+- **A07-1 (Medio) — Sesiones:** el JWT (ahora en cookie httpOnly, 7 días) sigue sin revocación ni refresh token. **Recomendación:** agregar refresh token con rotación y una lista de revocación (o reducir el TTL con auto-refresh) para poder invalidar sesiones antes de su expiración.
 - **A01-5 (Medio) — RBAC:** `RolesGuard` solo se usa en profile; el resto de rutas no distingue OWNER/ADMIN. Latente porque hoy solo existe el rol OWNER. **Recomendación:** cablear RolesGuard cuando se agregue el flujo multi-usuario/invitaciones.
 - **A07-5 (Bajo) — Enumeración:** `/register` responde 409 para emails existentes. **Recomendación:** mensaje genérico o verificación por email.
-- **A06-1 — Dependencias:** agregar `pnpm audit --audit-level=high` al CI.
+- **A06-1 — Dependencias:** `pnpm audit --prod` agregado al CI como **advisory** (reporta sin bloquear). Se bumpeó `multer` a 2.2.0 (única alta en el runtime real). El resto de altas/crítica actuales están en el toolchain de Nuxt/devtools (transitivas, dev-only, fuera del `.output` buildeado) — triar cuando haya upstream fix.
 - **A10-1 (Bajo) — SSRF:** el geocoder pega a un host fijo con input URL-encodeado; riesgo mínimo, sin acción requerida.
 
 ---

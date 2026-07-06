@@ -1,29 +1,51 @@
 import { useAuthStore } from '~/stores/auth';
-import type { RegisterDto, LoginDto, AuthResponseDto } from '@agendly/shared';
+import type { RegisterDto, LoginDto } from '@agendly/shared';
+
+interface MeResponse {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  tenantId: string;
+  tenant: {
+    id: string;
+    name: string;
+    slug: string;
+    onboardedAt: string | null;
+    trialEndsAt: string;
+    isActive: boolean;
+    subscriptionStatus?:
+      | 'TRIALING'
+      | 'ACTIVE'
+      | 'PAST_DUE'
+      | 'CANCELED'
+      | 'INCOMPLETE';
+    currentPeriodEnd?: string | null;
+  };
+}
 
 export function useAuth() {
   const config = useRuntimeConfig();
   const store = useAuthStore();
   const apiUrl = config.public.apiUrl;
 
+  // El backend setea la cookie httpOnly en la respuesta; luego cargamos el perfil.
   async function register(data: RegisterDto) {
-    const response = await $fetch<AuthResponseDto>(`${apiUrl}/auth/register`, {
+    await $fetch(`${apiUrl}/auth/register`, {
       method: 'POST',
       body: data,
+      credentials: 'include',
     });
-    store.setAuth(response.accessToken, response.user);
     await fetchMe();
-    return response;
   }
 
   async function login(data: LoginDto) {
-    const response = await $fetch<AuthResponseDto>(`${apiUrl}/auth/login`, {
+    await $fetch(`${apiUrl}/auth/login`, {
       method: 'POST',
       body: data,
+      credentials: 'include',
     });
-    store.setAuth(response.accessToken, response.user);
     await fetchMe();
-    return response;
   }
 
   function loginWithGoogle() {
@@ -31,47 +53,31 @@ export function useAuth() {
   }
 
   async function fetchMe() {
-    if (!store.token) return;
     try {
-      const profile = await $fetch<{
-        id: string;
-        email: string;
-        name: string;
-        role: string;
-        tenantId: string;
-        tenant: {
-          id: string;
-          name: string;
-          slug: string;
-          onboardedAt: string | null;
-          trialEndsAt: string;
-          isActive: boolean;
-        };
-      }>(`${apiUrl}/auth/me`, {
-        headers: { Authorization: `Bearer ${store.token}` },
+      // apiBase(): URL interna en SSR (localhost:3000 dentro de Docker es el
+      // propio frontend), pública en el cliente.
+      const p = await $fetch<MeResponse>(`${apiBase()}/auth/me`, {
+        credentials: 'include',
+        headers: import.meta.server ? useRequestHeaders(['cookie']) : {},
       });
-      store.setAuth(store.token, {
-        id: profile.id,
-        email: profile.email,
-        name: profile.name,
-        role: profile.role,
-        tenantId: profile.tenantId,
-      }, profile.tenant);
+      store.setAuth(
+        { id: p.id, email: p.email, name: p.name, role: p.role, tenantId: p.tenantId },
+        p.tenant,
+      );
     } catch {
-      store.logout();
+      store.clear();
     }
   }
 
-  function logout() {
-    store.logout();
+  async function logout() {
+    try {
+      await $fetch(`${apiUrl}/auth/logout`, { method: 'POST', credentials: 'include' });
+    } catch {
+      // aunque falle, limpiamos el estado local
+    }
+    store.clear();
+    await navigateTo('/login');
   }
 
-  return {
-    register,
-    login,
-    loginWithGoogle,
-    fetchMe,
-    logout,
-    store,
-  };
+  return { register, login, loginWithGoogle, fetchMe, logout, store };
 }

@@ -5,17 +5,9 @@ import type {
   ImageVersionDto,
 } from '@agendly/shared';
 
-// --- Nuxt / store stubs ---
+// --- Nuxt stubs ---
 
-const mockToken = 'test-token';
-
-vi.mock('~/stores/auth', () => ({
-  useAuthStore: () => ({ token: mockToken }),
-}));
-
-vi.stubGlobal('useRuntimeConfig', () => ({
-  public: { apiUrl: 'http://localhost:3000' },
-}));
+vi.stubGlobal('apiBase', () => 'http://localhost:3000');
 
 const mockFetch = vi.fn();
 vi.stubGlobal('$fetch', mockFetch);
@@ -72,7 +64,8 @@ describe('useProfileApi', () => {
       // Verify the call
       expect(mockFetch).toHaveBeenCalledOnce();
       expect(mockFetch).toHaveBeenCalledWith('http://localhost:3000/profile', {
-        headers: { Authorization: `Bearer ${mockToken}` },
+        credentials: 'include',
+        headers: {},
       });
 
       // Verify the shape matches ProfileDto
@@ -100,7 +93,7 @@ describe('useProfileApi', () => {
 
       expect(url).toBe('http://localhost:3000/profile/logo');
       expect(options.method).toBe('POST');
-      expect(options.headers).toEqual({ Authorization: `Bearer ${mockToken}` });
+      expect((options as RequestInit & { credentials?: string }).credentials).toBe('include');
 
       // Verify FormData contains the 'file' field
       expect(options.body).toBeInstanceOf(FormData);

@@ -37,6 +37,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Reporte de vulnerabilidades de deps de producción (OWASP A06). Advisory:
+      # la mayoría de los hallazgos actuales son del toolchain de Nuxt/devtools
+      # (transitivas, dev-only, fuera del runtime buildeado). Triar y accionar las
+      # que estén en el runtime. No bloquea el build para no frenar merges por
+      # advisories no accionables de dependencias transitivas.
+      - name: Audit dependencies (advisory)
+        run: pnpm audit --prod --audit-level=high || true
+
       - name: Generate Prisma client
         run: pnpm --filter @agendly/backend exec prisma generate
 

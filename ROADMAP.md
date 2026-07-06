@@ -9,7 +9,7 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | # | Ítem | Impacto | Esfuerzo | Prioridad |
 |---|---|---|---|---|
 | 1 | ~~Unificar upload de logo en R2~~ | ~~logo se perdía en cada redeploy~~ | — | ✅ Hecho |
-| 2 | **Token de auth a cookie** (`useCookie` en vez de solo localStorage) | Recargar una página del admin (F5) rebota a /login — molesto para el negocio a diario | Medio | 🔴 Alta |
+| 2 | ~~Token de auth a cookie httpOnly~~ (arregla también el rebote en F5) | — | — | ✅ Hecho |
 | 3 | **`forgot-password` backend** (`POST /auth/forgot-password`: token + email con Resend + página de reset). Hoy la UI existe pero pega a un endpoint inexistente y "miente" éxito | Usuarios que olvidan su contraseña quedan afuera para siempre | Medio | 🟡 Media |
 | 4 | **`/admin/subscription`**: el banner de prueba linkea a una página que no existe (404). Crear placeholder o quitar el link hasta tener billing | Confunde en el momento más sensible (fin del trial) | Bajo | 🟡 Media |
 | 5 | **`/arco`** (página de derechos ARCO): está en la allowlist del middleware pero no existe. Obligatoria junto al aviso de privacidad (LFPDPPP) si se opera en México | Cumplimiento legal | Bajo | 🟡 Media |

@@ -10,22 +10,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
     to.path === '/' ||
     to.path.match(/^\/[a-z0-9-]+$/) !== null; // /[slug] booking pages
 
-  // Load token from storage on first load
-  if (import.meta.client && !store.token) {
-    store.loadTokenFromStorage();
-  }
-
   if (isPublicRoute) return;
 
-  // Protected route — needs auth
-  if (!store.token) {
-    return navigateTo('/login');
-  }
-
-  // If we have token but no user data, fetch profile
+  // Fuente de verdad de la sesión: la cookie httpOnly. Cargamos el perfil vía
+  // /auth/me reenviando la cookie (funciona en SSR y en cliente → sin rebote en F5).
   if (!store.user) {
     try {
-      const config = useRuntimeConfig();
+      // apiBase(): URL interna del backend en SSR (dentro de Docker localhost:3000
+      // es el propio frontend), pública en el cliente.
+      const base = apiBase();
       const profile = await $fetch<{
         id: string;
         email: string;
@@ -47,18 +40,21 @@ export default defineNuxtRouteMiddleware(async (to) => {
             | 'INCOMPLETE';
           currentPeriodEnd?: string | null;
         };
-      }>(`${config.public.apiUrl}/auth/me`, {
-        headers: { Authorization: `Bearer ${store.token}` },
+      }>(`${base}/auth/me`, {
+        credentials: 'include',
+        headers: import.meta.server ? useRequestHeaders(['cookie']) : {},
       });
-      store.setAuth(store.token, {
-        id: profile.id,
-        email: profile.email,
-        name: profile.name,
-        role: profile.role,
-        tenantId: profile.tenantId,
-      }, profile.tenant);
+      store.setAuth(
+        {
+          id: profile.id,
+          email: profile.email,
+          name: profile.name,
+          role: profile.role,
+          tenantId: profile.tenantId,
+        },
+        profile.tenant,
+      );
     } catch {
-      store.logout();
       return navigateTo('/login');
     }
   }

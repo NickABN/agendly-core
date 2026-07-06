@@ -1,21 +1,18 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'auth' });
 
-const route = useRoute();
 const { fetchMe, store } = useAuth();
 
+// Tras el OAuth de Google el backend ya seteó la cookie httpOnly (el token ya NO
+// viaja en la URL). Solo cargamos el perfil y redirigimos.
 onMounted(async () => {
-  const token = route.query.token as string;
-  if (token) {
-    store.setAuth(token, { id: '', email: '', name: '', role: '', tenantId: '' });
-    await fetchMe();
-    if (store.isOnboarded) {
-      navigateTo('/admin');
-    } else {
-      navigateTo('/onboarding');
-    }
+  await fetchMe();
+  if (!store.isAuthenticated) {
+    await navigateTo('/login');
+  } else if (store.isOnboarded) {
+    await navigateTo('/admin');
   } else {
-    navigateTo('/login');
+    await navigateTo('/onboarding');
   }
 });
 </script>

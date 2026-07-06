@@ -1,19 +1,18 @@
 import * as Sentry from '@sentry/vue';
-import { useAuthStore } from '~/stores/auth';
 
 export function useApi() {
-  const config = useRuntimeConfig();
-  const store = useAuthStore();
-  const apiUrl = config.public.apiUrl;
+  // apiBase(): URL interna del backend en SSR, pública en el cliente.
+  const apiUrl = apiBase();
+  // En SSR reenviamos la cookie entrante al backend (el navegador solo la adjunta
+  // en el cliente); en el cliente `credentials: 'include'` la manda automáticamente.
+  const ssrHeaders = import.meta.server ? useRequestHeaders(['cookie']) : {};
 
-  function authHeaders(): Record<string, string> {
-    return store.token ? { Authorization: `Bearer ${store.token}` } : {};
-  }
-
-  // Instancia con interceptor central de errores: los 5xx (fallas del servidor)
-  // se reportan a Sentry con contexto; los 4xx los maneja el llamador.
+  // Instancia con auth por cookie httpOnly + interceptor central de errores: los
+  // 5xx (fallas del servidor) se reportan a Sentry; los 4xx los maneja el llamador.
   const client = $fetch.create({
     baseURL: apiUrl,
+    credentials: 'include',
+    headers: ssrHeaders,
     onResponseError({ request, response }) {
       const status = response.status;
       if (status >= 500) {
@@ -26,35 +25,23 @@ export function useApi() {
   });
 
   function get<T>(path: string) {
-    return client<T>(path, { headers: authHeaders() });
+    return client<T>(path);
   }
 
   function post<T>(path: string, body?: Record<string, unknown> | unknown[] | FormData) {
-    return client<T>(path, {
-      method: 'POST',
-      body: body as Record<string, unknown>,
-      headers: authHeaders(),
-    });
+    return client<T>(path, { method: 'POST', body: body as Record<string, unknown> });
   }
 
   function patch<T>(path: string, body?: Record<string, unknown> | unknown[] | FormData) {
-    return client<T>(path, {
-      method: 'PATCH',
-      body: body as Record<string, unknown>,
-      headers: authHeaders(),
-    });
+    return client<T>(path, { method: 'PATCH', body: body as Record<string, unknown> });
   }
 
   function put<T>(path: string, body?: Record<string, unknown> | unknown[] | FormData) {
-    return client<T>(path, {
-      method: 'PUT',
-      body: body as Record<string, unknown>,
-      headers: authHeaders(),
-    });
+    return client<T>(path, { method: 'PUT', body: body as Record<string, unknown> });
   }
 
   function del<T>(path: string) {
-    return client<T>(path, { method: 'DELETE', headers: authHeaders() });
+    return client<T>(path, { method: 'DELETE' });
   }
 
   return { get, post, patch, put, del };

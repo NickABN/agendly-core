@@ -6,20 +6,17 @@ import type {
   UploadResponseDto,
   ImageVersionDto,
 } from '@agendly/shared';
-import { useAuthStore } from '~/stores/auth';
 
 export function useProfileApi() {
-  const config = useRuntimeConfig();
-  const store = useAuthStore();
-  const apiUrl = config.public.apiUrl;
-
-  function authHeaders(): Record<string, string> {
-    return store.token ? { Authorization: `Bearer ${store.token}` } : {};
-  }
+  // apiBase(): URL interna del backend en SSR, pública en el cliente.
+  const apiUrl = apiBase();
+  // Auth por cookie httpOnly: en SSR reenviamos la cookie entrante.
+  const ssrHeaders = import.meta.server ? useRequestHeaders(['cookie']) : {};
 
   async function getProfile(): Promise<ProfileDto> {
     return $fetch<ProfileDto>(`${apiUrl}/profile`, {
-      headers: authHeaders(),
+      credentials: 'include',
+      headers: ssrHeaders,
     });
   }
 
@@ -27,7 +24,8 @@ export function useProfileApi() {
     return $fetch<ProfileDto>(`${apiUrl}/profile`, {
       method: 'PATCH',
       body: dto,
-      headers: authHeaders(),
+      credentials: 'include',
+      headers: ssrHeaders,
     });
   }
 
@@ -35,7 +33,8 @@ export function useProfileApi() {
     return $fetch<LocationUpdateResponseDto>(`${apiUrl}/profile/location`, {
       method: 'PATCH',
       body: dto,
-      headers: authHeaders(),
+      credentials: 'include',
+      headers: ssrHeaders,
     });
   }
 
@@ -49,13 +48,15 @@ export function useProfileApi() {
     return $fetch<UploadResponseDto>(`${apiUrl}/profile/${type}`, {
       method: 'POST',
       body: formData,
-      headers: authHeaders(),
+      credentials: 'include',
+      headers: ssrHeaders,
     });
   }
 
   async function getImageHistory(): Promise<ImageVersionDto[]> {
     return $fetch<ImageVersionDto[]>(`${apiUrl}/profile/images`, {
-      headers: authHeaders(),
+      credentials: 'include',
+      headers: ssrHeaders,
     });
   }
 

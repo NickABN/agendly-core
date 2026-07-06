@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from 'nestjs-pino';
 import { join } from 'path';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
@@ -22,6 +23,8 @@ async function bootstrap() {
   // Detrás de Render/proxy: confía en X-Forwarded-For para obtener la IP real
   // del cliente (evidencia de consentimiento LFPDPPP, rate limiting por IP).
   app.set('trust proxy', 1);
+
+  app.use(cookieParser());
 
   // Cabeceras de seguridad. El backend es API-only (no sirve HTML propio salvo
   // el mount legacy /uploads), así que los defaults de helmet no rompen nada.
