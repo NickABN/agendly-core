@@ -36,6 +36,8 @@ export default defineNuxtConfig({
     apiUrlInternal: process.env.NUXT_API_URL_INTERNAL || '',
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3000',
+      // Error tracking (opcional; sin DSN el plugin de Sentry queda no-op)
+      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
     },
   },
 

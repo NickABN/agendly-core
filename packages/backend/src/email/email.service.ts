@@ -2,6 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
 
+/** "ana@gmail.com" → "a***@gmail.com" para no loguear PII completa. */
+function maskEmail(email: string): string {
+  const [user, domain] = email.split('@');
+  if (!domain) return '***';
+  return `${user.slice(0, 1)}***@${domain}`;
+}
+
 interface AppointmentEmailData {
   clientName: string;
   clientEmail: string;
@@ -48,7 +55,8 @@ export class EmailService {
 
   private async send(to: string, subject: string, html: string) {
     if (!this.resend) {
-      this.logger.log(`[EMAIL] To: ${to} | Subject: ${subject}`);
+      // No loguear el email completo (PII). Solo dominio + asunto.
+      this.logger.log(`[EMAIL] To: ${maskEmail(to)} | Subject: ${subject}`);
       return;
     }
 
@@ -60,7 +68,7 @@ export class EmailService {
         html,
       });
     } catch (err) {
-      this.logger.error(`Failed to send email to ${to}`, err);
+      this.logger.error(`Fallo al enviar email a ${maskEmail(to)}`, err);
     }
   }
 

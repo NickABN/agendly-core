@@ -51,6 +51,15 @@ class EnvironmentVariables {
   @IsString()
   @IsOptional()
   FRONTEND_URL?: string;
+
+  // Observabilidad (opcionales; sin ellas: log level 'info', Sentry no-op)
+  @IsString()
+  @IsOptional()
+  LOG_LEVEL?: string;
+
+  @IsString()
+  @IsOptional()
+  SENTRY_DSN?: string;
 }
 
 export function validate(config: Record<string, unknown>) {

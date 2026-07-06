@@ -53,8 +53,8 @@ docker compose down -v                 # frenar y borrar datos
    - **Runtime:** Docker
    - **Dockerfile Path:** `packages/backend/Dockerfile`
    - **Docker Build Context Directory:** `.` (raíz — el build es monorepo)
-   - **Health Check Path:** `/` (el `AppController` responde)
-3. **Environment variables** (ver matriz abajo): `DATABASE_URL` (Neon), `JWT_SECRET`, `FRONTEND_URL` (la URL de Netlify), `R2_*` (opcional). Render inyecta `PORT` solo; el entrypoint lo respeta.
+   - **Health Check Path:** `/health/ready` (verifica que la app y la DB estén arriba)
+3. **Environment variables** (ver matriz abajo): `DATABASE_URL` (Neon), `JWT_SECRET` (32+ chars, `openssl rand -hex 32` — el default inseguro es rechazado), `FRONTEND_URL` (la URL de Netlify), `R2_*` (opcional), `SENTRY_DSN`/`LOG_LEVEL` (opcional). Render inyecta `PORT` solo; el entrypoint lo respeta.
 4. Deploy. El entrypoint corre `prisma migrate deploy` y arranca. Anotá la URL pública (ej. `https://agendly-api.onrender.com`) → va en Netlify.
 
 > El free tier de Render duerme el servicio tras inactividad (primer request lento). Suficiente para un PoC.
@@ -87,7 +87,7 @@ El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEN
 | Var | Req | Local (compose) | Prod (Render) |
 |---|---|---|---|
 | `DATABASE_URL` | ✅ | `postgresql://agendly:agendly_dev@db:5432/agendly` (ya en compose) | Neon (`...?sslmode=require`) |
-| `JWT_SECRET` | ✅ | dev default en compose | secreto fuerte (generá con `openssl rand -hex 32`) |
+| `JWT_SECRET` | ✅ | local válido en compose | secreto fuerte 32+ chars (`openssl rand -hex 32`); el default inseguro es rechazado al boot |
 | `JWT_EXPIRATION` | ○ | `7d` | `7d` |
 | `FRONTEND_URL` | ○→✅ | `http://localhost:3001` | URL de Netlify |
 | `PORT` | ○ | `3000` (compose) | Render lo inyecta |
@@ -98,6 +98,8 @@ El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEN
 | `R2_PUBLIC_URL` | ○ | — | URL pública del bucket |
 | `RESEND_API_KEY` | ○ | — | para emails reales (si no, se loguean) |
 | `GOOGLE_CLIENT_ID` / `_SECRET` / `_CALLBACK_URL` | ○ | — | OAuth Google (no-op si faltan) |
+| `LOG_LEVEL` | ○ | `info` | `info` (o `debug` para diagnosticar) |
+| `SENTRY_DSN` | ○ | — | error tracking backend (ver OBSERVABILITY.md) |
 
 ### Frontend (Docker local + Netlify)
 
@@ -105,6 +107,7 @@ El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEN
 |---|---|---|---|
 | `NUXT_PUBLIC_API_URL` | ✅ | `http://localhost:3000` (ya en compose) | URL de Render |
 | `NUXT_API_URL_INTERNAL` | solo local | `http://backend:3000` (ya en compose) | **no setear** |
+| `NUXT_PUBLIC_SENTRY_DSN` | ○ | — | error tracking frontend (ver OBSERVABILITY.md) |
 
 ---
 

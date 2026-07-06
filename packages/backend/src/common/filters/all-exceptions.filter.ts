@@ -6,12 +6,13 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import * as Sentry from '@sentry/nestjs';
+import type { Request, Response } from 'express';
 
 /**
  * Global safety net: HTTP exceptions pass through untouched; anything else is
- * logged with its stack and returned as a sanitized 500 in Spanish, so internal
- * errors (Prisma, etc.) never leak details to the client.
+ * logged con contexto (método, ruta, requestId), reportado a Sentry y devuelto
+ * como un 500 sanitizado en español, sin filtrar internals al cliente.
  */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -20,6 +21,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request & { id?: string }>();
 
     if (exception instanceof HttpException) {
       response.status(exception.getStatus()).json(exception.getResponse());
@@ -28,7 +30,20 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const err =
       exception instanceof Error ? exception : new Error(String(exception));
-    this.logger.error(err.message, err.stack);
+
+    // Contexto de request para correlación (sin cuerpo ni PII)
+    this.logger.error(
+      {
+        err,
+        method: request?.method,
+        path: request?.url,
+        requestId: request?.id,
+      },
+      err.stack,
+    );
+
+    // Reporte a Sentry (no-op si no hay DSN configurado)
+    Sentry.captureException(err);
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
