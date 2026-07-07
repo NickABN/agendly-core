@@ -10,7 +10,12 @@ import {
 
 /** Valor default local — jamás debe llegar a un entorno real (OWASP A05). */
 const INSECURE_JWT_DEFAULT = 'dev-only-insecure-secret-change-me';
-const LOCAL_FRONTEND_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
+const LOCAL_FRONTEND_HOSTS = new Set([
+  'localhost',
+  '127.0.0.1',
+  '0.0.0.0',
+  '::1',
+]);
 
 function isHostedRenderEnvironment(
   env: Pick<EnvironmentVariables, 'RENDER' | 'RENDER_SERVICE_ID'>,
@@ -25,7 +30,10 @@ function isLocalDockerCompose(env: EnvironmentVariables): boolean {
   return env.AGENDLY_LOCAL_DOCKER === 'true' && !isHostedRenderEnvironment(env);
 }
 
-function validateProductionFrontendUrl(value: unknown, allowLocalDockerCompose: boolean): void {
+function validateProductionFrontendUrl(
+  value: unknown,
+  allowLocalDockerCompose: boolean,
+): void {
   if (typeof value !== 'string' || value.trim() === '') {
     throw new Error('FRONTEND_URL is required when NODE_ENV=production');
   }
@@ -34,15 +42,24 @@ function validateProductionFrontendUrl(value: unknown, allowLocalDockerCompose: 
   try {
     url = new URL(value);
   } catch {
-    throw new Error('FRONTEND_URL must be a valid URL when NODE_ENV=production');
+    throw new Error(
+      'FRONTEND_URL must be a valid URL when NODE_ENV=production',
+    );
   }
 
   if (!['https:', 'http:'].includes(url.protocol)) {
-    throw new Error('FRONTEND_URL must use http or https when NODE_ENV=production');
+    throw new Error(
+      'FRONTEND_URL must use http or https when NODE_ENV=production',
+    );
   }
 
-  if (!allowLocalDockerCompose && LOCAL_FRONTEND_HOSTS.has(url.hostname.toLowerCase())) {
-    throw new Error('FRONTEND_URL cannot point to localhost when NODE_ENV=production');
+  if (
+    !allowLocalDockerCompose &&
+    LOCAL_FRONTEND_HOSTS.has(url.hostname.toLowerCase())
+  ) {
+    throw new Error(
+      'FRONTEND_URL cannot point to localhost when NODE_ENV=production',
+    );
   }
 
   if (!allowLocalDockerCompose && url.protocol !== 'https:') {

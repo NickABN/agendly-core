@@ -26,9 +26,9 @@ describe('env.validation — JWT_SECRET (OWASP A05)', () => {
 
 describe('env.validation — FRONTEND_URL in production', () => {
   it('requires FRONTEND_URL when NODE_ENV=production', () => {
-    expect(() => validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'production' })).toThrow(
-      'FRONTEND_URL is required',
-    );
+    expect(() =>
+      validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'production' }),
+    ).toThrow('FRONTEND_URL is required');
   });
 
   it('rejects localhost FRONTEND_URL when NODE_ENV=production', () => {
@@ -90,6 +90,8 @@ describe('env.validation — FRONTEND_URL in production', () => {
   });
 
   it('keeps local development usable without FRONTEND_URL', () => {
-    expect(() => validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'development' })).not.toThrow();
+    expect(() =>
+      validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'development' }),
+    ).not.toThrow();
   });
 });
