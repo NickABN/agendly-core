@@ -7,6 +7,7 @@
     "dev:frontend": "pnpm --filter @agendly/frontend dev",
     "dev": "pnpm --filter @agendly/shared build && pnpm -r --parallel dev",
     "build": "pnpm -r build",
+    "ci:prepare": "pnpm --filter @agendly/shared build && pnpm --filter @agendly/backend exec prisma generate",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",

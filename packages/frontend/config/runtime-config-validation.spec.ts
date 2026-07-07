@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { validateProductionPublicApiUrl } from './runtime-config-validation';
 
 describe('runtime-config-validation — NUXT_PUBLIC_API_URL in production', () => {

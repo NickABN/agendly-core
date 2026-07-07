@@ -6,8 +6,15 @@ const DOCKER_ONLY_API_HOSTS = new Set([
   'docker.for.win.localhost',
 ]);
 
-type RuntimeEnv = Pick<NodeJS.ProcessEnv, 'NODE_ENV' | 'NETLIFY' | 'CONTEXT'>;
-type LocalDockerEnv = RuntimeEnv & Pick<NodeJS.ProcessEnv, 'AGENDLY_LOCAL_DOCKER'>;
+type RuntimeEnv = {
+  NODE_ENV?: string;
+  NETLIFY?: string;
+  CONTEXT?: string;
+};
+
+type LocalDockerEnv = RuntimeEnv & {
+  AGENDLY_LOCAL_DOCKER?: string;
+};
 
 function parseHttpUrl(name: string, value: string): URL {
   let url: URL;
@@ -28,21 +35,25 @@ function normalizedHostname(url: URL): string {
   return url.hostname.toLowerCase();
 }
 
-export function isProduction(env: RuntimeEnv = process.env): boolean {
+export function isProduction(env: RuntimeEnv = process.env as RuntimeEnv): boolean {
   return env.NODE_ENV === 'production';
 }
 
-export function isProductionNetlifyDeploy(env: RuntimeEnv = process.env): boolean {
+export function isProductionNetlifyDeploy(
+  env: RuntimeEnv = process.env as RuntimeEnv,
+): boolean {
   return env.NETLIFY === 'true' && env.CONTEXT === 'production';
 }
 
-export function isLocalDockerCompose(env: LocalDockerEnv = process.env): boolean {
+export function isLocalDockerCompose(
+  env: LocalDockerEnv = process.env as LocalDockerEnv,
+): boolean {
   return env.AGENDLY_LOCAL_DOCKER === 'true' && !isProductionNetlifyDeploy(env);
 }
 
 export function validateProductionPublicApiUrl(
   value: string | undefined,
-  env: LocalDockerEnv = process.env,
+  env: LocalDockerEnv = process.env as LocalDockerEnv,
 ): void {
   if (!value) {
     throw new Error('NUXT_PUBLIC_API_URL is required in production runtime/deploys');

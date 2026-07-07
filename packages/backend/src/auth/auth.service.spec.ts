@@ -4,6 +4,11 @@ import * as fc from 'fast-check';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 
+jest.mock('bcrypt', () => ({
+  hash: jest.fn().mockResolvedValue('mock-password-hash'),
+  compare: jest.fn(),
+}));
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
