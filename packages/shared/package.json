@@ -12,6 +12,7 @@
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "lint": "echo 'no lint configured yet'",
+    "pretest": "node ../../scripts/forbid-only.mjs src",
     "test": "vitest run"
   },
   "devDependencies": {

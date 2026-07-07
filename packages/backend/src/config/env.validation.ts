@@ -10,8 +10,63 @@ import {
 
 /** Valor default local — jamás debe llegar a un entorno real (OWASP A05). */
 const INSECURE_JWT_DEFAULT = 'dev-only-insecure-secret-change-me';
+const LOCAL_FRONTEND_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
+
+function isHostedRenderEnvironment(
+  env: Pick<EnvironmentVariables, 'RENDER' | 'RENDER_SERVICE_ID'>,
+): boolean {
+  return (
+    env.RENDER === 'true' ||
+    (typeof env.RENDER_SERVICE_ID === 'string' && env.RENDER_SERVICE_ID !== '')
+  );
+}
+
+function isLocalDockerCompose(env: EnvironmentVariables): boolean {
+  return env.AGENDLY_LOCAL_DOCKER === 'true' && !isHostedRenderEnvironment(env);
+}
+
+function validateProductionFrontendUrl(value: unknown, allowLocalDockerCompose: boolean): void {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new Error('FRONTEND_URL is required when NODE_ENV=production');
+  }
+
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new Error('FRONTEND_URL must be a valid URL when NODE_ENV=production');
+  }
+
+  if (!['https:', 'http:'].includes(url.protocol)) {
+    throw new Error('FRONTEND_URL must use http or https when NODE_ENV=production');
+  }
+
+  if (!allowLocalDockerCompose && LOCAL_FRONTEND_HOSTS.has(url.hostname.toLowerCase())) {
+    throw new Error('FRONTEND_URL cannot point to localhost when NODE_ENV=production');
+  }
+
+  if (!allowLocalDockerCompose && url.protocol !== 'https:') {
+    throw new Error('FRONTEND_URL must use https when NODE_ENV=production');
+  }
+}
 
 class EnvironmentVariables {
+  @IsString()
+  @IsOptional()
+  NODE_ENV?: string;
+
+  @IsString()
+  @IsOptional()
+  AGENDLY_LOCAL_DOCKER?: string;
+
+  @IsString()
+  @IsOptional()
+  RENDER?: string;
+
+  @IsString()
+  @IsOptional()
+  RENDER_SERVICE_ID?: string;
+
   @IsString()
   @IsNotEmpty()
   DATABASE_URL!: string;
@@ -31,6 +86,20 @@ class EnvironmentVariables {
   @IsString()
   @IsOptional()
   JWT_EXPIRATION?: string;
+
+  // Sesión: access token corto + refresh token deslizante con tope absoluto.
+  // Sin secreto nuevo — el refresh es opaco (random + SHA-256), no firmado.
+  @IsString()
+  @IsOptional()
+  ACCESS_TOKEN_TTL?: string; // def 15m
+
+  @IsString()
+  @IsOptional()
+  REFRESH_TOKEN_TTL?: string; // def 7d (deslizante)
+
+  @IsString()
+  @IsOptional()
+  REFRESH_ABSOLUTE_TTL?: string; // def 30d (tope duro de la familia)
 
   @IsString()
   @IsOptional()
@@ -86,5 +155,13 @@ export function validate(config: Record<string, unknown>) {
   if (errors.length > 0) {
     throw new Error(errors.toString());
   }
+
+  if (validatedConfig.NODE_ENV === 'production') {
+    validateProductionFrontendUrl(
+      validatedConfig.FRONTEND_URL,
+      isLocalDockerCompose(validatedConfig),
+    );
+  }
+
   return validatedConfig;
 }

@@ -4,11 +4,11 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
+import { TokenService } from './token.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -24,7 +24,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly tokenService: TokenService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -177,13 +177,16 @@ export class AuthService {
     return this.buildAuthResponse(newUser, tenant.id);
   }
 
-  private buildAuthResponse(
+  private async buildAuthResponse(
     user: { id: string; email: string; name: string; role: string },
     tenantId: string,
   ) {
     const payload = { sub: user.id, tenantId, role: user.role };
+    // El refresh se emite fuera de la $transaction de creación (el user.id ya existe).
+    const refreshToken = await this.tokenService.issueRefreshToken(user.id);
     return {
       accessToken: this.jwtService.sign(payload),
+      refreshToken,
       user: {
         id: user.id,
         email: user.email,

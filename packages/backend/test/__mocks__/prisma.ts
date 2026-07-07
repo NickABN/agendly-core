@@ -25,3 +25,14 @@ export type Service = {
   deletedAt: Date | null;
 };
 export type Tenant = Record<string, unknown>;
+export type RefreshToken = {
+  id: string;
+  userId: string;
+  familyId: string;
+  tokenHash: string;
+  expiresAt: Date;
+  familyExpiresAt: Date;
+  createdAt: Date;
+  revokedAt: Date | null;
+  replacedByTokenId: string | null;
+};

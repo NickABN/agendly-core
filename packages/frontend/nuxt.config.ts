@@ -1,4 +1,29 @@
 import { fileURLToPath } from 'node:url';
+import {
+  isProductionNetlifyDeploy,
+  validateNetlifyInternalApiUrl,
+  validateProductionPublicApiUrl,
+} from './config/runtime-config-validation';
+
+function publicApiUrl(): string {
+  const value = process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  if (isProductionNetlifyDeploy()) {
+    validateProductionPublicApiUrl(process.env.NUXT_PUBLIC_API_URL);
+  }
+
+  return value;
+}
+
+function internalApiUrl(): string {
+  const value = process.env.NUXT_API_URL_INTERNAL || '';
+
+  if (isProductionNetlifyDeploy()) {
+    validateNetlifyInternalApiUrl(value);
+  }
+
+  return value;
+}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -33,9 +58,9 @@ export default defineNuxtConfig({
     // the backend over the compose network (http://backend:3000); the browser
     // uses `public.apiUrl` instead. Empty in prod → falls back to public.apiUrl.
     // Key `apiUrlInternal` maps to env NUXT_API_URL_INTERNAL at runtime.
-    apiUrlInternal: process.env.NUXT_API_URL_INTERNAL || '',
+    apiUrlInternal: internalApiUrl(),
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3000',
+      apiUrl: publicApiUrl(),
       // Error tracking (opcional; sin DSN el plugin de Sentry queda no-op)
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
     },

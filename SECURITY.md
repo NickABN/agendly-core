@@ -21,7 +21,7 @@ Estado: ✅ arreglado en esta iteración · 🟡 pendiente (con recomendación) 
 | A07-3 | A07 Auth | 🟢 Baja | Política de contraseña débil, bcrypt 10 rondas | ✅ (bcrypt→12) |
 | A09-1 | A09 Logging | 🟡 Media | Sin audit log de eventos de auth | ✅ (parcial) |
 | A07-4 | A07 Auth | 🟡 Media | Token en localStorage + en URL del callback OAuth | ✅ |
-| A07-1 | A07 Auth | 🟡 Media | JWT 7d no revocable, sin refresh | 🟡 |
+| A07-1 | A07 Auth | 🟡 Media | JWT 7d no revocable, sin refresh | ✅ |
 | A01-5 | A01 Access | 🟡 Media | RolesGuard casi sin uso (RBAC latente) | 🟡 |
 | A07-5 | A07 Auth | 🟢 Baja | Enumeración de usuarios en /register (409) | 🟡 |
 | A10-1 | A10 SSRF | 🟢 Baja | Geocoder a host fijo (riesgo mínimo) | ℹ️ |
@@ -65,11 +65,23 @@ Estado: ✅ arreglado en esta iteración · 🟡 pendiente (con recomendación) 
 
 **CSRF (residual):** con `SameSite=None` (necesario para el deploy cross-site Netlify+Render), la cookie viaja en requests cross-site. La mitigación vigente: la API solo acepta el origen del frontend (CORS con `credentials`) y las mutaciones son `application/json` → disparan preflight CORS que bloquea orígenes no permitidos; un CSRF clásico (form POST) no puede mandar `application/json` ni leer la respuesta. **Recomendación para prod real:** desplegar frontend+backend bajo el mismo dominio registrable (`app.agendly.mx` / `api.agendly.mx`) → `SameSite=Lax`, cookie de primera parte, sin cookies de terceros.
 
+### A07-1 — Refresh tokens con rotación + lista de revocación (Medio)
+**Antes:** un único JWT de acceso vivía 7 días en la cookie y **no se podía revocar** antes de expirar. Robo de token o "cerrar sesión en otro dispositivo": no había forma de invalidar la sesión.
+**Fix:** esquema **access + refresh**:
+- **Access token** JWT corto (`ACCESS_TOKEN_TTL`, def **15 min**) en la cookie `agendly_token`. Al vencer, el request va sin cookie → 401 → el frontend renueva solo.
+- **Refresh token** opaco (256 bits random, `randomBytes(32)`), **nunca firmado**, en la cookie httpOnly `agendly_refresh` con `path=/auth` (menor superficie). En la DB (`RefreshToken`) solo se guarda su **SHA-256** → un dump de la tabla no permite forjar tokens. El lookup es por `id` (la cookie es `id.secret`) y el secreto se verifica en **tiempo constante** (`timingSafeEqual`).
+- **Rotación:** cada `POST /auth/refresh` revoca el token presentado (`revokedAt`), emite uno nuevo en la misma familia y los **encadena** (`replacedByTokenId`). La rotación es atómica (`$transaction` modo array — el driver adapter PrismaPg no soporta transacciones interactivas).
+- **Detección de reuso:** si se presenta un refresh **ya rotado** (con el secreto correcto) → robo comprobado → se **revoca toda la familia** (`familyId`) → cualquier sesión derivada de ese token muere.
+- **Duración:** deslizante **7 días** (`REFRESH_TOKEN_TTL`) con **tope absoluto 30 días** (`REFRESH_ABSOLUTE_TTL`) por familia (`familyExpiresAt`) → una sesión no vive más de 30 días desde el login, aunque se use a diario.
+- **Revocación server-side:** `POST /auth/logout` revoca la familia actual; `POST /auth/logout-all` revoca **todas** las familias del usuario (cerrar sesión en todos los dispositivos). La tabla `RefreshToken` **es** la lista de revocación.
+- **Frontend:** interceptor central en `useApi` con **single-flight** (varios 401 concurrentes → un solo refresh) + retry-once; el middleware SSR intenta un refresh antes de rebotar a `/login`.
+- **Impacto:** la ventana de un token robado baja de **7 días** a **15 minutos** (el access) y las sesiones son revocables al instante.
+Regresión: `token.service.spec.ts` (rotación, expiry, tope de familia, reuso→revoca familia, secreto inválido, usuario inactivo), `auth.service.spec.ts`, `useApi.spec.ts` (single-flight + guards anti-loop). Código: `token.service.ts`, `cookie.ts`, migración `20260706120000_add_refresh_token`.
+
 ---
 
 ## Pendiente (recomendaciones — ver ROADMAP.md)
 
-- **A07-1 (Medio) — Sesiones:** el JWT (ahora en cookie httpOnly, 7 días) sigue sin revocación ni refresh token. **Recomendación:** agregar refresh token con rotación y una lista de revocación (o reducir el TTL con auto-refresh) para poder invalidar sesiones antes de su expiración.
 - **A01-5 (Medio) — RBAC:** `RolesGuard` solo se usa en profile; el resto de rutas no distingue OWNER/ADMIN. Latente porque hoy solo existe el rol OWNER. **Recomendación:** cablear RolesGuard cuando se agregue el flujo multi-usuario/invitaciones.
 - **A07-5 (Bajo) — Enumeración:** `/register` responde 409 para emails existentes. **Recomendación:** mensaje genérico o verificación por email.
 - **A06-1 — Dependencias:** `pnpm audit --prod` agregado al CI como **advisory** (reporta sin bloquear). Se bumpeó `multer` a 2.2.0 (única alta en el runtime real). El resto de altas/crítica actuales están en el toolchain de Nuxt/devtools (transitivas, dev-only, fuera del `.output` buildeado) — triar cuando haya upstream fix.

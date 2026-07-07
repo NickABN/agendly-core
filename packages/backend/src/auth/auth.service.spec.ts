@@ -1,8 +1,8 @@
 import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import * as fc from 'fast-check';
 import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -12,8 +12,10 @@ function makeJwtService(): jest.Mocked<JwtService> {
   return { sign: jest.fn().mockReturnValue('mock-token') } as any;
 }
 
-function makeConfigService(): jest.Mocked<ConfigService> {
-  return { get: jest.fn() } as any;
+function makeTokenService(): jest.Mocked<TokenService> {
+  return {
+    issueRefreshToken: jest.fn().mockResolvedValue('rtid.rtsecret'),
+  } as any;
 }
 
 /**
@@ -122,12 +124,13 @@ describe('AuthService — Property 1: Bug Condition (unfixed code)', () => {
         const service = new AuthService(
           prisma,
           makeJwtService(),
-          makeConfigService(),
+          makeTokenService(),
         );
 
         const result = await service.register(dto);
 
         expect(result.accessToken).toBeTruthy();
+        expect(result.refreshToken).toBe('rtid.rtsecret');
         expect(result.user.email).toBe(dto.email);
       }),
       { numRuns: 5 },
@@ -156,7 +159,7 @@ describe('AuthService — Property 1: Bug Condition (unfixed code)', () => {
           const service = new AuthService(
             prisma,
             makeJwtService(),
-            makeConfigService(),
+            makeTokenService(),
           );
 
           const result = await service.findOrCreateGoogleUser(profile);
@@ -202,7 +205,7 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
         const service = new AuthService(
           prisma,
           makeJwtService(),
-          makeConfigService(),
+          makeTokenService(),
         );
 
         await expect(service.register(dto)).rejects.toThrow(ConflictException);
@@ -310,7 +313,7 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
           const service = new AuthService(
             prisma,
             makeJwtService(),
-            makeConfigService(),
+            makeTokenService(),
           );
 
           await service.register({
@@ -378,7 +381,7 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
           const service = new AuthService(
             prisma,
             makeJwtService(),
-            makeConfigService(),
+            makeTokenService(),
           );
           const result = await service.findOrCreateGoogleUser(profile);
 

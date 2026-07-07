@@ -10,6 +10,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "echo 'no lint configured yet'",
+    "pretest": "node ../../scripts/forbid-only.mjs .",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "nuxt typecheck"

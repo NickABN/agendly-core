@@ -100,9 +100,32 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  refreshTokens RefreshToken[]
 
   @@index([tenantId])
+}
+
+// ─── RefreshToken (rotación + lista de revocación, OWASP A07) ────
+
+model RefreshToken {
+  id                String    @id @default(cuid()) // handle que viaja en la cookie (id.secret)
+  userId            String
+  familyId          String // sesión — alcance de revocación ante reuso
+  tokenHash         String // SHA-256 del secreto opaco (el secreto nunca se persiste)
+  expiresAt         DateTime // expiry deslizante por token
+  familyExpiresAt   DateTime // tope absoluto de la familia (denormalizado)
+  createdAt         DateTime  @default(now())
+  revokedAt         DateTime?
+  replacedByTokenId String?   @unique // cadena de rotación (self-relation)
+
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replacedBy RefreshToken? @relation("RotationChain", fields: [replacedByTokenId], references: [id], onDelete: SetNull)
+  replaces   RefreshToken? @relation("RotationChain")
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt]) // soporta el barrido de limpieza lazy
 }
 
 // ─── Employee ───────────────────────────────────────────

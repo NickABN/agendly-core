@@ -30,6 +30,8 @@ prisma/*.db
 .idea/
 
 # Local tooling / artifacts
+.atl/
+.codegraph/
 .playwright/
 .claude/settings.local.json
 packages/backend/uploads/
