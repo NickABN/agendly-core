@@ -4,10 +4,10 @@
     <header
       class="sticky top-0 z-40 flex items-center justify-between px-6 lg:px-12 h-16 bg-white/80 backdrop-blur-md border-b border-slate-100/50 shadow-sm"
     >
-      <div class="flex items-center gap-2">
+      <NuxtLink to="/" class="flex items-center gap-2">
         <span class="material-symbols-outlined text-primary text-2xl">auto_awesome</span>
         <span class="text-lg font-bold text-on-surface tracking-tight">Agendly</span>
-      </div>
+      </NuxtLink>
       <nav class="hidden md:flex items-center gap-8">
         <a
           href="#beneficios"
@@ -23,7 +23,7 @@
         >Iniciar sesión</NuxtLink>
         <NuxtLink
           to="/register"
-          class="bg-primary text-on-primary px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-all"
+          class="soul-gradient text-on-primary px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-all"
         >Empezar ahora</NuxtLink>
       </nav>
       <!-- Mobile menu -->
@@ -34,7 +34,7 @@
         >Entrar</NuxtLink>
         <NuxtLink
           to="/register"
-          class="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-semibold"
+          class="soul-gradient text-on-primary px-4 py-2 rounded-lg text-sm font-semibold"
         >Registrarse</NuxtLink>
       </div>
     </header>
@@ -110,7 +110,7 @@
               </div>
               <!-- Mock appointments -->
               <div class="p-6 space-y-3 bg-surface-container-low">
-                <p class="text-xs font-bold uppercase tracking-widest text-outline mb-4">Martes 25 de marzo</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-outline mb-4">Hoy</p>
                 <div
                   v-for="(apt, i) in mockAppointments"
                   :key="i"
@@ -150,7 +150,7 @@
             >
               <div>
                 <div
-                  class="w-12 h-12 bg-primary-container text-on-primary-container rounded-lg flex items-center justify-center mb-6"
+                  class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-6"
                 >
                   <span class="material-symbols-outlined">link</span>
                 </div>
@@ -163,7 +163,7 @@
               <div class="mt-8 rounded-xl overflow-hidden bg-surface-container p-4 space-y-2">
                 <div class="flex items-center gap-3 bg-white rounded-lg px-4 py-3 shadow-sm">
                   <span class="material-symbols-outlined text-primary text-xl">content_copy</span>
-                  <span class="text-sm font-medium text-on-surface">agendly.mx/tu-salon</span>
+                  <span class="text-sm font-medium text-on-surface">{{ exampleBookingUrl }}</span>
                   <span
                     class="ml-auto text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-full"
                   >Copiar</span>
@@ -255,10 +255,10 @@
           </div>
           <div class="max-w-md mx-auto relative group">
             <div
-              class="absolute -inset-1 bg-gradient-to-r from-primary to-primary-container rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"
+              class="absolute -inset-1 bg-gradient-to-r from-primary to-primary-container rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000"
             ></div>
             <div
-              class="relative bg-surface-container-lowest p-10 rounded-2xl border border-outline-variant/30 flex flex-col items-center"
+              class="relative bg-surface-container-lowest p-10 rounded-3xl border border-outline-variant/30 flex flex-col items-center editorial-shadow"
             >
               <span
                 class="text-sm font-bold text-primary tracking-widest uppercase mb-4"
@@ -323,7 +323,10 @@
       class="flex flex-col items-center justify-center gap-6 w-full py-16 bg-slate-50 border-t border-slate-100"
     >
       <div class="flex flex-col items-center gap-4">
-        <span class="text-xs font-black uppercase text-slate-300 tracking-[0.2em]">Agendly</span>
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+          <span class="text-sm font-black uppercase text-slate-400 tracking-[0.2em]">Agendly</span>
+        </div>
         <div class="flex gap-8">
           <NuxtLink
             to="/privacidad"
@@ -349,6 +352,16 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: false })
+
+useSeoMeta({
+  title: 'Agendly — Dile adiós al caos de WhatsApp',
+  description:
+    'Centraliza tus citas, automatiza recordatorios y recupera tu paz mental. Diseñado para profesionales de belleza en México.',
+})
+
+const { bookingDisplayUrl } = usePublicBookingUrl()
+
+const exampleBookingUrl = computed(() => bookingDisplayUrl('tu-salon'))
 
 const mockAppointments = [
   {
@@ -388,6 +401,7 @@ const pricingFeatures = [
   'Recordatorios vía WhatsApp',
   'Base de datos de clientes',
   'Enlace público personalizado',
+  'Reportes de negocio',
   'Soporte prioritario 24/7',
 ]
 </script>

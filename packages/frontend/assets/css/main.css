@@ -1,10 +1,11 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-/* Agendly Design System — MD3-inspired tokens */
-:root {
+/* Agendly Design System — MD3-inspired tokens.
+   Declared in @theme so Tailwind v4 generates the utilities
+   (bg-surface-container-*, text-on-surface, border-outline-variant, ...). */
+@theme {
   /* Primary */
-  --color-primary: #005da9;
   --color-primary-container: #0076d3;
   --color-primary-fixed: #d4e3ff;
   --color-primary-fixed-dim: #a4c9ff;
@@ -12,10 +13,10 @@
   --color-on-primary-container: #001d36;
 
   /* Secondary */
-  --color-secondary: #526070;
   --color-secondary-container: #d5e4f7;
   --color-secondary-fixed: #6ffbbe;
   --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #586676;
 
   /* Tertiary */
   --color-tertiary: #8d4b00;
@@ -37,7 +38,6 @@
   --color-outline-variant: #c0c7d4;
 
   /* Error */
-  --color-error: #ba1a1a;
   --color-error-container: #ffdad6;
 
   /* Inverse */
@@ -46,10 +46,23 @@
   /* Celebration */
   --color-celebrate: #FBBF24;
   --color-celebrate-dark: #F59E0B;
+}
 
-  /* Success / Warning */
+/* Semantic names that collide with Nuxt UI color aliases (primary,
+   secondary, success, warning, error) stay out of @theme; these :root
+   values exist for direct var() use (e.g. .soul-gradient below). */
+:root {
+  /* Brand blue is duplicated in public/favicon.svg — update both together. */
+  --color-primary: #005da9;
+  --color-secondary: #526070;
+  --color-error: #ba1a1a;
   --color-success: #10B981;
   --color-warning: #F59E0B;
+
+  /* The bg-primary/text-primary utilities and Nuxt UI components read
+     --ui-primary (not --color-primary), so this override is what rebrands
+     them. secondary/success/warning/error keep Nuxt UI defaults on purpose. */
+  --ui-primary: var(--color-primary);
 }
 
 /* Base typography & background */
@@ -57,6 +70,8 @@ body {
   font-family: 'Inter', sans-serif;
   color: var(--color-on-surface);
   background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Agendly Design System Utilities */
