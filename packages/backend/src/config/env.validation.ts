@@ -54,7 +54,9 @@ function validateProductionFrontendUrl(
     !allowLocalDockerCompose &&
     LOCAL_FRONTEND_HOSTS.has(url.hostname.toLowerCase())
   ) {
-    throw new Error(`${name} cannot point to localhost when NODE_ENV=production`);
+    throw new Error(
+      `${name} cannot point to localhost when NODE_ENV=production`,
+    );
   }
 
   if (!allowLocalDockerCompose && url.protocol !== 'https:') {

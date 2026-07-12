@@ -72,7 +72,9 @@ describe('EmailService public booking links', () => {
 
     expect(sendEmailMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        html: expect.stringContaining('href="https://agendly-admin1.netlify.app"'),
+        html: expect.stringContaining(
+          'href="https://agendly-admin1.netlify.app"',
+        ),
       }),
     );
   });
