@@ -6,7 +6,7 @@ import { hasActiveAccess } from '../common/subscription-access';
 export class PublicService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /** Public landing data for agendly.mx/[slug]: tenant info, services, employees. */
+  /** Public landing data for the frontend public app /[slug] route. */
   async getTenantBySlug(slug: string) {
     const tenant = await this.prisma.tenant.findUnique({
       where: { slug },

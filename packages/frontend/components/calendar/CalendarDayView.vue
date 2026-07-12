@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CalendarAppointment } from '~/composables/useAppointmentsCalendar';
 
-defineProps<{
+const props = defineProps<{
   appointments: CalendarAppointment[];
   loading: boolean;
   isToday: boolean;
@@ -13,10 +13,18 @@ const emit = defineEmits<{
 }>();
 
 const copied = ref(false);
+const { bookingDisplayUrl, bookingUrl } = usePublicBookingUrl();
 
-async function copyPublicUrl(slug: string) {
+const publicUrl = computed(() => bookingUrl(props.slug));
+const publicUrlLabel = computed(() => bookingDisplayUrl(props.slug));
+
+async function copyPublicUrl() {
+  if (!publicUrl.value) {
+    return;
+  }
+
   try {
-    await navigator.clipboard.writeText(`https://agendly.mx/${slug}`);
+    await navigator.clipboard.writeText(publicUrl.value);
     copied.value = true;
     setTimeout(() => (copied.value = false), 2000);
   } catch {
@@ -45,7 +53,7 @@ async function copyPublicUrl(slug: string) {
       </p>
       <p class="text-sm text-[var(--color-on-surface-variant)] max-w-sm">
         Comparte tu enlace:
-        <span class="font-bold text-[var(--color-primary)]">agendly.mx/{{ slug }}</span>
+        <span class="font-bold text-[var(--color-primary)]">{{ publicUrlLabel }}</span>
       </p>
     </div>
 
@@ -66,11 +74,11 @@ async function copyPublicUrl(slug: string) {
     <div class="mt-8 p-4 md:p-5 rounded-2xl bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div class="min-w-0">
         <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-1">Tu enlace de reservas</p>
-        <p class="font-mono font-semibold text-[var(--color-primary)] truncate">agendly.mx/{{ slug }}</p>
+        <p class="font-mono font-semibold text-[var(--color-primary)] truncate">{{ publicUrlLabel }}</p>
       </div>
       <button
         class="text-sm font-semibold text-[var(--color-primary)] flex items-center gap-1.5 bg-white px-4 py-2 rounded-lg border border-[var(--color-primary)]/20 hover:bg-[var(--color-primary)]/5 transition-colors shrink-0"
-        @click="copyPublicUrl(slug)"
+        @click="copyPublicUrl"
       >
         <span class="material-symbols-outlined text-base" aria-hidden="true">{{ copied ? 'check' : 'content_copy' }}</span>
         {{ copied ? 'Copiado' : 'Copiar' }}

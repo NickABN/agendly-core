@@ -54,7 +54,7 @@ docker compose down -v                 # frenar y borrar datos
    - **Dockerfile Path:** `packages/backend/Dockerfile`
    - **Docker Build Context Directory:** `.` (raíz — el build es monorepo)
    - **Health Check Path:** `/health/ready` (verifica que la app y la DB estén arriba)
-3. **Environment variables** (ver matriz abajo): `DATABASE_URL` (Neon), `JWT_SECRET` (32+ chars, `openssl rand -hex 32` — el default inseguro es rechazado), `FRONTEND_URL` (la URL de Netlify), `R2_*` (opcional), `SENTRY_DSN`/`LOG_LEVEL` (opcional). Render inyecta `PORT` solo; el entrypoint lo respeta.
+3. **Environment variables** (see matrix below): `DATABASE_URL` (Neon), `JWT_SECRET` (32+ chars, `openssl rand -hex 32` — the insecure default is rejected), `FRONTEND_URL` (the frontend origin used by backend CORS/auth redirects), `PUBLIC_APP_URL` (the customer-facing booking/email base URL), `R2_*` (optional), `SENTRY_DSN`/`LOG_LEVEL` (optional). Render injects `PORT`; the entrypoint already respects it.
 4. Deploy. El entrypoint corre `prisma migrate deploy` y arranca. Anotá la URL pública (ej. `https://agendly-api.onrender.com`) → va en Netlify.
 
 > El free tier de Render duerme el servicio tras inactividad (primer request lento). Suficiente para un PoC.
@@ -66,8 +66,9 @@ docker compose down -v                 # frenar y borrar datos
 1. Add new site → import del repo → misma rama.
 2. Netlify lee `netlify.toml` (raíz): build `pnpm --filter @agendly/frontend build`, publish `packages/frontend/dist`, Node 24. Usa pnpm automáticamente (detecta `packageManager` del root).
 3. **Environment variables** (Site settings → Environment):
-   - `NUXT_PUBLIC_API_URL` = la URL de Render del backend (ej. `https://agendly-api.onrender.com`).
-   - **NO** setear `NUXT_API_URL_INTERNAL` (es solo para Docker local).
+   - `NUXT_PUBLIC_API_URL` = the Render backend URL (for example `https://agendly-api.onrender.com`).
+   - `NUXT_PUBLIC_APP_URL` = `https://agendly-admin1.netlify.app` while the temporary Netlify domain is active. Public booking pages resolve as `https://agendly-admin1.netlify.app/<slug>`.
+   - **Do not** set `NUXT_API_URL_INTERNAL` on Netlify (local Docker only).
 4. Deploy. Nitro autodetecta `NETLIFY` → preset `netlify` → función serverless SSR + estáticos.
 
 **Gotcha conocido (monorepo + SSR):** si en el primer deploy las rutas SSR dan 404 (los estáticos cargan pero `/[slug]` no renderiza server-side), es que el catch-all a la función SSR no se registró. Fix: verificar en el build log que Netlify detectó Nuxt/Nitro; si no, agregar el módulo oficial `@netlify/nuxt` o un `_redirects` con `/* /.netlify/functions/server 200`. En un build local con `NITRO_PRESET=netlify` se generan `packages/frontend/dist/` (estáticos) y `packages/frontend/.netlify/functions-internal/server/server.mjs` (la función) — esa es la salida esperada.
@@ -76,7 +77,7 @@ docker compose down -v                 # frenar y borrar datos
 
 ## 5. CORS
 
-El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEND_URL` **debe** ser exactamente la URL de Netlify (sin barra final), o el navegador bloquea las llamadas. Si cambiás el dominio de Netlify, actualizá `FRONTEND_URL` en Render y redeployá.
+The backend uses `FRONTEND_URL` for `enableCors` (`main.ts`). In Render, `FRONTEND_URL` must exactly match the Netlify frontend origin (no trailing slash) or the browser will block requests. The backend uses `PUBLIC_APP_URL` for customer-facing booking links in emails. The frontend uses `NUXT_PUBLIC_APP_URL` for the same booking-link base in the browser. For this rollout, both public-app variables should point to `https://agendly-admin1.netlify.app`.
 
 ---
 
@@ -89,7 +90,8 @@ El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEN
 | `DATABASE_URL` | ✅ | `postgresql://agendly:agendly_dev@db:5432/agendly` (ya en compose) | Neon (`...?sslmode=require`) |
 | `JWT_SECRET` | ✅ | local válido en compose | secreto fuerte 32+ chars (`openssl rand -hex 32`); el default inseguro es rechazado al boot |
 | `JWT_EXPIRATION` | ○ | `7d` | `7d` |
-| `FRONTEND_URL` | ○→✅ | `http://localhost:3001` | URL de Netlify |
+| `FRONTEND_URL` | ○→✅ | `http://localhost:3001` | Netlify frontend origin for backend CORS/auth redirects |
+| `PUBLIC_APP_URL` | ○→✅ | `http://localhost:3001` | Customer-facing booking/email base URL |
 | `PORT` | ○ | `3000` (compose) | Render lo inyecta |
 | `R2_ACCOUNT_ID` | ○ | — | Cloudflare R2 |
 | `R2_ACCESS_KEY_ID` | ○ | — | Cloudflare R2 |
@@ -105,8 +107,9 @@ El backend usa `FRONTEND_URL` para `enableCors` (`main.ts`). En Render, `FRONTEN
 
 | Var | Req | Local (compose) | Prod (Netlify) |
 |---|---|---|---|
-| `NUXT_PUBLIC_API_URL` | ✅ | `http://localhost:3000` (ya en compose) | URL de Render |
-| `NUXT_API_URL_INTERNAL` | solo local | `http://backend:3000` (ya en compose) | **no setear** |
+| `NUXT_PUBLIC_API_URL` | ✅ | `http://localhost:3000` (already in compose) | Render backend URL |
+| `NUXT_PUBLIC_APP_URL` | ✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` (temporary public frontend base URL) |
+| `NUXT_API_URL_INTERNAL` | local only | `http://backend:3000` (already in compose) | **do not set** |
 | `NUXT_PUBLIC_SENTRY_DSN` | ○ | — | error tracking frontend (ver OBSERVABILITY.md) |
 
 Vars de Stripe (backend, opcionales; sin ellas billing responde 503 y la UI muestra "contáctanos"):

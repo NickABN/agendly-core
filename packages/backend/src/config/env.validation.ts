@@ -31,39 +31,34 @@ function isLocalDockerCompose(env: EnvironmentVariables): boolean {
 }
 
 function validateProductionFrontendUrl(
+  name: 'FRONTEND_URL' | 'PUBLIC_APP_URL',
   value: unknown,
   allowLocalDockerCompose: boolean,
 ): void {
   if (typeof value !== 'string' || value.trim() === '') {
-    throw new Error('FRONTEND_URL is required when NODE_ENV=production');
+    throw new Error(`${name} is required when NODE_ENV=production`);
   }
 
   let url: URL;
   try {
     url = new URL(value);
   } catch {
-    throw new Error(
-      'FRONTEND_URL must be a valid URL when NODE_ENV=production',
-    );
+    throw new Error(`${name} must be a valid URL when NODE_ENV=production`);
   }
 
   if (!['https:', 'http:'].includes(url.protocol)) {
-    throw new Error(
-      'FRONTEND_URL must use http or https when NODE_ENV=production',
-    );
+    throw new Error(`${name} must use http or https when NODE_ENV=production`);
   }
 
   if (
     !allowLocalDockerCompose &&
     LOCAL_FRONTEND_HOSTS.has(url.hostname.toLowerCase())
   ) {
-    throw new Error(
-      'FRONTEND_URL cannot point to localhost when NODE_ENV=production',
-    );
+    throw new Error(`${name} cannot point to localhost when NODE_ENV=production`);
   }
 
   if (!allowLocalDockerCompose && url.protocol !== 'https:') {
-    throw new Error('FRONTEND_URL must use https when NODE_ENV=production');
+    throw new Error(`${name} must use https when NODE_ENV=production`);
   }
 }
 
@@ -138,6 +133,10 @@ class EnvironmentVariables {
   @IsOptional()
   FRONTEND_URL?: string;
 
+  @IsString()
+  @IsOptional()
+  PUBLIC_APP_URL?: string;
+
   // Observabilidad (opcionales; sin ellas: log level 'info', Sentry no-op)
   @IsString()
   @IsOptional()
@@ -175,7 +174,13 @@ export function validate(config: Record<string, unknown>) {
 
   if (validatedConfig.NODE_ENV === 'production') {
     validateProductionFrontendUrl(
+      'FRONTEND_URL',
       validatedConfig.FRONTEND_URL,
+      isLocalDockerCompose(validatedConfig),
+    );
+    validateProductionFrontendUrl(
+      'PUBLIC_APP_URL',
+      validatedConfig.PUBLIC_APP_URL,
       isLocalDockerCompose(validatedConfig),
     );
   }

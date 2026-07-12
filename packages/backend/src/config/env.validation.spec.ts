@@ -27,7 +27,12 @@ describe('env.validation — JWT_SECRET (OWASP A05)', () => {
 describe('env.validation — FRONTEND_URL in production', () => {
   it('requires FRONTEND_URL when NODE_ENV=production', () => {
     expect(() =>
-      validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'production' }),
+      validate({
+        ...BASE,
+        JWT_SECRET: STRONG,
+        NODE_ENV: 'production',
+        PUBLIC_APP_URL: 'https://agendly-admin1.netlify.app',
+      }),
     ).toThrow('FRONTEND_URL is required');
   });
 
@@ -38,6 +43,7 @@ describe('env.validation — FRONTEND_URL in production', () => {
         JWT_SECRET: STRONG,
         NODE_ENV: 'production',
         FRONTEND_URL: 'http://localhost:3001',
+        PUBLIC_APP_URL: 'https://agendly-admin1.netlify.app',
       }),
     ).toThrow('FRONTEND_URL cannot point to localhost');
   });
@@ -50,6 +56,7 @@ describe('env.validation — FRONTEND_URL in production', () => {
         NODE_ENV: 'production',
         AGENDLY_LOCAL_DOCKER: 'true',
         FRONTEND_URL: 'http://localhost:3001',
+        PUBLIC_APP_URL: 'http://localhost:3001',
       }),
     ).not.toThrow();
   });
@@ -63,6 +70,7 @@ describe('env.validation — FRONTEND_URL in production', () => {
         AGENDLY_LOCAL_DOCKER: 'true',
         RENDER: 'true',
         FRONTEND_URL: 'http://localhost:3001',
+        PUBLIC_APP_URL: 'https://agendly-admin1.netlify.app',
       }),
     ).toThrow('FRONTEND_URL cannot point to localhost');
   });
@@ -74,6 +82,7 @@ describe('env.validation — FRONTEND_URL in production', () => {
         JWT_SECRET: STRONG,
         NODE_ENV: 'production',
         FRONTEND_URL: 'http://app.agendly.mx',
+        PUBLIC_APP_URL: 'https://agendly-admin1.netlify.app',
       }),
     ).toThrow('FRONTEND_URL must use https');
   });
@@ -85,6 +94,7 @@ describe('env.validation — FRONTEND_URL in production', () => {
         JWT_SECRET: STRONG,
         NODE_ENV: 'production',
         FRONTEND_URL: 'https://app.agendly.mx',
+        PUBLIC_APP_URL: 'https://agendly-admin1.netlify.app',
       }),
     ).not.toThrow();
   });
@@ -92,6 +102,68 @@ describe('env.validation — FRONTEND_URL in production', () => {
   it('keeps local development usable without FRONTEND_URL', () => {
     expect(() =>
       validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'development' }),
+    ).not.toThrow();
+  });
+});
+
+describe('env.validation — PUBLIC_APP_URL in production', () => {
+  it('requires PUBLIC_APP_URL when NODE_ENV=production', () => {
+    expect(() =>
+      validate({
+        ...BASE,
+        JWT_SECRET: STRONG,
+        NODE_ENV: 'production',
+        FRONTEND_URL: 'https://app.agendly.mx',
+      }),
+    ).toThrow('PUBLIC_APP_URL is required');
+  });
+
+  it('rejects localhost PUBLIC_APP_URL when NODE_ENV=production', () => {
+    expect(() =>
+      validate({
+        ...BASE,
+        JWT_SECRET: STRONG,
+        NODE_ENV: 'production',
+        FRONTEND_URL: 'https://app.agendly.mx',
+        PUBLIC_APP_URL: 'http://localhost:3001',
+      }),
+    ).toThrow('PUBLIC_APP_URL cannot point to localhost');
+  });
+
+  it('accepts localhost PUBLIC_APP_URL for explicit local Docker compose production runtime', () => {
+    expect(() =>
+      validate({
+        ...BASE,
+        JWT_SECRET: STRONG,
+        NODE_ENV: 'production',
+        AGENDLY_LOCAL_DOCKER: 'true',
+        FRONTEND_URL: 'http://localhost:3001',
+        PUBLIC_APP_URL: 'http://localhost:3001',
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects non-https public PUBLIC_APP_URL when NODE_ENV=production', () => {
+    expect(() =>
+      validate({
+        ...BASE,
+        JWT_SECRET: STRONG,
+        NODE_ENV: 'production',
+        FRONTEND_URL: 'https://app.agendly.mx',
+        PUBLIC_APP_URL: 'http://agendly-admin1.netlify.app',
+      }),
+    ).toThrow('PUBLIC_APP_URL must use https');
+  });
+
+  it('accepts a public PUBLIC_APP_URL when NODE_ENV=production', () => {
+    expect(() =>
+      validate({
+        ...BASE,
+        JWT_SECRET: STRONG,
+        NODE_ENV: 'production',
+        FRONTEND_URL: 'https://app.agendly.mx',
+        PUBLIC_APP_URL: 'https://agendly-admin1.netlify.app',
+      }),
     ).not.toThrow();
   });
 });

@@ -1,7 +1,7 @@
 import type { AppointmentChannel, AppointmentStatus } from '../enums';
 
 /**
- * Public booking flow contract (agendly.mx/[slug] and admin manual booking).
+ * Public booking flow contract (frontend public app /[slug] and admin manual booking).
  * `startTime` is always a UTC ISO-8601 instant with offset — never a zoneless string.
  */
 export interface CreateBookingRequest {

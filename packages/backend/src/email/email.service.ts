@@ -39,16 +39,26 @@ export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private readonly resend: Resend | null;
   private readonly fromEmail = 'Agendly <noreply@agendly.mx>';
+  private readonly publicAppUrl: string;
 
   constructor(private readonly configService: ConfigService) {
     const apiKey = this.configService.get<string>('RESEND_API_KEY');
     this.resend = apiKey ? new Resend(apiKey) : null;
+    this.publicAppUrl = (
+      this.configService.get<string>('PUBLIC_APP_URL') ||
+      this.configService.get<string>('FRONTEND_URL') ||
+      'http://localhost:3001'
+    ).replace(/\/+$/, '');
 
     if (!this.resend) {
       this.logger.warn(
         'RESEND_API_KEY not configured — emails will be logged only',
       );
     }
+  }
+
+  private publicBookingUrl(slug: string): string {
+    return `${this.publicAppUrl}/${slug}`;
   }
 
   async sendBookingConfirmation(data: AppointmentEmailData) {
@@ -115,6 +125,8 @@ export class EmailService {
   }
 
   private confirmationTemplate(data: AppointmentEmailData): string {
+    const appUrl = this.publicAppUrl;
+
     return `
     <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
       <h2 style="color: #111;">¡Tu cita está confirmada!</h2>
@@ -128,7 +140,7 @@ export class EmailService {
         <p style="margin: 4px 0;"><strong>Lugar:</strong> ${data.businessName}</p>
       </div>
       <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">
-        Agenda gestionada por <a href="https://agendly.mx" style="color: #6366f1;">Agendly</a>
+        Agenda gestionada por <a href="${appUrl}" style="color: #6366f1;">Agendly</a>
       </p>
     </div>`;
   }
@@ -136,6 +148,9 @@ export class EmailService {
   private cancellationTemplate(
     data: AppointmentEmailData & { reason?: string },
   ): string {
+    const bookingUrl = this.publicBookingUrl(data.slug);
+    const appUrl = this.publicAppUrl;
+
     return `
     <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
       <h2 style="color: #111;">Tu cita ha sido cancelada</h2>
@@ -148,9 +163,9 @@ export class EmailService {
         <p style="margin: 4px 0;"><strong>Hora:</strong> ${data.time}</p>
         ${data.reason ? `<p style="margin: 4px 0;"><strong>Motivo:</strong> ${data.reason}</p>` : ''}
       </div>
-      <p>Si deseas reagendar, visita: <a href="https://agendly.mx/${data.slug}" style="color: #6366f1;">agendly.mx/${data.slug}</a></p>
+      <p>Si deseas reagendar, visita: <a href="${bookingUrl}" style="color: #6366f1;">${bookingUrl}</a></p>
       <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">
-        Agenda gestionada por <a href="https://agendly.mx" style="color: #6366f1;">Agendly</a>
+        Agenda gestionada por <a href="${appUrl}" style="color: #6366f1;">Agendly</a>
       </p>
     </div>`;
   }

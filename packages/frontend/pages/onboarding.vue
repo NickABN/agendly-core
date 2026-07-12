@@ -8,6 +8,7 @@ const error = ref('');
 
 const { store } = useAuth();
 const onboarding = useOnboarding();
+const { bookingBaseLabel, bookingDisplayUrl, bookingUrl } = usePublicBookingUrl();
 
 // ─── Step 1: Business Info ─────────────────────────
 const businessForm = reactive({
@@ -56,7 +57,7 @@ const weekDays = reactive([
 // ─── Step 5: Done ───────────────────────────────────
 const publicUrl = computed(() => {
   const slug = businessForm.slug || store.tenant?.slug || '';
-  return slug ? `agendly.mx/${slug}` : '';
+  return bookingDisplayUrl(slug);
 });
 
 const ownerName = computed(() => store.user?.name?.split(' ')[0] || '');
@@ -143,7 +144,13 @@ function prevStep() {
 }
 
 function copyUrl() {
-  navigator.clipboard.writeText(`https://${publicUrl.value}`);
+  const url = bookingUrl(businessForm.slug || store.tenant?.slug);
+
+  if (!url) {
+    return;
+  }
+
+  navigator.clipboard.writeText(url);
 }
 </script>
 
@@ -242,14 +249,14 @@ function copyUrl() {
               <label class="text-sm font-medium tracking-wide text-[var(--color-on-surface-variant)] uppercase" for="biz-slug">
                 Tu enlace personalizado
               </label>
-              <div class="relative flex items-center">
-                <span class="absolute left-4 text-[var(--color-on-surface-variant)] font-medium text-sm">agendly.mx/</span>
+              <div class="flex items-center rounded-lg bg-[var(--color-surface-container-high)] focus-within:ring-2 focus-within:ring-[var(--color-primary)]/20 focus-within:bg-[var(--color-surface-container-lowest)] transition-all">
+                <span class="pl-4 pr-2 text-[var(--color-on-surface-variant)] font-medium text-sm whitespace-nowrap">{{ bookingBaseLabel }}</span>
                 <input
                   id="biz-slug"
                   v-model="businessForm.slug"
                   type="text"
                   placeholder="salon-calma"
-                  class="w-full pl-[100px] pr-4 py-3 bg-[var(--color-surface-container-high)] border-none rounded-lg focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] transition-all placeholder:text-[var(--color-outline)]/50"
+                  class="w-full min-w-0 pr-4 py-3 bg-transparent border-none rounded-r-lg focus:ring-0 focus:outline-none placeholder:text-[var(--color-outline)]/50"
                 />
               </div>
               <p class="text-xs text-[var(--color-on-surface-variant)]">Solo letras minúsculas, números y guiones.</p>
@@ -576,7 +583,7 @@ function copyUrl() {
                 </div>
                 <div class="text-center space-y-1">
                   <h2 class="text-xl font-bold tracking-tight">{{ businessForm.name || 'Tu Negocio' }}</h2>
-                  <p class="text-sm text-[var(--color-on-surface-variant)]">{{ publicUrl || 'agendly.mx/tu-negocio' }}</p>
+                  <p class="text-sm text-[var(--color-on-surface-variant)]">{{ publicUrl || `${bookingBaseLabel}tu-negocio` }}</p>
                 </div>
               </div>
               <div class="space-y-6">

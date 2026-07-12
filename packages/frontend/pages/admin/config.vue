@@ -14,6 +14,7 @@ const {
   onLogoSelect,
   uploadLogo,
 } = useTenantConfig();
+const { bookingBaseLabel } = usePublicBookingUrl();
 
 onMounted(() => void load());
 </script>
@@ -91,12 +92,12 @@ onMounted(() => void load());
             </div>
             <div class="space-y-2">
               <label class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">URL de reservas</label>
-              <div class="relative flex items-center">
-                <span class="absolute left-4 text-[var(--color-on-surface-variant)] text-sm font-medium">agendly.mx/</span>
+              <div class="flex items-center rounded-lg bg-[var(--color-surface-container-high)] focus-within:ring-2 focus-within:ring-[var(--color-primary)]/20 focus-within:bg-[var(--color-surface-container-lowest)] transition-all">
+                <span class="pl-4 pr-2 text-[var(--color-on-surface-variant)] text-sm font-medium whitespace-nowrap">{{ bookingBaseLabel }}</span>
                 <input
                   v-model="businessForm.slug"
                   type="text"
-                  class="w-full pl-[100px] pr-4 py-3 bg-[var(--color-surface-container-high)] border-none rounded-lg focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] transition-all outline-none"
+                  class="w-full min-w-0 pr-4 py-3 bg-transparent border-none rounded-r-lg focus:ring-0 focus:outline-none"
                 />
               </div>
             </div>

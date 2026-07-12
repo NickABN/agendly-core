@@ -16,6 +16,28 @@ type LocalDockerEnv = RuntimeEnv & {
   AGENDLY_LOCAL_DOCKER?: string;
 };
 
+function validateHostedProductionUrl(
+  name: string,
+  value: string | undefined,
+  env: LocalDockerEnv = process.env as LocalDockerEnv,
+): void {
+  if (!value) {
+    throw new Error(`${name} is required in production runtime/deploys`);
+  }
+
+  const url = parseHttpUrl(name, value);
+  const hostname = normalizedHostname(url);
+  const allowLocalDockerCompose = isLocalDockerCompose(env);
+
+  if (!allowLocalDockerCompose && LOCAL_API_HOSTS.has(hostname)) {
+    throw new Error(`${name} cannot point to localhost in production`);
+  }
+
+  if (!allowLocalDockerCompose && url.protocol !== 'https:') {
+    throw new Error(`${name} must use https in production`);
+  }
+}
+
 function parseHttpUrl(name: string, value: string): URL {
   let url: URL;
   try {
@@ -55,21 +77,14 @@ export function validateProductionPublicApiUrl(
   value: string | undefined,
   env: LocalDockerEnv = process.env as LocalDockerEnv,
 ): void {
-  if (!value) {
-    throw new Error('NUXT_PUBLIC_API_URL is required in production runtime/deploys');
-  }
+  validateHostedProductionUrl('NUXT_PUBLIC_API_URL', value, env);
+}
 
-  const url = parseHttpUrl('NUXT_PUBLIC_API_URL', value);
-  const hostname = normalizedHostname(url);
-  const allowLocalDockerCompose = isLocalDockerCompose(env);
-
-  if (!allowLocalDockerCompose && LOCAL_API_HOSTS.has(hostname)) {
-    throw new Error('NUXT_PUBLIC_API_URL cannot point to localhost in production');
-  }
-
-  if (!allowLocalDockerCompose && url.protocol !== 'https:') {
-    throw new Error('NUXT_PUBLIC_API_URL must use https in production');
-  }
+export function validateProductionPublicAppUrl(
+  value: string | undefined,
+  env: LocalDockerEnv = process.env as LocalDockerEnv,
+): void {
+  validateHostedProductionUrl('NUXT_PUBLIC_APP_URL', value, env);
 }
 
 export function validateNetlifyInternalApiUrl(value: string | undefined): void {

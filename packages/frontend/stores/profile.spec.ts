@@ -9,7 +9,10 @@ vi.mock('~/stores/auth', () => ({
 }));
 
 vi.stubGlobal('useRuntimeConfig', () => ({
-  public: { apiUrl: 'http://localhost:3000' },
+  public: {
+    apiUrl: 'http://localhost:3000',
+    appUrl: 'http://localhost:3001',
+  },
 }));
 
 vi.stubGlobal('$fetch', vi.fn());

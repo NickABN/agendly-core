@@ -6,7 +6,7 @@ import type {
 } from '@agendly/shared';
 
 /**
- * Full state machine of the public booking flow (agendly.mx/[slug]):
+ * Full state machine of the public booking flow for the public app /[slug] route:
  * steps, selections, slot search, submit with 409 recovery, confirmation data.
  */
 export async function usePublicBooking(slug: string) {

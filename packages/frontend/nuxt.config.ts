@@ -3,6 +3,7 @@ import {
   isProductionNetlifyDeploy,
   validateNetlifyInternalApiUrl,
   validateProductionPublicApiUrl,
+  validateProductionPublicAppUrl,
 } from './config/runtime-config-validation';
 
 function publicApiUrl(): string {
@@ -13,6 +14,16 @@ function publicApiUrl(): string {
   }
 
   return value;
+}
+
+function publicAppUrl(): string {
+  const value = process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3001';
+
+  if (isProductionNetlifyDeploy()) {
+    validateProductionPublicAppUrl(process.env.NUXT_PUBLIC_APP_URL);
+  }
+
+  return value.replace(/\/$/, '');
 }
 
 function internalApiUrl(): string {
@@ -61,6 +72,7 @@ export default defineNuxtConfig({
     apiUrlInternal: internalApiUrl(),
     public: {
       apiUrl: publicApiUrl(),
+      appUrl: publicAppUrl(),
       // Error tracking (opcional; sin DSN el plugin de Sentry queda no-op)
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
     },
