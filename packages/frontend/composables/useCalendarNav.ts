@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue';
-import { addDays, formatDateKey, startOfWeek, todayKey } from '@agendly/shared';
+import type { Ref } from 'vue';
+import { BUSINESS_TZ, addDays, formatDateKey, startOfWeek, todayKey } from '@agendly/shared';
 
 export type CalendarView = 'day' | 'week' | 'month';
 
@@ -18,7 +19,20 @@ const MONTH_LONG = [
   'noviembre',
   'diciembre',
 ];
-const MONTH_SHORT = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+const MONTH_SHORT = [
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
+];
 
 function parts(dateKey: string): { year: number; month: number; day: number } {
   const [year, month, day] = dateKey.split('-').map(Number);
@@ -27,27 +41,30 @@ function parts(dateKey: string): { year: number; month: number; day: number } {
 
 /**
  * Calendar navigation state: current view, cursor date, and the derived
- * day/week/month structures. All math on business-TZ date keys.
+ * day/week/month structures. All math on business-TZ date keys, where the
+ * business timezone is the tenant's IANA zone (from /auth/me).
  */
-export function useCalendarNav() {
-  const view = ref<CalendarView>('day');
-  const selectedDate = ref(todayKey());
-  const weekStart = ref(startOfWeek(todayKey()));
-  const monthCursor = ref(todayKey().slice(0, 7)); // YYYY-MM
+export function useCalendarNav(timezone: Ref<string> = ref(BUSINESS_TZ)) {
+  const today = () => todayKey(timezone.value);
 
-  const isToday = computed(() => selectedDate.value === todayKey());
+  const view = ref<CalendarView>('day');
+  const selectedDate = ref(today());
+  const weekStart = ref(startOfWeek(today()));
+  const monthCursor = ref(today().slice(0, 7)); // YYYY-MM
+
+  const isToday = computed(() => selectedDate.value === today());
 
   const dayLabel = computed(() => formatDateKey(selectedDate.value));
 
   const weekDays = computed(() => {
-    const today = todayKey();
+    const todayDate = today();
     return Array.from({ length: 7 }, (_, i) => {
       const date = addDays(weekStart.value, i);
       return {
         date,
         dayName: WEEKDAY_SHORT[i],
         dayNumber: parts(date).day,
-        isToday: date === today,
+        isToday: date === todayDate,
         isSunday: i === 6,
       };
     });
@@ -62,9 +79,7 @@ export function useCalendarNav() {
   const monthYear = computed(() => Number(monthCursor.value.slice(0, 4)));
   const monthMonth = computed(() => Number(monthCursor.value.slice(5, 7)));
 
-  const monthLabel = computed(
-    () => `${MONTH_LONG[monthMonth.value - 1]} ${monthYear.value}`,
-  );
+  const monthLabel = computed(() => `${MONTH_LONG[monthMonth.value - 1]} ${monthYear.value}`);
 
   /** Month grid: Monday-based, padded to full 5/6 weeks with adjacent months. */
   const monthDays = computed(() => {
@@ -76,7 +91,7 @@ export function useCalendarNav() {
     while (addDays(gridStart, offsetToFirst) !== firstKey) offsetToFirst++;
     const total = offsetToFirst + daysInMonth;
     const cells = total <= 35 ? 35 : 42;
-    const today = todayKey();
+    const todayDate = today();
 
     return Array.from({ length: cells }, (_, i) => {
       const date = addDays(gridStart, i);
@@ -85,7 +100,7 @@ export function useCalendarNav() {
         date,
         day: p.day,
         currentMonth: p.year === monthYear.value && p.month === monthMonth.value,
-        isToday: date === today,
+        isToday: date === todayDate,
       };
     });
   });
@@ -116,9 +131,10 @@ export function useCalendarNav() {
   }
 
   function goToToday() {
-    selectedDate.value = todayKey();
-    weekStart.value = startOfWeek(todayKey());
-    monthCursor.value = todayKey().slice(0, 7);
+    const todayDate = today();
+    selectedDate.value = todayDate;
+    weekStart.value = startOfWeek(todayDate);
+    monthCursor.value = todayDate.slice(0, 7);
   }
 
   /** Jump to a specific date in day view (used from week/month cells). */

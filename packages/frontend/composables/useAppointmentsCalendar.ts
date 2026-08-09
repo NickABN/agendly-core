@@ -1,6 +1,6 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { Ref } from 'vue';
-import { formatTime, utcToDateKey } from '@agendly/shared';
+import { BUSINESS_TZ, formatTime, utcToDateKey } from '@agendly/shared';
 import type { CalendarView } from './useCalendarNav';
 
 export interface CalendarAppointment {
@@ -24,13 +24,16 @@ const POLL_INTERVAL_MS = 15_000;
  * Data layer for the admin calendar: one generic fetch per view, polling for
  * the ACTIVE view only while the tab is visible, and proper listener cleanup.
  */
-export function useAppointmentsCalendar(nav: {
-  view: Ref<CalendarView>;
-  selectedDate: Ref<string>;
-  weekStart: Ref<string>;
-  monthYear: Ref<number>;
-  monthMonth: Ref<number>;
-}) {
+export function useAppointmentsCalendar(
+  nav: {
+    view: Ref<CalendarView>;
+    selectedDate: Ref<string>;
+    weekStart: Ref<string>;
+    monthYear: Ref<number>;
+    monthMonth: Ref<number>;
+  },
+  timezone: Ref<string> = ref(BUSINESS_TZ),
+) {
   const api = useApi();
 
   const dayAppointments = ref<CalendarAppointment[]>([]);
@@ -69,7 +72,7 @@ export function useAppointmentsCalendar(nav: {
   const weekByDate = computed(() => {
     const map = new Map<string, CalendarAppointment[]>();
     for (const appt of weekAppointments.value) {
-      const key = utcToDateKey(appt.startTime);
+      const key = utcToDateKey(appt.startTime, timezone.value);
       const list = map.get(key);
       if (list) list.push(appt);
       else map.set(key, [appt]);
@@ -86,9 +89,8 @@ export function useAppointmentsCalendar(nav: {
   }
 
   // ── Refetch on navigation ──
-  watch(
-    [nav.view, nav.selectedDate, nav.weekStart, nav.monthYear, nav.monthMonth],
-    () => refresh(),
+  watch([nav.view, nav.selectedDate, nav.weekStart, nav.monthYear, nav.monthMonth], () =>
+    refresh(),
   );
 
   // ── Polling: active view only, paused while the tab is hidden ──
@@ -96,7 +98,7 @@ export function useAppointmentsCalendar(nav: {
 
   async function poll() {
     await refresh();
-    announcement.value = `Agenda actualizada a las ${formatTime(new Date())}`;
+    announcement.value = `Agenda actualizada a las ${formatTime(new Date(), timezone.value)}`;
   }
 
   function startPolling() {

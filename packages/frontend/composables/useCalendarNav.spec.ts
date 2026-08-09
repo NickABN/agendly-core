@@ -1,7 +1,25 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ref } from 'vue';
 import { useCalendarNav } from './useCalendarNav';
 
 describe('useCalendarNav', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('resolves "today" in the provided business timezone', () => {
+    // 2026-07-04T06:30Z = 23:30 July 3 in Tijuana but 00:30 July 4 in CDMX
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-04T06:30:00.000Z'));
+
+    const tijuana = useCalendarNav(ref('America/Tijuana'));
+    expect(tijuana.selectedDate.value).toBe('2026-07-03');
+    expect(tijuana.isToday.value).toBe(true);
+
+    const cdmx = useCalendarNav();
+    expect(cdmx.selectedDate.value).toBe('2026-07-04');
+  });
+
   it('starts on day view at today', () => {
     const nav = useCalendarNav();
     expect(nav.view.value).toBe('day');

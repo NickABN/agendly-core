@@ -7,6 +7,8 @@ defineProps<{
   index: number;
 }>();
 
+const timezone = useBusinessTimezone();
+
 function formatPhone(phone: string) {
   // Format Mexican phone numbers: 55 1234 5678
   if (phone.length === 10) {
@@ -36,7 +38,12 @@ function formatPhone(phone: string) {
           v-if="client.totalVisits >= 5"
           class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full text-amber-700 bg-amber-50 border border-amber-100 shrink-0"
         >
-          <span class="material-symbols-outlined text-[10px] align-middle mr-0.5" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">star</span>
+          <span
+            class="material-symbols-outlined text-[10px] align-middle mr-0.5"
+            style="font-variation-settings: 'FILL' 1"
+            aria-hidden="true"
+            >star</span
+          >
           Frecuente
         </span>
       </div>
@@ -54,14 +61,22 @@ function formatPhone(phone: string) {
 
     <!-- Service + visits -->
     <div class="hidden md:flex flex-col items-end gap-1 shrink-0">
-      <span class="text-xs font-medium text-[var(--color-on-surface-variant)]">{{ client.topService }}</span>
-      <span class="text-xs text-[var(--color-outline)]">Última: {{ formatDate(client.lastVisit, 'short') }}</span>
+      <span class="text-xs font-medium text-[var(--color-on-surface-variant)]">{{
+        client.topService
+      }}</span>
+      <span class="text-xs text-[var(--color-outline)]"
+        >Última: {{ formatDate(client.lastVisit, 'short', timezone) }}</span
+      >
     </div>
 
     <!-- Visit count -->
-    <div class="flex flex-col items-center justify-center px-3 md:px-4 py-2 rounded-xl bg-[var(--color-surface-container-low)] shrink-0">
+    <div
+      class="flex flex-col items-center justify-center px-3 md:px-4 py-2 rounded-xl bg-[var(--color-surface-container-low)] shrink-0"
+    >
       <span class="text-xl font-black text-[var(--color-primary)]">{{ client.totalVisits }}</span>
-      <span class="text-[10px] font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+      <span
+        class="text-[10px] font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+      >
         {{ client.totalVisits === 1 ? 'Visita' : 'Visitas' }}
       </span>
     </div>

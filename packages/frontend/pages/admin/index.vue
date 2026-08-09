@@ -3,8 +3,9 @@ definePageMeta({ layout: 'admin' });
 
 const { store, logout } = useAuth();
 
-const nav = useCalendarNav();
-const calendar = useAppointmentsCalendar(nav);
+const businessTimezone = useBusinessTimezone();
+const nav = useCalendarNav(businessTimezone);
+const calendar = useAppointmentsCalendar(nav, businessTimezone);
 
 const showManualForm = ref(false);
 
@@ -46,7 +47,9 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
         <span class="material-symbols-outlined text-amber-600" aria-hidden="true">schedule</span>
         <p class="text-sm text-amber-700">
           Te quedan <strong>{{ store.trialDaysRemaining }}</strong> días de prueba.
-          <NuxtLink to="/admin/subscription" class="font-bold underline ml-1">Suscribirme →</NuxtLink>
+          <NuxtLink to="/admin/subscription" class="font-bold underline ml-1"
+            >Suscribirme →</NuxtLink
+          >
         </p>
       </div>
       <!-- Sin acceso vigente (prueba vencida sin pago) -->
@@ -57,12 +60,17 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
         <span class="material-symbols-outlined text-red-600" aria-hidden="true">lock</span>
         <p class="text-sm text-red-700">
           Tu período de prueba terminó. Suscríbete para volver a recibir reservas.
-          <NuxtLink to="/admin/subscription" class="font-bold underline ml-1">Suscribirme →</NuxtLink>
+          <NuxtLink to="/admin/subscription" class="font-bold underline ml-1"
+            >Suscribirme →</NuxtLink
+          >
         </p>
       </div>
 
       <!-- Fetch error -->
-      <div v-if="calendar.error.value" class="mb-6 flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-100">
+      <div
+        v-if="calendar.error.value"
+        class="mb-6 flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-100"
+      >
         <span class="material-symbols-outlined text-red-500 text-lg" aria-hidden="true">error</span>
         <p class="text-sm text-red-700">{{ calendar.error.value }}</p>
       </div>

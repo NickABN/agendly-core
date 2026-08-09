@@ -9,17 +9,14 @@ interface User {
   tenantId: string;
 }
 
-type SubscriptionStatus =
-  | 'TRIALING'
-  | 'ACTIVE'
-  | 'PAST_DUE'
-  | 'CANCELED'
-  | 'INCOMPLETE';
+type SubscriptionStatus = 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE';
 
 interface Tenant {
   id: string;
   name: string;
   slug: string;
+  /** IANA timezone of the business (optional for legacy cached payloads). */
+  timezone?: string;
   onboardedAt: string | null;
   trialEndsAt: string;
   isActive: boolean;

@@ -11,15 +11,11 @@ interface MeResponse {
     id: string;
     name: string;
     slug: string;
+    timezone?: string;
     onboardedAt: string | null;
     trialEndsAt: string;
     isActive: boolean;
-    subscriptionStatus?:
-      | 'TRIALING'
-      | 'ACTIVE'
-      | 'PAST_DUE'
-      | 'CANCELED'
-      | 'INCOMPLETE';
+    subscriptionStatus?: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE';
     currentPeriodEnd?: string | null;
   };
 }
@@ -54,8 +50,7 @@ export function useAuth() {
 
   async function fetchMe() {
     try {
-      // apiBase(): URL interna en SSR (localhost:3000 dentro de Docker es el
-      // propio frontend), pública en el cliente.
+      // apiBase(): URL interna en Docker SSR; same-origin /api on Netlify.
       const p = await $fetch<MeResponse>(`${apiBase()}/auth/me`, {
         credentials: 'include',
         headers: import.meta.server ? useRequestHeaders(['cookie']) : {},
