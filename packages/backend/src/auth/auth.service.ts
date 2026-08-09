@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { isReservedSlug } from '@agendly/shared';
 import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -113,6 +114,7 @@ export class AuthService {
         id: user.tenant.id,
         name: user.tenant.name,
         slug: user.tenant.slug,
+        timezone: user.tenant.timezone,
         onboardedAt: user.tenant.onboardedAt?.toISOString() ?? null,
         trialEndsAt: user.tenant.trialEndsAt.toISOString(),
         isActive: user.tenant.isActive,
@@ -212,7 +214,12 @@ export class AuthService {
   ): Promise<string> {
     let slug = baseSlug;
     let counter = 1;
-    while (await prisma.tenant.findUnique({ where: { slug } })) {
+    // Reserved slugs collide with app routes (/admin, /onboarding, …), so
+    // they count as taken even when no tenant owns them.
+    while (
+      isReservedSlug(slug) ||
+      (await prisma.tenant.findUnique({ where: { slug } }))
+    ) {
       slug = `${baseSlug}-${counter}`;
       counter++;
     }

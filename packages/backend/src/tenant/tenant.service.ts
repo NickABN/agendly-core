@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { isReservedSlug } from '@agendly/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { mapTenantToProfileDto } from './tenant.mapper';
@@ -26,6 +28,11 @@ export class TenantService {
 
   async update(tenantId: string, dto: UpdateTenantDto) {
     if (dto.slug) {
+      // Reserved slugs collide with app routes (/admin, /onboarding, …) and
+      // would shadow them on the public booking URL. Shared list with frontend.
+      if (isReservedSlug(dto.slug)) {
+        throw new BadRequestException('Este slug está reservado, elige otro');
+      }
       const existing = await this.prisma.tenant.findUnique({
         where: { slug: dto.slug },
       });

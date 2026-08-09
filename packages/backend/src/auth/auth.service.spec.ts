@@ -1,5 +1,6 @@
 import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { isReservedSlug } from '@agendly/shared';
 import * as fc from 'fast-check';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
@@ -251,8 +252,13 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
 
     await fc.assert(
       fc.asyncProperty(
-        // Only use business names that produce a non-empty slug
-        validBusinessName.filter((name) => generateSlug(name).length > 0),
+        // Only use business names that produce a non-empty, non-reserved slug
+        // (reserved base slugs are always suffixed, which this property does not model)
+        validBusinessName.filter(
+          (name) =>
+            generateSlug(name).length > 0 &&
+            !isReservedSlug(generateSlug(name)),
+        ),
         fc.integer({ min: 1, max: 5 }),
         async (businessName, collisions) => {
           const baseSlug = generateSlug(businessName);
@@ -399,5 +405,63 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
       ),
       { numRuns: 20 },
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Reserved slugs — registration must never assign an app-route slug
+// ---------------------------------------------------------------------------
+
+describe('AuthService — reserved slugs at registration', () => {
+  it('skips a reserved base slug even when it is free in the database', async () => {
+    const tenantCreateMock = jest.fn().mockResolvedValue({
+      id: 'tenant-id',
+      slug: 'admin-1',
+      name: 'Admin',
+    });
+    const prisma = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        create: jest.fn().mockResolvedValue({
+          id: 'user-id',
+          email: 'owner@example.com',
+          name: 'Owner',
+          role: 'OWNER',
+          tenantId: 'tenant-id',
+        }),
+        update: jest.fn(),
+      },
+      tenant: {
+        create: tenantCreateMock,
+        // No tenant occupies any slug — only the reserved list blocks "admin"
+        findUnique: jest.fn().mockResolvedValue(null),
+      },
+      $transaction: jest.fn().mockImplementation(async (arg: unknown) => {
+        if (Array.isArray(arg)) {
+          const results: unknown[] = [];
+          for (const op of arg) {
+            results.push(await op);
+          }
+          return results;
+        }
+        return [];
+      }),
+    } as any;
+
+    const service = new AuthService(
+      prisma,
+      makeJwtService(),
+      makeTokenService(),
+    );
+
+    await service.register({
+      businessName: 'Admin',
+      ownerName: 'Owner',
+      email: 'owner@example.com',
+      password: 'password123',
+    });
+
+    const slugUsed: string = tenantCreateMock.mock.calls[0][0].data.slug;
+    expect(slugUsed).toBe('admin-1');
   });
 });

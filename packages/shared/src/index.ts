@@ -4,6 +4,9 @@ export * from './enums';
 // Datetime (single source of truth for timezone handling)
 export * from './datetime';
 
+// Reserved slugs (single source of truth for route/slug collisions)
+export * from './reserved-slugs';
+
 // DTOs
 export * from './dto/auth.dto';
 export * from './dto/tenant.dto';

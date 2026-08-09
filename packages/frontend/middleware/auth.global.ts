@@ -58,20 +58,14 @@ async function tryRefresh(
 export default defineNuxtRouteMiddleware(async (to) => {
   const store = useAuthStore();
 
-  // Public routes that don't need auth
-  const publicRoutes = ['/login', '/register', '/auth/callback', '/privacidad', '/arco'];
-  const isPublicRoute =
-    publicRoutes.some((route) => to.path.startsWith(route)) ||
-    to.path === '/' ||
-    to.path.match(/^\/[a-z0-9-]+$/) !== null; // /[slug] booking pages
-
-  if (isPublicRoute) return;
+  // Public routes (landing, auth pages, /[slug] booking pages). Reserved
+  // slugs like /admin or /onboarding are NOT booking pages — see utils/publicRoutes.
+  if (isPublicRoutePath(to.path)) return;
 
   // Fuente de verdad de la sesión: la cookie httpOnly. Cargamos el perfil vía
   // /auth/me reenviando la cookie (funciona en SSR y en cliente → sin rebote en F5).
   if (!store.user) {
-    // apiBase(): URL interna del backend en SSR (dentro de Docker localhost:3000
-    // es el propio frontend), pública en el cliente.
+    // apiBase(): URL interna en Docker SSR; same-origin /api on Netlify.
     const base = apiBase();
     const ssrCookie = () =>
       import.meta.server ? useRequestHeaders(['cookie']) : {};
