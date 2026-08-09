@@ -1,7 +1,11 @@
 import { defineConfig } from 'vitest/config';
+import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 
 export default defineConfig({
+  // Compiles .vue SFCs so component behavior specs can mount pages/components.
+  // Specs that mount must opt into jsdom with `// @vitest-environment jsdom`.
+  plugins: [vue()],
   test: {
     allowOnly: false,
     environment: 'node',

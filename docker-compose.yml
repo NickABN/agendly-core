@@ -33,6 +33,7 @@ services:
       REFRESH_ABSOLUTE_TTL: ${REFRESH_ABSOLUTE_TTL:-30d}
       AGENDLY_LOCAL_DOCKER: 'true'
       FRONTEND_URL: http://localhost:3001
+      PUBLIC_APP_URL: http://localhost:3001
       PORT: '3000'
       # Optional — uploads to Cloudflare R2. Without these, everything works
       # except logo/banner upload (which fails lazily at request time).
@@ -62,6 +63,7 @@ services:
       # Browser-facing URL (must be reachable from the host browser)
       AGENDLY_LOCAL_DOCKER: 'true'
       NUXT_PUBLIC_API_URL: http://localhost:3000
+      NUXT_PUBLIC_APP_URL: http://localhost:3001
       # SSR server-side URL (Nuxt server → backend over the compose network)
       NUXT_API_URL_INTERNAL: http://backend:3000
     ports:

@@ -5,7 +5,7 @@ Use this checklist after the branch is deployed to a reachable frontend URL. Do 
 ## Required target URLs
 
 - Frontend public app URL: `https://agendly-admin1.netlify.app`
-- Backend API URL: the Render environment configured in `NUXT_PUBLIC_API_URL`
+- Browser API URL: same-origin `/api`; Nitro's private `NUXT_API_PROXY_TARGET` points to Render
 - A tenant slug with public access enabled, for example: `<slug>`
 
 ## Lightweight manual CLI flow

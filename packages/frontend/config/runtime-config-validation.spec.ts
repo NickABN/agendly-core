@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  validateApiProxyTarget,
+  validateNetlifyProxyConfig,
   validateProductionPublicApiUrl,
   validateProductionPublicAppUrl,
 } from './runtime-config-validation';
@@ -85,5 +87,40 @@ describe('runtime-config-validation — NUXT_PUBLIC_APP_URL in production', () =
     expect(() =>
       validateProductionPublicAppUrl('https://agendly-admin1.netlify.app'),
     ).not.toThrow();
+  });
+});
+
+describe('runtime-config-validation — Netlify API proxy', () => {
+  it('requires the same-origin public API prefix', () => {
+    expect(() =>
+      validateNetlifyProxyConfig(
+        'https://agendly-backend-u9tt.onrender.com',
+        'https://agendly-backend-u9tt.onrender.com',
+        '',
+      ),
+    ).toThrow('NUXT_PUBLIC_API_URL must be /api');
+  });
+
+  it('requires a private upstream', () => {
+    expect(() => validateNetlifyProxyConfig('/api', undefined, '')).toThrow(
+      'NUXT_API_PROXY_TARGET is required',
+    );
+  });
+
+  it.each([
+    'http://agendly-backend-u9tt.onrender.com',
+    'https://example.com',
+    'https://agendly-backend-u9tt.onrender.com/backend',
+    'https://user:password@agendly-backend-u9tt.onrender.com',
+  ])('rejects invalid proxy target %s', (target) => {
+    expect(() => validateApiProxyTarget(target)).toThrow();
+  });
+
+  it('accepts the fixed Render origin and rejects a competing SSR override', () => {
+    const target = 'https://agendly-backend-u9tt.onrender.com';
+    expect(validateApiProxyTarget(target).origin).toBe(target);
+    expect(() => validateNetlifyProxyConfig('/api', target, target)).toThrow(
+      'NUXT_API_URL_INTERNAL must not be set',
+    );
   });
 });

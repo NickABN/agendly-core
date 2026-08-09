@@ -1,10 +1,4 @@
 const LOCAL_API_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]']);
-const DOCKER_ONLY_API_HOSTS = new Set([
-  'backend',
-  'host.docker.internal',
-  'docker.for.mac.localhost',
-  'docker.for.win.localhost',
-]);
 
 type RuntimeEnv = {
   NODE_ENV?: string;
@@ -80,6 +74,12 @@ export function validateProductionPublicApiUrl(
   validateHostedProductionUrl('NUXT_PUBLIC_API_URL', value, env);
 }
 
+export function validateNetlifyPublicApiUrl(value: string | undefined): void {
+  if (value !== '/api') {
+    throw new Error('NUXT_PUBLIC_API_URL must be /api for production Netlify deploys');
+  }
+}
+
 export function validateProductionPublicAppUrl(
   value: string | undefined,
   env: LocalDockerEnv = process.env as LocalDockerEnv,
@@ -87,21 +87,46 @@ export function validateProductionPublicAppUrl(
   validateHostedProductionUrl('NUXT_PUBLIC_APP_URL', value, env);
 }
 
-export function validateNetlifyInternalApiUrl(value: string | undefined): void {
+export function validateApiProxyTarget(value: string | undefined): URL {
   if (!value) {
-    return;
+    throw new Error('NUXT_API_PROXY_TARGET is required for production Netlify deploys');
   }
 
-  const url = parseHttpUrl('NUXT_API_URL_INTERNAL', value);
+  const url = parseHttpUrl('NUXT_API_PROXY_TARGET', value);
   const hostname = normalizedHostname(url);
 
   if (url.protocol !== 'https:') {
-    throw new Error('NUXT_API_URL_INTERNAL must use https for production Netlify deploys');
+    throw new Error('NUXT_API_PROXY_TARGET must use https');
   }
 
-  if (LOCAL_API_HOSTS.has(hostname) || DOCKER_ONLY_API_HOSTS.has(hostname)) {
+  if (!hostname.endsWith('.onrender.com')) {
+    throw new Error('NUXT_API_PROXY_TARGET must use a Render onrender.com host');
+  }
+
+  if (
+    url.username ||
+    url.password ||
+    url.pathname !== '/' ||
+    url.search ||
+    url.hash
+  ) {
     throw new Error(
-      'NUXT_API_URL_INTERNAL cannot point to localhost or Docker-only hosts on Netlify',
+      'NUXT_API_PROXY_TARGET must be an origin without credentials, path, query, or hash',
     );
+  }
+
+  return url;
+}
+
+export function validateNetlifyProxyConfig(
+  publicApiUrl: string | undefined,
+  proxyTarget: string | undefined,
+  internalApiUrl: string | undefined,
+): void {
+  validateNetlifyPublicApiUrl(publicApiUrl);
+  validateApiProxyTarget(proxyTarget);
+
+  if (internalApiUrl) {
+    throw new Error('NUXT_API_URL_INTERNAL must not be set on production Netlify deploys');
   }
 }

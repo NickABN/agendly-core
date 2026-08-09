@@ -31,7 +31,7 @@ function statusOf(err: unknown): number | undefined {
 }
 
 export function useApi() {
-  // apiBase(): URL interna del backend en SSR, pública en el cliente.
+  // apiBase(): URL interna en Docker SSR; same-origin /api on Netlify.
   const apiUrl = apiBase();
   // En SSR reenviamos la cookie entrante al backend (el navegador solo la adjunta
   // en el cliente); en el cliente `credentials: 'include'` la manda automáticamente.

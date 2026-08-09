@@ -18,7 +18,7 @@ docker compose up --build          # db + backend + frontend
 ```
 
 - El backend aplica migraciones al arrancar (`prisma migrate deploy` en el entrypoint) — incluye el `CREATE EXTENSION btree_gist` del constraint anti-doble-reserva.
-- Dentro de compose los servicios se hablan por nombre: backend → `db:5432`, SSR del frontend → `backend:3000` (var `NUXT_API_URL_INTERNAL`). El navegador usa `NUXT_PUBLIC_API_URL=http://localhost:3000`.
+- Dentro de compose los servicios se hablan por nombre: backend → `db:5432`, SSR del frontend → `backend:3000` (var `NUXT_API_URL_INTERNAL`). El navegador usa `NUXT_PUBLIC_API_URL=http://localhost:3000`; `PUBLIC_APP_URL` y `NUXT_PUBLIC_APP_URL` apuntan a `http://localhost:3001`.
 - **Uploads opcionales:** para probar logo/banner definí las 5 `R2_*` en un `.env` en la raíz (compose las lee). Sin ellas todo lo demás funciona; el upload falla lazily.
 
 Comandos útiles:
@@ -54,8 +54,10 @@ docker compose down -v                 # frenar y borrar datos
    - **Dockerfile Path:** `packages/backend/Dockerfile`
    - **Docker Build Context Directory:** `.` (raíz — el build es monorepo)
    - **Health Check Path:** `/health/ready` (verifica que la app y la DB estén arriba)
-3. **Environment variables** (see matrix below): `DATABASE_URL` (Neon), `JWT_SECRET` (32+ chars, `openssl rand -hex 32` — the insecure default is rejected), `FRONTEND_URL` (the frontend origin used by backend CORS/auth redirects), `PUBLIC_APP_URL` (the customer-facing booking/email base URL), `R2_*` (optional), `SENTRY_DSN`/`LOG_LEVEL` (optional). Render injects `PORT`; the entrypoint already respects it.
-4. Deploy. El entrypoint corre `prisma migrate deploy` y arranca. Anotá la URL pública (ej. `https://agendly-api.onrender.com`) → va en Netlify.
+3. **Environment variables** (see matrix below): `DATABASE_URL` (Neon), `JWT_SECRET` (32+ chars, `openssl rand -hex 32` — the insecure default is rejected), `FRONTEND_URL=https://agendly-admin1.netlify.app`, `PUBLIC_APP_URL=https://agendly-admin1.netlify.app`, and `GOOGLE_CALLBACK_URL=https://agendly-admin1.netlify.app/api/auth/google/callback`. Render injects `PORT`; the entrypoint already respects it.
+4. Deploy code and every committed Prisma migration as one atomic release. In particular, the password-reset code requires `prisma/migrations/20260712150109_add_password_reset_token/migration.sql`; never deploy one without the other.
+5. Confirm the release runs `prisma migrate deploy` before Nest starts. The current `docker-entrypoint.sh` does this explicitly and fails the container if migration deployment fails.
+6. Deploy. The backend origin for this deployment is `https://agendly-backend-u9tt.onrender.com`; this value is private Nitro upstream configuration in Netlify, not public browser config.
 
 > El free tier de Render duerme el servicio tras inactividad (primer request lento). Suficiente para un PoC.
 
@@ -66,10 +68,14 @@ docker compose down -v                 # frenar y borrar datos
 1. Add new site → import del repo → misma rama.
 2. Netlify lee `netlify.toml` (raíz): build `pnpm --filter @agendly/frontend build`, publish `packages/frontend/dist`, Node 24. Usa pnpm automáticamente (detecta `packageManager` del root).
 3. **Environment variables** (Site settings → Environment):
-   - `NUXT_PUBLIC_API_URL` = the Render backend URL (for example `https://agendly-api.onrender.com`).
+   - `NUXT_PUBLIC_API_URL` = `/api`.
+   - `NUXT_API_PROXY_TARGET` = `https://agendly-backend-u9tt.onrender.com`. This is private Nitro runtime config; never use a `NUXT_PUBLIC_*` name for it.
    - `NUXT_PUBLIC_APP_URL` = `https://agendly-admin1.netlify.app` while the temporary Netlify domain is active. Public booking pages resolve as `https://agendly-admin1.netlify.app/<slug>`.
    - **Do not** set `NUXT_API_URL_INTERNAL` on Netlify (local Docker only).
-4. Deploy. Nitro autodetecta `NETLIFY` → preset `netlify` → función serverless SSR + estáticos.
+4. Apply those exact values to the production context. The production build/runtime validation rejects a direct public backend URL, a missing/non-HTTPS/non-Render upstream, or an internal API override.
+5. Deploy. Nitro autodetecta `NETLIFY` → preset `netlify` → función serverless SSR + estáticos. Browser and Netlify SSR API calls use `/api/**`; Nitro strips `/api`, forwards to the fixed Render origin, and returns status, headers, redirects, and all `Set-Cookie` values.
+
+Google OAuth must also stay on the same origin. Configure both Render's `GOOGLE_CALLBACK_URL` and the Google Cloud authorized redirect URI as `https://agendly-admin1.netlify.app/api/auth/google/callback`. Login starts at `/api/auth/google`; the callback returns through Netlify so its auth cookies belong to the Netlify host.
 
 **Gotcha conocido (monorepo + SSR):** si en el primer deploy las rutas SSR dan 404 (los estáticos cargan pero `/[slug]` no renderiza server-side), es que el catch-all a la función SSR no se registró. Fix: verificar en el build log que Netlify detectó Nuxt/Nitro; si no, agregar el módulo oficial `@netlify/nuxt` o un `_redirects` con `/* /.netlify/functions/server 200`. En un build local con `NITRO_PRESET=netlify` se generan `packages/frontend/dist/` (estáticos) y `packages/frontend/.netlify/functions-internal/server/server.mjs` (la función) — esa es la salida esperada.
 
@@ -77,7 +83,7 @@ docker compose down -v                 # frenar y borrar datos
 
 ## 5. CORS
 
-The backend uses `FRONTEND_URL` for `enableCors` (`main.ts`). In Render, `FRONTEND_URL` must exactly match the Netlify frontend origin (no trailing slash) or the browser will block requests. The backend uses `PUBLIC_APP_URL` for customer-facing booking links in emails. The frontend uses `NUXT_PUBLIC_APP_URL` for the same booking-link base in the browser. For this rollout, both public-app variables should point to `https://agendly-admin1.netlify.app`.
+The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (`main.ts` via `src/config/cors.ts`); both values are normalized to their origin, so a trailing path is tolerated but the origins must match the browser's exactly. The backend also uses `PUBLIC_APP_URL` for customer-facing booking links in emails. The frontend uses `NUXT_PUBLIC_APP_URL` for the same booking-link base in the browser. For this rollout, both public-app variables should point to `https://agendly-admin1.netlify.app`.
 
 ---
 
@@ -89,9 +95,11 @@ The backend uses `FRONTEND_URL` for `enableCors` (`main.ts`). In Render, `FRONTE
 |---|---|---|---|
 | `DATABASE_URL` | ✅ | `postgresql://agendly:agendly_dev@db:5432/agendly` (ya en compose) | Neon (`...?sslmode=require`) |
 | `JWT_SECRET` | ✅ | local válido en compose | secreto fuerte 32+ chars (`openssl rand -hex 32`); el default inseguro es rechazado al boot |
-| `JWT_EXPIRATION` | ○ | `7d` | `7d` |
-| `FRONTEND_URL` | ○→✅ | `http://localhost:3001` | Netlify frontend origin for backend CORS/auth redirects |
-| `PUBLIC_APP_URL` | ○→✅ | `http://localhost:3001` | Customer-facing booking/email base URL |
+| `ACCESS_TOKEN_TTL` | ○ | `15m` (default) | `15m` (default) |
+| `REFRESH_TOKEN_TTL` | ○ | `7d` (default) | `7d` (default) |
+| `REFRESH_ABSOLUTE_TTL` | ○ | `30d` (default) | `30d` (default) |
+| `FRONTEND_URL` | ○→✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` |
+| `PUBLIC_APP_URL` | ○→✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` |
 | `PORT` | ○ | `3000` (compose) | Render lo inyecta |
 | `R2_ACCOUNT_ID` | ○ | — | Cloudflare R2 |
 | `R2_ACCESS_KEY_ID` | ○ | — | Cloudflare R2 |
@@ -99,7 +107,8 @@ The backend uses `FRONTEND_URL` for `enableCors` (`main.ts`). In Render, `FRONTE
 | `R2_BUCKET_NAME` | ○ | — | Cloudflare R2 |
 | `R2_PUBLIC_URL` | ○ | — | URL pública del bucket |
 | `RESEND_API_KEY` | ○ | — | para emails reales (si no, se loguean) |
-| `GOOGLE_CLIENT_ID` / `_SECRET` / `_CALLBACK_URL` | ○ | — | OAuth Google (no-op si faltan) |
+| `GOOGLE_CLIENT_ID` / `_SECRET` | ○ | — | OAuth Google (no-op si faltan) |
+| `GOOGLE_CALLBACK_URL` | ○ | — | `https://agendly-admin1.netlify.app/api/auth/google/callback` |
 | `LOG_LEVEL` | ○ | `info` | `info` (o `debug` para diagnosticar) |
 | `SENTRY_DSN` | ○ | — | error tracking backend (ver OBSERVABILITY.md) |
 
@@ -107,7 +116,8 @@ The backend uses `FRONTEND_URL` for `enableCors` (`main.ts`). In Render, `FRONTE
 
 | Var | Req | Local (compose) | Prod (Netlify) |
 |---|---|---|---|
-| `NUXT_PUBLIC_API_URL` | ✅ | `http://localhost:3000` (already in compose) | Render backend URL |
+| `NUXT_PUBLIC_API_URL` | ✅ | `http://localhost:3000` (already in compose) | `/api` |
+| `NUXT_API_PROXY_TARGET` | Netlify only | — | `https://agendly-backend-u9tt.onrender.com` (private; never expose under `public`) |
 | `NUXT_PUBLIC_APP_URL` | ✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` (temporary public frontend base URL) |
 | `NUXT_API_URL_INTERNAL` | local only | `http://backend:3000` (already in compose) | **do not set** |
 | `NUXT_PUBLIC_SENTRY_DSN` | ○ | — | error tracking frontend (ver OBSERVABILITY.md) |
@@ -131,7 +141,7 @@ Modelo: un plan mensual flat (el precio se define en Stripe, no en el código). 
 2. **Product + Price**: Products → Add product → nombre "Agendly Profesional" → precio **recurrente mensual** en MXN (ej. $299) → guardar → copiar el **Price ID** (`price_...`) → `STRIPE_PRICE_ID`.
 3. **API key**: Developers → API keys → copiar la **Secret key** de test (`sk_test_...`) → `STRIPE_SECRET_KEY`.
 4. **Webhook**:
-   - **Prod (Render)**: Developers → Webhooks → Add endpoint → URL `https://<tu-backend>.onrender.com/billing/webhook` → eventos: `customer.subscription.*`, `invoice.paid`, `invoice.payment_failed` → copiar el **Signing secret** (`whsec_...`) → `STRIPE_WEBHOOK_SECRET` en Render.
+   - **Prod (Render)**: Developers → Webhooks → Add endpoint → URL `https://agendly-backend-u9tt.onrender.com/billing/webhook` → eventos: `customer.subscription.*`, `invoice.paid`, `invoice.payment_failed` → copiar el **Signing secret** (`whsec_...`) → `STRIPE_WEBHOOK_SECRET` en Render. Stripe may target Render directly; it does not use browser cookies.
    - **Local**: instalar [Stripe CLI](https://stripe.com/docs/stripe-cli) → `stripe listen --forward-to localhost:3000/billing/webhook` → imprime el `whsec_...` → ponerlo en el `.env` de compose.
 5. **Probar el flujo**: login → `/admin/subscription` → Suscribirme → Checkout de Stripe (tarjeta test `4242 4242 4242 4242`, cualquier fecha futura/CVC) → el webhook activa la suscripción (`ACTIVE`). Probar fallo con `stripe trigger invoice.payment_failed`.
 
@@ -175,6 +185,5 @@ El CI (`.github/workflows/ci.yml`) corre en cada push/PR a `main`: typecheck + l
 
 ## Limitaciones conocidas (PoC)
 
-- **`forgot-password`** pega a `/api/auth/forgot-password` (ruta relativa que no existe) → falla en silencio. Pendiente (ver `ROADMAP.md`).
 - **Migraciones en el arranque:** OK con un solo contenedor. Si escalás a múltiples instancias en Render, mover `prisma migrate deploy` a un job de release separado.
 - **Datos legacy de logo:** tenants que subieron logo antes de la migración a R2 tienen `logoUrl` relativo (`/uploads/...`) servido por el static mount deprecado del backend; basta resubir el logo para migrarlos.

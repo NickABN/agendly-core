@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import {
   isProductionNetlifyDeploy,
-  validateNetlifyInternalApiUrl,
+  validateNetlifyProxyConfig,
   validateProductionPublicApiUrl,
   validateProductionPublicAppUrl,
 } from './config/runtime-config-validation';
@@ -10,7 +10,11 @@ function publicApiUrl(): string {
   const value = process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   if (isProductionNetlifyDeploy()) {
-    validateProductionPublicApiUrl(process.env.NUXT_PUBLIC_API_URL);
+    validateNetlifyProxyConfig(
+      process.env.NUXT_PUBLIC_API_URL,
+      process.env.NUXT_API_PROXY_TARGET,
+      process.env.NUXT_API_URL_INTERNAL,
+    );
   }
 
   return value;
@@ -28,11 +32,6 @@ function publicAppUrl(): string {
 
 function internalApiUrl(): string {
   const value = process.env.NUXT_API_URL_INTERNAL || '';
-
-  if (isProductionNetlifyDeploy()) {
-    validateNetlifyInternalApiUrl(value);
-  }
-
   return value;
 }
 
@@ -66,9 +65,13 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Private fixed upstream for the same-origin Nitro proxy. Never place this
+    // value under `public`: browsers must only see and call `/api`.
+    apiProxyTarget: process.env.NUXT_API_PROXY_TARGET || '',
     // Server-side base for SSR fetches. In local Docker the Nuxt server reaches
     // the backend over the compose network (http://backend:3000); the browser
-    // uses `public.apiUrl` instead. Empty in prod → falls back to public.apiUrl.
+    // uses `public.apiUrl` instead. It must be empty on Netlify so SSR also uses
+    // the same-origin `/api` proxy and shares its cookie behavior.
     // Key `apiUrlInternal` maps to env NUXT_API_URL_INTERNAL at runtime.
     apiUrlInternal: internalApiUrl(),
     public: {

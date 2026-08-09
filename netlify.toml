@@ -15,9 +15,11 @@
 [build.environment]
   NODE_VERSION = "24"
 
-# Set NUXT_PUBLIC_API_URL in the Netlify UI (Site settings → Environment) to the
-# public Render backend URL, e.g. https://agendly-api.onrender.com
-# Do NOT set NUXT_API_URL_INTERNAL in prod — it's a local-Docker-only override.
+# Production uses a same-origin Nitro proxy so host-only auth cookies survive SSR:
+# NUXT_PUBLIC_API_URL=/api
+# NUXT_API_PROXY_TARGET=https://agendly-backend-u9tt.onrender.com (private runtime config)
+# NUXT_PUBLIC_APP_URL=https://agendly-admin1.netlify.app
+# Do NOT set NUXT_API_URL_INTERNAL on Netlify; it is local-Docker-only.
 
 # Cabeceras de seguridad para el frontend (OWASP A05). Netlify termina TLS.
 [[headers]]
