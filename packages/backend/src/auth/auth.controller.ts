@@ -15,8 +15,11 @@ import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
+import { PasswordResetService } from './password-reset.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -32,6 +35,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly tokenService: TokenService,
+    private readonly passwordResetService: PasswordResetService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -81,6 +85,30 @@ export class AuthController {
       await this.authService.login(dto);
     this.setSessionCookies(res, accessToken, refreshToken);
     return { user };
+  }
+
+  /**
+   * Always returns the same generic 200 body (anti-enumeration): the response never
+   * reveals whether the email exists. Throttled as tight as login (brute force).
+   */
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    await this.passwordResetService.requestReset(dto.email);
+    return {
+      message:
+        'Si existe una cuenta con ese correo, recibirás un enlace para restablecer tu contraseña',
+    };
+  }
+
+  /** Consumes a reset token; invalid/expired/used tokens → 400 with a Spanish message. */
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    await this.passwordResetService.resetPassword(dto.token, dto.password);
+    return { message: 'Tu contraseña se actualizó correctamente' };
   }
 
   /**

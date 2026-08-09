@@ -96,3 +96,32 @@ describe('EmailService public booking links', () => {
     );
   });
 });
+
+describe('EmailService password reset email', () => {
+  beforeEach(() => {
+    sendEmailMock.mockReset();
+    sendEmailMock.mockResolvedValue(undefined);
+  });
+
+  it('sends the reset link and mentions the 30 minute validity', async () => {
+    const service = new EmailService(
+      makeConfig({
+        RESEND_API_KEY: 'test-key',
+        FRONTEND_URL: 'https://admin.agendly.mx',
+      }),
+    );
+    const resetUrl = 'https://admin.agendly.mx/reset-password?token=abc123';
+
+    await service.sendPasswordReset('ana@example.com', resetUrl);
+
+    expect(sendEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'ana@example.com',
+        subject: expect.stringContaining('contraseña'),
+        html: expect.stringContaining(resetUrl),
+      }),
+    );
+    const html: string = sendEmailMock.mock.calls[0][0].html;
+    expect(html).toContain('30 minutos');
+  });
+});

@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { TokenService } from './token.service';
+import { PasswordResetService } from './password-reset.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 
@@ -29,7 +30,13 @@ import { GoogleStrategy } from './strategies/google.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, TokenService, JwtStrategy, GoogleStrategy],
+  providers: [
+    AuthService,
+    TokenService,
+    PasswordResetService,
+    JwtStrategy,
+    GoogleStrategy,
+  ],
   exports: [AuthService, TokenService],
 })
 export class AuthModule {}

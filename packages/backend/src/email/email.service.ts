@@ -96,6 +96,26 @@ export class EmailService {
     }
   }
 
+  // ── Auth ────────────────────────────────────────────────
+
+  /** Password reset link for admin users. `resetUrl` must point at the admin app. */
+  async sendPasswordReset(to: string, resetUrl: string): Promise<void> {
+    const html = `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #111;">Restablece tu contraseña</h2>
+      <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta de Agendly.</p>
+      <p style="margin: 24px 0;">
+        <a href="${resetUrl}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;">Restablecer contraseña</a>
+      </p>
+      <p style="color: #6b7280; font-size: 14px;">
+        Este enlace es válido por 30 minutos. Si no solicitaste este cambio, puedes ignorar
+        este correo — tu contraseña seguirá siendo la misma.
+      </p>
+      <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">Agendly</p>
+    </div>`;
+    await this.send(to, 'Restablece tu contraseña — Agendly', html);
+  }
+
   // ── Billing (SaaS) ──────────────────────────────────────
 
   async sendPaymentReceipt(data: PaymentReceiptData): Promise<void> {
