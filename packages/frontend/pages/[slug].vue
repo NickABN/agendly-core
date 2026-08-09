@@ -17,7 +17,8 @@ if (b.fetchError.value) {
 }
 
 useSeoMeta({
-  title: () => (b.tenantName.value ? `${b.tenantName.value} — Reserva en línea | Agendly` : 'Agendly'),
+  title: () =>
+    b.tenantName.value ? `${b.tenantName.value} — Reserva en línea | Agendly` : 'Agendly',
   description: () =>
     b.tenantName.value
       ? `Agenda tu cita en ${b.tenantName.value} en línea. Elige servicio, especialista y horario en menos de un minuto.`
@@ -38,19 +39,31 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
       :service-name="b.selectedService.value?.name ?? ''"
       :employee-name="b.selectedEmployeeName.value"
       :tenant-name="b.tenantName.value"
+      :timezone="b.tenantTimezone.value"
     />
 
     <!-- Backend unavailable (non-404 error) -->
-    <div v-else-if="b.fetchError.value" class="flex flex-col items-center justify-center min-h-screen px-6 text-center space-y-4">
-      <span class="material-symbols-outlined text-5xl text-[var(--color-outline-variant)]" aria-hidden="true">cloud_off</span>
+    <div
+      v-else-if="b.fetchError.value"
+      class="flex flex-col items-center justify-center min-h-screen px-6 text-center space-y-4"
+    >
+      <span
+        class="material-symbols-outlined text-5xl text-[var(--color-outline-variant)]"
+        aria-hidden="true"
+        >cloud_off</span
+      >
       <p class="font-semibold text-[var(--color-on-surface)]">No pudimos cargar la página</p>
-      <p class="text-sm text-[var(--color-on-surface-variant)]">Intenta de nuevo en unos minutos.</p>
+      <p class="text-sm text-[var(--color-on-surface-variant)]">
+        Intenta de nuevo en unos minutos.
+      </p>
     </div>
 
     <!-- Booking flow -->
     <template v-else>
       <!-- Sticky header -->
-      <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[var(--color-outline-variant)]/10">
+      <header
+        class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[var(--color-outline-variant)]/10"
+      >
         <div class="max-w-sm mx-auto flex items-center justify-between px-4 h-14">
           <button
             v-if="b.step.value > 1"
@@ -64,8 +77,13 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
 
           <span class="font-bold text-[var(--color-on-surface)] tracking-tight">Agendly</span>
 
-          <div class="w-8 h-8 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center" aria-hidden="true">
-            <span class="material-symbols-outlined text-sm text-[var(--color-on-surface-variant)]">person</span>
+          <div
+            class="w-8 h-8 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center"
+            aria-hidden="true"
+          >
+            <span class="material-symbols-outlined text-sm text-[var(--color-on-surface-variant)]"
+              >person</span
+            >
           </div>
         </div>
 
@@ -76,37 +94,66 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
         <!-- Business header (step 1 only) -->
         <div v-if="b.step.value === 1" class="mb-6 space-y-1">
           <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-emerald-500 text-lg" style="font-variation-settings: 'FILL' 1" aria-hidden="true">verified</span>
-            <h1 class="text-2xl font-bold text-[var(--color-on-surface)] leading-tight">{{ b.tenantName.value }}</h1>
+            <span
+              class="material-symbols-outlined text-emerald-500 text-lg"
+              style="font-variation-settings: 'FILL' 1"
+              aria-hidden="true"
+              >verified</span
+            >
+            <h1 class="text-2xl font-bold text-[var(--color-on-surface)] leading-tight">
+              {{ b.tenantName.value }}
+            </h1>
           </div>
-          <p class="text-sm text-[var(--color-on-surface-variant)]">Reserva tu experiencia de bienestar</p>
+          <p class="text-sm text-[var(--color-on-surface-variant)]">
+            Reserva tu experiencia de bienestar
+          </p>
         </div>
 
         <!-- Step chips for step > 1 -->
         <div v-if="b.step.value > 1" class="flex flex-wrap gap-2 mb-5">
-          <div class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10">
-            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1" aria-hidden="true">content_cut</span>
+          <div
+            class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10"
+          >
+            <span
+              class="material-symbols-outlined text-sm"
+              style="font-variation-settings: 'FILL' 1"
+              aria-hidden="true"
+              >content_cut</span
+            >
             {{ b.selectedService.value?.name }} · {{ b.selectedService.value?.durationMinutes }} min
           </div>
-          <div v-if="b.step.value > 2 && b.selectedEmployeeName.value" class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10">
+          <div
+            v-if="b.step.value > 2 && b.selectedEmployeeName.value"
+            class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10"
+          >
             <span class="material-symbols-outlined text-sm" aria-hidden="true">person</span>
             {{ b.selectedEmployeeName.value }}
           </div>
-          <div v-if="b.step.value === 4 && b.selectedSlot.value" class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10">
+          <div
+            v-if="b.step.value === 4 && b.selectedSlot.value"
+            class="inline-flex items-center gap-1.5 bg-blue-50 text-[var(--color-primary)] rounded-full px-3 py-1 text-xs font-semibold border border-[var(--color-primary)]/10"
+          >
             <span class="material-symbols-outlined text-sm" aria-hidden="true">schedule</span>
-            {{ formatDateKey(b.selectedDate.value, 'short') }} · {{ formatTime(b.selectedSlot.value) }}
+            {{ formatDateKey(b.selectedDate.value, 'short') }} ·
+            {{ formatTime(b.selectedSlot.value, b.tenantTimezone.value) }}
           </div>
         </div>
 
         <!-- Error banner (visible on any step, incl. 409 recovery on step 3) -->
-        <div v-if="b.error.value && b.step.value >= 3" class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2" role="alert">
+        <div
+          v-if="b.error.value && b.step.value >= 3"
+          class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2"
+          role="alert"
+        >
           <span class="material-symbols-outlined text-lg" aria-hidden="true">error</span>
           {{ b.error.value }}
         </div>
 
         <!-- STEP 1: Service selection -->
         <div v-if="b.step.value === 1">
-          <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-4">¿Qué servicio necesitas?</h2>
+          <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-4">
+            ¿Qué servicio necesitas?
+          </h2>
           <div class="space-y-3">
             <BookingServiceCard
               v-for="s in b.services.value"
@@ -122,8 +169,12 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
 
         <!-- STEP 2: Employee selection -->
         <div v-if="b.step.value === 2">
-          <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-1">Selecciona tu especialista</h2>
-          <p class="text-sm text-[var(--color-on-surface-variant)] mb-5">Elige con quién quieres tu cita</p>
+          <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-1">
+            Selecciona tu especialista
+          </h2>
+          <p class="text-sm text-[var(--color-on-surface-variant)] mb-5">
+            Elige con quién quieres tu cita
+          </p>
 
           <BookingEmployeeSelector
             :employees="b.filteredEmployees.value"
@@ -135,22 +186,32 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
         <!-- STEP 3: Date + time -->
         <div v-if="b.step.value === 3" class="space-y-6">
           <div>
-            <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-1">Selecciona tu horario</h2>
-            <p class="text-sm text-[var(--color-on-surface-variant)]">{{ b.selectedService.value?.name }} · {{ b.selectedService.value?.durationMinutes }} min</p>
+            <h2 class="text-lg font-bold text-[var(--color-on-surface)] mb-1">
+              Selecciona tu horario
+            </h2>
+            <p class="text-sm text-[var(--color-on-surface-variant)]">
+              {{ b.selectedService.value?.name }} ·
+              {{ b.selectedService.value?.durationMinutes }} min
+            </p>
           </div>
 
           <div>
-            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-3">¿Qué día?</p>
-            <BookingDayTabs v-model="b.selectedDate.value" />
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-3">
+              ¿Qué día?
+            </p>
+            <BookingDayTabs v-model="b.selectedDate.value" :timezone="b.tenantTimezone.value" />
           </div>
 
           <div v-if="b.selectedDate.value || b.loadingSlots.value">
-            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-3">Horarios disponibles</p>
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider mb-3">
+              Horarios disponibles
+            </p>
             <BookingSlotGrid
               :slots="b.slots.value"
               :model-value="b.selectedSlot.value"
               :loading="b.loadingSlots.value"
               :has-date="!!b.selectedDate.value"
+              :timezone="b.tenantTimezone.value"
               @update:model-value="b.selectedSlot.value = $event"
             />
           </div>
@@ -175,36 +236,76 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
         <!-- STEP 4: Client info -->
         <div v-if="b.step.value === 4">
           <!-- Summary card -->
-          <div class="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-[var(--color-outline-variant)]/10 space-y-3">
-            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Resumen de la cita</p>
+          <div
+            class="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-[var(--color-outline-variant)]/10 space-y-3"
+          >
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">
+              Resumen de la cita
+            </p>
             <div class="grid grid-cols-2 gap-3">
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base" aria-hidden="true">content_cut</span>
-                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Servicio</span>
+                  <span
+                    class="material-symbols-outlined text-[var(--color-primary)] text-base"
+                    aria-hidden="true"
+                    >content_cut</span
+                  >
+                  <span
+                    class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                    >Servicio</span
+                  >
                 </div>
-                <p class="text-sm font-semibold text-[var(--color-on-surface)]">{{ b.selectedService.value?.name }}</p>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">
+                  {{ b.selectedService.value?.name }}
+                </p>
               </div>
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base" aria-hidden="true">person</span>
-                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Especialista</span>
+                  <span
+                    class="material-symbols-outlined text-[var(--color-primary)] text-base"
+                    aria-hidden="true"
+                    >person</span
+                  >
+                  <span
+                    class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                    >Especialista</span
+                  >
                 </div>
-                <p class="text-sm font-semibold text-[var(--color-on-surface)]">{{ b.selectedEmployeeName.value }}</p>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">
+                  {{ b.selectedEmployeeName.value }}
+                </p>
               </div>
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base" aria-hidden="true">event</span>
-                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Fecha</span>
+                  <span
+                    class="material-symbols-outlined text-[var(--color-primary)] text-base"
+                    aria-hidden="true"
+                    >event</span
+                  >
+                  <span
+                    class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                    >Fecha</span
+                  >
                 </div>
-                <p class="text-sm font-semibold text-[var(--color-on-surface)]">{{ formatDateKey(b.selectedDate.value, 'short') }}</p>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">
+                  {{ formatDateKey(b.selectedDate.value, 'short') }}
+                </p>
               </div>
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[var(--color-primary)] text-base" aria-hidden="true">payments</span>
-                  <span class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Precio est.</span>
+                  <span
+                    class="material-symbols-outlined text-[var(--color-primary)] text-base"
+                    aria-hidden="true"
+                    >payments</span
+                  >
+                  <span
+                    class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                    >Precio est.</span
+                  >
                 </div>
-                <p class="text-sm font-semibold text-[var(--color-on-surface)]">${{ b.selectedService.value?.priceMXN }} MXN</p>
+                <p class="text-sm font-semibold text-[var(--color-on-surface)]">
+                  ${{ b.selectedService.value?.priceMXN }} MXN
+                </p>
               </div>
             </div>
           </div>
@@ -213,7 +314,11 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
 
           <form class="space-y-4" @submit.prevent="b.submitBooking">
             <div class="space-y-2">
-              <label for="client-name" class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Nombre completo</label>
+              <label
+                for="client-name"
+                class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                >Nombre completo</label
+              >
               <input
                 id="client-name"
                 v-model="b.clientForm.name"
@@ -227,7 +332,11 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
             </div>
 
             <div class="space-y-2">
-              <label for="client-phone" class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Teléfono móvil</label>
+              <label
+                for="client-phone"
+                class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                >Teléfono móvil</label
+              >
               <input
                 id="client-phone"
                 v-model="b.clientForm.phone"
@@ -243,7 +352,14 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
             </div>
 
             <div class="space-y-2">
-              <label for="client-email" class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">Email <span class="normal-case font-normal text-[var(--color-outline)]">(opcional)</span></label>
+              <label
+                for="client-email"
+                class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                >Email
+                <span class="normal-case font-normal text-[var(--color-outline)]"
+                  >(opcional)</span
+                ></label
+              >
               <input
                 id="client-email"
                 v-model="b.clientForm.email"
@@ -262,7 +378,12 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
               />
               <span class="text-sm text-[var(--color-on-surface-variant)] leading-snug">
                 Al confirmar, aceptas nuestras
-                <NuxtLink to="/privacidad" target="_blank" class="text-[var(--color-primary)] underline">Políticas de Cancelación, Términos de Servicio y Aviso de Privacidad</NuxtLink>.
+                <NuxtLink
+                  to="/privacidad"
+                  target="_blank"
+                  class="text-[var(--color-primary)] underline"
+                  >Políticas de Cancelación, Términos de Servicio y Aviso de Privacidad</NuxtLink
+                >.
               </span>
             </label>
 
@@ -271,7 +392,12 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
               :disabled="b.submitting.value"
               class="w-full soul-gradient text-white py-4 rounded-full font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1" aria-hidden="true">check_circle</span>
+              <span
+                class="material-symbols-outlined"
+                style="font-variation-settings: 'FILL' 1"
+                aria-hidden="true"
+                >check_circle</span
+              >
               {{ b.submitting.value ? 'Confirmando...' : 'Confirmar cita' }}
             </button>
           </form>
@@ -279,7 +405,9 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
       </div>
 
       <!-- Bottom Agendly badge -->
-      <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[var(--color-outline-variant)]/10 py-3">
+      <div
+        class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[var(--color-outline-variant)]/10 py-3"
+      >
         <p class="text-center text-xs text-[var(--color-outline)]">
           Hecho con <span class="font-bold text-[var(--color-on-surface)]">⬡ Agendly</span>
         </p>

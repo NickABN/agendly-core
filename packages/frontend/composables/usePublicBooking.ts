@@ -1,9 +1,6 @@
 import { computed, reactive, ref, watch } from 'vue';
-import type {
-  BookingResponse,
-  CreateBookingRequest,
-  PublicTenantResponse,
-} from '@agendly/shared';
+import { BUSINESS_TZ } from '@agendly/shared';
+import type { BookingResponse, CreateBookingRequest, PublicTenantResponse } from '@agendly/shared';
 
 /**
  * Full state machine of the public booking flow for the public app /[slug] route:
@@ -25,6 +22,8 @@ export async function usePublicBooking(slug: string) {
   );
 
   const tenantName = computed(() => tenantData.value?.tenant.name ?? '');
+  /** The salon's IANA timezone — all public date/time display uses it. */
+  const tenantTimezone = computed(() => tenantData.value?.tenant.timezone ?? BUSINESS_TZ);
   const services = computed(() => tenantData.value?.services ?? []);
   const employees = computed(() => tenantData.value?.employees ?? []);
 
@@ -131,7 +130,11 @@ export async function usePublicBooking(slug: string) {
         { method: 'POST', body },
       );
     } catch (e: unknown) {
-      const err = e as { statusCode?: number; status?: number; data?: { message?: string | string[] } };
+      const err = e as {
+        statusCode?: number;
+        status?: number;
+        data?: { message?: string | string[] };
+      };
       const status = err.statusCode ?? err.status;
       const message = err.data?.message;
       const text = (Array.isArray(message) ? message[0] : message) || 'Error al crear la cita';
@@ -154,6 +157,7 @@ export async function usePublicBooking(slug: string) {
     tenantData,
     fetchError,
     tenantName,
+    tenantTimezone,
     services,
     employees,
     step,
