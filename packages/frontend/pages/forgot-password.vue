@@ -82,8 +82,9 @@
             >
               <span
                 class="material-symbols-outlined text-green-600 text-4xl"
-                style="font-variation-settings: 'FILL' 1;"
-              >mark_email_read</span>
+                style="font-variation-settings: 'FILL' 1"
+                >mark_email_read</span
+              >
             </div>
             <div>
               <h2 class="text-2xl font-bold text-on-surface mb-2 tracking-tight">
@@ -91,8 +92,8 @@
               </h2>
               <p class="text-on-surface-variant text-sm leading-relaxed">
                 Si existe una cuenta con
-                <span class="font-semibold text-on-surface">{{ email }}</span>, recibirás un enlace
-                para restablecer tu contraseña en los próximos minutos.
+                <span class="font-semibold text-on-surface">{{ email }}</span
+                >, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
               </p>
             </div>
             <NuxtLink
@@ -101,8 +102,9 @@
             >
               <span
                 class="material-symbols-outlined text-lg"
-                style="font-variation-settings: 'FILL' 0;"
-              >chevron_left</span>
+                style="font-variation-settings: 'FILL' 0"
+                >chevron_left</span
+              >
               Volver al inicio de sesión
             </NuxtLink>
           </div>
@@ -131,7 +133,7 @@
                   <div
                     class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline"
                   >
-                    <span class="material-symbols-outlined" style="font-size: 20px;">mail</span>
+                    <span class="material-symbols-outlined" style="font-size: 20px">mail</span>
                   </div>
                   <input
                     id="email"
@@ -152,9 +154,7 @@
                   :disabled="loading"
                   class="w-full py-4 px-6 soul-gradient text-on-primary font-bold rounded-full shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:scale-100"
                 >
-                  <span>{{
-                    loading ? 'Enviando...' : 'Enviar enlace de recuperación'
-                  }}</span>
+                  <span>{{ loading ? 'Enviando...' : 'Enviar enlace de recuperación' }}</span>
                   <span v-if="!loading" class="material-symbols-outlined text-lg">
                     arrow_forward
                   </span>
@@ -167,7 +167,8 @@
                   >
                     <span
                       class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform"
-                    >chevron_left</span>
+                      >chevron_left</span
+                    >
                     <span>Volver al Inicio de Sesión</span>
                   </NuxtLink>
                 </div>
@@ -203,28 +204,34 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: false })
+definePageMeta({ layout: false });
 
-const email = ref('')
-const loading = ref(false)
-const submitted = ref(false)
-const errorMsg = ref('')
+const config = useRuntimeConfig();
+const apiUrl = config.public.apiUrl;
+
+const email = ref('');
+const loading = ref(false);
+const submitted = ref(false);
+const errorMsg = ref('');
 
 async function handleSubmit() {
-  if (!email.value) return
-  errorMsg.value = ''
-  loading.value = true
+  if (!email.value) return;
+  errorMsg.value = '';
+  loading.value = true;
 
   try {
-    await $fetch('/api/auth/forgot-password', {
+    // The backend always answers the same generic 200 whether or not the email
+    // exists (anti-enumeration), so a successful response is always "check your inbox".
+    await $fetch(`${apiUrl}/auth/forgot-password`, {
       method: 'POST',
       body: { email: email.value },
-    })
+    });
+    submitted.value = true;
   } catch {
-    // Always show success to prevent email enumeration
+    // Network/server failure — the request never went through; let the user retry.
+    errorMsg.value = 'No pudimos procesar tu solicitud. Intenta de nuevo en unos momentos.';
   } finally {
-    loading.value = false
-    submitted.value = true
+    loading.value = false;
   }
 }
 </script>
