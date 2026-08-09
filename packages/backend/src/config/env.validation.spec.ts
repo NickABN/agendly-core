@@ -24,6 +24,47 @@ describe('env.validation — JWT_SECRET (OWASP A05)', () => {
   });
 });
 
+describe('env.validation — NODE_ENV', () => {
+  it.each(['development', 'production', 'test'])(
+    'accepts NODE_ENV=%s',
+    (env) => {
+      expect(() =>
+        validate({
+          ...BASE,
+          JWT_SECRET: STRONG,
+          NODE_ENV: env,
+          FRONTEND_URL: 'https://app.agendly.mx',
+          PUBLIC_APP_URL: 'https://agendly-admin1.netlify.app',
+        }),
+      ).not.toThrow();
+    },
+  );
+
+  it('accepts an unset NODE_ENV (local dev default)', () => {
+    expect(() => validate({ ...BASE, JWT_SECRET: STRONG })).not.toThrow();
+  });
+
+  it('rejects a miscased NODE_ENV like "Production"', () => {
+    expect(() =>
+      validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'Production' }),
+    ).toThrow(/NODE_ENV/);
+  });
+
+  it('rejects an unknown NODE_ENV like "staging"', () => {
+    expect(() =>
+      validate({ ...BASE, JWT_SECRET: STRONG, NODE_ENV: 'staging' }),
+    ).toThrow(/NODE_ENV/);
+  });
+});
+
+describe('env.validation — removed variables', () => {
+  it('ignores the deprecated JWT_EXPIRATION without failing', () => {
+    expect(() =>
+      validate({ ...BASE, JWT_SECRET: STRONG, JWT_EXPIRATION: '7d' }),
+    ).not.toThrow();
+  });
+});
+
 describe('env.validation — FRONTEND_URL in production', () => {
   it('requires FRONTEND_URL when NODE_ENV=production', () => {
     expect(() =>

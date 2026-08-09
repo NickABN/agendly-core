@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import {
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -65,7 +66,11 @@ function validateProductionFrontendUrl(
 }
 
 class EnvironmentVariables {
-  @IsString()
+  // Optional-when-unset (dev default), but a typo like 'Production' must fail
+  // fast: prod-only checks and secure cookies key off the exact string.
+  @IsIn(['development', 'production', 'test'], {
+    message: 'NODE_ENV must be one of: development, production, test',
+  })
   @IsOptional()
   NODE_ENV?: string;
 
@@ -96,10 +101,6 @@ class EnvironmentVariables {
       'JWT_SECRET no puede ser el valor default inseguro; genera uno con openssl rand -hex 32',
   })
   JWT_SECRET!: string;
-
-  @IsString()
-  @IsOptional()
-  JWT_EXPIRATION?: string;
 
   // Sesión: access token corto + refresh token deslizante con tope absoluto.
   // Sin secreto nuevo — el refresh es opaco (random + SHA-256), no firmado.

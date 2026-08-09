@@ -9,6 +9,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { buildCorsAllowlist } from './config/cors';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -30,8 +31,11 @@ async function bootstrap() {
   // el mount legacy /uploads), así que los defaults de helmet no rompen nada.
   app.use(helmet());
 
+  // Allowlist: admin frontend (FRONTEND_URL) + public booking site
+  // (PUBLIC_APP_URL) — the booking pages call /availability/* and
+  // /public/:slug from the browser and may live on a different origin.
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+    origin: buildCorsAllowlist(process.env),
     credentials: true,
   });
 
