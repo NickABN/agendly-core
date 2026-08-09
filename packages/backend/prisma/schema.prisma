@@ -51,6 +51,11 @@ enum SubscriptionStatus {
   INCOMPLETE // checkout iniciado, sin confirmar
 }
 
+enum StripeWebhookEventStatus {
+  PROCESSING
+  COMPLETED
+}
+
 // ─── Tenant ──────────────────────────────────────────────
 
 model Tenant {
@@ -84,6 +89,23 @@ model Tenant {
   privacyConsents    PrivacyConsent[]
   scheduleExceptions ScheduleException[]
   imageVersions      ImageVersion[]
+  stripeWebhookEvents StripeWebhookEvent[]
+}
+
+// ─── Stripe webhook event (durable idempotency) ───────────
+
+model StripeWebhookEvent {
+  eventId        String                   @id
+  tenantId       String?
+  status         StripeWebhookEventStatus @default(PROCESSING)
+  claimToken     String                   @unique
+  claimedAt      DateTime                 @default(now())
+  leaseExpiresAt DateTime
+  completedAt    DateTime?
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
 }
 
 // ─── User (Business Owner / Admin) ──────────────────────

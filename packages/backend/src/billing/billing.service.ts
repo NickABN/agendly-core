@@ -1,14 +1,35 @@
 import {
   Injectable,
+  ConflictException,
   Logger,
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import type { SubscriptionStatus } from '../generated/prisma/client.js';
+
+const WEBHOOK_CLAIM_LEASE_MS = 5 * 60 * 1000;
+
+type BillingTransaction = Pick<PrismaService, 'tenant' | 'stripeWebhookEvent'>;
+type WebhookNotification =
+  | {
+      kind: 'receipt';
+      data: {
+        to: string;
+        businessName: string;
+        amount: string;
+        currency: string;
+        invoiceUrl?: string;
+      };
+    }
+  | {
+      kind: 'payment-failed';
+      data: { to: string; businessName: string; manageUrl: string };
+    };
 
 /** Mapea el estado de la suscripción de Stripe a nuestro enum. */
 function mapStripeStatus(
@@ -152,33 +173,123 @@ export class BillingService {
 
   /** Aplica el evento del webhook al estado del tenant. */
   async handleEvent(event: Stripe.Event): Promise<void> {
+    const claimToken = await this.claimWebhookEvent(event.id);
+    if (!claimToken) return;
+
+    try {
+      const notification = await this.prisma.$transaction(async (tx) => {
+        const notification = await this.processEvent(tx, event, claimToken);
+        const completion = await tx.stripeWebhookEvent.updateMany({
+          where: { eventId: event.id, claimToken, status: 'PROCESSING' },
+          data: { status: 'COMPLETED', completedAt: new Date() },
+        });
+        if (completion.count !== 1) {
+          throw new ServiceUnavailableException(
+            'No se pudo completar el webhook',
+          );
+        }
+        return notification;
+      });
+      if (notification) this.sendNotification(notification);
+    } catch (error) {
+      await this.prisma.stripeWebhookEvent
+        .deleteMany({ where: { eventId: event.id, claimToken } })
+        .catch((cleanupError: unknown) => {
+          this.logger.error(
+            `No se pudo liberar el evento de Stripe: ${
+              cleanupError instanceof Error
+                ? cleanupError.message
+                : 'error desconocido'
+            }`,
+          );
+        });
+      throw error;
+    }
+  }
+
+  private async processEvent(
+    tx: BillingTransaction,
+    event: Stripe.Event,
+    claimToken: string,
+  ): Promise<WebhookNotification | undefined> {
     switch (event.type) {
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-      case 'customer.subscription.deleted': {
-        const sub = event.data.object;
-        await this.syncSubscription(sub);
-        break;
-      }
-      case 'invoice.paid': {
-        const invoice = event.data.object;
-        await this.onInvoicePaid(invoice);
-        break;
-      }
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object;
-        await this.onInvoiceFailed(invoice);
-        break;
-      }
+      case 'customer.subscription.deleted':
+        await this.syncSubscription(
+          tx,
+          event.id,
+          claimToken,
+          event.data.object,
+        );
+        return;
+      case 'invoice.paid':
+        return this.onInvoicePaid(tx, event.id, claimToken, event.data.object);
+      case 'invoice.payment_failed':
+        return this.onInvoiceFailed(
+          tx,
+          event.id,
+          claimToken,
+          event.data.object,
+        );
       default:
         this.logger.debug(`Evento de Stripe ignorado: ${event.type}`);
     }
   }
 
-  private async syncSubscription(sub: Stripe.Subscription): Promise<void> {
+  private async claimWebhookEvent(eventId: string): Promise<string | null> {
+    const now = new Date();
+    const claimToken = randomUUID();
+    const leaseExpiresAt = new Date(now.getTime() + WEBHOOK_CLAIM_LEASE_MS);
+
+    try {
+      await this.prisma.stripeWebhookEvent.create({
+        data: { eventId, claimToken, leaseExpiresAt },
+      });
+      return claimToken;
+    } catch (error) {
+      if (!isUniqueConstraintError(error)) throw error;
+    }
+
+    const existing = await this.prisma.stripeWebhookEvent.findUnique({
+      where: { eventId },
+    });
+    if (!existing) throw new ConflictException('Webhook en procesamiento');
+    if (existing.status === 'COMPLETED') return null;
+    if (existing.leaseExpiresAt > now) {
+      throw new ConflictException('Webhook en procesamiento');
+    }
+
+    const takeover = await this.prisma.stripeWebhookEvent.updateMany({
+      where: {
+        eventId,
+        status: 'PROCESSING',
+        leaseExpiresAt: { lt: now },
+      },
+      data: {
+        claimToken,
+        claimedAt: now,
+        leaseExpiresAt,
+      },
+    });
+    if (takeover.count === 1) return claimToken;
+
+    const current = await this.prisma.stripeWebhookEvent.findUnique({
+      where: { eventId },
+    });
+    if (current?.status === 'COMPLETED') return null;
+    throw new ConflictException('Webhook en procesamiento');
+  }
+
+  private async syncSubscription(
+    tx: BillingTransaction,
+    eventId: string,
+    claimToken: string,
+    sub: Stripe.Subscription,
+  ): Promise<void> {
     const customerId =
       typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
-    const tenant = await this.prisma.tenant.findFirst({
+    const tenant = await tx.tenant.findFirst({
       where: { stripeCustomerId: customerId },
     });
     if (!tenant) {
@@ -187,7 +298,8 @@ export class BillingService {
     }
 
     const periodEnd = sub.items.data[0]?.current_period_end;
-    await this.prisma.tenant.update({
+    await this.assignTenant(tx, eventId, claimToken, tenant.id);
+    await tx.tenant.update({
       where: { id: tenant.id },
       data: {
         stripeSubscriptionId: sub.id,
@@ -200,67 +312,106 @@ export class BillingService {
     );
   }
 
-  private async onInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
+  private async onInvoicePaid(
+    tx: BillingTransaction,
+    eventId: string,
+    claimToken: string,
+    invoice: Stripe.Invoice,
+  ): Promise<WebhookNotification | undefined> {
     const customerId =
       typeof invoice.customer === 'string'
         ? invoice.customer
         : invoice.customer?.id;
     if (!customerId) return;
-    const tenant = await this.prisma.tenant.findFirst({
+    const tenant = await tx.tenant.findFirst({
       where: { stripeCustomerId: customerId },
       include: { users: { where: { role: 'OWNER' }, take: 1 } },
     });
     if (!tenant) return;
 
-    await this.prisma.tenant.update({
+    await this.assignTenant(tx, eventId, claimToken, tenant.id);
+    await tx.tenant.update({
       where: { id: tenant.id },
       data: { subscriptionStatus: 'ACTIVE' },
     });
 
     const email = tenant.users[0]?.email;
-    if (email) {
-      this.emailService
-        .sendPaymentReceipt({
-          to: email,
-          businessName: tenant.name,
-          amount: (invoice.amount_paid / 100).toFixed(2),
-          currency: invoice.currency.toUpperCase(),
-          invoiceUrl: invoice.hosted_invoice_url ?? undefined,
-        })
-        .catch((err: Error) =>
-          this.logger.error(`Fallo recibo de pago: ${err.message}`),
-        );
-    }
+    return email
+      ? {
+          kind: 'receipt',
+          data: {
+            to: email,
+            businessName: tenant.name,
+            amount: (invoice.amount_paid / 100).toFixed(2),
+            currency: invoice.currency.toUpperCase(),
+            invoiceUrl: invoice.hosted_invoice_url ?? undefined,
+          },
+        }
+      : undefined;
   }
 
-  private async onInvoiceFailed(invoice: Stripe.Invoice): Promise<void> {
+  private async onInvoiceFailed(
+    tx: BillingTransaction,
+    eventId: string,
+    claimToken: string,
+    invoice: Stripe.Invoice,
+  ): Promise<WebhookNotification | undefined> {
     const customerId =
       typeof invoice.customer === 'string'
         ? invoice.customer
         : invoice.customer?.id;
     if (!customerId) return;
-    const tenant = await this.prisma.tenant.findFirst({
+    const tenant = await tx.tenant.findFirst({
       where: { stripeCustomerId: customerId },
       include: { users: { where: { role: 'OWNER' }, take: 1 } },
     });
     if (!tenant) return;
 
-    await this.prisma.tenant.update({
+    await this.assignTenant(tx, eventId, claimToken, tenant.id);
+    await tx.tenant.update({
       where: { id: tenant.id },
       data: { subscriptionStatus: 'PAST_DUE' },
     });
 
     const email = tenant.users[0]?.email;
-    if (email) {
-      this.emailService
-        .sendPaymentFailed({
-          to: email,
-          businessName: tenant.name,
-          manageUrl: `${this.frontendUrl()}/admin/subscription`,
-        })
-        .catch((err: Error) =>
-          this.logger.error(`Fallo aviso de dunning: ${err.message}`),
-        );
+    return email
+      ? {
+          kind: 'payment-failed',
+          data: {
+            to: email,
+            businessName: tenant.name,
+            manageUrl: `${this.frontendUrl()}/admin/subscription`,
+          },
+        }
+      : undefined;
+  }
+
+  private sendNotification(notification: WebhookNotification): void {
+    const sending =
+      notification.kind === 'receipt'
+        ? this.emailService.sendPaymentReceipt(notification.data)
+        : this.emailService.sendPaymentFailed(notification.data);
+    sending.catch((err: Error) =>
+      this.logger.error(`Fallo notificación de pago: ${err.message}`),
+    );
+  }
+
+  private async assignTenant(
+    tx: BillingTransaction,
+    eventId: string,
+    claimToken: string,
+    tenantId: string,
+  ): Promise<void> {
+    const assigned = await tx.stripeWebhookEvent.updateMany({
+      where: { eventId, claimToken, status: 'PROCESSING' },
+      data: { tenantId },
+    });
+    if (assigned.count !== 1) {
+      throw new ServiceUnavailableException('No se pudo asociar el webhook');
     }
   }
+}
+
+function isUniqueConstraintError(error: unknown): boolean {
+  return (error as { code?: string }).code === 'P2002';
 }
