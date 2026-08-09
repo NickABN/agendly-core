@@ -31,6 +31,15 @@ type WebhookNotification =
       data: { to: string; businessName: string; manageUrl: string };
     };
 
+type StoredNotification =
+  | {
+      kind: 'receipt';
+      amount: string;
+      currency: string;
+      invoiceUrl?: string | null;
+    }
+  | { kind: 'payment-failed' };
+
 /** Mapea el estado de la suscripción de Stripe a nuestro enum. */
 function mapStripeStatus(
   status: Stripe.Subscription.Status,
@@ -174,14 +183,20 @@ export class BillingService {
   /** Aplica el evento del webhook al estado del tenant. */
   async handleEvent(event: Stripe.Event): Promise<void> {
     const claimToken = await this.claimWebhookEvent(event.id);
-    if (!claimToken) return;
+    if (!claimToken) return this.resendPendingNotification(event.id);
 
     try {
       const notification = await this.prisma.$transaction(async (tx) => {
         const notification = await this.processEvent(tx, event, claimToken);
         const completion = await tx.stripeWebhookEvent.updateMany({
           where: { eventId: event.id, claimToken, status: 'PROCESSING' },
-          data: { status: 'COMPLETED', completedAt: new Date() },
+          data: {
+            status: 'COMPLETED',
+            completedAt: new Date(),
+            notification: notification
+              ? toStoredNotification(notification)
+              : undefined,
+          },
         });
         if (completion.count !== 1) {
           throw new ServiceUnavailableException(
@@ -190,10 +205,14 @@ export class BillingService {
         }
         return notification;
       });
-      if (notification) this.sendNotification(notification);
+      if (notification) await this.deliverNotification(event.id, notification);
     } catch (error) {
+      // Scoped to PROCESSING so a failed delivery never drops the COMPLETED
+      // row that guarantees idempotency.
       await this.prisma.stripeWebhookEvent
-        .deleteMany({ where: { eventId: event.id, claimToken } })
+        .deleteMany({
+          where: { eventId: event.id, claimToken, status: 'PROCESSING' },
+        })
         .catch((cleanupError: unknown) => {
           this.logger.error(
             `No se pudo liberar el evento de Stripe: ${
@@ -386,13 +405,70 @@ export class BillingService {
       : undefined;
   }
 
-  private sendNotification(notification: WebhookNotification): void {
-    const sending =
-      notification.kind === 'receipt'
-        ? this.emailService.sendPaymentReceipt(notification.data)
-        : this.emailService.sendPaymentFailed(notification.data);
-    sending.catch((err: Error) =>
-      this.logger.error(`Fallo notificación de pago: ${err.message}`),
+  /** Envía y sólo entonces marca entregado; si falla, Stripe reintenta. */
+  private async deliverNotification(
+    eventId: string,
+    notification: WebhookNotification,
+  ): Promise<void> {
+    try {
+      if (notification.kind === 'receipt') {
+        await this.emailService.sendPaymentReceipt(notification.data);
+      } else {
+        await this.emailService.sendPaymentFailed(notification.data);
+      }
+    } catch (err) {
+      this.logger.error(
+        `Fallo notificación de pago: ${
+          err instanceof Error ? err.message : 'error desconocido'
+        }`,
+      );
+      throw new ServiceUnavailableException(
+        'No se pudo enviar la notificación',
+      );
+    }
+
+    await this.prisma.stripeWebhookEvent.updateMany({
+      where: { eventId },
+      data: { notifiedAt: new Date() },
+    });
+  }
+
+  /** Reenvía la notificación pendiente de un evento ya completado. */
+  private async resendPendingNotification(eventId: string): Promise<void> {
+    const stored = await this.prisma.stripeWebhookEvent.findUnique({
+      where: { eventId },
+    });
+    if (!stored?.tenantId || !stored.notification || stored.notifiedAt) return;
+
+    const tenant = await this.prisma.tenant.findFirst({
+      where: { id: stored.tenantId },
+      include: { users: { where: { role: 'OWNER' }, take: 1 } },
+    });
+    const to = tenant?.users[0]?.email;
+    if (!tenant || !to) return;
+
+    const pending = stored.notification as StoredNotification;
+    await this.deliverNotification(
+      eventId,
+      pending.kind === 'receipt'
+        ? {
+            kind: 'receipt',
+            data: {
+              to,
+              businessName: tenant.name,
+              amount: pending.amount,
+              currency: pending.currency,
+              invoiceUrl: pending.invoiceUrl ?? undefined,
+            },
+          }
+        : {
+            kind: 'payment-failed',
+            data: {
+              to,
+              businessName: tenant.name,
+              manageUrl: `${this.frontendUrl()}/admin/subscription`,
+            },
+          },
     );
   }
 
@@ -414,4 +490,16 @@ export class BillingService {
 
 function isUniqueConstraintError(error: unknown): boolean {
   return (error as { code?: string }).code === 'P2002';
+}
+
+/** Quita los datos personales: el destinatario se resuelve al entregar. */
+function toStoredNotification(n: WebhookNotification): StoredNotification {
+  return n.kind === 'payment-failed'
+    ? { kind: 'payment-failed' }
+    : {
+        kind: 'receipt',
+        amount: n.data.amount,
+        currency: n.data.currency,
+        invoiceUrl: n.data.invoiceUrl ?? null,
+      };
 }

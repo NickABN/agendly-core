@@ -103,6 +103,9 @@ model StripeWebhookEvent {
   leaseExpiresAt DateTime
   completedAt    DateTime?
 
+  notification Json?
+  notifiedAt   DateTime?
+
   tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])

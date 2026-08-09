@@ -1,6 +1,6 @@
 import { BillingService } from './billing.service';
 import type Stripe from 'stripe';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, ServiceUnavailableException } from '@nestjs/common';
 import type { EmailService } from '../email/email.service';
 
 function makeConfig(overrides: Record<string, string> = {}) {
@@ -75,6 +75,14 @@ function invoiceEvent(
   object: Record<string, unknown> = { customer: 'cus_1' },
 ) {
   return { id, type, data: { object } } as unknown as Stripe.Event;
+}
+
+function receiptEvent(id: string) {
+  return invoiceEvent(id, 'invoice.paid', {
+    customer: 'cus_1',
+    amount_paid: 1000,
+    currency: 'mxn',
+  });
 }
 
 describe('BillingService.handleEvent — mapeo de webhooks', () => {
@@ -300,7 +308,11 @@ describe('BillingService.handleEvent — mapeo de webhooks', () => {
     await expect(service.handleEvent(event)).rejects.toBe(processingError);
 
     expect(deleteMany).toHaveBeenCalledWith({
-      where: { eventId: 'evt_retry', claimToken: expect.any(String) },
+      where: {
+        eventId: 'evt_retry',
+        claimToken: expect.any(String),
+        status: 'PROCESSING',
+      },
     });
     expect(create).toHaveBeenCalledTimes(1);
 
@@ -360,5 +372,72 @@ describe('BillingService.handleEvent — mapeo de webhooks', () => {
     );
 
     expect(update).not.toHaveBeenCalled();
+  });
+
+  it('rethrows when the send fails and leaves the notification pending', async () => {
+    email.sendPaymentReceipt.mockClear();
+    email.sendPaymentReceipt.mockRejectedValueOnce(new Error('resend down'));
+    const { prisma, updateMany, deleteMany } = makePrisma({
+      id: 't1',
+      name: 'Salón',
+      users: [{ email: 'owner@x.com' }],
+    });
+    const service = new BillingService(prisma, makeConfig(), email);
+
+    await expect(
+      service.handleEvent(receiptEvent('evt_send_failed')),
+    ).rejects.toBeInstanceOf(ServiceUnavailableException);
+
+    expect(updateMany).not.toHaveBeenCalledWith(
+      expect.objectContaining({ data: { notifiedAt: expect.any(Date) } }),
+    );
+    expect(deleteMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({ status: 'PROCESSING' }),
+    });
+  });
+
+  it('resends a pending notification when a completed event is redelivered', async () => {
+    email.sendPaymentReceipt.mockClear();
+    const { prisma, create, findUnique, updateMany, update } = makePrisma({
+      id: 't1',
+      name: 'Salón',
+      users: [{ email: 'owner@x.com' }],
+    });
+    create.mockRejectedValueOnce({ code: 'P2002' });
+    findUnique.mockResolvedValue({
+      status: 'COMPLETED',
+      tenantId: 't1',
+      notification: { kind: 'receipt', amount: '10.00', currency: 'MXN' },
+      notifiedAt: null,
+    });
+    const service = new BillingService(prisma, makeConfig(), email);
+
+    await service.handleEvent(receiptEvent('evt_resend'));
+
+    expect(email.sendPaymentReceipt).toHaveBeenCalledWith(
+      expect.objectContaining({ to: 'owner@x.com', amount: '10.00' }),
+    );
+    expect(update).not.toHaveBeenCalled();
+    expect(updateMany).toHaveBeenCalledWith({
+      where: { eventId: 'evt_resend' },
+      data: { notifiedAt: expect.any(Date) },
+    });
+  });
+
+  it('does not resend when the completed event was already notified', async () => {
+    email.sendPaymentReceipt.mockClear();
+    const { prisma, create, findUnique } = makePrisma({ id: 't1' });
+    create.mockRejectedValueOnce({ code: 'P2002' });
+    findUnique.mockResolvedValue({
+      status: 'COMPLETED',
+      tenantId: 't1',
+      notification: { kind: 'receipt', amount: '10.00', currency: 'MXN' },
+      notifiedAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
+    const service = new BillingService(prisma, makeConfig(), email);
+
+    await service.handleEvent(receiptEvent('evt_already_notified'));
+
+    expect(email.sendPaymentReceipt).not.toHaveBeenCalled();
   });
 });
