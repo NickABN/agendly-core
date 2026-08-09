@@ -11,7 +11,7 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | 1 | ~~Unificar upload de logo en R2~~ | ~~logo se perdía en cada redeploy~~ | — | ✅ Hecho |
 | 2 | ~~Token de auth a cookie httpOnly~~ (arregla también el rebote en F5) | — | — | ✅ Hecho |
 | 2b | ~~Refresh tokens con rotación + lista de revocación~~ (A07-1: access 15m + refresh opaco revocable, deslizante 7d/tope 30d, detección de reuso, logout-all). *Follow-ups:* cron de limpieza de revocados-no-expirados; UI de "dispositivos"/logout-all | — | — | ✅ Hecho |
-| 3 | **`forgot-password` backend** (`POST /auth/forgot-password`: token + email con Resend + página de reset). Hoy la UI existe pero pega a un endpoint inexistente y "miente" éxito | Usuarios que olvidan su contraseña quedan afuera para siempre | Medio | 🟡 Media |
+| 3 | ~~**`forgot-password` backend**~~ (`POST /auth/forgot-password` + `/auth/reset-password`: token single-use hasheado SHA-256, TTL 30 min, email con Resend, página `/reset-password`, revoca todas las sesiones al resetear) | — | — | ✅ Hecho |
 | 4 | **`/admin/subscription`**: el banner de prueba linkea a una página que no existe (404). Crear placeholder o quitar el link hasta tener billing | Confunde en el momento más sensible (fin del trial) | Bajo | 🟡 Media |
 | 5 | **`/arco`** (página de derechos ARCO): está en la allowlist del middleware pero no existe. Obligatoria junto al aviso de privacidad (LFPDPPP) si se opera en México | Cumplimiento legal | Bajo | 🟡 Media |
 | 6 | ~~Billing / suscripciones~~ (Stripe: schema, checkout, portal, webhooks, enforcement del trial) | — | — | ✅ Hecho (falta cuenta Stripe + tarjeta real para producción) |
