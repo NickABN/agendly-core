@@ -22,6 +22,10 @@ coverage/
 
 # Prisma
 prisma/*.db
+# Generated client — rebuilt by `prisma generate` (see root `ci:prepare`).
+# Never commit it: it is ~1.8k lines of churn per schema change and its
+# trailing whitespace fails `git diff --check`.
+packages/backend/src/generated/
 
 # Turbo
 .turbo/

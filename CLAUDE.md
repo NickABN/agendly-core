@@ -15,6 +15,10 @@ SaaS de agendamiento de citas para negocios de belleza y estética en México.
 ## Comandos
 
 ```bash
+# Setup inicial (obligatorio tras clonar o cambiar el schema de Prisma)
+pnpm install
+pnpm ci:prepare             # Build de shared + genera el cliente Prisma
+
 # Desarrollo
 pnpm dev                    # Levanta backend + frontend en paralelo
 pnpm dev:backend            # Solo backend (puerto 3000)

@@ -20,10 +20,13 @@ COPY packages/backend/package.json packages/backend/
 COPY packages/frontend/package.json packages/frontend/
 RUN pnpm install --frozen-lockfile --filter @agendly/backend...
 
-# Build shared (tsc) BEFORE backend (backend consumes shared/dist)
+# Build shared (tsc) BEFORE backend (backend consumes shared/dist).
+# `prisma generate` must run here: the client under src/generated/ is gitignored,
+# so a clean clone has no client to compile until it is generated.
 COPY packages/shared packages/shared
 COPY packages/backend packages/backend
 RUN pnpm --filter @agendly/shared build \
+  && pnpm --filter @agendly/backend exec prisma generate \
   && pnpm --filter @agendly/backend build
 
 # Produce a self-contained prod bundle (real node_modules, shared injected,
