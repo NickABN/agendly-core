@@ -52,7 +52,12 @@ export class AvailabilityService {
     }
 
     if (employeeId === ANY_EMPLOYEE) {
-      return this.getSlotsForAnyEmployee(tenant.id, service, date);
+      return this.getSlotsForAnyEmployee(
+        tenant.id,
+        service,
+        date,
+        tenant.timezone,
+      );
     }
 
     const employee = await this.prisma.employee.findFirst({
@@ -74,6 +79,7 @@ export class AvailabilityService {
       date,
       serviceDurationMinutes: service.durationMinutes,
       bufferMinutes: service.bufferMinutes,
+      timezone: tenant.timezone,
     });
     return slots.map((slot) => ({ ...slot, employeeId }));
   }
@@ -86,6 +92,7 @@ export class AvailabilityService {
     tenantId: string,
     service: Pick<Service, 'id' | 'durationMinutes' | 'bufferMinutes'>,
     date: string,
+    timezone: string,
   ): Promise<TimeSlotDto[]> {
     const employees = await this.prisma.employee.findMany({
       where: {
@@ -106,6 +113,7 @@ export class AvailabilityService {
         date,
         serviceDurationMinutes: service.durationMinutes,
         bufferMinutes: service.bufferMinutes,
+        timezone,
       });
       for (const slot of slots) {
         if (!byStart.has(slot.start)) {
@@ -118,17 +126,21 @@ export class AvailabilityService {
   }
 
   /**
-   * Returns available time slots for a given employee on a given business-TZ date.
+   * Returns available time slots for a given employee on a given tenant-TZ date.
    * Considers: schedule, exceptions, existing appointments, service duration + buffer,
    * service availability windows, and (for today) already-past times.
    * Slot instants are UTC ISO strings with `Z`.
+   *
+   * `timezone` is REQUIRED (the tenant's IANA timezone): a silent default here
+   * would hide a missed call site and compute slots on the wrong wall clock.
    */
   async getAvailableSlots(params: {
     tenantId: string;
     employeeId: string;
-    date: string; // YYYY-MM-DD (business-TZ day)
+    date: string; // YYYY-MM-DD (tenant-TZ day)
     serviceDurationMinutes: number;
     bufferMinutes: number;
+    timezone: string;
     serviceId?: string;
   }): Promise<TimeSlotDto[]> {
     const {
@@ -137,16 +149,22 @@ export class AvailabilityService {
       date,
       serviceDurationMinutes,
       bufferMinutes,
+      timezone,
       serviceId,
     } = params;
 
-    const { start: dayStart, end: dayEnd } = dayBoundsUtc(date);
+    const { start: dayStart, end: dayEnd } = dayBoundsUtc(date, timezone);
     const dayOfWeek = dayOfWeekOf(date) as DayOfWeek;
 
-    // 1. Schedule exception for this date takes precedence over the weekly schedule
+    // 1. Schedule exception for this date takes precedence over the weekly schedule.
+    //    ScheduleException.date is @db.Date (a civil date): match it by the UTC
+    //    midnight of the date key so the lookup is independent of the tenant TZ.
     const exception = await this.prisma.scheduleException.findUnique({
       where: {
-        employeeId_date: { employeeId, date: dayStart },
+        employeeId_date: {
+          employeeId,
+          date: new Date(`${date}T00:00:00.000Z`),
+        },
       },
     });
 
@@ -181,6 +199,7 @@ export class AvailabilityService {
         serviceDurationMinutes,
         bufferMinutes,
         bookedSlots,
+        timezone,
       );
     } else {
       const schedules = await this.prisma.schedule.findMany({
@@ -198,6 +217,7 @@ export class AvailabilityService {
         serviceDurationMinutes,
         bufferMinutes,
         bookedSlots,
+        timezone,
       );
     }
 
@@ -208,7 +228,7 @@ export class AvailabilityService {
       });
       if (serviceAvail.length > 0) {
         slots = slots.filter((slot) => {
-          const slotMinutes = utcToZonedMinutes(slot.start);
+          const slotMinutes = utcToZonedMinutes(slot.start, timezone);
           return serviceAvail.some((sa) => {
             if (!sa.startTime || !sa.endTime) return true;
             const from = timeToMinutes(sa.startTime);
@@ -219,8 +239,8 @@ export class AvailabilityService {
       }
     }
 
-    // 4. Never offer slots that already started (today only)
-    if (date === todayKey()) {
+    // 4. Never offer slots that already started (today only, in the tenant TZ)
+    if (date === todayKey(timezone)) {
       slots = slots.filter((slot) => !isPast(slot.start));
     }
 
@@ -236,6 +256,7 @@ export class AvailabilityService {
     durationMinutes: number,
     bufferMinutes: number,
     bookedSlots: Array<{ start: Date; end: Date }>,
+    timezone: string,
   ): TimeSlotDto[] {
     const allSlots: TimeSlotDto[] = [];
     for (const block of blocks) {
@@ -247,6 +268,7 @@ export class AvailabilityService {
           durationMinutes,
           bufferMinutes,
           bookedSlots,
+          timezone,
         ),
       );
     }
@@ -259,11 +281,12 @@ export class AvailabilityService {
    */
   generateSlots(
     date: string,
-    workStart: string, // HH:mm (business-TZ wall time)
+    workStart: string, // HH:mm (tenant-TZ wall time)
     workEnd: string, // HH:mm
     durationMinutes: number,
     bufferMinutes: number,
     bookedSlots: Array<{ start: Date; end: Date }>,
+    timezone: string,
   ): TimeSlotDto[] {
     const slots: TimeSlotDto[] = [];
     const totalMinutes = durationMinutes + bufferMinutes;
@@ -271,9 +294,9 @@ export class AvailabilityService {
     const workStartMinutes = timeToMinutes(workStart);
     const workEndMinutes = timeToMinutes(workEnd);
 
-    // Booked ranges as minutes relative to the business-TZ midnight of `date`,
+    // Booked ranges as minutes relative to the tenant-TZ midnight of `date`,
     // clamped to the day so cross-midnight appointments still block correctly.
-    const dayStartMs = zonedToUtc(date, '00:00').getTime();
+    const dayStartMs = zonedToUtc(date, '00:00', timezone).getTime();
     const booked = bookedSlots.map((slot) => ({
       start: Math.max(0, (slot.start.getTime() - dayStartMs) / 60_000),
       end: Math.min(24 * 60, (slot.end.getTime() - dayStartMs) / 60_000),
@@ -290,8 +313,12 @@ export class AvailabilityService {
 
       if (!isOverlapping) {
         slots.push({
-          start: zonedToUtc(date, minutesToTime(cursor)).toISOString(),
-          end: zonedToUtc(date, minutesToTime(slotEnd)).toISOString(),
+          start: zonedToUtc(
+            date,
+            minutesToTime(cursor),
+            timezone,
+          ).toISOString(),
+          end: zonedToUtc(date, minutesToTime(slotEnd), timezone).toISOString(),
         });
       }
 

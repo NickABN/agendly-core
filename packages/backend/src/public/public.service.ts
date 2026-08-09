@@ -32,6 +32,7 @@ export class PublicService {
       tenant: {
         name: tenant.name,
         slug: tenant.slug,
+        timezone: tenant.timezone,
       },
       services: services.map((s) => ({
         id: s.id,

@@ -13,7 +13,8 @@ export interface PublicEmployeeDto {
 }
 
 export interface PublicTenantResponse {
-  tenant: { name: string; slug: string };
+  /** `timezone` is the tenant's IANA timezone — drives all public date/time display. */
+  tenant: { name: string; slug: string; timezone: string };
   services: PublicServiceDto[];
   employees: PublicEmployeeDto[];
 }

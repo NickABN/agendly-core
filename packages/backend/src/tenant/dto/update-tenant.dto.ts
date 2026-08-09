@@ -2,6 +2,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsTimeZone,
   Matches,
   MaxLength,
 } from 'class-validator';
@@ -31,7 +32,9 @@ export class UpdateTenantDto {
   address?: string;
 
   @IsOptional()
-  @IsString()
+  @IsTimeZone({
+    message: 'La zona horaria debe ser un identificador IANA válido',
+  })
   timezone?: string;
 
   @IsOptional()
