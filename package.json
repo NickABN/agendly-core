@@ -8,9 +8,9 @@
     "dev": "pnpm --filter @agendly/shared build && pnpm -r --parallel dev",
     "build": "pnpm -r build",
     "ci:prepare": "pnpm --filter @agendly/shared build && pnpm --filter @agendly/backend exec prisma generate",
-    "lint": "pnpm -r lint",
+    "lint": "pnpm --filter @agendly/shared build && pnpm -r lint",
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm --filter @agendly/shared build && pnpm -r typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,vue,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,vue,json,md}\""
   },
