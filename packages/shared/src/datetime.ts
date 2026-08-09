@@ -7,7 +7,10 @@ import { DayOfWeek } from './enums';
  * - Every appointment/slot instant crosses the API as ISO-8601 UTC with `Z`
  *   (e.g. "2026-07-03T15:00:00.000Z").
  * - Date-only parameters are date keys ("YYYY-MM-DD") and ALWAYS mean a
- *   calendar day in the business timezone (America/Mexico_City).
+ *   calendar day in the tenant's timezone. Mexico spans 4 IANA zones
+ *   (Mexico_City, Cancun, Hermosillo/Mazatlan, Tijuana), so every conversion
+ *   helper takes an explicit `tz`. `BUSINESS_TZ` is only the documented
+ *   default for tenants that never changed their timezone.
  * - Never emit zoneless datetime strings; never parse one with `new Date()`.
  *
  * All functions are pure and rely only on Intl (works in Node 18+ and browsers).
@@ -25,6 +28,17 @@ const WEEKDAYS: DayOfWeek[] = [
   DayOfWeek.FRIDAY,
   DayOfWeek.SATURDAY,
 ];
+
+/** Whether `tz` is an IANA timezone identifier the runtime's Intl accepts. */
+export function isValidIanaTimeZone(tz: string): boolean {
+  if (typeof tz !== 'string' || tz.length === 0) return false;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 function parseDateKey(dateKey: string): [number, number, number] {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
@@ -51,20 +65,35 @@ function toDate(value: string | Date): Date {
   return d;
 }
 
-const wallClockFormatter = new Intl.DateTimeFormat('en-US', {
-  timeZone: BUSINESS_TZ,
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hourCycle: 'h23',
-});
+// Intl.DateTimeFormat construction is expensive; cache one formatter per
+// timezone (and per style for date formatting). Tenants use a handful of
+// zones, so the maps stay tiny.
+const wallClockFormatters = new Map<string, Intl.DateTimeFormat>();
+const dateKeyFormatters = new Map<string, Intl.DateTimeFormat>();
+const timeFormatters = new Map<string, Intl.DateTimeFormat>();
+const dateFormatters = new Map<string, Intl.DateTimeFormat>();
 
-/** Business-TZ offset (ms) at the given instant. Negative means west of UTC. */
-function tzOffsetMs(instant: Date): number {
-  const parts = wallClockFormatter.formatToParts(instant);
+function wallClockFormatter(tz: string): Intl.DateTimeFormat {
+  let formatter = wallClockFormatters.get(tz);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    });
+    wallClockFormatters.set(tz, formatter);
+  }
+  return formatter;
+}
+
+/** Offset (ms) of `tz` at the given instant. Negative means west of UTC. */
+function tzOffsetMs(instant: Date, tz: string): number {
+  const parts = wallClockFormatter(tz).formatToParts(instant);
   const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
   const asUtc = Date.UTC(
     get('year'),
@@ -78,43 +107,50 @@ function tzOffsetMs(instant: Date): number {
 }
 
 /**
- * Interpret a wall-clock date+time in the business timezone and return the UTC instant.
+ * Interpret a wall-clock date+time in the given timezone and return the UTC instant.
  * Two-pass Intl round-trip: exact for any offset (including minute offsets and DST edges).
  */
-export function zonedToUtc(dateKey: string, time: string): Date {
+export function zonedToUtc(dateKey: string, time: string, tz: string = BUSINESS_TZ): Date {
   const [y, m, d] = parseDateKey(dateKey);
   const [hh, mm, ss] = parseTime(time);
   const wallAsUtc = Date.UTC(y, m - 1, d, hh, mm, ss);
-  let instant = wallAsUtc - tzOffsetMs(new Date(wallAsUtc));
-  instant = wallAsUtc - tzOffsetMs(new Date(instant));
+  let instant = wallAsUtc - tzOffsetMs(new Date(wallAsUtc), tz);
+  instant = wallAsUtc - tzOffsetMs(new Date(instant), tz);
   return new Date(instant);
 }
 
-/** Minutes since business-TZ midnight for a UTC instant (0..1439). */
-export function utcToZonedMinutes(instant: string | Date): number {
-  const parts = wallClockFormatter.formatToParts(toDate(instant));
+/** Minutes since the timezone's midnight for a UTC instant (0..1439). */
+export function utcToZonedMinutes(instant: string | Date, tz: string = BUSINESS_TZ): number {
+  const parts = wallClockFormatter(tz).formatToParts(toDate(instant));
   const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
   return get('hour') * 60 + get('minute');
 }
 
-const dateKeyFormatter = new Intl.DateTimeFormat('en-CA', {
-  timeZone: BUSINESS_TZ,
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
-
-/** Business-TZ calendar day ("YYYY-MM-DD") containing the given UTC instant. */
-export function utcToDateKey(instant: string | Date): string {
-  return dateKeyFormatter.format(toDate(instant));
+function dateKeyFormatter(tz: string): Intl.DateTimeFormat {
+  let formatter = dateKeyFormatters.get(tz);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    dateKeyFormatters.set(tz, formatter);
+  }
+  return formatter;
 }
 
-/** Today's date key in the business timezone. */
-export function todayKey(now: Date = new Date()): string {
-  return utcToDateKey(now);
+/** Calendar day ("YYYY-MM-DD") of the given timezone containing the UTC instant. */
+export function utcToDateKey(instant: string | Date, tz: string = BUSINESS_TZ): string {
+  return dateKeyFormatter(tz).format(toDate(instant));
 }
 
-/** Weekday of a business-TZ calendar date (date keys are civil dates — TZ-independent). */
+/** Today's date key in the given timezone. */
+export function todayKey(tz: string = BUSINESS_TZ, now: Date = new Date()): string {
+  return utcToDateKey(now, tz);
+}
+
+/** Weekday of a calendar date (date keys are civil dates — TZ-independent). */
 export function dayOfWeekOf(dateKey: string): DayOfWeek {
   const [y, m, d] = parseDateKey(dateKey);
   return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
@@ -140,11 +176,14 @@ export function dateKeyRange(startKey: string, count: number): string[] {
   return Array.from({ length: count }, (_, i) => addDays(startKey, i));
 }
 
-/** UTC bounds [start, end) of a business-TZ calendar day. */
-export function dayBoundsUtc(dateKey: string): { start: Date; end: Date } {
+/** UTC bounds [start, end) of a calendar day in the given timezone. */
+export function dayBoundsUtc(
+  dateKey: string,
+  tz: string = BUSINESS_TZ,
+): { start: Date; end: Date } {
   return {
-    start: zonedToUtc(dateKey, '00:00'),
-    end: zonedToUtc(addDays(dateKey, 1), '00:00'),
+    start: zonedToUtc(dateKey, '00:00', tz),
+    end: zonedToUtc(addDays(dateKey, 1), '00:00', tz),
   };
 }
 
@@ -153,39 +192,50 @@ export function isPast(instant: string | Date, graceMinutes = 0, now: Date = new
   return toDate(instant).getTime() < now.getTime() - graceMinutes * 60_000;
 }
 
-const timeFormatter = new Intl.DateTimeFormat(LOCALE, {
-  timeZone: BUSINESS_TZ,
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: true,
-});
-
-/** "03:30 p.m." — business-TZ time of an instant, consistent 12h everywhere. */
-export function formatTime(instant: string | Date): string {
-  return timeFormatter.format(toDate(instant));
+function timeFormatter(tz: string): Intl.DateTimeFormat {
+  let formatter = timeFormatters.get(tz);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(LOCALE, {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    timeFormatters.set(tz, formatter);
+  }
+  return formatter;
 }
 
-const dateFormatters: Record<string, Intl.DateTimeFormat> = {
-  long: new Intl.DateTimeFormat(LOCALE, {
-    timeZone: BUSINESS_TZ,
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  }),
-  short: new Intl.DateTimeFormat(LOCALE, {
-    timeZone: BUSINESS_TZ,
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }),
-};
-
-/** "jueves, 3 de julio" (long) or "3 jul 2026" (short) — business-TZ date of an instant. */
-export function formatDate(instant: string | Date, style: 'long' | 'short' = 'long'): string {
-  return dateFormatters[style].format(toDate(instant));
+/** "03:30 p.m." — wall time of an instant in the given timezone, consistent 12h everywhere. */
+export function formatTime(instant: string | Date, tz: string = BUSINESS_TZ): string {
+  return timeFormatter(tz).format(toDate(instant));
 }
 
-/** Format a date key (business-TZ calendar day) for display, without instant ambiguity. */
+function dateFormatter(tz: string, style: 'long' | 'short'): Intl.DateTimeFormat {
+  const key = `${tz}|${style}`;
+  let formatter = dateFormatters.get(key);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(
+      LOCALE,
+      style === 'long'
+        ? { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long' }
+        : { timeZone: tz, day: 'numeric', month: 'short', year: 'numeric' },
+    );
+    dateFormatters.set(key, formatter);
+  }
+  return formatter;
+}
+
+/** "jueves, 3 de julio" (long) or "3 jul 2026" (short) — calendar day of the instant in `tz`. */
+export function formatDate(
+  instant: string | Date,
+  style: 'long' | 'short' = 'long',
+  tz: string = BUSINESS_TZ,
+): string {
+  return dateFormatter(tz, style).format(toDate(instant));
+}
+
+/** Format a date key (a civil calendar day) for display, without instant ambiguity. */
 export function formatDateKey(dateKey: string, style: 'long' | 'short' = 'long'): string {
   const [y, m, d] = parseDateKey(dateKey);
   // Noon UTC is the same calendar day in every timezone the formatter pins.
