@@ -1,3 +1,4 @@
+import { DayOfWeek } from '@agendly/shared';
 import { useAuthStore } from '~/stores/auth';
 
 interface ServiceForm {
@@ -36,6 +37,23 @@ interface ScheduleResponse {
   isActive: boolean;
 }
 
+interface WeekDayScheduleForm {
+  enabled: boolean;
+  start: string;
+  end: string;
+}
+
+/** Monday-first order matching the rows of the onboarding weekly editor. */
+const WEEK_DAY_ORDER: DayOfWeek[] = [
+  DayOfWeek.MONDAY,
+  DayOfWeek.TUESDAY,
+  DayOfWeek.WEDNESDAY,
+  DayOfWeek.THURSDAY,
+  DayOfWeek.FRIDAY,
+  DayOfWeek.SATURDAY,
+  DayOfWeek.SUNDAY,
+];
+
 interface TenantResponse {
   id: string;
   name: string;
@@ -72,8 +90,20 @@ export function useOnboarding() {
     return api.get<EmployeeResponse[]>('/employees');
   }
 
-  async function createDefaultSchedule(employeeId: string) {
-    return api.post<ScheduleResponse[]>(`/schedules/employee/${employeeId}/default`);
+  /**
+   * Replaces each employee's weekly schedule with the hours edited in step 4.
+   * PUT /schedules/bulk is a full replace per employee, so disabled days are
+   * simply omitted and stay closed.
+   */
+  async function saveSchedules(employeeIds: string[], weekDays: WeekDayScheduleForm[]) {
+    const days = weekDays
+      .map((day, index) => ({ ...day, dayOfWeek: WEEK_DAY_ORDER[index] }))
+      .filter((day) => day.enabled)
+      .map((day) => ({ dayOfWeek: day.dayOfWeek, startTime: day.start, endTime: day.end }));
+
+    for (const employeeId of employeeIds) {
+      await api.put<ScheduleResponse[]>('/schedules/bulk', { employeeId, days });
+    }
   }
 
   async function getSchedules() {
@@ -99,7 +129,7 @@ export function useOnboarding() {
     getServices,
     createEmployees,
     getEmployees,
-    createDefaultSchedule,
+    saveSchedules,
     getSchedules,
     completeOnboarding,
   };

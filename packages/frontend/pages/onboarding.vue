@@ -31,6 +31,7 @@ function removeService(index: number) {
 
 // ─── Step 3: Employees ─────────────────────────────
 const createdServiceIds = ref<Array<{ id: string; name: string }>>([]);
+const createdEmployeeIds = ref<string[]>([]);
 const employees = reactive<Array<{ name: string; role: string; serviceIds: string[] }>>([
   { name: store.user?.name || '', role: 'Administrador', serviceIds: [] },
 ]);
@@ -115,12 +116,11 @@ async function nextStep() {
           serviceIds: createdServiceIds.value.map((s) => s.id),
         }))
       );
-      for (const emp of created) {
-        await onboarding.createDefaultSchedule(emp.id);
-      }
+      createdEmployeeIds.value = created.map((emp) => emp.id);
     }
 
     if (currentStep.value === 4) {
+      await onboarding.saveSchedules(createdEmployeeIds.value, weekDays);
       await onboarding.completeOnboarding();
     }
 
