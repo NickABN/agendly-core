@@ -46,6 +46,12 @@ describe('BookingService.createBooking', () => {
     bufferMinutes: 0,
   };
   const employeeRow = { id: 'emp-1', tenantId: TENANT_ID, name: 'María' };
+  const tenantRow = {
+    id: TENANT_ID,
+    name: 'Salón',
+    slug: 'salon',
+    timezone: 'America/Mexico_City',
+  };
   const appointmentRow = {
     id: 'appt-1',
     employeeId: 'emp-1',
@@ -67,9 +73,7 @@ describe('BookingService.createBooking', () => {
         findFirst: jest.fn().mockResolvedValue({ id: 'es-1' }),
       },
       tenant: {
-        findUnique: jest
-          .fn()
-          .mockResolvedValue({ name: 'Salón', slug: 'salon' }),
+        findUnique: jest.fn().mockResolvedValue(tenantRow),
       },
       appointment: {
         create: jest.fn().mockReturnValue(Promise.resolve(appointmentRow)),
@@ -105,6 +109,61 @@ describe('BookingService.createBooking', () => {
     expect(result.startTime).toBe(futureStart.toISOString());
     expect(prisma.$transaction).toHaveBeenCalledTimes(1);
     expect(prisma.privacyConsent.create).toHaveBeenCalled();
+  });
+
+  it('validates the slot against availability computed in the tenant timezone', async () => {
+    // 23:30 on 2030-06-10 in Tijuana = 2030-06-11T06:30Z. Resolving the date
+    // key in CDMX would ask availability for the WRONG day (2030-06-11).
+    prisma.tenant.findUnique.mockResolvedValue({
+      ...tenantRow,
+      timezone: 'America/Tijuana',
+    });
+    const lateStart = zonedToUtc('2030-06-10', '23:30', 'America/Tijuana');
+    availabilityService.getAvailableSlots.mockResolvedValue([
+      {
+        start: lateStart.toISOString(),
+        end: new Date(lateStart.getTime() + 60 * 60 * 1000).toISOString(),
+      },
+    ]);
+
+    await bookingService.createBooking(
+      TENANT_ID,
+      buildDto({ startTime: lateStart.toISOString(), clientEmail: undefined }),
+    );
+
+    expect(availabilityService.getAvailableSlots).toHaveBeenCalledWith(
+      expect.objectContaining({
+        date: '2030-06-10',
+        timezone: 'America/Tijuana',
+      }),
+    );
+  });
+
+  it('formats the confirmation email date and time in the tenant timezone', async () => {
+    // 10:00 in Cancun (UTC-5, no DST) = 15:00Z; formatted in CDMX it would say 09:00
+    prisma.tenant.findUnique.mockResolvedValue({
+      ...tenantRow,
+      timezone: 'America/Cancun',
+    });
+    const cancunStart = zonedToUtc(FUTURE_DATE, '10:00', 'America/Cancun');
+    availabilityService.getAvailableSlots.mockResolvedValue([
+      {
+        start: cancunStart.toISOString(),
+        end: new Date(cancunStart.getTime() + 60 * 60 * 1000).toISOString(),
+      },
+    ]);
+
+    await bookingService.createBooking(
+      TENANT_ID,
+      buildDto({ startTime: cancunStart.toISOString() }),
+    );
+
+    expect(emailService.sendBookingConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        time: expect.stringMatching(/10:00/),
+        date: expect.stringContaining('junio'),
+      }),
+    );
   });
 
   it('rejects when the service does not exist or is inactive', async () => {
@@ -166,7 +225,8 @@ describe('BookingService.createBooking', () => {
       buildDto({ clientEmail: undefined }),
     );
 
-    expect(prisma.tenant.findUnique).not.toHaveBeenCalled();
+    // The tenant is loaded ONCE for its timezone; no extra fetch for email
+    expect(prisma.tenant.findUnique).toHaveBeenCalledTimes(1);
     expect(emailService.sendBookingConfirmation).not.toHaveBeenCalled();
   });
 });

@@ -18,6 +18,14 @@ import type {
 } from '@agendly/shared';
 import type { AppointmentChannel } from '../generated/prisma/client.js';
 
+/** Tenant fields the booking flow needs (timezone drives all slot math). */
+interface TenantContext {
+  id: string;
+  name: string;
+  slug: string;
+  timezone: string;
+}
+
 @Injectable()
 export class BookingService {
   private readonly logger = new Logger(BookingService.name);
@@ -40,14 +48,31 @@ export class BookingService {
     if (!tenant || !hasActiveAccess(tenant)) {
       throw new NotFoundException('Negocio no encontrado');
     }
-    return this.createBooking(tenant.id, dto, clientIp);
+    return this.createBookingForTenant(tenant, dto, clientIp);
   }
 
+  /** Admin/manual booking: loads the tenant once (timezone, email data). */
   async createBooking(
     tenantId: string,
     dto: CreateBookingDto,
     clientIp?: string,
   ): Promise<BookingResponse> {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: tenantId },
+    });
+    if (!tenant) {
+      throw new NotFoundException('Negocio no encontrado');
+    }
+    return this.createBookingForTenant(tenant, dto, clientIp);
+  }
+
+  private async createBookingForTenant(
+    tenant: TenantContext,
+    dto: CreateBookingDto,
+    clientIp?: string,
+  ): Promise<BookingResponse> {
+    const tenantId = tenant.id;
+
     // 1. Service and employee must exist, belong to the tenant, and be active
     const service = await this.prisma.service.findFirst({
       where: { id: dto.serviceId, tenantId, deletedAt: null, isActive: true },
@@ -87,9 +112,10 @@ export class BookingService {
       tenantId,
       employeeId: dto.employeeId,
       serviceId: dto.serviceId,
-      date: utcToDateKey(startTime),
+      date: utcToDateKey(startTime, tenant.timezone),
       serviceDurationMinutes: service.durationMinutes,
       bufferMinutes: service.bufferMinutes,
+      timezone: tenant.timezone,
     });
     if (!daySlots.some((slot) => slot.start === requestedStart)) {
       throw new ConflictException('Este horario ya no está disponible');
@@ -137,7 +163,7 @@ export class BookingService {
     }
 
     this.sendConfirmationEmail(
-      tenantId,
+      tenant,
       dto,
       service.name,
       employee.name,
@@ -161,7 +187,7 @@ export class BookingService {
 
   /** Fire-and-forget, outside the transaction, always with a logged catch. */
   private sendConfirmationEmail(
-    tenantId: string,
+    tenant: TenantContext,
     dto: CreateBookingDto,
     serviceName: string,
     employeeName: string,
@@ -169,20 +195,17 @@ export class BookingService {
   ): void {
     if (!dto.clientEmail) return;
 
-    void this.prisma.tenant
-      .findUnique({ where: { id: tenantId } })
-      .then((tenant) =>
-        this.emailService.sendBookingConfirmation({
-          clientName: dto.clientName,
-          clientEmail: dto.clientEmail!,
-          serviceName,
-          employeeName,
-          businessName: tenant?.name ?? '',
-          date: formatDate(startTime),
-          time: formatTime(startTime),
-          slug: tenant?.slug ?? '',
-        }),
-      )
+    void this.emailService
+      .sendBookingConfirmation({
+        clientName: dto.clientName,
+        clientEmail: dto.clientEmail,
+        serviceName,
+        employeeName,
+        businessName: tenant.name,
+        date: formatDate(startTime, 'long', tenant.timezone),
+        time: formatTime(startTime, tenant.timezone),
+        slug: tenant.slug,
+      })
       .catch((err: Error) =>
         this.logger.error(
           `Fallo al enviar confirmación de reserva: ${err.message}`,

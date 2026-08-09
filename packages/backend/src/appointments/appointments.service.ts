@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import {
+  BUSINESS_TZ,
   addDays,
   dayBoundsUtc,
   formatDate,
@@ -22,8 +23,21 @@ export class AppointmentsService {
     private readonly emailService: EmailService,
   ) {}
 
+  /**
+   * Tenant timezone for calendar day boundaries. One indexed PK lookup per
+   * calendar read; the tenant row is not otherwise loaded on these paths.
+   */
+  private async tenantTimezone(tenantId: string): Promise<string> {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { timezone: true },
+    });
+    return tenant?.timezone ?? BUSINESS_TZ;
+  }
+
   async findByDate(tenantId: string, date: string) {
-    const { start, end } = dayBoundsUtc(date);
+    const timezone = await this.tenantTimezone(tenantId);
+    const { start, end } = dayBoundsUtc(date, timezone);
 
     const appointments = await this.prisma.appointment.findMany({
       where: {
@@ -41,8 +55,9 @@ export class AppointmentsService {
   }
 
   async findByWeek(tenantId: string, startDate: string) {
-    const weekStart = zonedToUtc(startDate, '00:00');
-    const weekEnd = zonedToUtc(addDays(startDate, 7), '00:00');
+    const timezone = await this.tenantTimezone(tenantId);
+    const weekStart = zonedToUtc(startDate, '00:00', timezone);
+    const weekEnd = zonedToUtc(addDays(startDate, 7), '00:00', timezone);
 
     const appointments = await this.prisma.appointment.findMany({
       where: {
@@ -64,13 +79,14 @@ export class AppointmentsService {
     year: number,
     month: number,
   ): Promise<MonthDensityResponse> {
+    const timezone = await this.tenantTimezone(tenantId);
     const monthKey = `${year}-${String(month).padStart(2, '0')}`;
-    const monthStart = zonedToUtc(`${monthKey}-01`, '00:00');
+    const monthStart = zonedToUtc(`${monthKey}-01`, '00:00', timezone);
     const nextMonth =
       month === 12
         ? `${year + 1}-01-01`
         : `${year}-${String(month + 1).padStart(2, '0')}-01`;
-    const monthEnd = zonedToUtc(nextMonth, '00:00');
+    const monthEnd = zonedToUtc(nextMonth, '00:00', timezone);
 
     const appointments = await this.prisma.appointment.findMany({
       where: {
@@ -86,10 +102,10 @@ export class AppointmentsService {
       orderBy: { startTime: 'asc' },
     });
 
-    // Group by business-TZ day for the month density view
+    // Group by tenant-TZ day for the month density view
     const dayMap = new Map<string, { count: number; employees: string[] }>();
     for (const a of appointments) {
-      const dayKey = utcToDateKey(a.startTime);
+      const dayKey = utcToDateKey(a.startTime, timezone);
       const existing = dayMap.get(dayKey);
       if (!existing) {
         dayMap.set(dayKey, { count: 1, employees: [a.employee.name] });
@@ -115,7 +131,7 @@ export class AppointmentsService {
       include: {
         employee: { select: { name: true } },
         service: { select: { name: true } },
-        tenant: { select: { name: true, slug: true } },
+        tenant: { select: { name: true, slug: true, timezone: true } },
       },
     });
 
@@ -146,7 +162,7 @@ export class AppointmentsService {
       startTime: Date;
       employee: { name: string };
       service: { name: string };
-      tenant: { name: string; slug: string };
+      tenant: { name: string; slug: string; timezone: string };
     },
     reason?: string,
   ): void {
@@ -157,8 +173,12 @@ export class AppointmentsService {
         serviceName: appointment.service.name,
         employeeName: appointment.employee.name,
         businessName: appointment.tenant.name,
-        date: formatDate(appointment.startTime),
-        time: formatTime(appointment.startTime),
+        date: formatDate(
+          appointment.startTime,
+          'long',
+          appointment.tenant.timezone,
+        ),
+        time: formatTime(appointment.startTime, appointment.tenant.timezone),
         slug: appointment.tenant.slug,
         reason,
       }),
