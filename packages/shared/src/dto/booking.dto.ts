@@ -13,6 +13,8 @@ export interface CreateBookingRequest {
   clientPhone: string;
   clientEmail?: string;
   channel?: AppointmentChannel;
+  /** Milliseconds the client spent on the public form (friction metric). */
+  bookingDurationMs?: number;
 }
 
 export interface BookingResponse {

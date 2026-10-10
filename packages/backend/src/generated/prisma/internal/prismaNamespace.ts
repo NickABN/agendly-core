@@ -1578,6 +1578,7 @@ export const AppointmentScalarFieldEnum = {
   status: 'status',
   channel: 'channel',
   cancellationReason: 'cancellationReason',
+  bookingDurationSec: 'bookingDurationSec',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

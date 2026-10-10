@@ -1,6 +1,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { BUSINESS_TZ, formatTime, utcToDateKey } from '@agendly/shared';
+import type { NoShowRiskDto } from '@agendly/shared';
 import type { CalendarView } from './useCalendarNav';
 
 export interface CalendarAppointment {
@@ -14,6 +15,8 @@ export interface CalendarAppointment {
   channel: string;
   employee: { id: string; name: string };
   service: { id: string; name: string; durationMinutes: number };
+  /** Interpretable no-show estimate (upcoming confirmed appointments only). */
+  noShowRisk?: NoShowRiskDto | null;
 }
 
 export type MonthDensity = Record<string, { count: number; employees: string[] }>;

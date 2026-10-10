@@ -1,4 +1,5 @@
 import type { AppointmentStatus, AppointmentChannel } from '../enums';
+import type { NoShowRiskDto } from './insights.dto';
 
 export interface AppointmentDto {
   id: string;
@@ -14,6 +15,8 @@ export interface AppointmentDto {
   status: AppointmentStatus;
   channel: AppointmentChannel;
   cancellationReason: string | null;
+  /** Present on upcoming CONFIRMED appointments in calendar reads. */
+  noShowRisk?: NoShowRiskDto | null;
 }
 
 export interface CreateAppointmentDto {

@@ -19,6 +19,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { ProfileModule } from './profile/profile.module';
 import { HealthModule } from './health/health.module';
 import { BillingModule } from './billing/billing.module';
+import { InsightsModule } from './insights/insights.module';
 import { validate } from './config/env.validation';
 import { loggerConfig } from './config/logger.config';
 
@@ -47,6 +48,7 @@ import { loggerConfig } from './config/logger.config';
     ProfileModule,
     HealthModule,
     BillingModule,
+    InsightsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

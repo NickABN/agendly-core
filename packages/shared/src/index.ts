@@ -20,3 +20,4 @@ export * from './dto/schedule.dto';
 export * from './dto/profile.dto';
 export * from './dto/booking.dto';
 export * from './dto/public.dto';
+export * from './dto/insights.dto';

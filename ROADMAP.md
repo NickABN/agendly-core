@@ -28,6 +28,17 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | 9 | Mover `prisma migrate deploy` del entrypoint a un release job | Solo relevante con múltiples instancias | Bajo | 🟢 Cuando escale |
 | 10 | Limpiar datos legacy: tenants con `logoUrl` relativo `/uploads/...` → resubir logo; después quitar el static mount deprecado de `main.ts` | Higiene | Bajo | 🟢 Baja |
 
+### IA y métricas (proyecto de maestría)
+
+| Fase | Ítem | Estado |
+|---|---|---|
+| 1 | **Métricas de impacto** (`GET /insights/summary`, página `/admin/metrics`): % de citas reservadas solas, tasa de inasistencia, tiempo para reservar (`Appointment.bookingDurationSec`), anticipación, clientes que regresan, serie semanal | ✅ Hecho |
+| 4 | **Riesgo de inasistencia** interpretable (`src/insights/no-show-risk.ts`, regresión logística con pesos previos `prior-v1`): badge + razones en la agenda; evaluación sin fuga de datos (AUC, Brier, precisión/recall) en `/admin/metrics` | ✅ Hecho |
+| 4b | Re-ajustar los pesos con datos reales (`fitRiskModel` por regresión logística local) cuando haya ≥ 200 citas atendidas y ≥ 20 faltas | ⏳ Pendiente de datos |
+| 4c | Normalizar teléfonos (`+52…`) para no partir el historial de un mismo cliente | 🟢 Baja |
+| 2 | Asistente de reservas conversacional (LLM + tool use sobre el motor de reservas) | ⏸️ En pausa — costo de API |
+| 3 | Onboarding asistido (generar servicios desde una descripción o foto de la lista de precios) | ⏸️ En pausa — costo de API |
+
 ---
 
 ## 2. Cuentas a crear (PoC = $0/mes)

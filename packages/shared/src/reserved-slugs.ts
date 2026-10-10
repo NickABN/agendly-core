@@ -19,6 +19,7 @@ export const RESERVED_SLUGS = [
   'employees',
   'forgot-password',
   'health',
+  'insights',
   'login',
   'onboarding',
   'privacidad',

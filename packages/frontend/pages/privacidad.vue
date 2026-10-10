@@ -57,6 +57,7 @@ const legal = useLegalInfo();
       <li>Correo electrónico (opcional, solo para enviarte la confirmación).</li>
       <li>Datos de la cita: servicio, profesional, fecha y hora.</li>
       <li>Registro de tu aceptación de este aviso (fecha y dirección IP).</li>
+      <li>Tiempo que tardaste en completar la reserva (métrica de facilidad de uso).</li>
     </ul>
     <p>
       Agendly <strong>no solicita datos personales sensibles</strong> (salud, origen étnico,
@@ -69,6 +70,12 @@ const legal = useLegalInfo();
     <ul>
       <li>Crear y administrar tu cuenta y la página pública de tu negocio.</li>
       <li>Agendar, confirmar o cancelar citas y avisarte por correo.</li>
+      <li>
+        Mostrar al negocio una estimación del riesgo de que una cita no se atienda, calculada solo
+        con el historial de citas en ese mismo negocio (faltas previas, anticipación, si eres
+        cliente nuevo). Es una ayuda para que el negocio confirme la cita; no se usa para negarte
+        el servicio ni se comparte con otros negocios.
+      </li>
       <li>
         Mantener la seguridad de la plataforma (prevención de fraude y abuso, bitácoras de acceso).
       </li>

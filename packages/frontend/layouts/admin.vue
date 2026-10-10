@@ -13,6 +13,7 @@ const navItems = [
   { to: '/admin/clients', icon: 'groups', label: 'Clientes' },
   { to: '/admin/services', icon: 'content_cut', label: 'Servicios' },
   { to: '/admin/staff', icon: 'badge', label: 'Personal' },
+  { to: '/admin/metrics', icon: 'insights', label: 'Métricas' },
   { to: '/admin/config', icon: 'settings', label: 'Configuración' },
 ];
 

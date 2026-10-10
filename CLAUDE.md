@@ -48,6 +48,7 @@ pnpm --filter @agendly/shared <script>
 - **Polling en MVP:** El admin se actualiza cada 10-15s con polling (solo cuando el tab está activo). WebSockets en V1.1.
 - **URL pública:** Cada negocio tiene una URL compartible `/[slug]` para que sus clientes reserven (hoy `agendly-admin1.netlify.app/[slug]`; `agendly.mx` es el dominio objetivo).
 - **Gratis por ahora:** el cobro está apagado (`BILLING_ENFORCED` sin definir). El código de Stripe se conserva, pero `/admin/subscription` funciona como página de apoyo voluntario (`NUXT_PUBLIC_SUPPORT_URL`).
+- **Métricas e IA sin costo:** `src/insights/` calcula métricas de impacto y un riesgo de inasistencia interpretable (función pura `no-show-risk.ts`, sin APIs externas). Si cambian los pesos, sube `RISK_MODEL.version`. Las fases con LLM (asistente, onboarding asistido) están en pausa por costo.
 - **Legal:** `/terminos`, `/privacidad` y `/arco` leen la identidad del responsable de `NUXT_PUBLIC_LEGAL_*`. Si cambia su contenido, sube `LEGAL_DOCS_VERSION` en `packages/shared/src/legal.ts` (se guarda con la aceptación de cada dueño). No anunciar en la landing funciones que no existen.
 
 ## Engram Memory

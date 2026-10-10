@@ -15,6 +15,8 @@ export async function usePublicBooking(slug: string) {
   const { slots, loading: loadingSlots, fetchSlots, reset: resetSlots } = useAvailability();
   // SSR-safe base: internal URL when rendering on the server (Docker), public on the client.
   const ssrBase = apiBase();
+  // Friction metric: time from page load (in the browser) to submit.
+  const startedAt = import.meta.client ? Date.now() : 0;
 
   // ── Tenant payload (SSR) ──
   const { data: tenantData, error: fetchError } = await useAsyncData(`public-${slug}`, () =>
@@ -128,6 +130,7 @@ export async function usePublicBooking(slug: string) {
         clientName: clientForm.name.trim(),
         clientPhone: clientForm.phone.trim(),
         clientEmail: clientForm.email.trim() || undefined,
+        ...(startedAt > 0 && { bookingDurationMs: bookingDurationMs(startedAt) }),
       };
       confirmation.value = await $fetch<BookingResponse>(
         `${apiUrl}/availability/book?tenantSlug=${slug}`,
@@ -187,4 +190,9 @@ export async function usePublicBooking(slug: string) {
     goToClientForm,
     submitBooking,
   };
+}
+
+/** Elapsed ms since `startedAt`, capped to the backend limit (1 h). */
+export function bookingDurationMs(startedAt: number, now: number = Date.now()): number {
+  return Math.min(Math.max(0, Math.round(now - startedAt)), 3_600_000);
 }

@@ -3,11 +3,14 @@ import {
   IsEmail,
   IsEnum,
   IsISO8601,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 import { AppointmentChannel } from '@agendly/shared';
@@ -54,4 +57,11 @@ export class CreateBookingDto {
   @IsOptional()
   @IsEnum(AppointmentChannel)
   channel?: AppointmentChannel;
+
+  /** Time the client spent on the public form, in ms (friction metric; ≤ 1 h). */
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(3_600_000)
+  bookingDurationMs?: number;
 }
