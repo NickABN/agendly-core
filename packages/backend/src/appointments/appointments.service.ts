@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
+import { NoShowRiskService } from '../insights/no-show-risk.service';
 import {
   BUSINESS_TZ,
   addDays,
@@ -10,7 +11,7 @@ import {
   utcToDateKey,
   zonedToUtc,
 } from '@agendly/shared';
-import type { MonthDensityResponse } from '@agendly/shared';
+import type { MonthDensityResponse, NoShowRiskDto } from '@agendly/shared';
 import type { AppointmentStatus } from '../generated/prisma/client.js';
 
 /** Calendar reads + status mutation. Client CRM lives in ClientsService. */
@@ -21,6 +22,7 @@ export class AppointmentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
+    private readonly riskService: NoShowRiskService,
   ) {}
 
   /**
@@ -51,7 +53,10 @@ export class AppointmentsService {
       orderBy: { startTime: 'asc' },
     });
 
-    return appointments.map((a) => this.toCalendarDto(a));
+    const risks = await this.riskService.annotate(tenantId, appointments);
+    return appointments.map((a) =>
+      this.toCalendarDto(a, risks.get(a.id) ?? null),
+    );
   }
 
   async findByWeek(tenantId: string, startDate: string) {
@@ -71,7 +76,10 @@ export class AppointmentsService {
       orderBy: { startTime: 'asc' },
     });
 
-    return appointments.map((a) => this.toCalendarDto(a));
+    const risks = await this.riskService.annotate(tenantId, appointments);
+    return appointments.map((a) =>
+      this.toCalendarDto(a, risks.get(a.id) ?? null),
+    );
   }
 
   async findByMonth(
@@ -189,18 +197,21 @@ export class AppointmentsService {
     );
   }
 
-  private toCalendarDto(a: {
-    id: string;
-    clientName: string;
-    clientPhone: string;
-    clientEmail: string | null;
-    startTime: Date;
-    endTime: Date;
-    status: unknown;
-    channel: unknown;
-    employee: { id: string; name: string };
-    service: { id: string; name: string; durationMinutes: number };
-  }) {
+  private toCalendarDto(
+    a: {
+      id: string;
+      clientName: string;
+      clientPhone: string;
+      clientEmail: string | null;
+      startTime: Date;
+      endTime: Date;
+      status: unknown;
+      channel: unknown;
+      employee: { id: string; name: string };
+      service: { id: string; name: string; durationMinutes: number };
+    },
+    noShowRisk: NoShowRiskDto | null,
+  ) {
     return {
       id: a.id,
       clientName: a.clientName,
@@ -212,6 +223,7 @@ export class AppointmentsService {
       channel: a.channel,
       employee: a.employee,
       service: a.service,
+      noShowRisk,
     };
   }
 }

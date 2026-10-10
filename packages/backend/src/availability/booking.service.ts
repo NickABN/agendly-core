@@ -142,6 +142,10 @@ export class BookingService {
             startTime,
             endTime,
             channel: (dto.channel as AppointmentChannel) || 'WEB',
+            bookingDurationSec:
+              dto.bookingDurationMs !== undefined
+                ? Math.round(dto.bookingDurationMs / 1000)
+                : null,
           },
         }),
         // Record privacy consent (LFPDPPP) — con IP como evidencia de origen

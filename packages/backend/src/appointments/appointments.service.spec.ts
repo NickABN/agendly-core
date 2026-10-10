@@ -31,12 +31,17 @@ function buildEmail() {
   };
 }
 
+function buildRisk() {
+  return { annotate: jest.fn().mockResolvedValue(new Map()) };
+}
+
 describe('AppointmentsService calendar reads (tenant timezone)', () => {
   it('findByDate queries the tenant-TZ day bounds (Tijuana)', async () => {
     const prisma = buildPrisma({ timezone: 'America/Tijuana' });
     const service = new AppointmentsService(
       prisma as never,
       buildEmail() as never,
+      buildRisk() as never,
     );
 
     await service.findByDate(TENANT_ID, '2026-07-03');
@@ -60,6 +65,7 @@ describe('AppointmentsService calendar reads (tenant timezone)', () => {
     const service = new AppointmentsService(
       prisma as never,
       buildEmail() as never,
+      buildRisk() as never,
     );
 
     await service.findByWeek(TENANT_ID, '2026-06-29');
@@ -93,6 +99,7 @@ describe('AppointmentsService calendar reads (tenant timezone)', () => {
     const service = new AppointmentsService(
       prisma as never,
       buildEmail() as never,
+      buildRisk() as never,
     );
 
     const density = await service.findByMonth(TENANT_ID, 2026, 7);
@@ -128,7 +135,11 @@ describe('AppointmentsService.updateStatus cancellation email (tenant timezone)'
       },
     });
     const email = buildEmail();
-    const service = new AppointmentsService(prisma as never, email as never);
+    const service = new AppointmentsService(
+      prisma as never,
+      email as never,
+      buildRisk() as never,
+    );
 
     await service.updateStatus(TENANT_ID, 'appt-1', 'CANCELLED', 'motivo');
 

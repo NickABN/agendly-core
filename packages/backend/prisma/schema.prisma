@@ -271,6 +271,8 @@ model Appointment {
   status             AppointmentStatus   @default(CONFIRMED)
   channel            AppointmentChannel  @default(WEB)
   cancellationReason String?
+  // Segundos que tardó el cliente en completar el formulario público (métrica de fricción)
+  bookingDurationSec Int?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 

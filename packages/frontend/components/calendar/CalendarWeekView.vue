@@ -112,6 +112,19 @@ const employeeColorByName = computed(() => {
                 {{ appt.clientName }}
               </h4>
               <p class="text-xs text-[var(--color-on-surface-variant)]">{{ appt.service.name }}</p>
+              <p
+                v-if="appt.noShowRisk && appt.noShowRisk.level !== 'LOW'"
+                class="mt-1 inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                :class="
+                  appt.noShowRisk.level === 'HIGH'
+                    ? 'bg-red-50 text-red-700'
+                    : 'bg-amber-50 text-amber-700'
+                "
+                :title="appt.noShowRisk.reasons.join(' · ')"
+              >
+                <span class="material-symbols-outlined text-[11px]" aria-hidden="true">warning</span>
+                {{ appt.noShowRisk.level === 'HIGH' ? 'Riesgo alto' : 'Riesgo medio' }}
+              </p>
               <div class="mt-2 flex items-center gap-1.5">
                 <div
                   class="w-2 h-2 rounded-full"

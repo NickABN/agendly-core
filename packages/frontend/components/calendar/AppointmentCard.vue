@@ -26,6 +26,15 @@ const statusConfig: Record<string, { label: string; class: string }> = {
   NO_SHOW: { label: 'No asistió', class: 'bg-amber-50 text-amber-700 border border-amber-100' },
 };
 
+// Only MEDIUM/HIGH are surfaced: a LOW badge on most cards would be noise.
+const riskConfig: Record<string, { label: string; class: string }> = {
+  MEDIUM: {
+    label: 'Riesgo medio',
+    class: 'bg-amber-50 text-amber-700 border border-amber-100',
+  },
+  HIGH: { label: 'Riesgo alto', class: 'bg-red-50 text-red-700 border border-red-100' },
+};
+
 function serviceIcon(name: string): string {
   const lower = name.toLowerCase();
   if (lower.includes('corte')) return 'content_cut';
@@ -64,7 +73,22 @@ function serviceIcon(name: string): string {
           :class="statusConfig[appointment.status]?.class"
           >{{ statusConfig[appointment.status]?.label }}</span
         >
+        <span
+          v-if="appointment.noShowRisk && riskConfig[appointment.noShowRisk.level]"
+          class="text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5 whitespace-nowrap"
+          :class="riskConfig[appointment.noShowRisk.level]?.class"
+          :title="appointment.noShowRisk.reasons.join(' · ')"
+        >
+          <span class="material-symbols-outlined text-[12px]" aria-hidden="true">warning</span>
+          {{ riskConfig[appointment.noShowRisk.level]?.label }}
+        </span>
       </div>
+      <p
+        v-if="appointment.noShowRisk && riskConfig[appointment.noShowRisk.level]"
+        class="text-[11px] text-[var(--color-on-surface-variant)] mt-0.5"
+      >
+        Posible falta: {{ appointment.noShowRisk.reasons.join(' · ').toLowerCase() }}. Confirma por teléfono.
+      </p>
       <p class="text-xs text-[var(--color-on-surface-variant)] font-medium mt-0.5">
         {{ appointment.service.name }}
       </p>
