@@ -1,5 +1,7 @@
 # Roadmap — Agendly
 
+Estado al 2026-10: en producción con free tiers (Render + Netlify + Neon + R2), **gratis y sin cobro** (`BILLING_ENFORCED` apagado, página de apoyo voluntario), con Términos, Aviso de Privacidad integral y página ARCO; la aceptación de términos se guarda por usuario.
+
 Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario mobile-first, formulario público verificado e2e), Docker local full-stack funcionando, config de deploy lista (`DEPLOY.md`), optimización de imágenes con sharp + R2.
 
 ---
@@ -12,9 +14,14 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | 2 | ~~Token de auth a cookie httpOnly~~ (arregla también el rebote en F5) | — | — | ✅ Hecho |
 | 2b | ~~Refresh tokens con rotación + lista de revocación~~ (A07-1: access 15m + refresh opaco revocable, deslizante 7d/tope 30d, detección de reuso, logout-all). *Follow-ups:* cron de limpieza de revocados-no-expirados; UI de "dispositivos"/logout-all | — | — | ✅ Hecho |
 | 3 | ~~**`forgot-password` backend**~~ (`POST /auth/forgot-password` + `/auth/reset-password`: token single-use hasheado SHA-256, TTL 30 min, email con Resend, página `/reset-password`, revoca todas las sesiones al resetear) | — | — | ✅ Hecho |
-| 4 | **`/admin/subscription`**: el banner de prueba linkea a una página que no existe (404). Crear placeholder o quitar el link hasta tener billing | Confunde en el momento más sensible (fin del trial) | Bajo | 🟡 Media |
-| 5 | **`/arco`** (página de derechos ARCO): está en la allowlist del middleware pero no existe. Obligatoria junto al aviso de privacidad (LFPDPPP) si se opera en México | Cumplimiento legal | Bajo | 🟡 Media |
-| 6 | ~~Billing / suscripciones~~ (Stripe: schema, checkout, portal, webhooks, enforcement del trial) | — | — | ✅ Hecho (falta cuenta Stripe + tarjeta real para producción) |
+| 4 | ~~`/admin/subscription`~~ (la página existe; mientras sea gratis funciona como "Apoya Agendly" con `NUXT_PUBLIC_SUPPORT_URL`) | — | — | ✅ Hecho |
+| 5 | ~~`/arco`, `/terminos` y Aviso de Privacidad integral~~ (identidad del responsable vía `NUXT_PUBLIC_LEGAL_*`; clickwrap en registro con `termsAcceptedAt`/`termsVersion`) | — | — | ✅ Hecho |
+| 6 | ~~Billing / suscripciones~~ (Stripe: schema, checkout, portal, webhooks, enforcement del trial) | — | — | ✅ Hecho, **apagado** (`BILLING_ENFORCED`). Antes de activarlo: términos de pago, política de reembolsos, facturación CFDI |
+| 5b | **Configurar `NUXT_PUBLIC_LEGAL_NAME/ADDRESS/EMAIL` en Netlify** y que un abogado revise `/terminos` y `/privacidad` (los textos son una base, no asesoría legal) | Cumplimiento legal | Bajo | 🔴 Alta |
+| 6b | **Reagendar citas** desde el admin con aviso al cliente (alcance MVP del product brief; hoy solo hay cancelar/completar/no-show) | Flujo incompleto | Medio | 🟡 Media |
+| 6c | **Autoservicio del cliente**: link en el correo de confirmación para cancelar su propia cita | Menos no-shows, menos WhatsApp | Medio | 🟡 Media |
+| 6d | **Eliminar cuenta** desde el panel (hoy se pide por correo, ver `/terminos` §10) | Derecho de cancelación (ARCO) | Bajo | 🟡 Media |
+| 6e | Warning de hidratación SSR en `/admin/settings/profile` | Higiene | Bajo | 🟢 Baja |
 | 7 | Recordatorios de cita (email/WhatsApp N horas antes; el enum `WHATSAPP` existe sin integración — Twilio/Meta API tiene costo) | Reduce inasistencias — la propuesta de valor central | Alto | 🟢 Post-PoC |
 | 8 | Split del template de `onboarding.vue` (761 líneas; la lógica ya está limpia en `useOnboarding`) | Solo mantenibilidad | Bajo | 🟢 Baja |
 | 9 | Mover `prisma migrate deploy` del entrypoint a un release job | Solo relevante con múltiples instancias | Bajo | 🟢 Cuando escale |

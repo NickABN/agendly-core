@@ -111,6 +111,7 @@ The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (
 | `GOOGLE_CALLBACK_URL` | ○ | — | `https://agendly-admin1.netlify.app/api/auth/google/callback` |
 | `LOG_LEVEL` | ○ | `info` | `info` (o `debug` para diagnosticar) |
 | `SENTRY_DSN` | ○ | — | error tracking backend (ver OBSERVABILITY.md) |
+| `BILLING_ENFORCED` | ○ | sin definir (gratis) | **sin definir** mientras Agendly sea gratis. Solo `true` bloquea negocios con la prueba vencida |
 
 ### Frontend (Docker local + Netlify)
 
@@ -121,6 +122,12 @@ The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (
 | `NUXT_PUBLIC_APP_URL` | ✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` (temporary public frontend base URL) |
 | `NUXT_API_URL_INTERNAL` | local only | `http://backend:3000` (already in compose) | **do not set** |
 | `NUXT_PUBLIC_SENTRY_DSN` | ○ | — | error tracking frontend (ver OBSERVABILITY.md) |
+| `NUXT_PUBLIC_LEGAL_NAME` | ✅ prod | — | nombre del responsable (persona física o razón social) para Términos / Aviso de Privacidad |
+| `NUXT_PUBLIC_LEGAL_ADDRESS` | ✅ prod | — | domicilio para oír y recibir notificaciones (lo exige la LFPDPPP) |
+| `NUXT_PUBLIC_LEGAL_EMAIL` | ✅ prod | — | correo de privacidad/ARCO **que sí revises** |
+| `NUXT_PUBLIC_SUPPORT_URL` | ○ | — | Stripe Payment Link de aportación voluntaria; vacío = sin botón |
+
+Sin las `NUXT_PUBLIC_LEGAL_*` las páginas legales muestran "[pendiente de configurar]" y el server loguea un warning al arrancar.
 
 Vars de Stripe (backend, opcionales; sin ellas billing responde 503 y la UI muestra "contáctanos"):
 
@@ -132,7 +139,17 @@ Vars de Stripe (backend, opcionales; sin ellas billing responde 503 y la UI mues
 
 ---
 
-## Stripe (suscripción SaaS)
+## Apoyo voluntario (modo actual, sin suscripción)
+
+Mientras Agendly sea gratis, **no** se configura `BILLING_ENFORCED` ni las vars de Stripe del backend. `/admin/subscription` se muestra como "Apoya Agendly":
+
+1. Stripe → Payment Links → New → producto "Apoyo a Agendly" con **"Let customers choose what to pay"** (monto libre, pago único, MXN).
+2. Copiar la URL (`https://buy.stripe.com/...`) → `NUXT_PUBLIC_SUPPORT_URL` en Netlify.
+3. En la descripción del producto aclarar: aportación voluntaria, no deducible, no otorga beneficios. Mantener el texto alineado con la sección 8 de `/terminos`.
+
+## Stripe (suscripción SaaS — desactivada)
+
+> Requiere `BILLING_ENFORCED=true`. No activar hasta tener términos de pago, política de reembolsos y facturación (CFDI) definidos.
 
 Modelo: un plan mensual flat (el precio se define en Stripe, no en el código). Trial de 14 días automático al registrarse; al vencer sin pago, el admin se bloquea (redirige a `/admin/subscription`) y el negocio deja de tomar reservas públicas.
 
