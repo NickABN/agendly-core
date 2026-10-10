@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { PublicTenantResponse } from '@agendly/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { hasActiveAccess } from '../common/subscription-access';
 
@@ -7,7 +8,7 @@ export class PublicService {
   constructor(private readonly prisma: PrismaService) {}
 
   /** Public landing data for the frontend public app /[slug] route. */
-  async getTenantBySlug(slug: string) {
+  async getTenantBySlug(slug: string): Promise<PublicTenantResponse> {
     const tenant = await this.prisma.tenant.findUnique({
       where: { slug },
     });
@@ -33,6 +34,10 @@ export class PublicService {
         name: tenant.name,
         slug: tenant.slug,
         timezone: tenant.timezone,
+        logoUrl: tenant.logoUrl ?? null,
+        bannerUrl: tenant.bannerUrl ?? null,
+        address: tenant.address ?? null,
+        phone: tenant.phone ?? null,
       },
       services: services.map((s) => ({
         id: s.id,

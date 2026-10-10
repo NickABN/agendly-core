@@ -56,16 +56,16 @@ onMounted(() => void servicesStore.load());
     <div class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
       <div class="max-w-7xl mx-auto w-full">
         <!-- Breadcrumbs -->
-        <nav class="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] mb-6 font-medium" aria-label="Migas de pan">
+        <nav class="hidden md:flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] mb-6 font-medium" aria-label="Migas de pan">
           <NuxtLink to="/admin" class="hover:text-[var(--color-primary)] transition-colors">Panel</NuxtLink>
           <span class="material-symbols-outlined text-xs" aria-hidden="true">chevron_right</span>
           <span class="text-[var(--color-on-surface)]">Servicios</span>
         </nav>
 
         <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-10">
           <div class="space-y-1">
-            <h2 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-[var(--color-on-surface)]">Servicios</h2>
+            <h2 class="hidden md:block text-3xl lg:text-4xl font-extrabold tracking-tight text-[var(--color-on-surface)]">Servicios</h2>
             <p class="text-[var(--color-on-surface-variant)] max-w-xl">
               Gestiona el catálogo de servicios de tu negocio, establece duraciones y precios personalizados para tus clientes.
             </p>

@@ -21,7 +21,8 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | 6b | **Reagendar citas** desde el admin con aviso al cliente (alcance MVP del product brief; hoy solo hay cancelar/completar/no-show) | Flujo incompleto | Medio | 🟡 Media |
 | 6c | **Autoservicio del cliente**: link en el correo de confirmación para cancelar su propia cita | Menos no-shows, menos WhatsApp | Medio | 🟡 Media |
 | 6d | **Eliminar cuenta** desde el panel (hoy se pide por correo, ver `/terminos` §10) | Derecho de cancelación (ARCO) | Bajo | 🟡 Media |
-| 6e | Warning de hidratación SSR en `/admin/settings/profile` | Higiene | Bajo | 🟢 Baja |
+| 6e | ~~`/admin/settings/profile` no renderizaba logo/banner/ubicación~~ (componentes sin prefijo `Profile*`) y la página pública no mostraba logo, banner, dirección ni teléfono | — | — | ✅ Hecho |
+| 6f | **Unificar** `/admin/config` y `/admin/settings/profile` (hoy duplican logo + datos + ubicación; config enlaza a la otra para el banner) | Mantenibilidad / UX | Medio | 🟢 Baja |
 | 7 | Recordatorios de cita (email/WhatsApp N horas antes; el enum `WHATSAPP` existe sin integración — Twilio/Meta API tiene costo) | Reduce inasistencias — la propuesta de valor central | Alto | 🟢 Post-PoC |
 | 8 | Split del template de `onboarding.vue` (761 líneas; la lógica ya está limpia en `useOnboarding`) | Solo mantenibilidad | Bajo | 🟢 Baja |
 | 9 | Mover `prisma migrate deploy` del entrypoint a un release job | Solo relevante con múltiples instancias | Bajo | 🟢 Cuando escale |

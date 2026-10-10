@@ -48,6 +48,9 @@ onMounted(async () => {
   // Dynamic import to avoid SSR issues
   const L = await import('leaflet');
   await import('leaflet/dist/leaflet.css');
+  // The parent may re-render (loading → loaded) while leaflet loads, unmounting
+  // this instance; bail out instead of crashing with "Map container not found".
+  if (!mapContainer.value) return;
 
   // Fix default icon paths broken by bundlers
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
