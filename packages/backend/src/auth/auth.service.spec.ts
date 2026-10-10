@@ -1,6 +1,6 @@
 import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { isReservedSlug } from '@agendly/shared';
+import { LEGAL_DOCS_VERSION, isReservedSlug } from '@agendly/shared';
 import * as fc from 'fast-check';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
@@ -108,6 +108,7 @@ const validRegisterDto = fc.record({
   ownerName: validOwnerName,
   email: validEmail,
   password: validPassword,
+  acceptedTerms: fc.constant(true as const),
 });
 
 // ---------------------------------------------------------------------------
@@ -332,6 +333,7 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
             ownerName: 'Owner',
             email: 'test@example.com',
             password: 'password123',
+            acceptedTerms: true,
           });
 
           // Verify that ensureUniqueSlug iterated through all occupied slugs
@@ -459,9 +461,48 @@ describe('AuthService — reserved slugs at registration', () => {
       ownerName: 'Owner',
       email: 'owner@example.com',
       password: 'password123',
+      acceptedTerms: true,
     });
 
     const slugUsed: string = tenantCreateMock.mock.calls[0][0].data.slug;
     expect(slugUsed).toBe('admin-1');
+  });
+});
+
+describe('AuthService — terms acceptance evidence', () => {
+  it('stores the accepted legal docs version on email registration', async () => {
+    const userCreate = jest.fn((args: { data: Record<string, unknown> }) => ({
+      id: 'u1',
+      role: 'OWNER',
+      ...args.data,
+    }));
+    const prisma = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        create: userCreate,
+      },
+      tenant: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        create: jest.fn((args: { data: Record<string, unknown> }) => args.data),
+      },
+      $transaction: jest.fn((ops: unknown[]) => Promise.all(ops)),
+    } as never;
+    const service = new AuthService(
+      prisma,
+      makeJwtService(),
+      makeTokenService(),
+    );
+
+    await service.register({
+      businessName: 'Bellas Nails',
+      ownerName: 'Owner',
+      email: 'owner@example.com',
+      password: 'password123',
+      acceptedTerms: true,
+    });
+
+    const data = userCreate.mock.calls[0][0].data;
+    expect(data.termsVersion).toBe(LEGAL_DOCS_VERSION);
+    expect(data.termsAcceptedAt).toBeInstanceOf(Date);
   });
 });

@@ -149,6 +149,12 @@ class EnvironmentVariables {
   @IsOptional()
   SENTRY_DSN?: string;
 
+  // Cobro obligatorio: solo 'true' bloquea negocios con la prueba vencida.
+  // Sin definir (default) Agendly opera gratis.
+  @IsIn(['true', 'false'])
+  @IsOptional()
+  BILLING_ENFORCED?: string;
+
   // Stripe (opcionales; sin ellas los endpoints de billing responden 503)
   @IsString()
   @IsOptional()

@@ -41,7 +41,12 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
     <div class="flex-1 overflow-y-auto p-3 md:p-6">
       <!-- Trial por vencer (últimos 7 días) -->
       <div
-        v-if="store.hasAccess && store.trialDaysRemaining > 0 && store.trialDaysRemaining <= 7"
+        v-if="
+          store.billingEnforced &&
+          store.hasAccess &&
+          store.trialDaysRemaining > 0 &&
+          store.trialDaysRemaining <= 7
+        "
         class="mb-6 flex items-center gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200"
       >
         <span class="material-symbols-outlined text-amber-600" aria-hidden="true">schedule</span>

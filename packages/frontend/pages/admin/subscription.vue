@@ -3,6 +3,8 @@ definePageMeta({ layout: 'admin' });
 
 const route = useRoute();
 const billing = useBilling();
+const { store } = useAuth();
+const legal = useLegalInfo();
 
 const STATUS_LABEL: Record<string, { label: string; class: string }> = {
   TRIALING: { label: 'Período de prueba', class: 'bg-blue-50 text-blue-700 border-blue-100' },
@@ -18,17 +20,61 @@ const isSubscribed = computed(
     billing.status.value?.subscriptionStatus === 'PAST_DUE',
 );
 
-onMounted(() => billing.loadStatus());
+// Mientras Agendly es gratis (sin BILLING_ENFORCED) esta página es de apoyo voluntario.
+onMounted(() => {
+  if (store.billingEnforced) billing.loadStatus();
+});
 </script>
 
 <template>
   <div class="flex flex-col h-full overflow-hidden">
     <header class="flex items-center gap-4 px-4 md:px-6 h-16 bg-white/80 backdrop-blur-md border-b border-[var(--color-outline-variant)]/10 sticky top-0 z-40 shrink-0">
-      <h1 class="text-lg font-bold tracking-tight">Suscripción</h1>
+      <h1 class="text-lg font-bold tracking-tight">
+        {{ store.billingEnforced ? 'Suscripción' : 'Apoya Agendly' }}
+      </h1>
     </header>
 
     <div class="flex-1 overflow-y-auto p-4 md:p-8">
-      <div class="max-w-2xl mx-auto w-full space-y-6">
+      <!-- Modo gratuito: apoyo voluntario -->
+      <div v-if="!store.billingEnforced" class="max-w-2xl mx-auto w-full space-y-6">
+        <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-[var(--color-outline-variant)]/10">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-[var(--color-primary)] text-3xl" style="font-variation-settings: 'FILL' 1" aria-hidden="true">volunteer_activism</span>
+            <h2 class="text-xl font-bold text-[var(--color-on-surface)]">Agendly es gratis</h2>
+          </div>
+          <p class="text-sm text-[var(--color-on-surface-variant)] mb-3">
+            Tu negocio puede usar Agendly sin costo y sin límite de tiempo mientras el proyecto
+            está en beta. Si te ayuda en tu día a día y quieres apoyar su desarrollo y los costos
+            del servidor, puedes hacer una aportación voluntaria.
+          </p>
+          <p class="text-sm text-[var(--color-on-surface-variant)] mb-6">
+            No es una suscripción ni desbloquea funciones: todas las cuentas tienen lo mismo.
+          </p>
+
+          <a
+            v-if="legal.supportUrl"
+            :href="legal.supportUrl"
+            target="_blank"
+            rel="noopener"
+            class="w-full soul-gradient text-white py-3 rounded-xl font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-lg" aria-hidden="true">favorite</span>
+            Hacer una aportación
+          </a>
+          <p v-else class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-[var(--color-on-surface-variant)]">
+            <span class="material-symbols-outlined text-lg" aria-hidden="true">favorite</span>
+            ¡Gracias por usar Agendly! Compartir tu enlace con otros negocios también nos ayuda.
+          </p>
+        </section>
+
+        <p v-if="legal.supportUrl" class="text-xs text-center text-[var(--color-outline)]">
+          Pagos procesados por Stripe. Aportación no deducible y reembolsable a solicitud dentro de
+          30 días. Consulta los
+          <NuxtLink to="/terminos" target="_blank" class="underline">Términos</NuxtLink>.
+        </p>
+      </div>
+
+      <div v-else class="max-w-2xl mx-auto w-full space-y-6">
         <!-- Retorno del checkout -->
         <div v-if="checkoutResult === 'success'" class="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
           <span class="material-symbols-outlined text-emerald-600" style="font-variation-settings: 'FILL' 1" aria-hidden="true">check_circle</span>

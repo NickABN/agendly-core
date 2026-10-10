@@ -16,6 +16,10 @@ const navItems = [
   { to: '/admin/config', icon: 'settings', label: 'Configuración' },
 ];
 
+// Mientras Agendly es gratis, /admin/subscription es la página de apoyo voluntario.
+const planNavLabel = computed(() => (store.billingEnforced ? 'Suscripción' : 'Apoya Agendly'));
+const planNavIcon = computed(() => (store.billingEnforced ? 'credit_card' : 'volunteer_activism'));
+
 // Close the drawer on navigation
 watch(() => route.fullPath, () => {
   drawerOpen.value = false;
@@ -68,6 +72,22 @@ watch(() => route.fullPath, () => {
           {{ item.label }}
         </NuxtLink>
       </nav>
+
+      <div class="px-4 pb-2 space-y-1">
+        <NuxtLink
+          to="/admin/subscription"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm text-[var(--color-on-surface-variant)] hover:bg-slate-200/40"
+          active-class="bg-slate-200/60 !text-[var(--color-primary)] font-semibold"
+        >
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">{{ planNavIcon }}</span>
+          {{ planNavLabel }}
+        </NuxtLink>
+        <p class="px-4 pt-1 text-[11px] text-[var(--color-outline)]">
+          <NuxtLink to="/terminos" target="_blank" class="hover:underline">Términos</NuxtLink>
+          ·
+          <NuxtLink to="/privacidad" target="_blank" class="hover:underline">Privacidad</NuxtLink>
+        </p>
+      </div>
 
       <!-- User profile -->
       <div class="p-4 border-t border-[var(--color-outline-variant)]/10">

@@ -7,6 +7,7 @@ const PUBLIC_ROUTE_PREFIXES = [
   '/auth/callback',
   '/privacidad',
   '/arco',
+  '/terminos',
   '/forgot-password',
   '/reset-password',
 ];

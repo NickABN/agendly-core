@@ -9,15 +9,28 @@ const form = reactive({
   email: '',
   password: '',
 });
+// Clickwrap: aceptación expresa antes de crear la cuenta (correo o Google).
+const acceptedTerms = ref(false);
 const loading = ref(false);
 const error = ref('');
 const showPassword = ref(false);
 
+function requireTerms(): boolean {
+  if (acceptedTerms.value) return true;
+  error.value = 'Para continuar, acepta los Términos y el Aviso de Privacidad.';
+  return false;
+}
+
+function handleGoogle() {
+  if (requireTerms()) loginWithGoogle();
+}
+
 async function handleSubmit() {
+  if (!requireTerms()) return;
   loading.value = true;
   error.value = '';
   try {
-    await register(form);
+    await register({ ...form, acceptedTerms: true });
     navigateTo('/onboarding');
   } catch (e: unknown) {
     const err = e as { data?: { message?: string } };
@@ -35,11 +48,27 @@ async function handleSubmit() {
       <p class="text-[var(--color-on-surface-variant)]">Crea tu cuenta y transforma la gestión de tu negocio.</p>
     </header>
 
+    <!-- Aceptación de Términos (aplica a Google y a correo) -->
+    <label class="flex items-start gap-3 cursor-pointer p-3 rounded-lg bg-[var(--color-surface-container-low)]">
+      <input
+        v-model="acceptedTerms"
+        type="checkbox"
+        class="mt-0.5 w-4 h-4 rounded accent-[var(--color-primary)]"
+        @change="error = ''"
+      />
+      <span class="text-sm text-[var(--color-on-surface-variant)] leading-snug">
+        He leído y acepto los
+        <NuxtLink to="/terminos" target="_blank" class="text-[var(--color-primary)] underline">Términos y Condiciones</NuxtLink>
+        y el
+        <NuxtLink to="/privacidad" target="_blank" class="text-[var(--color-primary)] underline">Aviso de Privacidad</NuxtLink>.
+      </span>
+    </label>
+
     <!-- Google OAuth -->
     <button
       type="button"
       class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-low,#f3f4f5)] transition-all duration-200"
-      @click="loginWithGoogle"
+      @click="handleGoogle"
     >
       <svg class="w-5 h-5" viewBox="0 0 24 24">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -58,7 +87,7 @@ async function handleSubmit() {
     </div>
 
     <!-- Error -->
-    <div v-if="error" class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+    <div v-if="error" class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm" role="alert">
       {{ error }}
     </div>
 
@@ -149,13 +178,5 @@ async function handleSubmit() {
       </NuxtLink>
     </p>
 
-    <footer class="pt-4 text-center">
-      <p class="text-[10px] text-[var(--color-outline)] uppercase tracking-widest leading-relaxed">
-        Al registrarte, aceptas nuestros<br />
-        <NuxtLink to="/privacidad" class="underline hover:text-[var(--color-primary)]">Términos de Servicio</NuxtLink>
-        y
-        <NuxtLink to="/privacidad" class="underline hover:text-[var(--color-primary)]">Política de Privacidad</NuxtLink>.
-      </p>
-    </footer>
   </div>
 </template>

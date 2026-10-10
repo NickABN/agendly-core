@@ -7,6 +7,9 @@ export * from './datetime';
 // Reserved slugs (single source of truth for route/slug collisions)
 export * from './reserved-slugs';
 
+// Legal documents version (stored with each terms acceptance)
+export * from './legal';
+
 // DTOs
 export * from './dto/auth.dto';
 export * from './dto/tenant.dto';

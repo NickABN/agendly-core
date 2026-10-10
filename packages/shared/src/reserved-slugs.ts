@@ -29,6 +29,7 @@ export const RESERVED_SLUGS = [
   'schedules',
   'services',
   'tenant',
+  'terminos',
 ] as const;
 
 export type ReservedSlug = (typeof RESERVED_SLUGS)[number];

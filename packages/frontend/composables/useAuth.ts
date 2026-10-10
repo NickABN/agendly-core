@@ -17,6 +17,10 @@ interface MeResponse {
     isActive: boolean;
     subscriptionStatus?: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE';
     currentPeriodEnd?: string | null;
+    /** Server-side `BILLING_ENFORCED`: false while Agendly is free. */
+    billingEnforced?: boolean;
+    /** Server-computed access (isActive + billing rules when enforced). */
+    hasAccess?: boolean;
   };
 }
 
