@@ -5,12 +5,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { isReservedSlug } from '@agendly/shared';
+import { LEGAL_DOCS_VERSION, isReservedSlug } from '@agendly/shared';
 import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { TokenService } from './token.service';
 import { RegisterDto } from './dto/register.dto';
+import {
+  hasActiveAccess,
+  isBillingEnforced,
+} from '../common/subscription-access';
 import { LoginDto } from './dto/login.dto';
 
 /** Coste bcrypt: 12 rondas (recomendado actual; 10 era el mínimo aceptable). */
@@ -58,6 +62,8 @@ export class AuthService {
           passwordHash,
           name: dto.ownerName,
           role: 'OWNER',
+          termsAcceptedAt: new Date(),
+          termsVersion: LEGAL_DOCS_VERSION,
         },
       }),
     ]);
@@ -120,6 +126,8 @@ export class AuthService {
         isActive: user.tenant.isActive,
         subscriptionStatus: user.tenant.subscriptionStatus,
         currentPeriodEnd: user.tenant.currentPeriodEnd?.toISOString() ?? null,
+        billingEnforced: isBillingEnforced(),
+        hasAccess: hasActiveAccess(user.tenant),
       },
     };
   }
@@ -172,6 +180,10 @@ export class AuthService {
           name: profile.name,
           googleId: profile.googleId,
           role: 'OWNER',
+          // El botón de Google en /register y /login muestra el aviso de
+          // aceptación ("Al continuar aceptas..."), así que se registra aquí.
+          termsAcceptedAt: new Date(),
+          termsVersion: LEGAL_DOCS_VERSION,
         },
       }),
     ]);

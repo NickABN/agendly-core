@@ -377,13 +377,20 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
                 class="mt-0.5 w-4 h-4 rounded border-[var(--color-outline-variant)] accent-[var(--color-primary)]"
               />
               <span class="text-sm text-[var(--color-on-surface-variant)] leading-snug">
-                Al confirmar, aceptas nuestras
+                Acepto el
                 <NuxtLink
                   to="/privacidad"
                   target="_blank"
                   class="text-[var(--color-primary)] underline"
-                  >Políticas de Cancelación, Términos de Servicio y Aviso de Privacidad</NuxtLink
-                >.
+                  >Aviso de Privacidad</NuxtLink
+                >
+                y los
+                <NuxtLink
+                  to="/terminos"
+                  target="_blank"
+                  class="text-[var(--color-primary)] underline"
+                  >Términos</NuxtLink
+                >. Cambios y cancelaciones se acuerdan directamente con el negocio.
               </span>
             </label>
 

@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { AuthenticatedRequest } from '../types/authenticated-request';
+import { hasActiveAccess } from '../subscription-access';
 
 /**
- * Bloquea rutas de mutación del admin cuando el tenant no tiene acceso vigente:
- * requiere `isActive` y (suscripción ACTIVE/PAST_DUE, o prueba TRIALING no vencida).
+ * Bloquea rutas de mutación del admin cuando el tenant no tiene acceso vigente
+ * (ver `hasActiveAccess`; sin `BILLING_ENFORCED=true` solo exige `isActive`).
  * NO se aplica a /billing (para que un tenant vencido pueda entrar a pagar) ni a
  * /auth ni a lecturas de perfil.
  */
@@ -34,15 +35,7 @@ export class SubscriptionGuard implements CanActivate {
       throw new ForbiddenException('Cuenta desactivada');
     }
 
-    const now = Date.now();
-    const trialValid =
-      tenant.subscriptionStatus === 'TRIALING' &&
-      tenant.trialEndsAt.getTime() > now;
-    const subscribed =
-      tenant.subscriptionStatus === 'ACTIVE' ||
-      tenant.subscriptionStatus === 'PAST_DUE'; // gracia mientras reintenta el cobro
-
-    if (!trialValid && !subscribed) {
+    if (!hasActiveAccess(tenant)) {
       throw new ForbiddenException(
         'Tu período de prueba terminó. Suscríbete para continuar.',
       );

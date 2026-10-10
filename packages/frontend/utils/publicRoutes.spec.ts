@@ -12,6 +12,7 @@ describe('isPublicRoutePath', () => {
     '/auth/callback',
     '/privacidad',
     '/arco',
+    '/terminos',
     '/forgot-password',
     '/reset-password',
   ])('treats the explicit public route "%s" as public', (path) => {

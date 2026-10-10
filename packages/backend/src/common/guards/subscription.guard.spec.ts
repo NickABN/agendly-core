@@ -19,7 +19,15 @@ function guardWith(tenant: unknown) {
 const future = new Date(Date.now() + 5 * 86_400_000);
 const past = new Date(Date.now() - 86_400_000);
 
-describe('SubscriptionGuard', () => {
+describe('SubscriptionGuard (BILLING_ENFORCED=true)', () => {
+  const original = process.env.BILLING_ENFORCED;
+  beforeEach(() => {
+    process.env.BILLING_ENFORCED = 'true';
+  });
+  afterEach(() => {
+    process.env.BILLING_ENFORCED = original;
+  });
+
   it('allows an active subscription', async () => {
     const guard = guardWith({
       isActive: true,
@@ -83,5 +91,35 @@ describe('SubscriptionGuard', () => {
   it('denies when there is no tenant in the request', async () => {
     const guard = guardWith(null);
     await expect(guard.canActivate(ctxFor(undefined))).resolves.toBe(false);
+  });
+});
+
+describe('SubscriptionGuard (billing not enforced — free mode)', () => {
+  const original = process.env.BILLING_ENFORCED;
+  beforeEach(() => {
+    delete process.env.BILLING_ENFORCED;
+  });
+  afterEach(() => {
+    process.env.BILLING_ENFORCED = original;
+  });
+
+  it('allows an expired trial without subscription', async () => {
+    const guard = guardWith({
+      isActive: true,
+      subscriptionStatus: 'TRIALING',
+      trialEndsAt: past,
+    });
+    await expect(guard.canActivate(ctxFor('t1'))).resolves.toBe(true);
+  });
+
+  it('still blocks a deactivated tenant', async () => {
+    const guard = guardWith({
+      isActive: false,
+      subscriptionStatus: 'TRIALING',
+      trialEndsAt: future,
+    });
+    await expect(guard.canActivate(ctxFor('t1'))).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
   });
 });

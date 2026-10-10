@@ -22,6 +22,10 @@ interface Tenant {
   isActive: boolean;
   subscriptionStatus?: SubscriptionStatus;
   currentPeriodEnd?: string | null;
+  /** Server-side `BILLING_ENFORCED`: false while Agendly is free. */
+  billingEnforced?: boolean;
+  /** Server-computed access (isActive + billing rules when enforced). */
+  hasAccess?: boolean;
 }
 
 /**
@@ -42,8 +46,15 @@ export const useAuthStore = defineStore('auth', () => {
   });
   const isTrialExpired = computed(() => trialDaysRemaining.value <= 0);
 
-  /** Acceso vigente: suscrito (ACTIVE/PAST_DUE) o en prueba no vencida. */
+  /** ¿El servidor exige suscripción? Mientras sea gratis no hay avisos de prueba. */
+  const billingEnforced = computed(() => tenant.value?.billingEnforced === true);
+
+  /**
+   * Acceso vigente. Lo decide el servidor (`tenant.hasAccess`); el cálculo local
+   * (suscrito o en prueba no vencida) queda solo para payloads legacy sin el campo.
+   */
   const hasAccess = computed(() => {
+    if (typeof tenant.value?.hasAccess === 'boolean') return tenant.value.hasAccess;
     const status = tenant.value?.subscriptionStatus;
     if (status === 'ACTIVE' || status === 'PAST_DUE') return true;
     if (status === 'CANCELED' || status === 'INCOMPLETE') return false;
@@ -73,6 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
     isOnboarded,
     trialDaysRemaining,
     isTrialExpired,
+    billingEnforced,
     hasAccess,
     setAuth,
     setTenant,

@@ -55,7 +55,7 @@
               <span class="text-primary">caos de WhatsApp.</span>
             </h1>
             <p class="text-xl text-on-surface-variant font-medium leading-relaxed mb-10 max-w-lg">
-              Centraliza tus citas, automatiza recordatorios y recupera tu paz mental. Diseñado para
+              Centraliza tus citas, deja que tus clientes reserven solos y recupera tu paz mental. Diseñado para
               profesionales que valoran su tiempo y el de sus clientes.
             </p>
             <div class="flex flex-col sm:flex-row gap-4">
@@ -63,7 +63,7 @@
                 to="/register"
                 class="soul-gradient text-on-primary px-8 py-4 rounded-lg font-semibold text-lg shadow-sm hover:opacity-95 transition-all flex items-center justify-center gap-2"
               >
-                Comenzar Prueba Gratis
+                Crear cuenta gratis
                 <span class="material-symbols-outlined text-lg">arrow_forward</span>
               </NuxtLink>
               <a
@@ -182,10 +182,10 @@
               >
                 <span class="material-symbols-outlined">notifications_active</span>
               </div>
-              <h3 class="text-2xl font-semibold mb-4">Cero inasistencias</h3>
+              <h3 class="text-2xl font-semibold mb-4">Confirmación inmediata</h3>
               <p class="text-on-surface-variant font-medium leading-relaxed">
-                Recordatorios automáticos por WhatsApp y correo. El sistema trabaja mientras tú
-                descansas o atiendes a alguien más.
+                Tus clientes reservan solos y reciben su confirmación por correo al instante. Cada
+                cita queda clara para ellos y para ti, sin mensajes de ida y vuelta.
               </p>
             </div>
             <!-- Feature 3 -->
@@ -214,10 +214,10 @@
                 >
                   <span class="material-symbols-outlined">group</span>
                 </div>
-                <h3 class="text-2xl font-semibold mb-4">Gestión de Clientes Pro</h3>
+                <h3 class="text-2xl font-semibold mb-4">Directorio de clientes</h3>
                 <p class="text-on-surface-variant font-medium leading-relaxed">
-                  Historial de citas, preferencias y notas privadas de cada cliente en un solo lugar.
-                  Conoce a tu cliente antes de que cruce la puerta.
+                  Cada persona que reserva queda en tu directorio con sus visitas y su último
+                  servicio. Identifica a tus clientes frecuentes de un vistazo.
                 </p>
               </div>
               <!-- Mini client list mockup -->
@@ -247,10 +247,11 @@
         <div class="max-w-7xl mx-auto">
           <div class="max-w-3xl mx-auto text-center mb-20">
             <h2 class="text-4xl lg:text-5xl font-semibold tracking-tight text-on-surface mb-6">
-              Un solo plan, sin sorpresas.
+              Gratis mientras estamos en beta.
             </h2>
             <p class="text-xl text-on-surface-variant font-medium">
-              Creemos en la transparencia. Todo el poder de Agendly por una inversión única mensual.
+              Sin tarjeta y sin fecha de vencimiento. Si algún día hay planes de pago, te avisaremos
+              con anticipación y nunca se te cobrará sin que lo aceptes.
             </p>
           </div>
           <div class="max-w-md mx-auto relative group">
@@ -262,10 +263,10 @@
             >
               <span
                 class="text-sm font-bold text-primary tracking-widest uppercase mb-4"
-              >Plan Profesional</span>
+              >Plan Beta</span>
               <div class="flex items-baseline gap-1 mb-8">
-                <span class="text-5xl font-bold text-on-surface">$249</span>
-                <span class="text-xl text-on-surface-variant font-medium">MXN/mes</span>
+                <span class="text-5xl font-bold text-on-surface">$0</span>
+                <span class="text-xl text-on-surface-variant font-medium">MXN</span>
               </div>
               <ul class="w-full space-y-5 mb-10">
                 <li
@@ -287,7 +288,7 @@
                 Comenzar ahora
               </NuxtLink>
               <p class="mt-4 text-xs text-on-secondary-container font-medium text-center">
-                Cancela en cualquier momento sin penalizaciones.
+                Puedes dar de baja tu cuenta cuando quieras.
               </p>
             </div>
           </div>
@@ -306,13 +307,13 @@
             Tu negocio merece el orden que Agendly ofrece.
           </h2>
           <p class="text-xl opacity-90 font-medium mb-12">
-            Únete a cientos de profesionales que ya transformaron su flujo de trabajo.
+            Configura tu negocio en minutos y comparte tu enlace de reservas hoy mismo.
           </p>
           <NuxtLink
             to="/register"
             class="inline-block bg-white text-primary px-10 py-5 rounded-lg font-bold text-xl shadow-xl hover:opacity-95 transition-all"
           >
-            Probar gratis por 14 días
+            Crear mi cuenta gratis
           </NuxtLink>
         </div>
       </section>
@@ -332,8 +333,14 @@
             to="/privacidad"
             class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors"
           >Privacidad</NuxtLink>
-          <a href="#" class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors">Términos</a>
-          <a href="#" class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors">Soporte</a>
+          <NuxtLink
+            to="/terminos"
+            class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors"
+          >Términos</NuxtLink>
+          <NuxtLink
+            to="/arco"
+            class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors"
+          >Derechos ARCO</NuxtLink>
         </div>
       </div>
       <div
@@ -356,7 +363,7 @@ definePageMeta({ layout: false })
 useSeoMeta({
   title: 'Agendly — Dile adiós al caos de WhatsApp',
   description:
-    'Centraliza tus citas, automatiza recordatorios y recupera tu paz mental. Diseñado para profesionales de belleza en México.',
+    'Centraliza tus citas, deja que tus clientes reserven solos y recupera tu paz mental. Diseñado para profesionales de belleza en México.',
 })
 
 const { bookingDisplayUrl } = usePublicBookingUrl()
@@ -396,12 +403,13 @@ const mockClients = [
   { initials: 'LG', name: 'Laura García', visits: 5, color: '#526070' },
 ]
 
+// Solo funciones que existen hoy (evitar publicidad engañosa — PROFECO).
 const pricingFeatures = [
   'Citas ilimitadas',
-  'Recordatorios vía WhatsApp',
-  'Base de datos de clientes',
   'Enlace público personalizado',
-  'Reportes de negocio',
-  'Soporte prioritario 24/7',
+  'Confirmaciones por correo',
+  'Agenda por día, semana y mes',
+  'Directorio de clientes',
+  'Personal, servicios y horarios',
 ]
 </script>

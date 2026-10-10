@@ -47,6 +47,12 @@ async function handleSubmit() {
       </svg>
       <span class="font-medium">Continuar con Google</span>
     </button>
+    <p class="-mt-5 text-center text-[11px] text-[var(--color-outline)] leading-snug">
+      Si es tu primera vez, al continuar con Google aceptas los
+      <NuxtLink to="/terminos" target="_blank" class="underline">Términos</NuxtLink>
+      y el
+      <NuxtLink to="/privacidad" target="_blank" class="underline">Aviso de Privacidad</NuxtLink>.
+    </p>
 
     <!-- Divider -->
     <div class="relative flex items-center py-2">

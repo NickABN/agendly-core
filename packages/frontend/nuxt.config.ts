@@ -79,6 +79,13 @@ export default defineNuxtConfig({
       appUrl: publicAppUrl(),
       // Error tracking (opcional; sin DSN el plugin de Sentry queda no-op)
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
+      // Apoyo voluntario (Stripe Payment Link). Vacío = no se muestra el botón.
+      supportUrl: process.env.NUXT_PUBLIC_SUPPORT_URL || '',
+      // Identidad del responsable para Términos / Aviso de Privacidad / ARCO.
+      // La LFPDPPP exige nombre y domicilio del responsable: configúralos en Netlify.
+      legalName: process.env.NUXT_PUBLIC_LEGAL_NAME || '',
+      legalAddress: process.env.NUXT_PUBLIC_LEGAL_ADDRESS || '',
+      legalEmail: process.env.NUXT_PUBLIC_LEGAL_EMAIL || '',
     },
   },
 

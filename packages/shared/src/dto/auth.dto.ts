@@ -3,6 +3,8 @@ export interface RegisterDto {
   ownerName: string;
   email: string;
   password: string;
+  /** Owner explicitly accepted Términos y Condiciones + Aviso de Privacidad. */
+  acceptedTerms: true;
 }
 
 export interface LoginDto {

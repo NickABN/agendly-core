@@ -100,6 +100,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Evidencia de aceptación de Términos + Aviso de Privacidad (LEGAL_DOCS_VERSION)
+  termsAcceptedAt DateTime?
+  termsVersion    String?
+
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   refreshTokens       RefreshToken[]
   passwordResetTokens PasswordResetToken[]

@@ -10,6 +10,7 @@ describe('isReservedSlug', () => {
     'auth',
     'privacidad',
     'arco',
+    'terminos',
     'forgot-password',
     'reset-password',
     'api',
