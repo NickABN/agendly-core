@@ -29,16 +29,16 @@ onMounted(() => void clients.load());
     <div class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
       <div class="max-w-6xl mx-auto w-full">
         <!-- Breadcrumbs -->
-        <nav class="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] mb-6 font-medium" aria-label="Migas de pan">
+        <nav class="hidden md:flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] mb-6 font-medium" aria-label="Migas de pan">
           <NuxtLink to="/admin" class="hover:text-[var(--color-primary)] transition-colors">Panel</NuxtLink>
           <span class="material-symbols-outlined text-xs" aria-hidden="true">chevron_right</span>
           <span class="text-[var(--color-on-surface)]">Clientes</span>
         </nav>
 
         <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-10">
           <div class="space-y-1">
-            <h2 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-[var(--color-on-surface)]">Clientes</h2>
+            <h2 class="hidden md:block text-3xl lg:text-4xl font-extrabold tracking-tight text-[var(--color-on-surface)]">Clientes</h2>
             <p class="text-[var(--color-on-surface-variant)] max-w-xl">
               Directorio de todas las personas que han reservado contigo. Se actualiza automáticamente con cada cita.
             </p>
@@ -46,7 +46,7 @@ onMounted(() => void clients.load());
         </div>
 
         <!-- Stats -->
-        <div v-if="!clients.pending.value && clients.items.value.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div v-if="!clients.pending.value && clients.items.value.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 md:mb-10">
           <div class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10">
             <p class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1">Total Clientes</p>
             <p class="text-3xl font-black text-[var(--color-on-surface)]">{{ clients.items.value.length }}</p>

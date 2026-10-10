@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin' });
 
-const { store, logout } = useAuth();
+const { store } = useAuth();
 
 const businessTimezone = useBusinessTimezone();
 const nav = useCalendarNav(businessTimezone);
@@ -32,7 +32,6 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
       @next="nav.next"
       @today="nav.goToToday"
       @new-appointment="showManualForm = true"
-      @logout="logout"
     />
 
     <!-- Screen-reader announcement for polling refreshes -->

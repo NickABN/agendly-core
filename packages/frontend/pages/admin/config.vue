@@ -175,6 +175,21 @@ onMounted(() => void load());
           <p class="text-sm">Ingresa coordenadas o una dirección para ver el mapa.</p>
         </div>
       </section>
+
+      <!-- Advanced profile (banner + image history) -->
+      <NuxtLink
+        to="/admin/settings/profile"
+        class="mb-8 flex items-center gap-4 bg-[var(--color-surface-container-lowest)] rounded-xl p-6 editorial-shadow border border-[var(--color-outline-variant)]/10 hover:border-[var(--color-primary)]/30 transition-colors"
+      >
+        <span class="material-symbols-outlined text-[var(--color-primary)] text-2xl" aria-hidden="true">wallpaper</span>
+        <div class="flex-1">
+          <p class="font-semibold text-[var(--color-on-surface)]">Banner e historial de imágenes</p>
+          <p class="text-sm text-[var(--color-on-surface-variant)]">
+            Agrega una imagen de portada a tu página de reservas y recupera imágenes anteriores.
+          </p>
+        </div>
+        <span class="material-symbols-outlined text-[var(--color-outline)]" aria-hidden="true">chevron_right</span>
+      </NuxtLink>
     </div>
   </div>
 </template>

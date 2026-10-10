@@ -13,7 +13,6 @@ const emit = defineEmits<{
   next: [];
   today: [];
   'new-appointment': [];
-  logout: [];
 }>();
 
 const viewLabels: Record<CalendarView, string> = {
@@ -37,7 +36,7 @@ const viewLabels: Record<CalendarView, string> = {
         >
           <span class="material-symbols-outlined text-lg" aria-hidden="true">chevron_left</span>
         </button>
-        <h2 class="text-sm font-bold text-[var(--color-on-surface)] min-w-[140px] md:min-w-[200px] text-center capitalize">
+        <h2 class="text-sm font-bold text-[var(--color-on-surface)] min-w-[140px] md:min-w-[200px] text-center first-letter:uppercase">
           {{ label }}
         </h2>
         <button
@@ -81,13 +80,6 @@ const viewLabels: Record<CalendarView, string> = {
       >
         <span class="material-symbols-outlined text-lg" aria-hidden="true">add</span>
         <span class="hidden sm:inline">Nueva Cita</span>
-      </button>
-      <button
-        class="p-2 text-[var(--color-on-surface-variant)] hover:text-red-500 transition-colors"
-        aria-label="Cerrar sesión"
-        @click="emit('logout')"
-      >
-        <span class="material-symbols-outlined" aria-hidden="true">logout</span>
       </button>
     </div>
   </header>

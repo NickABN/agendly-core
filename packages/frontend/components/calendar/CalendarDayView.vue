@@ -52,8 +52,7 @@ async function copyPublicUrl() {
         {{ isToday ? 'No hay citas para hoy' : 'No hay citas para este día' }}
       </p>
       <p class="text-sm text-[var(--color-on-surface-variant)] max-w-sm">
-        Comparte tu enlace:
-        <span class="font-bold text-[var(--color-primary)]">{{ publicUrlLabel }}</span>
+        Comparte tu enlace de reservas (abajo) para que tus clientes agenden solos.
       </p>
     </div>
 

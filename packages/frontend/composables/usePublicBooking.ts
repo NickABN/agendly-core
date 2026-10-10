@@ -22,6 +22,10 @@ export async function usePublicBooking(slug: string) {
   );
 
   const tenantName = computed(() => tenantData.value?.tenant.name ?? '');
+  const tenantLogoUrl = computed(() => tenantData.value?.tenant.logoUrl ?? null);
+  const tenantBannerUrl = computed(() => tenantData.value?.tenant.bannerUrl ?? null);
+  const tenantAddress = computed(() => tenantData.value?.tenant.address ?? null);
+  const tenantPhone = computed(() => tenantData.value?.tenant.phone ?? null);
   /** The salon's IANA timezone — all public date/time display uses it. */
   const tenantTimezone = computed(() => tenantData.value?.tenant.timezone ?? BUSINESS_TZ);
   const services = computed(() => tenantData.value?.services ?? []);
@@ -157,6 +161,10 @@ export async function usePublicBooking(slug: string) {
     tenantData,
     fetchError,
     tenantName,
+    tenantLogoUrl,
+    tenantBannerUrl,
+    tenantAddress,
+    tenantPhone,
     tenantTimezone,
     services,
     employees,

@@ -150,7 +150,7 @@ onMounted(async () => {
               <h4 class="text-sm font-bold text-[var(--color-outline)] uppercase tracking-wider">
                 Logo del negocio
               </h4>
-              <ImageUpload
+              <ProfileImageUpload
                 type="logo"
                 :current-url="store.profileData?.logoUrl ?? null"
                 :max-size-mb="5"
@@ -159,7 +159,7 @@ onMounted(async () => {
                 <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-3">
                   Historial de logos
                 </p>
-                <ImageHistory :images="store.imageHistory" type="LOGO" />
+                <ProfileImageHistory :images="store.imageHistory" type="LOGO" />
               </div>
             </div>
 
@@ -170,7 +170,7 @@ onMounted(async () => {
               <h4 class="text-sm font-bold text-[var(--color-outline)] uppercase tracking-wider">
                 Banner del negocio
               </h4>
-              <ImageUpload
+              <ProfileImageUpload
                 type="banner"
                 :current-url="store.profileData?.bannerUrl ?? null"
                 :max-size-mb="8"
@@ -179,7 +179,7 @@ onMounted(async () => {
                 <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-3">
                   Historial de banners
                 </p>
-                <ImageHistory :images="store.imageHistory" type="BANNER" />
+                <ProfileImageHistory :images="store.imageHistory" type="BANNER" />
               </div>
             </div>
           </section>
@@ -196,7 +196,7 @@ onMounted(async () => {
             >
               Ubicación
             </h3>
-            <LocationForm
+            <ProfileLocationForm
               :initial-data="locationInitialData"
               @submit="onLocationSubmit"
             />

@@ -28,6 +28,13 @@ useSeoMeta({
 });
 
 const progressStep = computed(() => Math.min(b.step.value, 4));
+
+const tenantInitials = computed(() => getInitials(b.tenantName.value || 'A'));
+const mapsUrl = computed(() =>
+  b.tenantAddress.value
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.tenantAddress.value)}`
+    : '',
+);
 </script>
 
 <template>
@@ -75,16 +82,25 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
           </button>
           <div v-else class="w-8"></div>
 
-          <span class="font-bold text-[var(--color-on-surface)] tracking-tight">Agendly</span>
-
-          <div
-            class="w-8 h-8 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center"
-            aria-hidden="true"
-          >
-            <span class="material-symbols-outlined text-sm text-[var(--color-on-surface-variant)]"
-              >person</span
+          <div class="flex items-center gap-2 min-w-0">
+            <img
+              v-if="b.tenantLogoUrl.value"
+              :src="b.tenantLogoUrl.value"
+              alt=""
+              class="w-7 h-7 rounded-full object-cover shrink-0"
+            />
+            <span
+              v-else
+              class="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-[11px] font-bold flex items-center justify-center shrink-0"
+              aria-hidden="true"
+              >{{ tenantInitials }}</span
             >
+            <span class="font-bold text-[var(--color-on-surface)] tracking-tight truncate">{{
+              b.tenantName.value
+            }}</span>
           </div>
+
+          <div class="w-8"></div>
         </div>
 
         <BookingProgressBar :current="progressStep" :total="4" />
@@ -93,6 +109,12 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
       <div class="max-w-sm mx-auto px-4 py-6 pb-24">
         <!-- Business header (step 1 only) -->
         <div v-if="b.step.value === 1" class="mb-6 space-y-1">
+          <img
+            v-if="b.tenantBannerUrl.value"
+            :src="b.tenantBannerUrl.value"
+            alt=""
+            class="w-full aspect-[3/1] object-cover rounded-2xl mb-4"
+          />
           <div class="flex items-center gap-2">
             <span
               class="material-symbols-outlined text-emerald-500 text-lg"
@@ -107,6 +129,29 @@ const progressStep = computed(() => Math.min(b.step.value, 4));
           <p class="text-sm text-[var(--color-on-surface-variant)]">
             Reserva tu experiencia de bienestar
           </p>
+          <div
+            v-if="b.tenantAddress.value || b.tenantPhone.value"
+            class="flex flex-col gap-1 pt-2 text-xs text-[var(--color-on-surface-variant)]"
+          >
+            <a
+              v-if="b.tenantAddress.value"
+              :href="mapsUrl"
+              target="_blank"
+              rel="noopener"
+              class="flex items-start gap-1.5 hover:text-[var(--color-primary)]"
+            >
+              <span class="material-symbols-outlined text-sm" aria-hidden="true">location_on</span>
+              {{ b.tenantAddress.value }}
+            </a>
+            <a
+              v-if="b.tenantPhone.value"
+              :href="`tel:${b.tenantPhone.value}`"
+              class="flex items-center gap-1.5 hover:text-[var(--color-primary)]"
+            >
+              <span class="material-symbols-outlined text-sm" aria-hidden="true">call</span>
+              {{ b.tenantPhone.value }}
+            </a>
+          </div>
         </div>
 
         <!-- Step chips for step > 1 -->

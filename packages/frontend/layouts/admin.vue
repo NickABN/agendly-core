@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { store } = useAuth();
+const { store, logout } = useAuth();
 const route = useRoute();
 
 const userInitials = computed(() => getInitials(store.user?.name || store.tenant?.name || 'A'));
@@ -91,7 +91,7 @@ watch(() => route.fullPath, () => {
 
       <!-- User profile -->
       <div class="p-4 border-t border-[var(--color-outline-variant)]/10">
-        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-200/40 transition-colors cursor-pointer">
+        <div class="flex items-center gap-3 p-2">
           <div class="w-9 h-9 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white text-sm font-bold shrink-0">
             {{ userInitials }}
           </div>
@@ -99,6 +99,14 @@ watch(() => route.fullPath, () => {
             <p class="text-sm font-bold text-[var(--color-on-surface)] truncate">{{ userName }}</p>
             <p class="text-xs text-[var(--color-on-surface-variant)]">Admin</p>
           </div>
+          <button
+            class="p-2 rounded-lg text-[var(--color-on-surface-variant)] hover:text-red-500 hover:bg-slate-200/40 transition-colors"
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
+            @click="logout"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+          </button>
         </div>
       </div>
     </aside>
