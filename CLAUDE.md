@@ -9,7 +9,7 @@ SaaS de agendamiento de citas para negocios de belleza y estética en México.
 - **Frontend:** Nuxt 3, Vue 3, Tailwind CSS, Nuxt UI 3, Pinia
 - **Shared:** DTOs y tipos TypeScript compartidos entre backend y frontend
 - **Email:** Resend (SPF/DKIM)
-- **Deploy:** Railway.app
+- **Deploy:** free tiers — backend en Render (Docker), frontend en Netlify (Nuxt SSR + proxy `/api`), Postgres en Neon, imágenes en Cloudflare R2. Ver `DEPLOY.md`
 - **CI/CD:** GitHub Actions
 
 ## Comandos
@@ -46,7 +46,9 @@ pnpm --filter @agendly/shared <script>
 - **Soft deletes:** Empleados y servicios usan `deletedAt` en lugar de borrado físico.
 - **Channel-agnostic:** El motor de reservas no sabe por qué canal llegó la cita (web, WhatsApp, manual).
 - **Polling en MVP:** El admin se actualiza cada 10-15s con polling (solo cuando el tab está activo). WebSockets en V1.1.
-- **URL pública:** Cada negocio tiene una URL compartible `agendly.mx/[slug]` para que sus clientes reserven.
+- **URL pública:** Cada negocio tiene una URL compartible `/[slug]` para que sus clientes reserven (hoy `agendly-admin1.netlify.app/[slug]`; `agendly.mx` es el dominio objetivo).
+- **Gratis por ahora:** el cobro está apagado (`BILLING_ENFORCED` sin definir). El código de Stripe se conserva, pero `/admin/subscription` funciona como página de apoyo voluntario (`NUXT_PUBLIC_SUPPORT_URL`).
+- **Legal:** `/terminos`, `/privacidad` y `/arco` leen la identidad del responsable de `NUXT_PUBLIC_LEGAL_*`. Si cambia su contenido, sube `LEGAL_DOCS_VERSION` en `packages/shared/src/legal.ts` (se guarda con la aceptación de cada dueño). No anunciar en la landing funciones que no existen.
 
 ## Engram Memory
 
