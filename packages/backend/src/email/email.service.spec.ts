@@ -125,3 +125,57 @@ describe('EmailService password reset email', () => {
     expect(html).toContain('30 minutos');
   });
 });
+
+describe('EmailService reminders and HTML escaping', () => {
+  beforeEach(() => {
+    sendEmailMock.mockReset();
+    sendEmailMock.mockResolvedValue({ data: { id: 'e1' }, error: null });
+  });
+
+  const service = () =>
+    new EmailService(
+      makeConfig({
+        RESEND_API_KEY: 'test-key',
+        PUBLIC_APP_URL: 'https://agendly.mx',
+      }),
+    );
+
+  it('escapes user-provided names in booking emails', async () => {
+    await service().sendBookingConfirmation({
+      ...bookingData,
+      clientName: '<a href="https://phish.example">Ana</a>',
+    });
+    const html: string = sendEmailMock.mock.calls[0][0].html;
+    expect(html).not.toContain('<a href="https://phish.example">');
+    expect(html).toContain(
+      '&lt;a href=&quot;https://phish.example&quot;&gt;Ana&lt;/a&gt;',
+    );
+  });
+
+  it('sends a reminder with the business phone and a stronger ask for high risk', async () => {
+    const ok = await service().sendBookingReminder({
+      ...bookingData,
+      businessPhone: '+52 33 1234 5678',
+      emphasizeConfirmation: true,
+    });
+    expect(ok).toBe(true);
+    const { subject, html } = sendEmailMock.mock.calls[0][0];
+    expect(subject).toContain('Recordatorio');
+    expect(html).toContain('tel:+52 33 1234 5678');
+    expect(html).toContain('¿Sigues pudiendo asistir?');
+    expect(html).toContain('https://agendly.mx/salon-calma');
+  });
+
+  it('reports failure when the provider rejects the email', async () => {
+    sendEmailMock.mockResolvedValue({
+      data: null,
+      error: { message: 'rate limited' },
+    });
+    const ok = await service().sendBookingReminder({
+      ...bookingData,
+      businessPhone: null,
+      emphasizeConfirmation: false,
+    });
+    expect(ok).toBe(false);
+  });
+});

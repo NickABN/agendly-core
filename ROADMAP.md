@@ -23,7 +23,7 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | 6d | **Eliminar cuenta** desde el panel (hoy se pide por correo, ver `/terminos` §10) | Derecho de cancelación (ARCO) | Bajo | 🟡 Media |
 | 6e | ~~`/admin/settings/profile` no renderizaba logo/banner/ubicación~~ (componentes sin prefijo `Profile*`) y la página pública no mostraba logo, banner, dirección ni teléfono | — | — | ✅ Hecho |
 | 6f | **Unificar** `/admin/config` y `/admin/settings/profile` (hoy duplican logo + datos + ubicación; config enlaza a la otra para el banner) | Mantenibilidad / UX | Medio | 🟢 Baja |
-| 7 | Recordatorios de cita (email/WhatsApp N horas antes; el enum `WHATSAPP` existe sin integración — Twilio/Meta API tiene costo) | Reduce inasistencias — la propuesta de valor central | Alto | 🟢 Post-PoC |
+| 7 | Recordatorios de cita por **WhatsApp** (los de correo ya existen; el enum `WHATSAPP` existe sin integración — Twilio/Meta API tiene costo) | Reduce inasistencias — la propuesta de valor central | Alto | 🟢 Post-PoC |
 | 8 | Split del template de `onboarding.vue` (761 líneas; la lógica ya está limpia en `useOnboarding`) | Solo mantenibilidad | Bajo | 🟢 Baja |
 | 9 | Mover `prisma migrate deploy` del entrypoint a un release job | Solo relevante con múltiples instancias | Bajo | 🟢 Cuando escale |
 | 10 | Limpiar datos legacy: tenants con `logoUrl` relativo `/uploads/...` → resubir logo; después quitar el static mount deprecado de `main.ts` | Higiene | Bajo | 🟢 Baja |
@@ -35,6 +35,7 @@ Estado al 2026-07: MVP refactorizado (motor de reservas endurecido, calendario m
 | 1 | **Métricas de impacto** (`GET /insights/summary`, página `/admin/metrics`): % de citas reservadas solas, tasa de inasistencia, tiempo para reservar (`Appointment.bookingDurationSec`), anticipación, clientes que regresan, serie semanal | ✅ Hecho |
 | 4 | **Riesgo de inasistencia** interpretable (`src/insights/no-show-risk.ts`, regresión logística con pesos previos `prior-v1`): badge + razones en la agenda; evaluación sin fuga de datos (AUC, Brier, precisión/recall) en `/admin/metrics` | ✅ Hecho |
 | 4b | Re-ajustar los pesos con datos reales (`fitRiskModel` por regresión logística local) cuando haya ≥ 200 citas atendidas y ≥ 20 faltas | ⏳ Pendiente de datos |
+| 5 | **Recordatorios por correo** 24 h antes (job horario vía GitHub Actions → `POST /reminders/run`); a las citas de riesgo alto les pide confirmar. Métricas comparan faltas con vs sin recordatorio | ✅ Hecho |
 | 4c | Normalizar teléfonos (`+52…`) para no partir el historial de un mismo cliente | 🟢 Baja |
 | 2 | Asistente de reservas conversacional (LLM + tool use sobre el motor de reservas) | ⏸️ En pausa — costo de API |
 | 3 | Onboarding asistido (generar servicios desde una descripción o foto de la lista de precios) | ⏸️ En pausa — costo de API |

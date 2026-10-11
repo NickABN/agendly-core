@@ -273,6 +273,8 @@ model Appointment {
   cancellationReason String?
   // Segundos que tardó el cliente en completar el formulario público (métrica de fricción)
   bookingDurationSec Int?
+  // Recordatorio por correo enviado (idempotencia del job + métrica de impacto)
+  reminderSentAt     DateTime?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 
@@ -283,6 +285,7 @@ model Appointment {
   @@index([tenantId])
   @@index([employeeId, startTime])
   @@index([tenantId, startTime])
+  @@index([status, startTime])
 }
 
 // ─── Privacy Consent (LFPDPPP) ──────────────────────────

@@ -230,6 +230,57 @@ const aucReading = computed(() => {
             </details>
           </section>
 
+          <!-- Email reminders -->
+          <section
+            class="bg-white rounded-xl p-5 md:p-6 shadow-sm border border-[var(--color-outline-variant)]/10"
+          >
+            <div class="flex items-center gap-2 mb-1">
+              <span class="material-symbols-outlined text-[var(--color-primary)]" aria-hidden="true"
+                >mark_email_read</span
+              >
+              <h2 class="text-sm font-bold text-[var(--color-on-surface)]">
+                Recordatorios por correo
+              </h2>
+            </div>
+            <p class="text-xs text-[var(--color-on-surface-variant)] mb-4 max-w-2xl">
+              Un día antes de cada cita, Agendly le recuerda al cliente si dejó su correo. A las
+              citas con riesgo alto les pide confirmar o avisar si no puede asistir.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="p-3 rounded-lg bg-[var(--color-surface-container-low)]">
+                <p
+                  class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)]"
+                >
+                  Enviados
+                </p>
+                <p class="text-xl font-black">{{ s.reminders.sent }}</p>
+              </div>
+              <div class="p-3 rounded-lg bg-[var(--color-surface-container-low)]">
+                <p
+                  class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)]"
+                >
+                  Faltas con recordatorio
+                </p>
+                <p class="text-xl font-black">
+                  {{ formatPercent(s.reminders.noShowRateWithReminder) }}
+                </p>
+              </div>
+              <div class="p-3 rounded-lg bg-[var(--color-surface-container-low)]">
+                <p
+                  class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)]"
+                >
+                  Faltas sin recordatorio
+                </p>
+                <p class="text-xl font-black">
+                  {{ formatPercent(s.reminders.noShowRateWithoutReminder) }}
+                </p>
+              </div>
+            </div>
+            <p class="text-[11px] text-[var(--color-outline)] mt-3">
+              Comparación observacional: los clientes sin correo no reciben recordatorio.
+            </p>
+          </section>
+
           <!-- Risk model -->
           <section
             class="bg-white rounded-xl p-5 md:p-6 shadow-sm border border-[var(--color-outline-variant)]/10"

@@ -83,6 +83,7 @@ export class InsightsService {
         clientPhone: true,
         clientEmail: true,
         bookingDurationSec: true,
+        reminderSentAt: true,
       },
       orderBy: { startTime: 'asc' },
     });
@@ -133,6 +134,15 @@ export class InsightsService {
       weeks.set(weekStart, week);
     }
 
+    const resolvedWith = { total: 0, noShows: 0 };
+    const resolvedWithout = { total: 0, noShows: 0 };
+    for (const a of appointments) {
+      if (a.status !== 'COMPLETED' && a.status !== 'NO_SHOW') continue;
+      const bucket = a.reminderSentAt ? resolvedWith : resolvedWithout;
+      bucket.total += 1;
+      if (a.status === 'NO_SHOW') bucket.noShows += 1;
+    }
+
     const phones = [...new Set(appointments.map((a) => a.clientPhone))];
     const returningClients = await this.countReturning(tenantId, phones, start);
 
@@ -165,6 +175,14 @@ export class InsightsService {
       medianBookingDurationSec: median(durations),
       uniqueClients: phones.length,
       returningClients,
+      reminders: {
+        sent: appointments.filter((a) => a.reminderSentAt !== null).length,
+        noShowRateWithReminder: ratio(resolvedWith.noShows, resolvedWith.total),
+        noShowRateWithoutReminder: ratio(
+          resolvedWithout.noShows,
+          resolvedWithout.total,
+        ),
+      },
       weekly: [...weeks.values()].sort((a, b) =>
         a.weekStart.localeCompare(b.weekStart),
       ),

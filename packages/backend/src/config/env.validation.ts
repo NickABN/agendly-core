@@ -155,6 +155,13 @@ class EnvironmentVariables {
   @IsOptional()
   BILLING_ENFORCED?: string;
 
+  // Recordatorios: secreto del job programado (GitHub Actions → POST /reminders/run).
+  // Sin él, el endpoint responde 503 y no se envían recordatorios.
+  @IsString()
+  @MinLength(32)
+  @IsOptional()
+  CRON_SECRET?: string;
+
   // Stripe (opcionales; sin ellas los endpoints de billing responden 503)
   @IsString()
   @IsOptional()

@@ -111,6 +111,7 @@ The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (
 | `GOOGLE_CALLBACK_URL` | ○ | — | `https://agendly-admin1.netlify.app/api/auth/google/callback` |
 | `LOG_LEVEL` | ○ | `info` | `info` (o `debug` para diagnosticar) |
 | `SENTRY_DSN` | ○ | — | error tracking backend (ver OBSERVABILITY.md) |
+| `CRON_SECRET` | ○ | — | 32+ chars (`openssl rand -hex 32`). Activa `POST /reminders/run`; sin él no se envían recordatorios |
 | `BILLING_ENFORCED` | ○ | sin definir (gratis) | **sin definir** mientras Agendly sea gratis. Solo `true` bloquea negocios con la prueba vencida |
 
 ### Frontend (Docker local + Netlify)
@@ -138,6 +139,18 @@ Vars de Stripe (backend, opcionales; sin ellas billing responde 503 y la UI mues
 | `STRIPE_WEBHOOK_SECRET` | del endpoint de webhook (`whsec_...`, ver abajo) |
 
 ---
+
+## Recordatorios por correo (GitHub Actions — $0)
+
+Render free se duerme, así que el job vive en `.github/workflows/reminders.yml` (cada hora, minuto 17) y llama al backend:
+
+1. Generar un secreto: `openssl rand -hex 32` → `CRON_SECRET` en Render.
+2. GitHub → Settings → Secrets and variables → Actions → New repository secret:
+   - `AGENDLY_API_URL` = `https://agendly-backend-u9tt.onrender.com`
+   - `CRON_SECRET` = el mismo valor.
+3. Probar: Actions → Reminders → Run workflow. La respuesta muestra `{candidates, sent, failed}`.
+
+Reglas: citas `CONFIRMED` con correo, que empiezan en 1–24 h y se reservaron hace ≥ 12 h; máximo 50 por corrida (Resend free = 100/día). Requiere `RESEND_API_KEY` y un dominio verificado en Resend para el remitente `noreply@agendly.mx`; sin la key solo se loguean.
 
 ## Apoyo voluntario (modo actual, sin suscripción)
 

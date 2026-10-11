@@ -26,6 +26,7 @@ export const RESERVED_SLUGS = [
   'profile',
   'public',
   'register',
+  'reminders',
   'reset-password',
   'schedules',
   'services',
