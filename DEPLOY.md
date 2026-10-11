@@ -107,6 +107,7 @@ The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (
 | `R2_BUCKET_NAME` | ○ | — | Cloudflare R2 |
 | `R2_PUBLIC_URL` | ○ | — | URL pública del bucket |
 | `RESEND_API_KEY` | ○ | — | para emails reales (si no, se loguean) |
+| `EMAIL_FROM` | ○ | — | remitente en un dominio verificado en Resend, ej. `Agendly <hola@tudominio.mx>` (default `noreply@agendly.mx`) |
 | `GOOGLE_CLIENT_ID` / `_SECRET` | ○ | — | OAuth Google (no-op si faltan) |
 | `GOOGLE_CALLBACK_URL` | ○ | — | `https://agendly-admin1.netlify.app/api/auth/google/callback` |
 | `LOG_LEVEL` | ○ | `info` | `info` (o `debug` para diagnosticar) |
@@ -150,7 +151,7 @@ Render free se duerme, así que el job vive en `.github/workflows/reminders.yml`
    - `CRON_SECRET` = el mismo valor.
 3. Probar: Actions → Reminders → Run workflow. La respuesta muestra `{candidates, sent, failed}`.
 
-Reglas: citas `CONFIRMED` con correo, que empiezan en 1–24 h y se reservaron hace ≥ 12 h; máximo 50 por corrida (Resend free = 100/día). Requiere `RESEND_API_KEY` y un dominio verificado en Resend para el remitente `noreply@agendly.mx`; sin la key solo se loguean.
+Reglas: citas `CONFIRMED` con correo, que empiezan en 1–24 h y se reservaron hace ≥ 12 h; máximo 50 por corrida (Resend free = 100/día). Requiere `RESEND_API_KEY` y que `EMAIL_FROM` use un dominio verificado en Resend; sin la key solo se loguean.
 
 ## Apoyo voluntario (modo actual, sin suscripción)
 

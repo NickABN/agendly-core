@@ -155,6 +155,11 @@ class EnvironmentVariables {
   @IsOptional()
   BILLING_ENFORCED?: string;
 
+  // Remitente de correos ("Nombre <correo@dominio-verificado>"); default noreply@agendly.mx
+  @IsString()
+  @IsOptional()
+  EMAIL_FROM?: string;
+
   // Recordatorios: secreto del job programado (GitHub Actions → POST /reminders/run).
   // Sin él, el endpoint responde 503 y no se envían recordatorios.
   @IsString()

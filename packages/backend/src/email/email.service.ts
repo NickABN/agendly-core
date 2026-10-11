@@ -65,12 +65,16 @@ export interface ReminderEmailData extends AppointmentEmailData {
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private readonly resend: Resend | null;
-  private readonly fromEmail = 'Agendly <noreply@agendly.mx>';
+  private readonly fromEmail: string;
   private readonly publicAppUrl: string;
 
   constructor(private readonly configService: ConfigService) {
     const apiKey = this.configService.get<string>('RESEND_API_KEY');
     this.resend = apiKey ? new Resend(apiKey) : null;
+    // Must be on a domain verified in Resend, or every send is rejected.
+    this.fromEmail =
+      this.configService.get<string>('EMAIL_FROM') ||
+      'Agendly <noreply@agendly.mx>';
     this.publicAppUrl = (
       this.configService.get<string>('PUBLIC_APP_URL') ||
       this.configService.get<string>('FRONTEND_URL') ||
