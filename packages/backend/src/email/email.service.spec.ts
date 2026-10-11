@@ -179,3 +179,31 @@ describe('EmailService reminders and HTML escaping', () => {
     expect(ok).toBe(false);
   });
 });
+
+describe('EmailService sender', () => {
+  beforeEach(() => {
+    sendEmailMock.mockReset();
+    sendEmailMock.mockResolvedValue({ data: { id: 'e1' }, error: null });
+  });
+
+  it('uses EMAIL_FROM when configured', async () => {
+    const service = new EmailService(
+      makeConfig({
+        RESEND_API_KEY: 'k',
+        EMAIL_FROM: 'Agendly <hola@midominio.mx>',
+      }),
+    );
+    await service.sendBookingConfirmation(bookingData);
+    expect(sendEmailMock.mock.calls[0][0].from).toBe(
+      'Agendly <hola@midominio.mx>',
+    );
+  });
+
+  it('falls back to the default sender', async () => {
+    const service = new EmailService(makeConfig({ RESEND_API_KEY: 'k' }));
+    await service.sendBookingConfirmation(bookingData);
+    expect(sendEmailMock.mock.calls[0][0].from).toBe(
+      'Agendly <noreply@agendly.mx>',
+    );
+  });
+});
