@@ -1,0 +1,30 @@
+name: Reminders
+
+# Hourly trigger for appointment email reminders. Render's free tier sleeps
+# after ~15 min idle, so an in-process cron would not fire; this request also
+# wakes the backend (hence the generous timeout and retries).
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Trigger due reminders
+        env:
+          API_URL: ${{ secrets.AGENDLY_API_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$API_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "AGENDLY_API_URL / CRON_SECRET not configured — skipping."
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error \
+            --max-time 120 --retry 3 --retry-delay 30 --retry-all-errors \
+            -X POST "${API_URL%/}/reminders/run" \
+            -H "x-cron-secret: $CRON_SECRET"

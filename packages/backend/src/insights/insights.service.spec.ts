@@ -14,6 +14,7 @@ function appt(overrides: Record<string, unknown>) {
     clientPhone: '+521111111111',
     clientEmail: 'a@b.mx',
     bookingDurationSec: null,
+    reminderSentAt: null,
     ...overrides,
   };
 }
@@ -70,7 +71,10 @@ describe('InsightsService.summary', () => {
 
   it('computes rates, channels, medians, weekly series and returning clients', async () => {
     const rows = [
-      appt({ bookingDurationSec: 40 }),
+      appt({
+        bookingDurationSec: 40,
+        reminderSentAt: new Date('2026-10-04T16:00:00.000Z'),
+      }),
       appt({
         status: 'NO_SHOW',
         clientPhone: '+522222222222',
@@ -112,6 +116,11 @@ describe('InsightsService.summary', () => {
       { weekStart: '2026-10-05', total: 3, autonomous: 2, noShows: 1 },
       { weekStart: '2026-10-12', total: 1, autonomous: 0, noShows: 0 },
     ]);
+    expect(res.reminders).toEqual({
+      sent: 1,
+      noShowRateWithReminder: 0,
+      noShowRateWithoutReminder: 1,
+    });
     expect(res.riskModel.samples).toBe(2);
     expect(res.riskModel.noShows).toBe(1);
   });

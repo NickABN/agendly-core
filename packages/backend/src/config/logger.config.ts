@@ -27,6 +27,7 @@ export function loggerConfig(): Params {
           'req.headers.authorization',
           'req.headers.cookie',
           'req.headers["x-api-key"]',
+          'req.headers["x-cron-secret"]',
         ],
         remove: true,
       },

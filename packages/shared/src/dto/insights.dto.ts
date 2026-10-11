@@ -46,6 +46,15 @@ export interface InsightsSummaryDto {
   /** Clients in range with at least one earlier visit to this business. */
   returningClients: number;
   weekly: InsightsWeekDto[];
+  /**
+   * Email reminders in range and the no-show rate of resolved appointments
+   * with vs without one (observational: clients without email can't get one).
+   */
+  reminders: {
+    sent: number;
+    noShowRateWithReminder: number | null;
+    noShowRateWithoutReminder: number | null;
+  };
   riskModel: {
     version: string;
     samples: number;

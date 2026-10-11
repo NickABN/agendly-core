@@ -184,8 +184,8 @@
               </div>
               <h3 class="text-2xl font-semibold mb-4">Confirmación inmediata</h3>
               <p class="text-on-surface-variant font-medium leading-relaxed">
-                Tus clientes reservan solos y reciben su confirmación por correo al instante. Cada
-                cita queda clara para ellos y para ti, sin mensajes de ida y vuelta.
+                Tus clientes reservan solos, reciben su confirmación al instante y un recordatorio
+                por correo un día antes. Sin mensajes de ida y vuelta.
               </p>
             </div>
             <!-- Feature 3 -->
@@ -407,7 +407,7 @@ const mockClients = [
 const pricingFeatures = [
   'Citas ilimitadas',
   'Enlace público personalizado',
-  'Confirmaciones por correo',
+  'Confirmaciones y recordatorios por correo',
   'Agenda por día, semana y mes',
   'Directorio de clientes',
   'Personal, servicios y horarios',

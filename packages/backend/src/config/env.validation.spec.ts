@@ -208,3 +208,21 @@ describe('env.validation — PUBLIC_APP_URL in production', () => {
     ).not.toThrow();
   });
 });
+
+describe('env.validation — CRON_SECRET', () => {
+  it('is optional', () => {
+    expect(() => validate({ ...BASE, JWT_SECRET: STRONG })).not.toThrow();
+  });
+
+  it('rejects a short secret', () => {
+    expect(() =>
+      validate({ ...BASE, JWT_SECRET: STRONG, CRON_SECRET: 'short' }),
+    ).toThrow(/CRON_SECRET/);
+  });
+
+  it('accepts a 32+ char secret', () => {
+    expect(() =>
+      validate({ ...BASE, JWT_SECRET: STRONG, CRON_SECRET: STRONG }),
+    ).not.toThrow();
+  });
+});
