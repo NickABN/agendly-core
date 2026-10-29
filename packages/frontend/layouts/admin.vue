@@ -83,6 +83,14 @@ watch(() => route.fullPath, () => {
           <span class="material-symbols-outlined text-xl" aria-hidden="true">{{ planNavIcon }}</span>
           {{ planNavLabel }}
         </NuxtLink>
+        <NuxtLink
+          to="/admin/account"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm text-[var(--color-on-surface-variant)] hover:bg-slate-200/40"
+          active-class="bg-slate-200/60 !text-[var(--color-primary)] font-semibold"
+        >
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">manage_accounts</span>
+          Cuenta
+        </NuxtLink>
         <p class="px-4 pt-1 text-[11px] text-[var(--color-outline)]">
           <NuxtLink to="/terminos" target="_blank" class="hover:underline">Términos</NuxtLink>
           ·

@@ -50,6 +50,7 @@ pnpm --filter @agendly/shared <script>
 - **Gratis por ahora:** el cobro está apagado (`BILLING_ENFORCED` sin definir). El código de Stripe se conserva, pero `/admin/subscription` funciona como página de apoyo voluntario (`NUXT_PUBLIC_SUPPORT_URL`).
 - **Métricas e IA sin costo:** `src/insights/` calcula métricas de impacto y un riesgo de inasistencia interpretable (función pura `no-show-risk.ts`, sin APIs externas). Si cambian los pesos, sube `RISK_MODEL.version`. Las fases con LLM (asistente, onboarding asistido) están en pausa por costo.
 - **Recordatorios:** `src/reminders/` los dispara GitHub Actions cada hora (`.github/workflows/reminders.yml`) con `CRON_SECRET`; no uses cron en proceso (Render free se duerme). Todo texto de usuario en correos pasa por `escapeHtml`.
+- **Baja de cuenta:** `src/account-deletion/` — el dueño la pide en `/admin/account`; el tenant queda `isActive=false` con `deletionScheduledAt` (+30 días) y `.github/workflows/account-purge.yml` lo borra a diario (cascade + R2). Todo modelo nuevo con `tenantId` debe tener `onDelete: Cascade`.
 - **Legal:** `/terminos`, `/privacidad` y `/arco` leen la identidad del responsable de `NUXT_PUBLIC_LEGAL_*`. Si cambia su contenido, sube `LEGAL_DOCS_VERSION` en `packages/shared/src/legal.ts` (se guarda con la aceptación de cada dueño). No anunciar en la landing funciones que no existen.
 
 ## Engram Memory

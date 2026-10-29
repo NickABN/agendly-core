@@ -224,6 +224,45 @@ export class EmailService {
     await this.send(to, 'Restablece tu contraseña — Agendly', html);
   }
 
+  // ── Account deletion ────────────────────────────────────
+
+  async sendAccountDeletionScheduled(data: {
+    to: string;
+    businessName: string;
+    deletionDate: string;
+    loginUrl: string;
+  }): Promise<void> {
+    const d = escapeFields(data);
+    const html = `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #111;">Programaste la eliminación de tu cuenta</h2>
+      <p>La cuenta de <strong>${d.businessName}</strong> en Agendly está desactivada: tu página de reservas ya no recibe citas.</p>
+      <p>El <strong>${d.deletionDate}</strong> borraremos de forma definitiva el negocio, su personal, servicios, citas y datos de clientes. Eso no se puede deshacer.</p>
+      <p>¿Cambiaste de opinión? Inicia sesión antes de esa fecha y reactiva tu cuenta:</p>
+      <p style="margin: 24px 0;">
+        <a href="${data.loginUrl}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;">Reactivar mi cuenta</a>
+      </p>
+      <p style="color: #6b7280; font-size: 14px;">Si no fuiste tú, cambia tu contraseña y reactiva la cuenta de inmediato.</p>
+      <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">Agendly</p>
+    </div>`;
+    await this.send(data.to, 'Tu cuenta de Agendly se eliminará pronto', html);
+  }
+
+  async sendAccountDeleted(data: {
+    to: string;
+    businessName: string;
+  }): Promise<void> {
+    const d = escapeFields(data);
+    const html = `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #111;">Tu cuenta fue eliminada</h2>
+      <p>Borramos de forma definitiva la cuenta de <strong>${d.businessName}</strong> en Agendly y todos sus datos, como lo solicitaste.</p>
+      <p>Gracias por haber usado Agendly. Si algún día quieres volver, puedes crear una cuenta nueva cuando quieras.</p>
+      <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">Agendly</p>
+    </div>`;
+    await this.send(data.to, 'Tu cuenta de Agendly fue eliminada', html);
+  }
+
   // ── Billing (SaaS) ──────────────────────────────────────
 
   async sendPaymentReceipt(data: PaymentReceiptData): Promise<void> {

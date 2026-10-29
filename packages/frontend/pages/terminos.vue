@@ -115,8 +115,13 @@ const legal = useLegalInfo();
 
     <h2>10. Baja de la cuenta</h2>
     <p>
-      Puedes dejar de usar Agendly cuando quieras y solicitar la eliminación de tu cuenta y tus
-      datos escribiendo al contacto de arriba. Conservaremos solo lo que la ley nos obligue.
+      Puedes dejar de usar Agendly cuando quieras. El dueño de la cuenta puede eliminarla desde el
+      panel, en <strong>Cuenta</strong>, o pedirlo escribiendo al contacto de arriba. Al solicitarlo,
+      tu página de reservas se desactiva de inmediato y tienes 30 días naturales para reactivar la
+      cuenta. Pasado ese plazo borramos de forma definitiva el negocio, su personal, servicios,
+      citas, los datos de sus clientes y sus imágenes, y te avisamos por correo. Las citas que
+      tengas agendadas no se cancelan ni se notifican automáticamente: avisar a tus clientes es tu
+      responsabilidad. Conservaremos solo lo que la ley nos obligue.
     </p>
 
     <h2>11. Cambios a estos Términos</h2>

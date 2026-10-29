@@ -30,6 +30,7 @@ describe('isReservedSlug', () => {
     'appointments',
     'availability',
     'profile',
+    'account',
   ])('reserves the backend resource root "%s"', (slug) => {
     expect(isReservedSlug(slug)).toBe(true);
   });

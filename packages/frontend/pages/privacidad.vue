@@ -126,7 +126,9 @@ const legal = useLegalInfo();
     <h2>8. Conservación y seguridad</h2>
     <p>
       Conservamos los datos mientras tu cuenta esté activa o mientras el negocio los necesite para
-      gestionar sus citas, y después solo el tiempo que exija la ley. Aplicamos medidas de seguridad
+      gestionar sus citas, y después solo el tiempo que exija la ley. Cuando el dueño de un negocio
+      elimina su cuenta, los datos del negocio y de sus clientes se bloquean durante 30 días (por si
+      decide reactivarla) y después se suprimen de forma definitiva. Aplicamos medidas de seguridad
       administrativas, técnicas y físicas: conexiones cifradas (HTTPS), contraseñas con hash,
       sesiones revocables y aislamiento de datos entre negocios.
     </p>
