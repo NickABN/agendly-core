@@ -13,6 +13,8 @@ interface MeResponse {
     onboardedAt: string | null;
     trialEndsAt: string;
     isActive: boolean;
+    /** Owner-requested deletion pending: UTC ISO date of the definitive purge. */
+    deletionScheduledAt?: string | null;
     subscriptionStatus?:
       | 'TRIALING'
       | 'ACTIVE'
@@ -111,6 +113,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // If not onboarded, redirect to onboarding (unless already there)
   if (!store.isOnboarded && !to.path.startsWith('/onboarding')) {
     return navigateTo('/onboarding');
+  }
+
+  // Eliminación de cuenta pendiente: el negocio está desactivado y lo único que
+  // puede hacer el dueño es reactivarlo (o esperar la purga) desde /admin/account.
+  if (store.deletionScheduledAt) {
+    if (to.path !== '/admin/account') return navigateTo('/admin/account');
+    return;
   }
 
   // Sin acceso vigente (prueba vencida y sin suscripción): forzar a pagar.

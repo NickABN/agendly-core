@@ -21,3 +21,4 @@ export * from './dto/profile.dto';
 export * from './dto/booking.dto';
 export * from './dto/public.dto';
 export * from './dto/insights.dto';
+export * from './dto/account.dto';

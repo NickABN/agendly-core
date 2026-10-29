@@ -52,6 +52,7 @@ export type TenantMinAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletionScheduledAt: Date | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
   subscriptionStatus: $Enums.SubscriptionStatus | null
@@ -74,6 +75,7 @@ export type TenantMaxAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletionScheduledAt: Date | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
   subscriptionStatus: $Enums.SubscriptionStatus | null
@@ -96,6 +98,7 @@ export type TenantCountAggregateOutputType = {
   isActive: number
   createdAt: number
   updatedAt: number
+  deletionScheduledAt: number
   stripeCustomerId: number
   stripeSubscriptionId: number
   subscriptionStatus: number
@@ -130,6 +133,7 @@ export type TenantMinAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  deletionScheduledAt?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
   subscriptionStatus?: true
@@ -152,6 +156,7 @@ export type TenantMaxAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  deletionScheduledAt?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
   subscriptionStatus?: true
@@ -174,6 +179,7 @@ export type TenantCountAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  deletionScheduledAt?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
   subscriptionStatus?: true
@@ -283,6 +289,7 @@ export type TenantGroupByOutputType = {
   isActive: boolean
   createdAt: Date
   updatedAt: Date
+  deletionScheduledAt: Date | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
   subscriptionStatus: $Enums.SubscriptionStatus
@@ -328,6 +335,7 @@ export type TenantWhereInput = {
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
+  deletionScheduledAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   stripeCustomerId?: Prisma.StringNullableFilter<"Tenant"> | string | null
   stripeSubscriptionId?: Prisma.StringNullableFilter<"Tenant"> | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Tenant"> | $Enums.SubscriptionStatus
@@ -358,6 +366,7 @@ export type TenantOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletionScheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
@@ -392,6 +401,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
+  deletionScheduledAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   stripeSubscriptionId?: Prisma.StringNullableFilter<"Tenant"> | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFilter<"Tenant"> | $Enums.SubscriptionStatus
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
@@ -421,6 +431,7 @@ export type TenantOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletionScheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
@@ -451,6 +462,7 @@ export type TenantScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"Tenant"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
+  deletionScheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
   stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   stripeSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusWithAggregatesFilter<"Tenant"> | $Enums.SubscriptionStatus
@@ -473,6 +485,7 @@ export type TenantCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -503,6 +516,7 @@ export type TenantUncheckedCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -533,6 +547,7 @@ export type TenantUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -563,6 +578,7 @@ export type TenantUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -593,6 +609,7 @@ export type TenantCreateManyInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -615,6 +632,7 @@ export type TenantUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -637,6 +655,7 @@ export type TenantUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -659,6 +678,7 @@ export type TenantCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletionScheduledAt?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
@@ -686,6 +706,7 @@ export type TenantMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletionScheduledAt?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
@@ -708,6 +729,7 @@ export type TenantMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletionScheduledAt?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
   subscriptionStatus?: Prisma.SortOrder
@@ -884,6 +906,7 @@ export type TenantCreateWithoutUsersInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -913,6 +936,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -958,6 +982,7 @@ export type TenantUpdateWithoutUsersInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -987,6 +1012,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1016,6 +1042,7 @@ export type TenantCreateWithoutEmployeesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1045,6 +1072,7 @@ export type TenantUncheckedCreateWithoutEmployeesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1090,6 +1118,7 @@ export type TenantUpdateWithoutEmployeesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1119,6 +1148,7 @@ export type TenantUncheckedUpdateWithoutEmployeesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1148,6 +1178,7 @@ export type TenantCreateWithoutServicesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1177,6 +1208,7 @@ export type TenantUncheckedCreateWithoutServicesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1222,6 +1254,7 @@ export type TenantUpdateWithoutServicesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1251,6 +1284,7 @@ export type TenantUncheckedUpdateWithoutServicesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1280,6 +1314,7 @@ export type TenantCreateWithoutSchedulesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1309,6 +1344,7 @@ export type TenantUncheckedCreateWithoutSchedulesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1354,6 +1390,7 @@ export type TenantUpdateWithoutSchedulesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1383,6 +1420,7 @@ export type TenantUncheckedUpdateWithoutSchedulesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1412,6 +1450,7 @@ export type TenantCreateWithoutScheduleExceptionsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1441,6 +1480,7 @@ export type TenantUncheckedCreateWithoutScheduleExceptionsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1486,6 +1526,7 @@ export type TenantUpdateWithoutScheduleExceptionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1515,6 +1556,7 @@ export type TenantUncheckedUpdateWithoutScheduleExceptionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1544,6 +1586,7 @@ export type TenantCreateWithoutAppointmentsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1573,6 +1616,7 @@ export type TenantUncheckedCreateWithoutAppointmentsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1618,6 +1662,7 @@ export type TenantUpdateWithoutAppointmentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1647,6 +1692,7 @@ export type TenantUncheckedUpdateWithoutAppointmentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1676,6 +1722,7 @@ export type TenantCreateWithoutPrivacyConsentsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1705,6 +1752,7 @@ export type TenantUncheckedCreateWithoutPrivacyConsentsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1750,6 +1798,7 @@ export type TenantUpdateWithoutPrivacyConsentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1779,6 +1828,7 @@ export type TenantUncheckedUpdateWithoutPrivacyConsentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1808,6 +1858,7 @@ export type TenantCreateWithoutImageVersionsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1837,6 +1888,7 @@ export type TenantUncheckedCreateWithoutImageVersionsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletionScheduledAt?: Date | string | null
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   subscriptionStatus?: $Enums.SubscriptionStatus
@@ -1882,6 +1934,7 @@ export type TenantUpdateWithoutImageVersionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -1911,6 +1964,7 @@ export type TenantUncheckedUpdateWithoutImageVersionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subscriptionStatus?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
@@ -2034,6 +2088,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletionScheduledAt?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
   subscriptionStatus?: boolean
@@ -2065,6 +2120,7 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletionScheduledAt?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
   subscriptionStatus?: boolean
@@ -2087,6 +2143,7 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletionScheduledAt?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
   subscriptionStatus?: boolean
@@ -2109,13 +2166,14 @@ export type TenantSelectScalar = {
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletionScheduledAt?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
   subscriptionStatus?: boolean
   currentPeriodEnd?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "logoUrl" | "bannerUrl" | "latitude" | "longitude" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "createdAt" | "updatedAt" | "stripeCustomerId" | "stripeSubscriptionId" | "subscriptionStatus" | "currentPeriodEnd", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "logoUrl" | "bannerUrl" | "latitude" | "longitude" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "createdAt" | "updatedAt" | "deletionScheduledAt" | "stripeCustomerId" | "stripeSubscriptionId" | "subscriptionStatus" | "currentPeriodEnd", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   employees?: boolean | Prisma.Tenant$employeesArgs<ExtArgs>
@@ -2158,6 +2216,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    deletionScheduledAt: Date | null
     stripeCustomerId: string | null
     stripeSubscriptionId: string | null
     subscriptionStatus: $Enums.SubscriptionStatus
@@ -2608,6 +2667,7 @@ export interface TenantFieldRefs {
   readonly isActive: Prisma.FieldRef<"Tenant", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Tenant", 'DateTime'>
+  readonly deletionScheduledAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly stripeCustomerId: Prisma.FieldRef<"Tenant", 'String'>
   readonly stripeSubscriptionId: Prisma.FieldRef<"Tenant", 'String'>
   readonly subscriptionStatus: Prisma.FieldRef<"Tenant", 'SubscriptionStatus'>

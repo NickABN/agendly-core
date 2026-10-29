@@ -112,7 +112,7 @@ The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (
 | `GOOGLE_CALLBACK_URL` | ○ | — | `https://agendly-admin1.netlify.app/api/auth/google/callback` |
 | `LOG_LEVEL` | ○ | `info` | `info` (o `debug` para diagnosticar) |
 | `SENTRY_DSN` | ○ | — | error tracking backend (ver OBSERVABILITY.md) |
-| `CRON_SECRET` | ○ | — | 32+ chars (`openssl rand -hex 32`). Activa `POST /reminders/run`; sin él no se envían recordatorios |
+| `CRON_SECRET` | ○ | — | 32+ chars (`openssl rand -hex 32`). Activa `POST /reminders/run` y `POST /account/purge/run`; sin él no se envían recordatorios ni se purgan cuentas |
 | `BILLING_ENFORCED` | ○ | sin definir (gratis) | **sin definir** mientras Agendly sea gratis. Solo `true` bloquea negocios con la prueba vencida |
 
 ### Frontend (Docker local + Netlify)
@@ -152,6 +152,12 @@ Render free se duerme, así que el job vive en `.github/workflows/reminders.yml`
 3. Probar: Actions → Reminders → Run workflow. La respuesta muestra `{candidates, sent, failed}`.
 
 Reglas: citas `CONFIRMED` con correo, que empiezan en 1–24 h y se reservaron hace ≥ 12 h; máximo 50 por corrida (Resend free = 100/día). Requiere `RESEND_API_KEY` y que `EMAIL_FROM` use un dominio verificado en Resend; sin la key solo se loguean.
+
+## Eliminación de cuentas (GitHub Actions — $0)
+
+El dueño elimina su cuenta desde `/admin/account`: el negocio queda desactivado (sin página pública, reservas ni recordatorios) y tiene 30 días para reactivarlo. `.github/workflows/account-purge.yml` (diario, 09:41 UTC) llama a `POST /account/purge/run` con los **mismos** secrets `AGENDLY_API_URL` y `CRON_SECRET` de los recordatorios y borra definitivamente los negocios vencidos (cascade en BD + imágenes en R2 + cancela la suscripción de Stripe si existía). Probar: Actions → Account purge → Run workflow → `{due, purged, failed}`.
+
+> GitHub desactiva los workflows programados tras 60 días sin actividad en el repo: si eso pasa, reactívalos en la pestaña Actions.
 
 ## Apoyo voluntario (modo actual, sin suscripción)
 

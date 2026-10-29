@@ -10,6 +10,6 @@ import { GeocoderService } from './geocoder.service';
   imports: [ConfigModule],
   controllers: [ProfileController],
   providers: [ProfileService, UploadService, StorageService, GeocoderService],
-  exports: [UploadService],
+  exports: [UploadService, StorageService],
 })
 export class ProfileModule {}

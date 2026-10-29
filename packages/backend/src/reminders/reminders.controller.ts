@@ -1,22 +1,10 @@
-import {
-  Controller,
-  Headers,
-  HttpCode,
-  Post,
-  ServiceUnavailableException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Headers, HttpCode, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { createHash, timingSafeEqual } from 'crypto';
 import { RemindersService } from './reminders.service';
+import { assertCronSecret } from '../common/cron-secret';
 
-/** Constant-time comparison of two secrets of any length. */
-export function secretsMatch(candidate: string, expected: string): boolean {
-  const a = createHash('sha256').update(candidate).digest();
-  const b = createHash('sha256').update(expected).digest();
-  return timingSafeEqual(a, b);
-}
+export { secretsMatch } from '../common/cron-secret';
 
 /**
  * System job endpoint, called hourly by the GitHub Actions scheduler with the
@@ -33,13 +21,7 @@ export class RemindersController {
   @HttpCode(200)
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   run(@Headers('x-cron-secret') provided?: string) {
-    const expected = this.config.get<string>('CRON_SECRET');
-    if (!expected) {
-      throw new ServiceUnavailableException('Recordatorios no configurados');
-    }
-    if (!provided || !secretsMatch(provided, expected)) {
-      throw new UnauthorizedException();
-    }
+    assertCronSecret(this.config.get<string>('CRON_SECRET'), provided);
     return this.reminders.sendDueReminders();
   }
 }
