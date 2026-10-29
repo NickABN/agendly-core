@@ -10,6 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update-status': [id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CANCELLED'];
+  reschedule: [appointment: CalendarAppointment];
 }>();
 
 const copied = ref(false);
@@ -65,6 +66,7 @@ async function copyPublicUrl() {
           :appointment="appt"
           :border-class="borderColorForIndex(index)"
           @update-status="(status) => emit('update-status', appt.id, status)"
+          @reschedule="emit('reschedule', appt)"
         />
       </div>
     </div>

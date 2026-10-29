@@ -44,3 +44,49 @@ export type MonthDensityResponse = Record<string, { count: number; employees: st
 /** Day/week calendar reads return arrays of full appointments. */
 export type DayAppointmentsResponse = AppointmentDto[];
 export type WeekAppointmentsResponse = AppointmentDto[];
+
+/** PATCH /appointments/:id/reschedule */
+export interface RescheduleRequest {
+  /** UTC ISO instant of one of the slots from GET /appointments/:id/reschedule-slots */
+  startTime: string;
+  /** Optional new employee (defaults to the current one) */
+  employeeId?: string;
+}
+
+export interface RescheduleResponse {
+  id: string;
+  employeeId: string;
+  /** UTC ISO instant */
+  startTime: string;
+  /** UTC ISO instant */
+  endTime: string;
+}
+
+/**
+ * Client self-service view (GET /public/appointments/:token), reached through the
+ * signed link in the confirmation, reschedule and reminder emails.
+ */
+export interface ClientAppointmentDto {
+  clientName: string;
+  serviceName: string;
+  employeeName: string;
+  /** UTC ISO instant */
+  startTime: string;
+  /** UTC ISO instant */
+  endTime: string;
+  status: AppointmentStatus;
+  /** CONFIRMED and not started yet */
+  canCancel: boolean;
+  business: {
+    name: string;
+    slug: string;
+    timezone: string;
+    phone: string | null;
+    address: string | null;
+  };
+}
+
+/** POST /public/appointments/:token/cancel */
+export interface ClientCancelRequest {
+  reason?: string;
+}

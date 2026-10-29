@@ -15,6 +15,7 @@ describe('isPublicRoutePath', () => {
     '/terminos',
     '/forgot-password',
     '/reset-password',
+    '/cita/cm1abc.c2lnbmF0dXJl',
   ])('treats the explicit public route "%s" as public', (path) => {
     expect(isPublicRoutePath(path)).toBe(true);
   });

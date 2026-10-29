@@ -207,3 +207,70 @@ describe('EmailService sender', () => {
     );
   });
 });
+
+describe('EmailService self-service links', () => {
+  beforeEach(() => {
+    sendEmailMock.mockReset();
+    sendEmailMock.mockResolvedValue(undefined);
+  });
+
+  const manageUrl = 'https://app.test/cita/cm1abc.sig';
+
+  it('adds the cancel link to confirmations only when provided', async () => {
+    const service = new EmailService(makeConfig({ RESEND_API_KEY: 'k' }));
+
+    await service.sendBookingConfirmation({ ...bookingData, manageUrl });
+    await service.sendBookingConfirmation(bookingData);
+
+    const [withLink, withoutLink] = sendEmailMock.mock.calls.map(
+      ([arg]: [{ html: string }]) => arg.html,
+    );
+    expect(withLink).toContain(`href="${manageUrl}"`);
+    expect(withoutLink).not.toContain('/cita/');
+  });
+
+  it('sends the reschedule email with old and new times, escaping user text', async () => {
+    const service = new EmailService(makeConfig({ RESEND_API_KEY: 'k' }));
+
+    await service.sendBookingRescheduled({
+      ...bookingData,
+      clientName: '<b>Ana</b>',
+      previousDate: 'lunes 6 de julio',
+      previousTime: '09:00',
+      manageUrl,
+    });
+
+    const { html, subject } = sendEmailMock.mock.calls[0][0] as {
+      html: string;
+      subject: string;
+    };
+    expect(subject).toContain('reagendada');
+    expect(html).toContain('&lt;b&gt;Ana&lt;/b&gt;');
+    expect(html).toContain('lunes 6 de julio, 09:00');
+    expect(html).toContain(`href="${manageUrl}"`);
+  });
+
+  it('notifies the owner of a client cancellation with escaped fields', async () => {
+    const service = new EmailService(makeConfig({ RESEND_API_KEY: 'k' }));
+
+    await service.sendClientCancellationNotice({
+      to: 'owner@salon.mx',
+      businessName: 'Salon Calma',
+      clientName: 'Ana',
+      clientPhone: '5512345678',
+      serviceName: 'Haircut',
+      employeeName: 'Nico',
+      date: '2026-07-07',
+      time: '10:00',
+      reason: '<script>x</script>',
+    });
+
+    const { to, html } = sendEmailMock.mock.calls[0][0] as {
+      to: string;
+      html: string;
+    };
+    expect(to).toBe('owner@salon.mx');
+    expect(html).toContain('&lt;script&gt;');
+    expect(html).not.toContain('<script>');
+  });
+});

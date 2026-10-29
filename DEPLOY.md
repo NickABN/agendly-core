@@ -94,7 +94,7 @@ The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (
 | Var | Req | Local (compose) | Prod (Render) |
 |---|---|---|---|
 | `DATABASE_URL` | ✅ | `postgresql://agendly:agendly_dev@db:5432/agendly` (ya en compose) | Neon (`...?sslmode=require`) |
-| `JWT_SECRET` | ✅ | local válido en compose | secreto fuerte 32+ chars (`openssl rand -hex 32`); el default inseguro es rechazado al boot |
+| `JWT_SECRET` | ✅ | local válido en compose | secreto fuerte 32+ chars (`openssl rand -hex 32`); el default inseguro es rechazado al boot. También firma los links "cancelar mi cita" de los correos: rotarlo invalida los links ya enviados |
 | `ACCESS_TOKEN_TTL` | ○ | `15m` (default) | `15m` (default) |
 | `REFRESH_TOKEN_TTL` | ○ | `7d` (default) | `7d` (default) |
 | `REFRESH_ABSOLUTE_TTL` | ○ | `30d` (default) | `30d` (default) |

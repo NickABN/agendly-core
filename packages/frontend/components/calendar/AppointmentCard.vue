@@ -11,6 +11,7 @@ const timezone = useBusinessTimezone();
 
 const emit = defineEmits<{
   'update-status': [status: 'COMPLETED' | 'NO_SHOW' | 'CANCELLED'];
+  reschedule: [];
 }>();
 
 const statusConfig: Record<string, { label: string; class: string }> = {
@@ -102,19 +103,16 @@ function serviceIcon(name: string): string {
         </span>
         <span class="text-xs text-[var(--color-outline)]">{{ appointment.clientPhone }}</span>
       </div>
-    </div>
-    <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
-      <div
-        class="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
-        :class="colorForName(appointment.employee.name)"
-        :title="appointment.employee.name"
-      >
-        {{ getInitials(appointment.employee.name) }}
-      </div>
       <div
         v-if="appointment.status === 'CONFIRMED'"
-        class="flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+        class="flex flex-wrap gap-1 mt-3 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 transition-opacity"
       >
+        <button
+          class="text-[10px] px-2 py-1 rounded-lg bg-blue-50 text-[var(--color-primary)] border border-blue-100 font-semibold hover:bg-blue-100 transition-colors"
+          @click="emit('reschedule')"
+        >
+          Reagendar
+        </button>
         <button
           class="text-[10px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 font-semibold hover:bg-emerald-100 transition-colors"
           @click="emit('update-status', 'COMPLETED')"
@@ -133,6 +131,15 @@ function serviceIcon(name: string): string {
         >
           Cancelar
         </button>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
+      <div
+        class="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+        :class="colorForName(appointment.employee.name)"
+        :title="appointment.employee.name"
+      >
+        {{ getInitials(appointment.employee.name) }}
       </div>
     </div>
   </div>

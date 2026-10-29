@@ -16,6 +16,7 @@ export const RESERVED_SLUGS = [
   'auth',
   'availability',
   'billing',
+  'cita',
   'employees',
   'forgot-password',
   'health',

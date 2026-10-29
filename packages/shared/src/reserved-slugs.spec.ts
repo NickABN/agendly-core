@@ -17,6 +17,7 @@ describe('isReservedSlug', () => {
     'health',
     'billing',
     'public',
+    'cita',
   ])('reserves the app route "%s"', (slug) => {
     expect(isReservedSlug(slug)).toBe(true);
   });

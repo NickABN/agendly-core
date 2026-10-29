@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CalendarAppointment } from '~/composables/useAppointmentsCalendar';
+
 definePageMeta({ layout: 'admin' });
 
 const { store } = useAuth();
@@ -8,6 +10,13 @@ const nav = useCalendarNav(businessTimezone);
 const calendar = useAppointmentsCalendar(nav, businessTimezone);
 
 const showManualForm = ref(false);
+const showReschedule = ref(false);
+const rescheduling = ref<CalendarAppointment | null>(null);
+
+function openReschedule(appointment: CalendarAppointment) {
+  rescheduling.value = appointment;
+  showReschedule.value = true;
+}
 
 const headerLabel = computed(() => {
   if (nav.view.value === 'day') return nav.dayLabel.value;
@@ -86,6 +95,7 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
         :is-today="nav.isToday.value"
         :slug="tenantSlug"
         @update-status="onUpdateStatus"
+        @reschedule="openReschedule"
       />
 
       <CalendarWeekView
@@ -110,6 +120,12 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
       :tenant-slug="tenantSlug"
       :default-date="nav.selectedDate.value"
       @created="calendar.refresh"
+    />
+
+    <CalendarRescheduleModal
+      v-model:open="showReschedule"
+      :appointment="rescheduling"
+      @rescheduled="calendar.refresh"
     />
   </div>
 </template>

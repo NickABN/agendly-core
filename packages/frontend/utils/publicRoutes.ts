@@ -10,6 +10,8 @@ const PUBLIC_ROUTE_PREFIXES = [
   '/terminos',
   '/forgot-password',
   '/reset-password',
+  // Client self-service appointment page (signed link from emails)
+  '/cita/',
 ];
 
 /** Shape of a public booking page path: a single lowercase segment. */

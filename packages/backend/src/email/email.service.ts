@@ -52,6 +52,32 @@ interface AppointmentEmailData {
   date: string;
   time: string;
   slug: string;
+  /** Signed self-service link (view / cancel) — see AppointmentLinkService. */
+  manageUrl?: string;
+}
+
+export interface RescheduleEmailData extends AppointmentEmailData {
+  previousDate: string;
+  previousTime: string;
+}
+
+/** Owner notice when a client cancels from their self-service link. */
+export interface ClientCancellationNoticeData {
+  to: string;
+  businessName: string;
+  clientName: string;
+  clientPhone: string;
+  serviceName: string;
+  employeeName: string;
+  date: string;
+  time: string;
+  reason?: string;
+}
+
+/** Self-service block shared by the client-facing appointment emails. */
+function manageBlock(manageUrl: string | undefined): string {
+  if (!manageUrl) return '';
+  return `<p style="font-size: 14px;">¿No puedes asistir? <a href="${manageUrl}" style="color: #6366f1;">Cancela tu cita aquí</a> para liberar el horario.</p>`;
 }
 
 export interface ReminderEmailData extends AppointmentEmailData {
@@ -106,6 +132,35 @@ export class EmailService {
     const html = this.cancellationTemplate(escapeFields(data));
 
     await this.send(data.clientEmail, subject, html);
+  }
+
+  async sendBookingRescheduled(data: RescheduleEmailData) {
+    const subject = `Cita reagendada — ${data.serviceName} en ${data.businessName}`;
+    await this.send(
+      data.clientEmail,
+      subject,
+      this.rescheduleTemplate(escapeFields(data)),
+    );
+  }
+
+  async sendClientCancellationNotice(data: ClientCancellationNoticeData) {
+    const d = escapeFields(data);
+    const subject = `Un cliente canceló su cita — ${data.date} ${data.time}`;
+    const html = `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #111;">Cita cancelada por el cliente</h2>
+      <p><strong>${d.clientName}</strong> canceló su cita en ${d.businessName}. El horario ya quedó libre para nuevas reservas.</p>
+      <div style="background: #fef2f2; border-radius: 8px; padding: 16px; margin: 16px 0;">
+        <p style="margin: 4px 0;"><strong>Servicio:</strong> ${d.serviceName}</p>
+        <p style="margin: 4px 0;"><strong>Con:</strong> ${d.employeeName}</p>
+        <p style="margin: 4px 0;"><strong>Fecha:</strong> ${d.date}</p>
+        <p style="margin: 4px 0;"><strong>Hora:</strong> ${d.time}</p>
+        <p style="margin: 4px 0;"><strong>Teléfono:</strong> ${d.clientPhone}</p>
+        ${d.reason ? `<p style="margin: 4px 0;"><strong>Motivo:</strong> ${d.reason}</p>` : ''}
+      </div>
+      <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">Agendly</p>
+    </div>`;
+    await this.send(data.to, subject, html);
   }
 
   /** Returns false when the provider rejected the email (the job retries later). */
@@ -212,6 +267,7 @@ export class EmailService {
         <p style="margin: 4px 0;"><strong>Hora:</strong> ${data.time}</p>
         <p style="margin: 4px 0;"><strong>Lugar:</strong> ${data.businessName}</p>
       </div>
+      ${manageBlock(data.manageUrl)}
       <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">
         Agenda gestionada por <a href="${appUrl}" style="color: #6366f1;">Agendly</a>
       </p>
@@ -243,18 +299,44 @@ export class EmailService {
     </div>`;
   }
 
+  private rescheduleTemplate(data: RescheduleEmailData): string {
+    const appUrl = this.publicAppUrl;
+
+    return `
+    <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
+      <h2 style="color: #111;">Tu cita cambió de horario</h2>
+      <p>Hola <strong>${data.clientName}</strong>,</p>
+      <p>${data.businessName} reagendó tu cita. Estos son los nuevos datos:</p>
+      <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin: 16px 0;">
+        <p style="margin: 4px 0;"><strong>Servicio:</strong> ${data.serviceName}</p>
+        <p style="margin: 4px 0;"><strong>Con:</strong> ${data.employeeName}</p>
+        <p style="margin: 4px 0;"><strong>Fecha:</strong> ${data.date}</p>
+        <p style="margin: 4px 0;"><strong>Hora:</strong> ${data.time}</p>
+        <p style="margin: 4px 0;"><strong>Lugar:</strong> ${data.businessName}</p>
+      </div>
+      <p style="color: #6b7280; font-size: 14px;">Antes: ${data.previousDate}, ${data.previousTime}</p>
+      ${manageBlock(data.manageUrl)}
+      <p style="color: #6b7280; font-size: 12px; margin-top: 32px;">
+        Agenda gestionada por <a href="${appUrl}" style="color: #6366f1;">Agendly</a>
+      </p>
+    </div>`;
+  }
+
   private reminderTemplate(data: ReminderEmailData): string {
     const bookingUrl = this.publicBookingUrl(data.slug);
     const appUrl = this.publicAppUrl;
     const phoneLine = data.businessPhone
       ? `llama o escribe al <a href="tel:${data.businessPhone}" style="color: #6366f1;">${data.businessPhone}</a>`
       : 'avísale al negocio';
+    const cancelOption = data.manageUrl
+      ? `<a href="${data.manageUrl}" style="color: #6366f1;">cancela aquí</a> o ${phoneLine}`
+      : phoneLine;
     const callToAction = data.emphasizeConfirmation
       ? `<div style="background: #fffbeb; border-radius: 8px; padding: 12px 16px; margin: 16px 0;">
-          <strong>¿Sigues pudiendo asistir?</strong> Si no, por favor ${phoneLine} para liberar el
+          <strong>¿Sigues pudiendo asistir?</strong> Si no, por favor ${cancelOption} para liberar el
           horario para alguien más.
         </div>`
-      : `<p>Si no puedes asistir, por favor ${phoneLine} para liberar el horario.</p>`;
+      : `<p>Si no puedes asistir, por favor ${cancelOption} para liberar el horario.</p>`;
 
     return `
     <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
