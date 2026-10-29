@@ -47,6 +47,7 @@ function build(
     prisma as never,
     email as never,
     risk as never,
+    { manageUrl: (id: string) => `https://app.test/cita/${id}.sig` } as never,
   );
   return { service, prisma, email, risk };
 }
@@ -89,6 +90,7 @@ describe('RemindersService.sendDueReminders', () => {
         businessPhone: '+52 33 1234 5678',
         time: expect.stringMatching(/9:00/), // 15:00Z = 9:00 in Mexico City
         emphasizeConfirmation: false,
+        manageUrl: 'https://app.test/cita/a1.sig',
       }),
     );
   });

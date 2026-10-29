@@ -9,10 +9,12 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantGuard } from '../common/guards/tenant.guard';
+import { SubscriptionGuard } from '../common/guards/subscription.guard';
 import { CurrentTenant } from '../common/decorators/current-tenant.decorator';
 import { AppointmentsService } from './appointments.service';
 import { ClientsService } from './clients.service';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { RescheduleDto, RescheduleSlotsQueryDto } from './dto/reschedule.dto';
 import type { AppointmentStatus } from '../generated/prisma/client.js';
 
 @Controller('appointments')
@@ -65,6 +67,35 @@ export class AppointmentsController {
       id,
       body.status as unknown as AppointmentStatus,
       body.cancellationReason,
+    );
+  }
+
+  @Get(':id/reschedule-slots')
+  rescheduleSlots(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+    @Query() query: RescheduleSlotsQueryDto,
+  ) {
+    return this.appointmentsService.rescheduleSlots(
+      tenantId,
+      id,
+      query.date,
+      query.employeeId,
+    );
+  }
+
+  @Patch(':id/reschedule')
+  @UseGuards(SubscriptionGuard)
+  reschedule(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+    @Body() body: RescheduleDto,
+  ) {
+    return this.appointmentsService.reschedule(
+      tenantId,
+      id,
+      body.startTime,
+      body.employeeId,
     );
   }
 }

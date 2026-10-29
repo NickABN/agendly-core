@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { formatDate, formatTime } from '@agendly/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
+import { AppointmentLinkService } from '../email/appointment-link.service';
 import { NoShowRiskService } from '../insights/no-show-risk.service';
 import { hasActiveAccess } from '../common/subscription-access';
 
@@ -39,6 +40,7 @@ export class RemindersService {
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
     private readonly riskService: NoShowRiskService,
+    private readonly appointmentLinks: AppointmentLinkService,
   ) {}
 
   async sendDueReminders(
@@ -112,6 +114,7 @@ export class RemindersService {
         date: formatDate(a.startTime, 'long', a.tenant.timezone),
         time: formatTime(a.startTime, a.tenant.timezone),
         slug: a.tenant.slug,
+        manageUrl: this.appointmentLinks.manageUrl(a.id),
         emphasizeConfirmation: risks.get(a.id) === 'HIGH',
       });
 

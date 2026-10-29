@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
+import { AppointmentLinkService } from '../email/appointment-link.service';
 import { AvailabilityService } from './availability.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { formatDate, formatTime, isPast, utcToDateKey } from '@agendly/shared';
@@ -34,6 +35,7 @@ export class BookingService {
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
     private readonly availabilityService: AvailabilityService,
+    private readonly appointmentLinks: AppointmentLinkService,
   ) {}
 
   /** Public booking: resolves the tenant by slug first. */
@@ -168,6 +170,7 @@ export class BookingService {
 
     this.sendConfirmationEmail(
       tenant,
+      appointment.id,
       dto,
       service.name,
       employee.name,
@@ -192,6 +195,7 @@ export class BookingService {
   /** Fire-and-forget, outside the transaction, always with a logged catch. */
   private sendConfirmationEmail(
     tenant: TenantContext,
+    appointmentId: string,
     dto: CreateBookingDto,
     serviceName: string,
     employeeName: string,
@@ -209,6 +213,7 @@ export class BookingService {
         date: formatDate(startTime, 'long', tenant.timezone),
         time: formatTime(startTime, tenant.timezone),
         slug: tenant.slug,
+        manageUrl: this.appointmentLinks.manageUrl(appointmentId),
       })
       .catch((err: Error) =>
         this.logger.error(
@@ -219,7 +224,7 @@ export class BookingService {
 }
 
 /** Postgres exclusion-constraint violation (23P01) on appointment_no_overlap. */
-function isNoOverlapViolation(err: unknown): boolean {
+export function isNoOverlapViolation(err: unknown): boolean {
   const message = err instanceof Error ? err.message : String(err);
   return (
     message.includes('appointment_no_overlap') || message.includes('23P01')

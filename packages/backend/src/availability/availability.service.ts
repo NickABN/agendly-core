@@ -142,6 +142,8 @@ export class AvailabilityService {
     bufferMinutes: number;
     timezone: string;
     serviceId?: string;
+    /** Appointment being rescheduled: its current range must not block itself. */
+    excludeAppointmentId?: string;
   }): Promise<TimeSlotDto[]> {
     const {
       tenantId,
@@ -151,6 +153,7 @@ export class AvailabilityService {
       bufferMinutes,
       timezone,
       serviceId,
+      excludeAppointmentId,
     } = params;
 
     const { start: dayStart, end: dayEnd } = dayBoundsUtc(date, timezone);
@@ -177,6 +180,7 @@ export class AvailabilityService {
         startTime: { lt: dayEnd },
         endTime: { gt: dayStart },
         status: 'CONFIRMED',
+        ...(excludeAppointmentId ? { id: { not: excludeAppointmentId } } : {}),
       },
       orderBy: { startTime: 'asc' },
     });

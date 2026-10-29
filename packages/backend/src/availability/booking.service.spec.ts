@@ -99,6 +99,7 @@ describe('BookingService.createBooking', () => {
       prisma as never,
       emailService as never,
       availabilityService as unknown as AvailabilityService,
+      { manageUrl: (id: string) => `https://app.test/cita/${id}.sig` } as never,
     );
   });
 
@@ -162,6 +163,9 @@ describe('BookingService.createBooking', () => {
       expect.objectContaining({
         time: expect.stringMatching(/10:00/),
         date: expect.stringContaining('junio'),
+        manageUrl: expect.stringMatching(
+          /^https:\/\/app\.test\/cita\/.+\.sig$/,
+        ),
       }),
     );
   });
@@ -238,6 +242,7 @@ describe('BookingService.createPublicBooking', () => {
     };
     const service = new BookingService(
       prisma as never,
+      null as never,
       null as never,
       null as never,
     );
