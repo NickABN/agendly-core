@@ -63,6 +63,26 @@ export class BillingService {
     return this.config.get<string>('FRONTEND_URL', 'http://localhost:3001');
   }
 
+  /**
+   * Turns renewal off/on while an account deletion is pending, so the owner is
+   * not charged again during the grace period. No-op without Stripe.
+   */
+  async setCancelAtPeriodEnd(
+    subscriptionId: string,
+    cancel: boolean,
+  ): Promise<void> {
+    if (!this.stripe) return;
+    await this.stripe.subscriptions.update(subscriptionId, {
+      cancel_at_period_end: cancel,
+    });
+  }
+
+  /** Ends the subscription immediately (account purge). No-op without Stripe. */
+  async cancelSubscriptionNow(subscriptionId: string): Promise<void> {
+    if (!this.stripe) return;
+    await this.stripe.subscriptions.cancel(subscriptionId);
+  }
+
   /** Crea (o reusa) el Customer de Stripe para el tenant. */
   private async ensureCustomer(tenantId: string): Promise<string> {
     const tenant = await this.prisma.tenant.findUnique({

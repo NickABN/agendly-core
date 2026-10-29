@@ -15,6 +15,8 @@ interface MeResponse {
     onboardedAt: string | null;
     trialEndsAt: string;
     isActive: boolean;
+    /** Owner-requested deletion pending: UTC ISO date of the definitive purge. */
+    deletionScheduledAt?: string | null;
     subscriptionStatus?: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE';
     currentPeriodEnd?: string | null;
     /** Server-side `BILLING_ENFORCED`: false while Agendly is free. */

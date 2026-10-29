@@ -9,6 +9,7 @@
  * backend slug validation (registration and tenant updates).
  */
 export const RESERVED_SLUGS = [
+  'account',
   'admin',
   'api',
   'appointments',
@@ -16,6 +17,7 @@ export const RESERVED_SLUGS = [
   'auth',
   'availability',
   'billing',
+  'cita',
   'employees',
   'forgot-password',
   'health',

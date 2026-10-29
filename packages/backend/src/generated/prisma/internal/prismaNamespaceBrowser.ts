@@ -98,6 +98,7 @@ export const TenantScalarFieldEnum = {
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  deletionScheduledAt: 'deletionScheduledAt',
   stripeCustomerId: 'stripeCustomerId',
   stripeSubscriptionId: 'stripeSubscriptionId',
   subscriptionStatus: 'subscriptionStatus',

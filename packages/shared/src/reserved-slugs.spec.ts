@@ -17,6 +17,7 @@ describe('isReservedSlug', () => {
     'health',
     'billing',
     'public',
+    'cita',
   ])('reserves the app route "%s"', (slug) => {
     expect(isReservedSlug(slug)).toBe(true);
   });
@@ -29,6 +30,7 @@ describe('isReservedSlug', () => {
     'appointments',
     'availability',
     'profile',
+    'account',
   ])('reserves the backend resource root "%s"', (slug) => {
     expect(isReservedSlug(slug)).toBe(true);
   });

@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectsCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 
 @Injectable()
 export class StorageService {
@@ -60,5 +65,40 @@ export class StorageService {
     }
 
     return `${this.publicUrl}/${key}`;
+  }
+
+  /**
+   * Deletes every object under `prefix` (e.g. `tenants/<id>/` on account purge).
+   * Returns how many objects were removed; 0 when R2 is not configured.
+   */
+  async deletePrefix(prefix: string): Promise<number> {
+    if (!this.s3Client) return 0;
+    let deleted = 0;
+    let continuationToken: string | undefined;
+    do {
+      const page = await this.s3Client.send(
+        new ListObjectsV2Command({
+          Bucket: this.bucketName,
+          Prefix: prefix,
+          ContinuationToken: continuationToken,
+        }),
+      );
+      const keys = (page.Contents ?? [])
+        .map((o) => o.Key)
+        .filter((k): k is string => !!k);
+      if (keys.length > 0) {
+        await this.s3Client.send(
+          new DeleteObjectsCommand({
+            Bucket: this.bucketName,
+            Delete: { Objects: keys.map((Key) => ({ Key })), Quiet: true },
+          }),
+        );
+        deleted += keys.length;
+      }
+      continuationToken = page.IsTruncated
+        ? page.NextContinuationToken
+        : undefined;
+    } while (continuationToken);
+    return deleted;
   }
 }

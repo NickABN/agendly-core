@@ -70,6 +70,10 @@ model Tenant {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  // Baja solicitada por el dueño: isActive=false durante la gracia; el job diario
+  // borra el tenant (cascade) cuando llega esta fecha. null = sin baja pendiente.
+  deletionScheduledAt DateTime?
+
   // Suscripción SaaS (Stripe)
   stripeCustomerId     String?            @unique
   stripeSubscriptionId String?
@@ -84,6 +88,8 @@ model Tenant {
   privacyConsents    PrivacyConsent[]
   scheduleExceptions ScheduleException[]
   imageVersions      ImageVersion[]
+
+  @@index([deletionScheduledAt])
 }
 
 // ─── User (Business Owner / Admin) ──────────────────────

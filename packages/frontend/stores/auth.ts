@@ -20,6 +20,8 @@ interface Tenant {
   onboardedAt: string | null;
   trialEndsAt: string;
   isActive: boolean;
+  /** Owner-requested deletion pending: UTC ISO date of the definitive purge. */
+  deletionScheduledAt?: string | null;
   subscriptionStatus?: SubscriptionStatus;
   currentPeriodEnd?: string | null;
   /** Server-side `BILLING_ENFORCED`: false while Agendly is free. */
@@ -62,6 +64,9 @@ export const useAuthStore = defineStore('auth', () => {
     return !isTrialExpired.value;
   });
 
+  /** UTC ISO date of the scheduled purge while an account deletion is pending. */
+  const deletionScheduledAt = computed(() => tenant.value?.deletionScheduledAt ?? null);
+
   function setAuth(newUser: User, newTenant?: Tenant) {
     user.value = newUser;
     if (newTenant) tenant.value = newTenant;
@@ -86,6 +91,7 @@ export const useAuthStore = defineStore('auth', () => {
     isTrialExpired,
     billingEnforced,
     hasAccess,
+    deletionScheduledAt,
     setAuth,
     setTenant,
     clear,
