@@ -98,29 +98,49 @@ export class RemindersService {
     let sent = 0;
     let failed = 0;
     for (const a of eligible) {
-      const claim = await this.prisma.appointment.updateMany({
-        where: {
-          id: a.id,
-          reminderSentAt: null,
-          status: 'CONFIRMED',
-          startTime: a.startTime,
-          employeeId: a.employeeId,
-        },
-        data: { reminderSentAt: now },
-      });
-      if (claim.count === 0) continue; // another run took it, or it was cancelled
+      const where = {
+        id: a.id,
+        reminderSentAt: null,
+        status: 'CONFIRMED' as const,
+        startTime: a.startTime,
+        employeeId: a.employeeId,
+      };
+      const data = { reminderSentAt: now };
+      const claimedRows =
+        typeof this.prisma.appointment.updateManyAndReturn === 'function'
+          ? await this.prisma.appointment.updateManyAndReturn({
+              where,
+              data,
+              include: {
+                employee: { select: { name: true } },
+                service: { select: { name: true } },
+                tenant: {
+                  select: {
+                    name: true,
+                    slug: true,
+                    phone: true,
+                    timezone: true,
+                  },
+                },
+              },
+            })
+          : await this.prisma.appointment
+              .updateMany({ where, data })
+              .then((claim) => (claim.count === 0 ? [] : [a]));
+      const claimed = claimedRows[0];
+      if (!claimed) continue; // another run took it, or it was rescheduled/cancelled
 
       const ok = await this.emailService.sendBookingReminder({
-        clientName: a.clientName,
-        clientEmail: a.clientEmail!,
-        serviceName: a.service.name,
-        employeeName: a.employee.name,
-        businessName: a.tenant.name,
-        businessPhone: a.tenant.phone,
-        date: formatDate(a.startTime, 'long', a.tenant.timezone),
-        time: formatTime(a.startTime, a.tenant.timezone),
-        slug: a.tenant.slug,
-        manageUrl: this.appointmentLinks.manageUrl(a.id),
+        clientName: claimed.clientName,
+        clientEmail: claimed.clientEmail!,
+        serviceName: claimed.service.name,
+        employeeName: claimed.employee.name,
+        businessName: claimed.tenant.name,
+        businessPhone: claimed.tenant.phone,
+        date: formatDate(claimed.startTime, 'long', claimed.tenant.timezone),
+        time: formatTime(claimed.startTime, claimed.tenant.timezone),
+        slug: claimed.tenant.slug,
+        manageUrl: this.appointmentLinks.manageUrl(claimed.id),
         emphasizeConfirmation: risks.get(a.id) === 'HIGH',
       });
 
