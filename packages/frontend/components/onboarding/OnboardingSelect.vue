@@ -2,8 +2,8 @@
 /**
  * Thin wrapper kept for backward compatibility with onboarding code.
  * The styled listbox now lives in `components/ui/AppSelect.vue`; this simply
- * forwards props and the `update:modelValue` event so existing usages (and
- * their specs) keep working unchanged.
+ * forwards props and the `update:modelValue` event so existing usages keep
+ * working; OnboardingSelect.spec.ts covers the forwarding.
  */
 import AppSelect from '~/components/ui/AppSelect.vue';
 

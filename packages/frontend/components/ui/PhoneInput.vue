@@ -82,23 +82,29 @@ function parseModelValue(value: string) {
   nationalNumber.value = digits;
 }
 
+// Last value this component emitted. When the parent echoes it back through
+// v-model we must not re-parse it, or the typed spacing (and caret) is lost.
+let lastEmitted: string | null = null;
+
+function emitValue(value: string) {
+  lastEmitted = value;
+  emit('update:modelValue', value);
+}
+
 function emitCurrentValue() {
   const digits = nationalNumber.value.replace(/\D/g, '');
   if (!digits) {
-    emit('update:modelValue', '');
+    emitValue('');
     return;
   }
 
   if (selectedCountry.value === 'MX') {
-    emit(
-      'update:modelValue',
-      normalizeMxPhone(digits) ?? `+${currentCountry.value.dialCode}${digits}`,
-    );
+    emitValue(normalizeMxPhone(digits) ?? `+${currentCountry.value.dialCode}${digits}`);
     return;
   }
 
   const attempt = `+${currentCountry.value.dialCode}${digits}`;
-  emit('update:modelValue', normalizePhone(attempt) ?? attempt);
+  emitValue(normalizePhone(attempt) ?? attempt);
 }
 
 function onNumberInput(event: Event) {
@@ -111,7 +117,14 @@ function onCountryChange(value: CountryValue) {
   emitCurrentValue();
 }
 
-watch(() => props.modelValue, parseModelValue, { immediate: true });
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (value === lastEmitted) return;
+    parseModelValue(value);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>

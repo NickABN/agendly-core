@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
+import { defineComponent, nextTick, ref } from 'vue';
 import PhoneInput from './PhoneInput.vue';
 
 type PhoneInputProps = {
@@ -196,5 +197,25 @@ describe('PhoneInput', () => {
 
     expect(countryTrigger(wrapper).text()).toContain('🇲🇽 México +52');
     expect((phoneField(wrapper).element as HTMLInputElement).value).toBe('99912345678');
+  });
+
+  it('keeps the typed spacing when the parent echoes the value back through v-model', async () => {
+    const Host = defineComponent({
+      components: { PhoneInput },
+      setup() {
+        const phone = ref('');
+        return { phone };
+      },
+      template: '<PhoneInput id="echo-phone" v-model="phone" />',
+    });
+    const wrapper = mount(Host, { attachTo: document.body });
+    mountedWrappers.push(wrapper as unknown as VueWrapper);
+    const field = wrapper.get('#echo-phone');
+
+    await field.setValue('55 12');
+    await nextTick();
+
+    expect((field.element as HTMLInputElement).value).toBe('55 12');
+    expect((wrapper.vm as unknown as { phone: string }).phone).toBe('+525512');
   });
 });
