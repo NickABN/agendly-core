@@ -21,48 +21,30 @@
           <!-- Benefits -->
           <ul class="space-y-8">
             <li class="flex items-start gap-4">
-              <span class="material-symbols-outlined mt-1 text-[var(--color-primary-fixed)]">verified</span>
+              <span class="material-symbols-outlined mt-1 text-[var(--color-primary-fixed)]">link</span>
               <div>
-                <p class="font-semibold text-lg">Control absoluto</p>
-                <p class="text-white/70 text-sm">Gestiona agenda, clientes y personal desde un solo lugar.</p>
+                <p class="font-semibold text-lg">Reservas sin cuenta</p>
+                <p class="text-white/70 text-sm">Tus clientes agendan desde tu enlace público, sin registrarse.</p>
               </div>
             </li>
             <li class="flex items-start gap-4">
               <span class="material-symbols-outlined mt-1 text-[var(--color-primary-fixed)]">notifications_active</span>
               <div>
                 <p class="font-semibold text-lg">Recordatorios automáticos</p>
-                <p class="text-white/70 text-sm">Reduce inasistencias hasta en un 40% con avisos vía WhatsApp.</p>
+                <p class="text-white/70 text-sm">Cada cliente recibe un correo 24 horas antes de su cita.</p>
               </div>
             </li>
             <li class="flex items-start gap-4">
               <span class="material-symbols-outlined mt-1 text-[var(--color-primary-fixed)]">insights</span>
               <div>
-                <p class="font-semibold text-lg">Reportes inteligentes</p>
-                <p class="text-white/70 text-sm">Entiende el crecimiento de tu salón con datos reales.</p>
+                <p class="font-semibold text-lg">Métricas e inasistencias</p>
+                <p class="text-white/70 text-sm">Mide el impacto de tu agenda y detecta citas con riesgo de inasistencia.</p>
               </div>
             </li>
           </ul>
         </div>
       </div>
 
-      <!-- Testimonial -->
-      <div class="relative z-10 glass-panel p-6 rounded-xl border border-white/10 shadow-2xl">
-        <div class="flex items-center gap-1 mb-4">
-          <span v-for="i in 5" :key="i" class="material-symbols-outlined text-amber-400" style="font-variation-settings: 'FILL' 1">star</span>
-        </div>
-        <p class="text-white/80 italic text-sm mb-4 leading-relaxed">
-          "Desde que usamos Agendly, el salón se siente realmente como un santuario. Todo fluye sin interrupciones."
-        </p>
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-            <span class="text-sm font-bold">AK</span>
-          </div>
-          <div>
-            <p class="text-sm font-bold">Ana Karen Silva</p>
-            <p class="text-xs text-white/60">Dueña de Salón Calma</p>
-          </div>
-        </div>
-      </div>
     </aside>
 
     <!-- Form Area -->
