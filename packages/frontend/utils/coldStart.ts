@@ -120,6 +120,24 @@ export interface ColdStartNotifier {
   recovered(): void;
   /** Gave up; `read` = page data (reload helps), `write` = user action to repeat. */
   failed(kind: 'read' | 'write'): void;
+  /** Any API request succeeded (the server is awake). */
+  succeeded(kind: 'read' | 'write'): void;
+}
+
+export type ColdStartNoticePhase = 'hidden' | 'waking' | 'failed-read' | 'failed-write';
+
+/**
+ * Notice state after a successful API request. "waking" always clears. A failed-write
+ * notice clears only when a write succeeds (the user repeated the action), so an
+ * unrelated background read cannot hide it before the user has acted.
+ */
+export function noticePhaseAfterSuccess(
+  phase: ColdStartNoticePhase,
+  kind: 'read' | 'write',
+): ColdStartNoticePhase {
+  if (phase === 'waking') return 'hidden';
+  if (phase === 'failed-write' && kind === 'write') return 'hidden';
+  return phase;
 }
 
 type Fetcher = (request: unknown, options?: { method?: string }) => Promise<unknown>;
@@ -150,6 +168,7 @@ export function withColdStartHandling<F extends Fetcher>(fetcher: F, opts: ColdS
       try {
         const result = await fetcher(request, options);
         if (retry > 0) opts.notifier.recovered();
+        opts.notifier.succeeded(isIdempotentMethod(method) ? 'read' : 'write');
         return result;
       } catch (err) {
         if (!isColdStartError(err)) throw err;
