@@ -57,7 +57,7 @@ describe('cold-start client plugin integration', () => {
     vi.unstubAllGlobals();
   });
 
-  it('wraps global, raw, and API-base $fetch calls with one bounded retry policy', async () => {
+  it('wraps global, raw, and API-base $fetch with bounded cold-start backoff and default transient retries', async () => {
     const tenantUrl = `${apiUrl}/public/salon-calma`;
     const globalRequest = globalThis.$fetch(tenantUrl);
     await vi.advanceTimersByTimeAsync(3000);
@@ -75,9 +75,17 @@ describe('cold-start client plugin integration', () => {
     expect(globalFetcher).toHaveBeenCalledTimes(2);
     expect(rawFetcher).toHaveBeenCalledTimes(2);
     expect(clientFetcher).toHaveBeenCalledTimes(2);
-    expect(globalFetcher.mock.calls.map((call) => call[1]?.retry)).toEqual([0, 0]);
-    expect(rawFetcher.mock.calls.map((call) => call[1]?.retry)).toEqual([0, 0]);
-    expect(clientFetcher.mock.calls.map((call) => call[1]?.retry)).toEqual([0, 0]);
+    for (const fetcher of [globalFetcher, rawFetcher, clientFetcher]) {
+      const options = fetcher.mock.calls.map((call) => call[1]);
+      expect(options).toHaveLength(2);
+      for (const option of options) {
+        expect([undefined, 1]).toContain(option?.retry);
+        expect(option?.retryStatusCodes).toEqual(expect.arrayContaining([408, 409, 425, 429, 500]));
+        expect(option?.retryStatusCodes).not.toContain(502);
+        expect(option?.retryStatusCodes).not.toContain(503);
+        expect(option?.retryStatusCodes).not.toContain(504);
+      }
+    }
     expect(notifier.recovered).toHaveBeenCalledTimes(3);
     expect(notifier.succeeded).toHaveBeenCalledTimes(3);
   });

@@ -34,6 +34,47 @@ const userAbort = Object.assign(new Error('aborted'), {
   cause: Object.assign(new Error('aborted'), { name: 'AbortError' }),
 });
 
+type TestFetchOptions = {
+  method?: string;
+  retry?: number | false;
+  retryStatusCodes?: number[];
+  [key: string]: unknown;
+};
+
+type TestFetcher = (request: unknown, options?: TestFetchOptions) => Promise<unknown>;
+
+const OFETCH_DEFAULT_RETRY_STATUSES = new Set([
+  408, 409, 425, 429, 500, 501, 502, 503, 504, 521, 522, 524,
+]);
+
+/** Models ofetch's default single GET retry for the transient statuses in this contract. */
+function withDefaultGetRetry(transport: TestFetcher) {
+  return vi.fn(async (request: unknown, options?: TestFetchOptions) => {
+    const method = (options?.method ?? 'GET').toUpperCase();
+    const maxRetries =
+      options?.retry === false ? 0 : (options?.retry ?? (method === 'GET' ? 1 : 0));
+    const retryStatusCodes = new Set(options?.retryStatusCodes ?? OFETCH_DEFAULT_RETRY_STATUSES);
+    let retries = 0;
+
+    for (;;) {
+      try {
+        return await transport(request, options);
+      } catch (error) {
+        const fetchError = error as {
+          response?: { status?: unknown };
+          statusCode?: unknown;
+          status?: unknown;
+        };
+        const status = fetchError.response?.status ?? fetchError.statusCode ?? fetchError.status;
+        if (retries >= maxRetries || typeof status !== 'number' || !retryStatusCodes.has(status)) {
+          throw error;
+        }
+        retries += 1;
+      }
+    }
+  });
+}
+
 describe('isColdStartError — classifier', () => {
   it.each([
     ['network error (no response)', networkError],
@@ -74,6 +115,23 @@ describe('isColdStartError — classifier', () => {
       }),
     ).toBe(false);
     expect(isColdStartError(userAbort)).toBe(false);
+  });
+
+  it.each([
+    ['plain interceptor error', new Error('token refresh failed')],
+    ['URL/configuration error', new TypeError('Invalid API base URL')],
+  ])('does NOT classify a %s as a cold start', (_label, err) => {
+    expect(isColdStartError(err)).toBe(false);
+  });
+
+  it('does NOT classify a responseless FetchError as cold start while the browser is offline', () => {
+    vi.stubGlobal('navigator', { onLine: false });
+
+    try {
+      expect(isColdStartError(networkError)).toBe(false);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it.each([
@@ -133,8 +191,7 @@ describe('retry policy', () => {
 });
 
 describe('withColdStartHandling', () => {
-  function setup(impl: (...args: unknown[]) => Promise<unknown>) {
-    const fetcher = vi.fn(impl);
+  function setupFetcher(fetcher: TestFetcher) {
     const notifier = { waking: vi.fn(), recovered: vi.fn(), failed: vi.fn(), succeeded: vi.fn() };
     const sleep = vi.fn(() => Promise.resolve());
     const wrapped = withColdStartHandling(fetcher, {
@@ -143,6 +200,10 @@ describe('withColdStartHandling', () => {
       sleep,
     });
     return { fetcher, notifier, sleep, wrapped };
+  }
+
+  function setup(impl: (...args: unknown[]) => Promise<unknown>) {
+    return setupFetcher(vi.fn(impl));
   }
 
   it('GET: retries with backoff while waking, then resolves and clears the notice', async () => {
@@ -222,18 +283,77 @@ describe('withColdStartHandling', () => {
     expect(notifier.failed).not.toHaveBeenCalled();
   });
 
-  it('disables ofetch retries for each API attempt managed by the wrapper', async () => {
-    let calls = 0;
-    const { fetcher, wrapped } = setup((_request, _options) => {
-      calls += 1;
-      return calls === 1 ? Promise.reject(httpError(503)) : Promise.resolve({ ok: true });
-    });
+  it('preserves default transient retries while routing proxy retries through wrapper backoff', async () => {
+    const transport = vi
+      .fn<TestFetcher>()
+      .mockRejectedValueOnce(httpError(503))
+      .mockResolvedValueOnce({ ok: true });
+    const { notifier, sleep, wrapped } = setupFetcher(withDefaultGetRetry(transport));
 
     await expect(wrapped('/api/tenants/salon', { method: 'GET' })).resolves.toEqual({ ok: true });
 
-    expect(
-      fetcher.mock.calls.map((call) => (call[1] as { retry?: number } | undefined)?.retry),
-    ).toEqual([0, 0]);
+    expect(transport).toHaveBeenCalledTimes(2);
+    expect(sleep.mock.calls.map((call) => (call as unknown[])[0])).toEqual([3000]);
+    for (const [, options] of transport.mock.calls) {
+      expect([undefined, 1]).toContain(options?.retry);
+      expect(options?.retryStatusCodes).toEqual(expect.arrayContaining([408, 409, 425, 429, 500]));
+      expect(options?.retryStatusCodes).not.toContain(502);
+      expect(options?.retryStatusCodes).not.toContain(503);
+      expect(options?.retryStatusCodes).not.toContain(504);
+    }
+    expect(notifier.waking).toHaveBeenCalledTimes(1);
+    expect(notifier.recovered).toHaveBeenCalledTimes(1);
+    expect(notifier.failed).not.toHaveBeenCalled();
+  });
+
+  it.each([408, 409, 425, 429, 500])(
+    'keeps the default single GET retry for transient HTTP %s responses',
+    async (status) => {
+      const transport = vi
+        .fn<TestFetcher>()
+        .mockRejectedValueOnce(httpError(status))
+        .mockResolvedValueOnce({ ok: true });
+      const { notifier, sleep, wrapped } = setupFetcher(withDefaultGetRetry(transport));
+
+      await expect(wrapped('/api/appointments')).resolves.toEqual({ ok: true });
+
+      expect(transport).toHaveBeenCalledTimes(2);
+      expect(sleep).not.toHaveBeenCalled();
+      expect(notifier.waking).not.toHaveBeenCalled();
+      expect(notifier.failed).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([502, 503, 504])(
+    'keeps proxy HTTP %s retries within the wrapper backoff even with a caller retry option',
+    async (status) => {
+      const transport = vi.fn<TestFetcher>().mockRejectedValue(httpError(status));
+      const { notifier, sleep, wrapped } = setupFetcher(withDefaultGetRetry(transport));
+
+      const err = await wrapped('/api/tenants/me', { retry: 2 }).catch((error: unknown) => error);
+
+      expect(err).toBeInstanceOf(ColdStartError);
+      expect(transport).toHaveBeenCalledTimes(COLD_START_MAX_RETRIES + 1);
+      expect(sleep.mock.calls.map((call) => (call as unknown[])[0])).toEqual([3000, 6000, 12_000]);
+      expect(notifier.waking).toHaveBeenCalledTimes(COLD_START_MAX_RETRIES);
+      expect(notifier.failed).toHaveBeenCalledWith('read');
+    },
+  );
+
+  it('respects a caller-supplied retry count for transient GET responses', async () => {
+    const transport = vi
+      .fn<TestFetcher>()
+      .mockRejectedValueOnce(httpError(500))
+      .mockRejectedValueOnce(httpError(500))
+      .mockResolvedValueOnce({ ok: true });
+    const { notifier, wrapped } = setupFetcher(withDefaultGetRetry(transport));
+
+    await expect(wrapped('/api/appointments', { retry: 2 })).resolves.toEqual({ ok: true });
+
+    expect(transport).toHaveBeenCalledTimes(3);
+    expect(transport.mock.calls[0]?.[1]).toMatchObject({ retry: 2 });
+    expect(notifier.waking).not.toHaveBeenCalled();
+    expect(notifier.failed).not.toHaveBeenCalled();
   });
 });
 
