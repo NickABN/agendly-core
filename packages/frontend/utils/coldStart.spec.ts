@@ -50,6 +50,32 @@ describe('isColdStartError — classifier', () => {
     expect(isColdStartError(err)).toBe(true);
   });
 
+  it('recognizes a serialized ColdStartError after Nuxt loses its name and status', () => {
+    const coldStartError = new ColdStartError(networkError);
+    const wrappedError = Object.assign(new Error('wrapped'), {
+      statusCode: 500,
+      data: coldStartError.data,
+    });
+
+    expect(isColdStartError(wrappedError)).toBe(true);
+  });
+
+  it('classifies an AbortError caused by the request timeout, not a user signal', () => {
+    const timeoutAbort = Object.assign(new Error('fetch failed'), {
+      name: 'FetchError',
+      cause: Object.assign(new Error('aborted'), { name: 'AbortError' }),
+    });
+
+    expect(isColdStartError(timeoutAbort, { timeout: 8000 })).toBe(true);
+    expect(
+      isColdStartError(timeoutAbort, {
+        timeout: 8000,
+        signal: new AbortController().signal,
+      }),
+    ).toBe(false);
+    expect(isColdStartError(userAbort)).toBe(false);
+  });
+
   it.each([
     ['400 validation', httpError(400, { message: ['email inválido'], statusCode: 400 })],
     ['401 (refresh flow must run)', httpError(401)],
@@ -94,6 +120,15 @@ describe('retry policy', () => {
 
   it('never retries real errors', () => {
     expect(shouldRetryColdStart(httpError(400), 'GET', 0)).toBe(false);
+  });
+
+  it('retries an AbortError when it came from the configured request timeout', () => {
+    const timeoutAbort = Object.assign(new Error('fetch failed'), {
+      name: 'FetchError',
+      cause: Object.assign(new Error('aborted'), { name: 'AbortError' }),
+    });
+
+    expect(shouldRetryColdStart(timeoutAbort, 'GET', 0, { timeout: 8000 })).toBe(true);
   });
 });
 
@@ -186,6 +221,20 @@ describe('withColdStartHandling', () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(notifier.failed).not.toHaveBeenCalled();
   });
+
+  it('disables ofetch retries for each API attempt managed by the wrapper', async () => {
+    let calls = 0;
+    const { fetcher, wrapped } = setup((_request, _options) => {
+      calls += 1;
+      return calls === 1 ? Promise.reject(httpError(503)) : Promise.resolve({ ok: true });
+    });
+
+    await expect(wrapped('/api/tenants/salon', { method: 'GET' })).resolves.toEqual({ ok: true });
+
+    expect(
+      fetcher.mock.calls.map((call) => (call[1] as { retry?: number } | undefined)?.retry),
+    ).toEqual([0, 0]);
+  });
 });
 
 describe('isApiUrl', () => {
@@ -213,7 +262,8 @@ describe('noticePhaseAfterSuccess', () => {
   it('any success clears "waking"; failed-read and hidden stay as they are', () => {
     expect(noticePhaseAfterSuccess('waking', 'read')).toBe('hidden');
     expect(noticePhaseAfterSuccess('waking', 'write')).toBe('hidden');
-    expect(noticePhaseAfterSuccess('failed-read', 'write')).toBe('failed-read');
+    expect(noticePhaseAfterSuccess('failed-read', 'read')).toBe('hidden');
+    expect(noticePhaseAfterSuccess('failed-read', 'write')).toBe('hidden');
     expect(noticePhaseAfterSuccess('hidden', 'read')).toBe('hidden');
   });
 });
