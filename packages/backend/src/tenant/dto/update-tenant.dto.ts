@@ -7,7 +7,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { normalizeMxPhone } from '@agendly/shared';
+import { normalizePhone } from '@agendly/shared';
 
 export class UpdateTenantDto {
   @IsOptional()
@@ -24,18 +24,18 @@ export class UpdateTenantDto {
   slug?: string;
 
   // Optional business phone. An empty value clears it (stored as null); an absent one leaves it unchanged;
-  // a present value is normalized to E.164 and rejected if it is not a valid
-  // Mexican number.
+  // a present value is normalized to E.164 (MX or foreign) and rejected if it is
+  // not a valid phone number.
   @IsOptional()
   @Transform(({ value }: { value: unknown }) => {
     if (typeof value !== 'string') return value;
     const trimmed = value.trim();
     // null (not undefined) so Prisma actually clears the stored phone.
     if (trimmed === '') return null;
-    return normalizeMxPhone(trimmed) ?? trimmed;
+    return normalizePhone(trimmed) ?? trimmed;
   })
   @IsString()
-  @Matches(/^\+52\d{10}$/, { message: 'El teléfono no es válido' })
+  @Matches(/^\+[1-9]\d{7,14}$/, { message: 'El teléfono no es válido' })
   phone?: string | null;
 
   @IsOptional()

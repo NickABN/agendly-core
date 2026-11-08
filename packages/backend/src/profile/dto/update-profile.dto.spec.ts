@@ -47,4 +47,17 @@ describe('UpdateProfileDto phone normalization', () => {
     expect(errors).toHaveLength(0);
     expect(dto.phone).toBe('+15512345678');
   });
+
+  it.each([
+    ['+1 415 555 1234', '+14155551234'],
+    ['+34 612 345 678', '+34612345678'],
+  ])(
+    'normalizes international input with separators %s to %s',
+    async (input, expected) => {
+      const dto = build({ phone: input });
+      const errors = await validate(dto);
+      expect(errors).toHaveLength(0);
+      expect(dto.phone).toBe(expected);
+    },
+  );
 });

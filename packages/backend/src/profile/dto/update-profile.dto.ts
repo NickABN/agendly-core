@@ -6,7 +6,7 @@ import {
   Matches,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { normalizeMxPhone } from '@agendly/shared';
+import { normalizePhone } from '@agendly/shared';
 
 export class UpdateProfileDto {
   @IsOptional()
@@ -14,13 +14,13 @@ export class UpdateProfileDto {
   @Length(2, 100)
   name?: string;
 
-  // Accept loose MX input (10 digits, 52/+52 prefixes, legacy prefixes) by
-  // normalizing to E.164 first, then keep the strict E.164 validation.
+  // Accept loose MX input and foreign numbers by normalizing to E.164 first,
+  // then keep the broad E.164 validation. The lower bound stays at 1 digit to
+  // preserve the existing E.164 property test in profile.service.spec.ts, which
+  // is outside this change's allowed edit surfaces.
   @IsOptional()
   @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string'
-      ? (normalizeMxPhone(value) ?? value.trim())
-      : value,
+    typeof value === 'string' ? (normalizePhone(value) ?? value.trim()) : value,
   )
   @Matches(/^\+[1-9]\d{1,14}$/)
   phone?: string;

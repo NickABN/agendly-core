@@ -1,5 +1,5 @@
 import { computed, reactive, ref, watch } from 'vue';
-import { BUSINESS_TZ, normalizeMxPhone } from '@agendly/shared';
+import { BUSINESS_TZ, normalizePhone } from '@agendly/shared';
 import type { BookingResponse, CreateBookingRequest, PublicTenantResponse } from '@agendly/shared';
 import { isColdStartError } from '~/utils/coldStart';
 
@@ -157,8 +157,9 @@ export async function usePublicBooking(slug: string) {
       error.value = 'Debes aceptar el aviso de privacidad';
       return;
     }
-    // Validate the phone client-side with the same rules the backend uses.
-    const normalizedPhone = normalizeMxPhone(clientForm.phone);
+    // Validate the phone client-side with the same rules the backend uses
+    // (MX numbers, or any foreign number with a country code).
+    const normalizedPhone = normalizePhone(clientForm.phone);
     if (!normalizedPhone) {
       error.value = 'El teléfono no es válido';
       return;

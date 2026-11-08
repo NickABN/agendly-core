@@ -21,6 +21,9 @@ describe('CreateBookingDto clientPhone normalization', () => {
     ['+52 55 1234 5678', '+525512345678'],
     ['5215512345678', '+525512345678'],
     ['0445512345678', '+525512345678'],
+    // International numbers are now accepted (E.164 passthrough)
+    ['+1 415 555 1234', '+14155551234'],
+    ['+34 612 345 678', '+34612345678'],
   ])('normalizes %s to %s on transform', async (input, expected) => {
     const dto = build({ clientPhone: input });
     const errors = await validate(dto);
@@ -35,7 +38,7 @@ describe('CreateBookingDto clientPhone normalization', () => {
     expect(dto.clientPhone).toBe('+525512345678');
   });
 
-  it.each(['', 'abcdefghij', '12345', '+15512345678', '55 1234 ABCD'])(
+  it.each(['', 'abcdefghij', '12345', '+0123456789', '55 1234 ABCD'])(
     'rejects invalid phone %s with the friendly message',
     async (input) => {
       const dto = build({ clientPhone: input });

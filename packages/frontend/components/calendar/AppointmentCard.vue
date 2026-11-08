@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatTime, formatMxPhone } from '@agendly/shared';
+import { formatTime, formatPhone } from '@agendly/shared';
 import type { CalendarAppointment } from '~/composables/useAppointmentsCalendar';
 
 defineProps<{
@@ -103,7 +103,7 @@ function serviceIcon(name: string): string {
           {{ formatTime(appointment.endTime, timezone) }}
         </span>
         <span class="text-xs text-[var(--color-outline)]">{{
-          formatMxPhone(appointment.clientPhone)
+          formatPhone(appointment.clientPhone)
         }}</span>
       </div>
       <div
