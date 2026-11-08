@@ -39,6 +39,7 @@ ejecución porque el driver adapter `PrismaPg` no implementa el protocolo de tra
 interactivas.
 
 **Formal Specification:**
+
 ```
 FUNCTION isBugCondition(input)
   INPUT: input de tipo RegisterDto | GoogleProfile
@@ -66,6 +67,7 @@ END FUNCTION
 ### Preservation Requirements
 
 **Unchanged Behaviors:**
+
 - Email duplicado debe seguir respondiendo HTTP 409 con "Ya existe una cuenta con este email"
 - Payload inválido (campos faltantes, email malformado, contraseña < 8 chars) debe seguir
   respondiendo HTTP 400
@@ -77,6 +79,7 @@ END FUNCTION
 Todo input que NO active la condición del bug (es decir, que no llegue al bloque
 `$transaction` con callback) debe comportarse exactamente igual que antes del fix. Esto
 incluye:
+
 - Registros con email duplicado (rechazados antes de la transacción)
 - Payloads inválidos (rechazados por ValidationPipe)
 - Login de usuarios existentes
@@ -134,6 +137,7 @@ códigos de respuesta HTTP y mensajes de error existentes.
    almacenando el slug único en una variable local.
 
 2. **Reemplazar transacción interactiva en `register` por modo batch**:
+
    ```
    // Antes (interactivo — incompatible con driver adapter)
    const result = await this.prisma.$transaction(async (tx) => {
@@ -149,12 +153,14 @@ códigos de respuesta HTTP y mensajes de error existentes.
      // user.create necesita tenantId — ver nota abajo
    ]);
    ```
+
    **Nota**: El modo batch no permite usar el resultado de `op1` en `op2` dentro del
    mismo array. La solución es ejecutar `tenant.create` y `user.create` en el mismo
    batch pasando el `tenantId` generado previamente con `cuid()` / `uuid()`, o bien
    ejecutar las dos operaciones en secuencia dentro de una transacción batch de una sola
    operación compuesta. La alternativa más simple y correcta es generar el `id` del
    tenant manualmente antes del batch:
+
    ```
    import { randomUUID } from 'crypto';
    const tenantId = randomUUID();
@@ -172,6 +178,7 @@ códigos de respuesta HTTP y mensajes de error existentes.
 4. **Actualizar la firma de `ensureUniqueSlug`**:
    Cambiar el tipo del primer parámetro de `tx` (cliente interactivo) a `PrismaService`
    para que pueda usarse fuera de la transacción:
+
    ```typescript
    private async ensureUniqueSlug(prisma: PrismaService, baseSlug: string): Promise<string>
    ```
@@ -197,12 +204,14 @@ comportamiento de `PrismaPg` (lanzar error en `$transaction` con callback). Ejec
 sobre el código actual sin corregir para observar el fallo.
 
 **Test Cases**:
+
 1. **Register con payload válido (unfixed)**: Llamar a `register` con DTO válido y
    verificar que lanza la excepción de Prisma sobre driver adapter (fallará en código sin fix)
 2. **findOrCreateGoogleUser con perfil nuevo (unfixed)**: Llamar con perfil Google nuevo
    y verificar que lanza la misma excepción (fallará en código sin fix)
 
 **Expected Counterexamples**:
+
 - `register` lanza `Error: Interactive transactions are not supported with driver adapters`
 - `findOrCreateGoogleUser` lanza el mismo error para perfiles nuevos
 
@@ -212,6 +221,7 @@ sobre el código actual sin corregir para observar el fallo.
 función corregida produce el comportamiento esperado.
 
 **Pseudocode:**
+
 ```
 FOR ALL input WHERE isBugCondition(input) DO
   result := register_fixed(input)
@@ -228,6 +238,7 @@ END FOR
 la función corregida produce el mismo resultado que la función original.
 
 **Pseudocode:**
+
 ```
 FOR ALL input WHERE NOT isBugCondition(input) DO
   ASSERT register_original(input) = register_fixed(input)
@@ -236,11 +247,13 @@ END FOR
 
 **Testing Approach**: Property-based testing es recomendado para preservation checking
 porque:
+
 - Genera muchos casos de prueba automáticamente sobre el dominio de inputs
 - Captura edge cases que los unit tests manuales podrían omitir
 - Provee garantías fuertes de que el comportamiento no cambia para inputs no afectados
 
 **Test Cases**:
+
 1. **Email duplicado (Preservation)**: Observar que `register` con email existente
    retorna 409 en código sin fix, luego verificar que sigue retornando 409 tras el fix
 2. **Payload inválido (Preservation)**: Verificar que la validación de DTO sigue

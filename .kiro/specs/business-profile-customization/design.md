@@ -73,14 +73,14 @@ packages/backend/src/common/decorators/roles.decorator.ts
 
 ### REST Endpoints
 
-| Method | Path | Description | Guards |
-|--------|------|-------------|--------|
-| `GET` | `/profile` | Get current tenant profile | JWT, Tenant |
-| `PATCH` | `/profile` | Update name/phone/timezone | JWT, Tenant, Roles(OWNER,ADMIN) |
+| Method  | Path                | Description                  | Guards                          |
+| ------- | ------------------- | ---------------------------- | ------------------------------- |
+| `GET`   | `/profile`          | Get current tenant profile   | JWT, Tenant                     |
+| `PATCH` | `/profile`          | Update name/phone/timezone   | JWT, Tenant, Roles(OWNER,ADMIN) |
 | `PATCH` | `/profile/location` | Update address + coordinates | JWT, Tenant, Roles(OWNER,ADMIN) |
-| `POST` | `/profile/logo` | Upload logo image | JWT, Tenant, Roles(OWNER,ADMIN) |
-| `POST` | `/profile/banner` | Upload banner image | JWT, Tenant, Roles(OWNER,ADMIN) |
-| `GET` | `/profile/images` | Get image version history | JWT, Tenant |
+| `POST`  | `/profile/logo`     | Upload logo image            | JWT, Tenant, Roles(OWNER,ADMIN) |
+| `POST`  | `/profile/banner`   | Upload banner image          | JWT, Tenant, Roles(OWNER,ADMIN) |
+| `GET`   | `/profile/images`   | Get image version history    | JWT, Tenant                     |
 
 ### ProfileController
 
@@ -211,15 +211,15 @@ export interface ProfileDto {
 }
 
 export interface UpdateProfileDto {
-  name?: string;       // 2–100 chars
-  phone?: string;      // E.164 format
-  timezone?: string;   // IANA identifier
+  name?: string; // 2–100 chars
+  phone?: string; // E.164 format
+  timezone?: string; // IANA identifier
 }
 
 export interface UpdateLocationDto {
   address: string;
-  latitude?: number;   // -90 to 90
-  longitude?: number;  // -180 to 180
+  latitude?: number; // -90 to 90
+  longitude?: number; // -180 to 180
 }
 
 export interface ImageVersionDto {
@@ -287,11 +287,11 @@ export class UpdateLocationDto {
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Profile response contains all required fields
 
-*For any* tenant with arbitrary profile data, a GET `/profile` request by an authorized user of that tenant should return a response containing all of: `name`, `phone`, `address`, `logoUrl`, `bannerUrl`, `latitude`, `longitude`, and `timezone` — with `null` as a valid value for optional fields.
+_For any_ tenant with arbitrary profile data, a GET `/profile` request by an authorized user of that tenant should return a response containing all of: `name`, `phone`, `address`, `logoUrl`, `bannerUrl`, `latitude`, `longitude`, and `timezone` — with `null` as a valid value for optional fields.
 
 **Validates: Requirements 1.1, 1.3, 1.4**
 
@@ -299,7 +299,7 @@ export class UpdateLocationDto {
 
 ### Property 2: Tenant isolation
 
-*For any* two distinct tenants A and B, a user authenticated as a member of tenant A should receive a 403 error when attempting to read or modify the profile of tenant B.
+_For any_ two distinct tenants A and B, a user authenticated as a member of tenant A should receive a 403 error when attempting to read or modify the profile of tenant B.
 
 **Validates: Requirements 1.2, 4.3, 7.3, 7.4**
 
@@ -307,7 +307,7 @@ export class UpdateLocationDto {
 
 ### Property 3: Image MIME type validation
 
-*For any* file upload request (logo or banner) where the MIME type is not `image/jpeg` or `image/png`, the Upload_Service should reject the request with a 422 error and no write to Object_Storage should occur.
+_For any_ file upload request (logo or banner) where the MIME type is not `image/jpeg` or `image/png`, the Upload_Service should reject the request with a 422 error and no write to Object_Storage should occur.
 
 **Validates: Requirements 2.1, 2.3, 3.1, 3.3**
 
@@ -315,7 +315,7 @@ export class UpdateLocationDto {
 
 ### Property 4: File size limits enforced per image type
 
-*For any* logo upload where the file size exceeds 5 MB, or any banner upload where the file size exceeds 8 MB, the Upload_Service should reject the request with a 422 error and no write to Object_Storage should occur.
+_For any_ logo upload where the file size exceeds 5 MB, or any banner upload where the file size exceeds 8 MB, the Upload_Service should reject the request with a 422 error and no write to Object_Storage should occur.
 
 **Validates: Requirements 2.2, 3.2**
 
@@ -323,7 +323,7 @@ export class UpdateLocationDto {
 
 ### Property 5: Successful upload creates ImageVersion and updates tenant URL
 
-*For any* valid image upload (logo or banner) that succeeds in Object_Storage, the resulting state should have: (a) a new `ImageVersion` record with the correct `url`, `fileSize`, `imageType`, and `tenantId`; and (b) the corresponding `logoUrl` or `bannerUrl` field on the `Tenant` record updated to the new URL.
+_For any_ valid image upload (logo or banner) that succeeds in Object_Storage, the resulting state should have: (a) a new `ImageVersion` record with the correct `url`, `fileSize`, `imageType`, and `tenantId`; and (b) the corresponding `logoUrl` or `bannerUrl` field on the `Tenant` record updated to the new URL.
 
 **Validates: Requirements 2.4, 2.5, 2.6, 3.4, 3.5, 3.6**
 
@@ -331,7 +331,7 @@ export class UpdateLocationDto {
 
 ### Property 6: Failed upload leaves system state unchanged
 
-*For any* image upload where the Object_Storage write fails, the system should return a 502 error, and neither the `Tenant` record nor any `ImageVersion` record should be created or modified.
+_For any_ image upload where the Object_Storage write fails, the system should return a 502 error, and neither the `Tenant` record nor any `ImageVersion` record should be created or modified.
 
 **Validates: Requirements 2.7, 2.8, 3.7, 3.8**
 
@@ -339,7 +339,7 @@ export class UpdateLocationDto {
 
 ### Property 7: Image version history is append-only and ordered descending
 
-*For any* sequence of N image uploads for a tenant, the image history endpoint should return exactly N records ordered by `createdAt` descending, and no previously existing record should be absent from the list.
+_For any_ sequence of N image uploads for a tenant, the image history endpoint should return exactly N records ordered by `createdAt` descending, and no previously existing record should be absent from the list.
 
 **Validates: Requirements 4.1, 4.2**
 
@@ -347,7 +347,7 @@ export class UpdateLocationDto {
 
 ### Property 8: Coordinate range validation
 
-*For any* location update where `latitude` is outside [-90, 90] or `longitude` is outside [-180, 180], the Profile_API should return a 422 error identifying the invalid field(s), and the `Tenant` record should remain unchanged.
+_For any_ location update where `latitude` is outside [-90, 90] or `longitude` is outside [-180, 180], the Profile_API should return a 422 error identifying the invalid field(s), and the `Tenant` record should remain unchanged.
 
 **Validates: Requirements 5.2, 5.3**
 
@@ -355,7 +355,7 @@ export class UpdateLocationDto {
 
 ### Property 9: Geocoding failure degrades gracefully
 
-*For any* location update submitted without explicit coordinates where the Geocoder is unavailable or returns no results, the Profile_API should store the `address` text, set `latitude` and `longitude` to `null`, return HTTP 200, and include a `geocodingWarning` in the response.
+_For any_ location update submitted without explicit coordinates where the Geocoder is unavailable or returns no results, the Profile_API should store the `address` text, set `latitude` and `longitude` to `null`, return HTTP 200, and include a `geocodingWarning` in the response.
 
 **Validates: Requirements 5.4, 5.5, 5.6**
 
@@ -363,7 +363,7 @@ export class UpdateLocationDto {
 
 ### Property 10: PATCH semantics — only submitted fields are updated
 
-*For any* PATCH request to `/profile` or `/profile/location` containing a subset of valid fields, only the submitted fields should change on the `Tenant` record; all other fields should retain their previous values.
+_For any_ PATCH request to `/profile` or `/profile/location` containing a subset of valid fields, only the submitted fields should change on the `Tenant` record; all other fields should retain their previous values.
 
 **Validates: Requirements 5.7, 6.5**
 
@@ -371,7 +371,7 @@ export class UpdateLocationDto {
 
 ### Property 11: Business name length validation
 
-*For any* profile update where `name` has fewer than 2 or more than 100 characters, the Profile_API should return a 422 error and the `Tenant.name` field should remain unchanged.
+_For any_ profile update where `name` has fewer than 2 or more than 100 characters, the Profile_API should return a 422 error and the `Tenant.name` field should remain unchanged.
 
 **Validates: Requirements 6.1**
 
@@ -379,7 +379,7 @@ export class UpdateLocationDto {
 
 ### Property 12: Phone E.164 format validation
 
-*For any* profile update where `phone` does not match the E.164 pattern (`^\+[1-9]\d{1,14}$`), the Profile_API should return a 422 error and the `Tenant.phone` field should remain unchanged.
+_For any_ profile update where `phone` does not match the E.164 pattern (`^\+[1-9]\d{1,14}$`), the Profile_API should return a 422 error and the `Tenant.phone` field should remain unchanged.
 
 **Validates: Requirements 6.2**
 
@@ -387,7 +387,7 @@ export class UpdateLocationDto {
 
 ### Property 13: Timezone IANA validation
 
-*For any* profile update where `timezone` is not a valid IANA timezone identifier, the Profile_API should return a 422 error and the `Tenant.timezone` field should remain unchanged.
+_For any_ profile update where `timezone` is not a valid IANA timezone identifier, the Profile_API should return a 422 error and the `Tenant.timezone` field should remain unchanged.
 
 **Validates: Requirements 6.3**
 
@@ -395,18 +395,18 @@ export class UpdateLocationDto {
 
 ## Error Handling
 
-| Scenario | HTTP Status | Response |
-|----------|-------------|----------|
-| Unauthenticated request | 401 | `{ message: 'Unauthorized' }` |
-| Authenticated user with role other than OWNER/ADMIN on mutation | 403 | `{ message: 'Forbidden resource' }` |
-| Cross-tenant access attempt | 403 | `{ message: 'Forbidden resource' }` |
-| Invalid MIME type on upload | 422 | `{ message: 'Solo se permiten archivos JPEG o PNG' }` |
-| File too large | 422 | `{ message: 'El archivo excede el tamaño máximo de X MB' }` |
-| Validation error on PATCH fields | 422 | `{ message: [...], errors: { field: reason } }` |
-| Coordinates out of range | 422 | `{ message: 'Coordenadas inválidas', errors: { latitude?: ..., longitude?: ... } }` |
-| Object_Storage write failure | 502 | `{ message: 'Error al subir el archivo al almacenamiento' }` |
-| Geocoding unavailable (non-blocking) | 200 | `{ ..., geocodingWarning: 'No se pudo geocodificar la dirección' }` |
-| Geocoder returns no results (non-blocking) | 200 | `{ ..., geocodingWarning: 'No se encontraron coordenadas para la dirección proporcionada' }` |
+| Scenario                                                        | HTTP Status | Response                                                                                     |
+| --------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------- |
+| Unauthenticated request                                         | 401         | `{ message: 'Unauthorized' }`                                                                |
+| Authenticated user with role other than OWNER/ADMIN on mutation | 403         | `{ message: 'Forbidden resource' }`                                                          |
+| Cross-tenant access attempt                                     | 403         | `{ message: 'Forbidden resource' }`                                                          |
+| Invalid MIME type on upload                                     | 422         | `{ message: 'Solo se permiten archivos JPEG o PNG' }`                                        |
+| File too large                                                  | 422         | `{ message: 'El archivo excede el tamaño máximo de X MB' }`                                  |
+| Validation error on PATCH fields                                | 422         | `{ message: [...], errors: { field: reason } }`                                              |
+| Coordinates out of range                                        | 422         | `{ message: 'Coordenadas inválidas', errors: { latitude?: ..., longitude?: ... } }`          |
+| Object_Storage write failure                                    | 502         | `{ message: 'Error al subir el archivo al almacenamiento' }`                                 |
+| Geocoding unavailable (non-blocking)                            | 200         | `{ ..., geocodingWarning: 'No se pudo geocodificar la dirección' }`                          |
+| Geocoder returns no results (non-blocking)                      | 200         | `{ ..., geocodingWarning: 'No se encontraron coordenadas para la dirección proporcionada' }` |
 
 ### Upload Atomicity
 
@@ -429,6 +429,7 @@ Both unit tests and property-based tests are required. Unit tests cover specific
 ### Backend Unit Tests (Jest)
 
 **`profile.service.spec.ts`**
+
 - Example: GET profile returns all required fields for a seeded tenant
 - Example: PATCH with only `name` updates name and leaves phone/timezone unchanged
 - Example: PATCH with invalid name length returns 422
@@ -437,6 +438,7 @@ Both unit tests and property-based tests are required. Unit tests cover specific
 - Edge case: Location update with geocoder returning null stores address with null coordinates
 
 **`upload.service.spec.ts`**
+
 - Example: Valid JPEG logo upload creates ImageVersion and updates tenant logoUrl
 - Example: File with `image/gif` MIME type is rejected with 422
 - Example: Logo file of 5.1 MB is rejected with 422
@@ -444,6 +446,7 @@ Both unit tests and property-based tests are required. Unit tests cover specific
 - Example: R2 upload failure returns 502 and leaves DB unchanged (mock StorageService to throw)
 
 **`geocoder.service.spec.ts`**
+
 - Example: Nominatim returns results → service returns `{ latitude, longitude }`
 - Example: Nominatim returns empty array → service returns `null`
 - Example: Nominatim throws network error → service returns `null`
@@ -485,10 +488,12 @@ Each property test runs a minimum of 100 iterations.
 ### Frontend Tests (Vitest)
 
 **`stores/profile.spec.ts`**
+
 - Example: `uploadLogo` action calls the correct endpoint and updates store state
 - Example: `updateProfile` action with validation error sets error state
 
 **`composables/useProfileApi.spec.ts`**
+
 - Example: `getProfile` returns typed `ProfileDto`
 - Example: `uploadImage` sends `multipart/form-data` with correct field name
 

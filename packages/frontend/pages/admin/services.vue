@@ -15,11 +15,15 @@ const availabilityService = ref<ServiceItem | null>(null);
 const activeCount = computed(() => services.value.filter((s) => s.isActive).length);
 const avgDuration = computed(() => {
   if (!services.value.length) return 0;
-  return Math.round(services.value.reduce((a, s) => a + s.durationMinutes, 0) / services.value.length);
+  return Math.round(
+    services.value.reduce((a, s) => a + s.durationMinutes, 0) / services.value.length,
+  );
 });
 const avgPrice = computed(() => {
   if (!services.value.length) return 0;
-  return Math.round(services.value.reduce((a, s) => a + Number(s.priceMXN), 0) / services.value.length);
+  return Math.round(
+    services.value.reduce((a, s) => a + Number(s.priceMXN), 0) / services.value.length,
+  );
 });
 
 function openCreate() {
@@ -48,7 +52,9 @@ onMounted(() => void servicesStore.load());
 <template>
   <div class="flex flex-col h-full overflow-hidden">
     <!-- Top bar -->
-    <header class="flex items-center gap-4 px-4 md:px-6 h-16 bg-white/80 backdrop-blur-md border-b border-[var(--color-outline-variant)]/10 sticky top-0 z-40 shrink-0">
+    <header
+      class="flex items-center gap-4 px-4 md:px-6 h-16 bg-white/80 backdrop-blur-md border-b border-[var(--color-outline-variant)]/10 sticky top-0 z-40 shrink-0"
+    >
       <h1 class="text-lg font-bold tracking-tight">Servicios</h1>
     </header>
 
@@ -56,8 +62,13 @@ onMounted(() => void servicesStore.load());
     <div class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
       <div class="max-w-7xl mx-auto w-full">
         <!-- Breadcrumbs -->
-        <nav class="hidden md:flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] mb-6 font-medium" aria-label="Migas de pan">
-          <NuxtLink to="/admin" class="hover:text-[var(--color-primary)] transition-colors">Panel</NuxtLink>
+        <nav
+          class="hidden md:flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] mb-6 font-medium"
+          aria-label="Migas de pan"
+        >
+          <NuxtLink to="/admin" class="hover:text-[var(--color-primary)] transition-colors"
+            >Panel</NuxtLink
+          >
           <span class="material-symbols-outlined text-xs" aria-hidden="true">chevron_right</span>
           <span class="text-[var(--color-on-surface)]">Servicios</span>
         </nav>
@@ -65,9 +76,14 @@ onMounted(() => void servicesStore.load());
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-10">
           <div class="space-y-1">
-            <h2 class="hidden md:block text-3xl lg:text-4xl font-extrabold tracking-tight text-[var(--color-on-surface)]">Servicios</h2>
+            <h2
+              class="hidden md:block text-3xl lg:text-4xl font-extrabold tracking-tight text-[var(--color-on-surface)]"
+            >
+              Servicios
+            </h2>
             <p class="text-[var(--color-on-surface-variant)] max-w-xl">
-              Gestiona el catálogo de servicios de tu negocio, establece duraciones y precios personalizados para tus clientes.
+              Gestiona el catálogo de servicios de tu negocio, establece duraciones y precios
+              personalizados para tus clientes.
             </p>
           </div>
           <button
@@ -80,11 +96,23 @@ onMounted(() => void servicesStore.load());
         </div>
 
         <ServicesFormModal v-model:open="showForm" :editing="editing" @submit="onSubmit" />
-        <ServicesAvailabilityModal :service="availabilityService" @close="availabilityService = null" />
+        <ServicesAvailabilityModal
+          :service="availabilityService"
+          @close="availabilityService = null"
+        />
 
         <!-- Loading skeleton -->
-        <div v-if="loading && services.length === 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="status" aria-label="Cargando servicios">
-          <div v-for="i in 3" :key="i" class="bg-white rounded-xl p-6 shadow-sm border border-[var(--color-outline-variant)]/10 animate-pulse">
+        <div
+          v-if="loading && services.length === 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          role="status"
+          aria-label="Cargando servicios"
+        >
+          <div
+            v-for="i in 3"
+            :key="i"
+            class="bg-white rounded-xl p-6 shadow-sm border border-[var(--color-outline-variant)]/10 animate-pulse"
+          >
             <div class="flex justify-between mb-4">
               <div class="w-11 h-11 rounded-lg bg-slate-100"></div>
               <div class="w-14 h-5 rounded-full bg-slate-100"></div>
@@ -99,12 +127,23 @@ onMounted(() => void servicesStore.load());
         </div>
 
         <!-- Empty state -->
-        <div v-else-if="services.length === 0" class="flex flex-col items-center justify-center py-24 text-center space-y-6">
-          <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-sm border border-[var(--color-outline-variant)]/10">
-            <span class="material-symbols-outlined text-6xl text-[var(--color-outline-variant)]" aria-hidden="true">inventory_2</span>
+        <div
+          v-else-if="services.length === 0"
+          class="flex flex-col items-center justify-center py-24 text-center space-y-6"
+        >
+          <div
+            class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-sm border border-[var(--color-outline-variant)]/10"
+          >
+            <span
+              class="material-symbols-outlined text-6xl text-[var(--color-outline-variant)]"
+              aria-hidden="true"
+              >inventory_2</span
+            >
           </div>
           <div class="space-y-2">
-            <h3 class="text-2xl font-bold text-[var(--color-on-surface)]">No tienes servicios aún</h3>
+            <h3 class="text-2xl font-bold text-[var(--color-on-surface)]">
+              No tienes servicios aún
+            </h3>
             <p class="text-[var(--color-on-surface-variant)] max-w-sm mx-auto">
               Comienza creando tu primer servicio para que tus clientes puedan agendar contigo.
             </p>
@@ -134,32 +173,64 @@ onMounted(() => void servicesStore.load());
             class="group bg-white rounded-xl p-6 shadow-sm border-2 border-dashed border-[var(--color-outline-variant)]/30 hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-primary)]/5 flex flex-col items-center justify-center text-center gap-4 cursor-pointer transition-all duration-200"
             @click="openCreate"
           >
-            <div class="w-14 h-14 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center group-hover:bg-[var(--color-primary)]/10 transition-colors">
-              <span class="material-symbols-outlined text-3xl text-[var(--color-outline)] group-hover:text-[var(--color-primary)] transition-colors" aria-hidden="true">add</span>
+            <div
+              class="w-14 h-14 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center group-hover:bg-[var(--color-primary)]/10 transition-colors"
+            >
+              <span
+                class="material-symbols-outlined text-3xl text-[var(--color-outline)] group-hover:text-[var(--color-primary)] transition-colors"
+                aria-hidden="true"
+                >add</span
+              >
             </div>
             <div>
               <p class="font-bold text-[var(--color-on-surface)]">Añadir nuevo servicio</p>
-              <p class="text-sm text-[var(--color-on-surface-variant)]">Expande tu oferta comercial</p>
+              <p class="text-sm text-[var(--color-on-surface-variant)]">
+                Expande tu oferta comercial
+              </p>
             </div>
           </button>
         </div>
 
         <!-- Stats footer -->
         <div v-if="services.length > 0" class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1">Total Servicios</p>
+          <div
+            class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10"
+          >
+            <p
+              class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1"
+            >
+              Total Servicios
+            </p>
             <p class="text-3xl font-black text-[var(--color-on-surface)]">{{ services.length }}</p>
           </div>
-          <div class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1">Activos</p>
+          <div
+            class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10"
+          >
+            <p
+              class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1"
+            >
+              Activos
+            </p>
             <p class="text-3xl font-black text-emerald-600">{{ activeCount }}</p>
           </div>
-          <div class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1">Duración Media</p>
+          <div
+            class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10"
+          >
+            <p
+              class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1"
+            >
+              Duración Media
+            </p>
             <p class="text-3xl font-black text-[var(--color-on-surface)]">{{ avgDuration }}m</p>
           </div>
-          <div class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1">Precio Promedio</p>
+          <div
+            class="p-5 bg-white rounded-xl shadow-sm border border-[var(--color-outline-variant)]/10"
+          >
+            <p
+              class="text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] mb-1"
+            >
+              Precio Promedio
+            </p>
             <p class="text-3xl font-black text-[var(--color-primary)]">${{ avgPrice }}</p>
           </div>
         </div>

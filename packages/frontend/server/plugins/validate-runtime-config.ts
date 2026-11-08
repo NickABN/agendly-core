@@ -27,11 +27,7 @@ export default defineNitroPlugin(() => {
   // The relative prefix also identifies the proxy topology if Netlify does not
   // expose build-only CONTEXT metadata to the running SSR function.
   if (isProductionNetlifyDeploy() || config.public.apiUrl === '/api') {
-    validateNetlifyProxyConfig(
-      config.public.apiUrl,
-      config.apiProxyTarget,
-      config.apiUrlInternal,
-    );
+    validateNetlifyProxyConfig(config.public.apiUrl, config.apiProxyTarget, config.apiUrlInternal);
     return;
   }
 

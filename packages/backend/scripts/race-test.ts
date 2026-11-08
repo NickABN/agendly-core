@@ -12,7 +12,8 @@ import { PrismaPg } from '@prisma/adapter-pg';
 
 const adapter = new PrismaPg({
   connectionString:
-    process.env.DATABASE_URL ?? 'postgresql://agendly:agendly_dev@localhost:5433/agendly',
+    process.env.DATABASE_URL ??
+    'postgresql://agendly:agendly_dev@localhost:5433/agendly',
 });
 const prisma = new PrismaClient({ adapter });
 
@@ -31,7 +32,12 @@ async function main() {
     data: { tenantId: tenant.id, name: 'Empleado Carrera' },
   });
   const service = await prisma.service.create({
-    data: { tenantId: tenant.id, name: 'Servicio Carrera', durationMinutes: 60, priceMXN: 100 },
+    data: {
+      tenantId: tenant.id,
+      name: 'Servicio Carrera',
+      durationMinutes: 60,
+      priceMXN: 100,
+    },
   });
 
   const startTime = new Date('2030-06-10T16:00:00.000Z');
@@ -53,7 +59,8 @@ async function main() {
       })
       .then(() => 'ok' as const)
       .catch((err: Error) =>
-        err.message.includes('appointment_no_overlap') || err.message.includes('23P01')
+        err.message.includes('appointment_no_overlap') ||
+        err.message.includes('23P01')
           ? ('blocked' as const)
           : Promise.reject(err),
       ),
@@ -67,9 +74,13 @@ async function main() {
   await prisma.tenant.delete({ where: { id: tenant.id } });
   await prisma.$disconnect();
 
-  console.log(`Intentos: ${CONCURRENCY} | creadas: ${ok} | bloqueadas: ${blocked}`);
+  console.log(
+    `Intentos: ${CONCURRENCY} | creadas: ${ok} | bloqueadas: ${blocked}`,
+  );
   if (ok === 1 && blocked === CONCURRENCY - 1) {
-    console.log('RACE_TEST_OK — el constraint bloquea la doble reserva bajo concurrencia');
+    console.log(
+      'RACE_TEST_OK — el constraint bloquea la doble reserva bajo concurrencia',
+    );
   } else {
     console.error('RACE_TEST_FAIL — se esperaba exactamente 1 cita creada');
     process.exit(1);

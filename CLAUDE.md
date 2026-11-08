@@ -56,10 +56,12 @@ pnpm --filter @agendly/shared <script>
 ## Engram Memory
 
 Al inicio de **cada conversación** sobre este proyecto:
+
 1. Llamar `mcp__engram__mem_session_start` con `id=agendly-{fecha}` y `project=agendly`
 2. Llamar `mcp__engram__mem_context` con `project=agendly` para recuperar contexto de sesiones anteriores
 
 Al completar trabajo significativo (arquitectura, decisiones, bugs, configuración):
+
 - Guardar con `mcp__engram__mem_save` **proactivamente**, sin esperar que el usuario lo pida
 
 ## Convenciones

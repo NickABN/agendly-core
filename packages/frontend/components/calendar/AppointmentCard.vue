@@ -88,7 +88,8 @@ function serviceIcon(name: string): string {
         v-if="appointment.noShowRisk && riskConfig[appointment.noShowRisk.level]"
         class="text-[11px] text-[var(--color-on-surface-variant)] mt-0.5"
       >
-        Posible falta: {{ appointment.noShowRisk.reasons.join(' · ').toLowerCase() }}. Confirma por teléfono.
+        Posible falta: {{ appointment.noShowRisk.reasons.join(' · ').toLowerCase() }}. Confirma por
+        teléfono.
       </p>
       <p class="text-xs text-[var(--color-on-surface-variant)] font-medium mt-0.5">
         {{ appointment.service.name }}

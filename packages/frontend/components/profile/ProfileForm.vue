@@ -50,7 +50,8 @@ function validateName(value: string): string {
 
 function validatePhone(value: string): string {
   if (value === '') return ''; // phone is optional; empty is allowed
-  if (!E164_REGEX.test(value)) return 'El teléfono debe estar en formato E.164 (ej. +521XXXXXXXXXX).';
+  if (!E164_REGEX.test(value))
+    return 'El teléfono debe estar en formato E.164 (ej. +521XXXXXXXXXX).';
   return '';
 }
 

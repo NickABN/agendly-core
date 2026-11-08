@@ -48,7 +48,9 @@ function submit() {
         aria-modal="true"
         @click.self="close"
       >
-        <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl border border-[var(--color-outline-variant)]/10">
+        <div
+          class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl border border-[var(--color-outline-variant)]/10"
+        >
           <div class="flex items-center justify-between mb-6">
             <h3 class="text-xl font-bold text-[var(--color-on-surface)]">
               {{ editing ? 'Editar Servicio' : 'Nuevo Servicio' }}
@@ -64,7 +66,10 @@ function submit() {
 
           <form class="space-y-5" @submit.prevent="submit">
             <div class="space-y-2">
-              <label for="service-name" class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">
+              <label
+                for="service-name"
+                class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+              >
                 Nombre del servicio
               </label>
               <input
@@ -79,7 +84,10 @@ function submit() {
 
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
-                <label for="service-duration" class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">
+                <label
+                  for="service-duration"
+                  class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                >
                   Duración
                 </label>
                 <select
@@ -96,11 +104,18 @@ function submit() {
                 </select>
               </div>
               <div class="space-y-2">
-                <label for="service-price" class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">
+                <label
+                  for="service-price"
+                  class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+                >
                   Precio (MXN)
                 </label>
                 <div class="relative">
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] font-semibold" aria-hidden="true">$</span>
+                  <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] font-semibold"
+                    aria-hidden="true"
+                    >$</span
+                  >
                   <input
                     id="service-price"
                     v-model.number="form.priceMXN"

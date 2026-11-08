@@ -32,11 +32,7 @@ function updateValue(event: Event) {
       class="w-full cursor-pointer appearance-none rounded-lg border border-[var(--color-outline-variant)]/20 bg-[var(--color-surface-container-high)] px-4 py-3 pr-10 text-base text-[var(--color-on-surface)] transition-colors hover:bg-[var(--color-surface-container-lowest)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 disabled:cursor-not-allowed disabled:opacity-60"
       @change="updateValue"
     >
-      <option
-        v-for="option in options"
-        :key="String(option.value)"
-        :value="String(option.value)"
-      >
+      <option v-for="option in options" :key="String(option.value)" :value="String(option.value)">
         {{ option.label }}
       </option>
     </select>

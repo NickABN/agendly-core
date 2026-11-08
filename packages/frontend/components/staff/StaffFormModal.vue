@@ -54,7 +54,9 @@ function submit() {
         aria-modal="true"
         @click.self="close"
       >
-        <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl border border-[var(--color-outline-variant)]/10">
+        <div
+          class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl border border-[var(--color-outline-variant)]/10"
+        >
           <div class="flex items-center justify-between mb-6">
             <h3 class="text-xl font-bold text-[var(--color-on-surface)]">
               {{ editing ? 'Editar Colaborador' : 'Nuevo Colaborador' }}
@@ -70,7 +72,10 @@ function submit() {
 
           <form class="space-y-5" @submit.prevent="submit">
             <div class="space-y-2">
-              <label for="staff-name" class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider">
+              <label
+                for="staff-name"
+                class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
+              >
                 Nombre completo
               </label>
               <input

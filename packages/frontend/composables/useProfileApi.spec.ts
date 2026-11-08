@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type {
-  ProfileDto,
-  UploadResponseDto,
-  ImageVersionDto,
-} from '@agendly/shared';
+import type { ProfileDto, UploadResponseDto, ImageVersionDto } from '@agendly/shared';
 
 // --- Nuxt stubs ---
 

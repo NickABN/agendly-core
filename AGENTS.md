@@ -11,10 +11,12 @@ Agendly is a SaaS appointment scheduling platform for small beauty and aesthetic
 ## Engram Memory
 
 At the start of **every conversation** about this project:
+
 1. Call `mcp__engram__mem_session_start` with `id=agendly-{date}` and `project=agendly`
 2. Call `mcp__engram__mem_context` with `project=agendly` to recover context from previous sessions
 
 After completing significant work (architecture, decisions, bugs, config changes):
+
 - Call `mcp__engram__mem_save` **proactively**, without waiting to be asked
 
 ## Build & Test Commands
@@ -51,18 +53,23 @@ cd packages/backend && npx prisma generate              # Generate Prisma client
 ## Architecture
 
 ### Multi-tenant Isolation
+
 Every database table (except `Tenant` itself) has a `tenantId` column. All API endpoints for authenticated users must use `TenantGuard` to scope queries to the current user's tenant.
 
 ### Soft Deletes
+
 `Employee` and `Service` models use a `deletedAt` field instead of physical deletion. This preserves appointment history.
 
 ### Channel-Agnostic Booking
+
 The booking engine accepts appointments without knowing the source channel (web form, WhatsApp, manual walk-in). The `channel` field on `Appointment` is metadata only.
 
 ### Availability Engine
+
 Core business logic in `packages/backend/src/availability/`. Computes available time slots based on employee schedules, schedule exceptions, existing appointments, service duration, and buffer time. Must use a Prisma transaction when creating appointments to prevent double-booking.
 
 ### Shared DTOs
+
 All DTOs and type definitions shared between frontend and backend live in `packages/shared/src/`. Import as `@agendly/shared`.
 
 ## Testing Requirements

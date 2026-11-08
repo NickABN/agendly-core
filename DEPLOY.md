@@ -22,6 +22,7 @@ docker compose up --build          # db + backend + frontend
 - **Uploads opcionales:** para probar logo/banner definí las 5 `R2_*` en un `.env` en la raíz (compose las lee). Sin ellas todo lo demás funciona; el upload falla lazily.
 
 Comandos útiles:
+
 ```bash
 docker compose logs -f backend         # ver logs
 docker compose exec db psql -U agendly -d agendly    # entrar a la BD
@@ -91,53 +92,53 @@ The backend builds its CORS allowlist from `FRONTEND_URL` and `PUBLIC_APP_URL` (
 
 ### Backend (Docker local + Render)
 
-| Var | Req | Local (compose) | Prod (Render) |
-|---|---|---|---|
-| `DATABASE_URL` | ✅ | `postgresql://agendly:agendly_dev@db:5432/agendly` (ya en compose) | Neon (`...?sslmode=require`) |
-| `JWT_SECRET` | ✅ | local válido en compose | secreto fuerte 32+ chars (`openssl rand -hex 32`); el default inseguro es rechazado al boot. También firma los links "cancelar mi cita" de los correos: rotarlo invalida los links ya enviados |
-| `ACCESS_TOKEN_TTL` | ○ | `15m` (default) | `15m` (default) |
-| `REFRESH_TOKEN_TTL` | ○ | `7d` (default) | `7d` (default) |
-| `REFRESH_ABSOLUTE_TTL` | ○ | `30d` (default) | `30d` (default) |
-| `FRONTEND_URL` | ○→✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` |
-| `PUBLIC_APP_URL` | ○→✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` |
-| `PORT` | ○ | `3000` (compose) | Render lo inyecta |
-| `R2_ACCOUNT_ID` | ○ | — | Cloudflare R2 |
-| `R2_ACCESS_KEY_ID` | ○ | — | Cloudflare R2 |
-| `R2_SECRET_ACCESS_KEY` | ○ | — | Cloudflare R2 |
-| `R2_BUCKET_NAME` | ○ | — | Cloudflare R2 |
-| `R2_PUBLIC_URL` | ○ | — | URL pública del bucket |
-| `RESEND_API_KEY` | ○ | — | para emails reales (si no, se loguean) |
-| `EMAIL_FROM` | ○ | — | remitente en un dominio verificado en Resend, ej. `Agendly <hola@tudominio.mx>` (default `noreply@agendly.mx`) |
-| `GOOGLE_CLIENT_ID` / `_SECRET` | ○ | — | OAuth Google (no-op si faltan) |
-| `GOOGLE_CALLBACK_URL` | ○ | — | `https://agendly-admin1.netlify.app/api/auth/google/callback` |
-| `LOG_LEVEL` | ○ | `info` | `info` (o `debug` para diagnosticar) |
-| `SENTRY_DSN` | ○ | — | error tracking backend (ver OBSERVABILITY.md) |
-| `CRON_SECRET` | ○ | — | 32+ chars (`openssl rand -hex 32`). Activa `POST /reminders/run` y `POST /account/purge/run`; sin él no se envían recordatorios ni se purgan cuentas |
-| `BILLING_ENFORCED` | ○ | sin definir (gratis) | **sin definir** mientras Agendly sea gratis. Solo `true` bloquea negocios con la prueba vencida |
+| Var                            | Req  | Local (compose)                                                    | Prod (Render)                                                                                                                                                                                  |
+| ------------------------------ | ---- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                 | ✅   | `postgresql://agendly:agendly_dev@db:5432/agendly` (ya en compose) | Neon (`...?sslmode=require`)                                                                                                                                                                   |
+| `JWT_SECRET`                   | ✅   | local válido en compose                                            | secreto fuerte 32+ chars (`openssl rand -hex 32`); el default inseguro es rechazado al boot. También firma los links "cancelar mi cita" de los correos: rotarlo invalida los links ya enviados |
+| `ACCESS_TOKEN_TTL`             | ○    | `15m` (default)                                                    | `15m` (default)                                                                                                                                                                                |
+| `REFRESH_TOKEN_TTL`            | ○    | `7d` (default)                                                     | `7d` (default)                                                                                                                                                                                 |
+| `REFRESH_ABSOLUTE_TTL`         | ○    | `30d` (default)                                                    | `30d` (default)                                                                                                                                                                                |
+| `FRONTEND_URL`                 | ○→✅ | `http://localhost:3001`                                            | `https://agendly-admin1.netlify.app`                                                                                                                                                           |
+| `PUBLIC_APP_URL`               | ○→✅ | `http://localhost:3001`                                            | `https://agendly-admin1.netlify.app`                                                                                                                                                           |
+| `PORT`                         | ○    | `3000` (compose)                                                   | Render lo inyecta                                                                                                                                                                              |
+| `R2_ACCOUNT_ID`                | ○    | —                                                                  | Cloudflare R2                                                                                                                                                                                  |
+| `R2_ACCESS_KEY_ID`             | ○    | —                                                                  | Cloudflare R2                                                                                                                                                                                  |
+| `R2_SECRET_ACCESS_KEY`         | ○    | —                                                                  | Cloudflare R2                                                                                                                                                                                  |
+| `R2_BUCKET_NAME`               | ○    | —                                                                  | Cloudflare R2                                                                                                                                                                                  |
+| `R2_PUBLIC_URL`                | ○    | —                                                                  | URL pública del bucket                                                                                                                                                                         |
+| `RESEND_API_KEY`               | ○    | —                                                                  | para emails reales (si no, se loguean)                                                                                                                                                         |
+| `EMAIL_FROM`                   | ○    | —                                                                  | remitente en un dominio verificado en Resend, ej. `Agendly <hola@tudominio.mx>` (default `noreply@agendly.mx`)                                                                                 |
+| `GOOGLE_CLIENT_ID` / `_SECRET` | ○    | —                                                                  | OAuth Google (no-op si faltan)                                                                                                                                                                 |
+| `GOOGLE_CALLBACK_URL`          | ○    | —                                                                  | `https://agendly-admin1.netlify.app/api/auth/google/callback`                                                                                                                                  |
+| `LOG_LEVEL`                    | ○    | `info`                                                             | `info` (o `debug` para diagnosticar)                                                                                                                                                           |
+| `SENTRY_DSN`                   | ○    | —                                                                  | error tracking backend (ver OBSERVABILITY.md)                                                                                                                                                  |
+| `CRON_SECRET`                  | ○    | —                                                                  | 32+ chars (`openssl rand -hex 32`). Activa `POST /reminders/run` y `POST /account/purge/run`; sin él no se envían recordatorios ni se purgan cuentas                                           |
+| `BILLING_ENFORCED`             | ○    | sin definir (gratis)                                               | **sin definir** mientras Agendly sea gratis. Solo `true` bloquea negocios con la prueba vencida                                                                                                |
 
 ### Frontend (Docker local + Netlify)
 
-| Var | Req | Local (compose) | Prod (Netlify) |
-|---|---|---|---|
-| `NUXT_PUBLIC_API_URL` | ✅ | `http://localhost:3000` (already in compose) | `/api` |
-| `NUXT_API_PROXY_TARGET` | Netlify only | — | `https://agendly-backend-u9tt.onrender.com` (private; never expose under `public`) |
-| `NUXT_PUBLIC_APP_URL` | ✅ | `http://localhost:3001` | `https://agendly-admin1.netlify.app` (temporary public frontend base URL) |
-| `NUXT_API_URL_INTERNAL` | local only | `http://backend:3000` (already in compose) | **do not set** |
-| `NUXT_PUBLIC_SENTRY_DSN` | ○ | — | error tracking frontend (ver OBSERVABILITY.md) |
-| `NUXT_PUBLIC_LEGAL_NAME` | ✅ prod | — | nombre del responsable (persona física o razón social) para Términos / Aviso de Privacidad |
-| `NUXT_PUBLIC_LEGAL_ADDRESS` | ✅ prod | — | domicilio para oír y recibir notificaciones (lo exige la LFPDPPP) |
-| `NUXT_PUBLIC_LEGAL_EMAIL` | ✅ prod | — | correo de privacidad/ARCO **que sí revises** |
-| `NUXT_PUBLIC_SUPPORT_URL` | ○ | — | Stripe Payment Link de aportación voluntaria; vacío = sin botón |
+| Var                         | Req          | Local (compose)                              | Prod (Netlify)                                                                             |
+| --------------------------- | ------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `NUXT_PUBLIC_API_URL`       | ✅           | `http://localhost:3000` (already in compose) | `/api`                                                                                     |
+| `NUXT_API_PROXY_TARGET`     | Netlify only | —                                            | `https://agendly-backend-u9tt.onrender.com` (private; never expose under `public`)         |
+| `NUXT_PUBLIC_APP_URL`       | ✅           | `http://localhost:3001`                      | `https://agendly-admin1.netlify.app` (temporary public frontend base URL)                  |
+| `NUXT_API_URL_INTERNAL`     | local only   | `http://backend:3000` (already in compose)   | **do not set**                                                                             |
+| `NUXT_PUBLIC_SENTRY_DSN`    | ○            | —                                            | error tracking frontend (ver OBSERVABILITY.md)                                             |
+| `NUXT_PUBLIC_LEGAL_NAME`    | ✅ prod      | —                                            | nombre del responsable (persona física o razón social) para Términos / Aviso de Privacidad |
+| `NUXT_PUBLIC_LEGAL_ADDRESS` | ✅ prod      | —                                            | domicilio para oír y recibir notificaciones (lo exige la LFPDPPP)                          |
+| `NUXT_PUBLIC_LEGAL_EMAIL`   | ✅ prod      | —                                            | correo de privacidad/ARCO **que sí revises**                                               |
+| `NUXT_PUBLIC_SUPPORT_URL`   | ○            | —                                            | Stripe Payment Link de aportación voluntaria; vacío = sin botón                            |
 
 Sin las `NUXT_PUBLIC_LEGAL_*` las páginas legales muestran "[pendiente de configurar]" y el server loguea un warning al arrancar.
 
 Vars de Stripe (backend, opcionales; sin ellas billing responde 503 y la UI muestra "contáctanos"):
 
-| Var | Dónde obtenerla |
-|---|---|
-| `STRIPE_SECRET_KEY` | Stripe → Developers → API keys (usa la **test** `sk_test_...`) |
-| `STRIPE_PRICE_ID` | Stripe → Products → tu plan → Price ID (`price_...`) |
-| `STRIPE_WEBHOOK_SECRET` | del endpoint de webhook (`whsec_...`, ver abajo) |
+| Var                     | Dónde obtenerla                                                |
+| ----------------------- | -------------------------------------------------------------- |
+| `STRIPE_SECRET_KEY`     | Stripe → Developers → API keys (usa la **test** `sk_test_...`) |
+| `STRIPE_PRICE_ID`       | Stripe → Products → tu plan → Price ID (`price_...`)           |
+| `STRIPE_WEBHOOK_SECRET` | del endpoint de webhook (`whsec_...`, ver abajo)               |
 
 ---
 
@@ -174,6 +175,7 @@ Mientras Agendly sea gratis, **no** se configura `BILLING_ENFORCED` ni las vars 
 Modelo: un plan mensual flat (el precio se define en Stripe, no en el código). Trial de 14 días automático al registrarse; al vencer sin pago, el admin se bloquea (redirige a `/admin/subscription`) y el negocio deja de tomar reservas públicas.
 
 **Setup (test mode, una sola vez):**
+
 1. Crear cuenta en https://stripe.com (modo **Test** activado, sin verificación de negocio para probar).
 2. **Product + Price**: Products → Add product → nombre "Agendly Profesional" → precio **recurrente mensual** en MXN (ej. $299) → guardar → copiar el **Price ID** (`price_...`) → `STRIPE_PRICE_ID`.
 3. **API key**: Developers → API keys → copiar la **Secret key** de test (`sk_test_...`) → `STRIPE_SECRET_KEY`.

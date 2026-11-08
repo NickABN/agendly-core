@@ -15,12 +15,7 @@ interface MeResponse {
     isActive: boolean;
     /** Owner-requested deletion pending: UTC ISO date of the definitive purge. */
     deletionScheduledAt?: string | null;
-    subscriptionStatus?:
-      | 'TRIALING'
-      | 'ACTIVE'
-      | 'PAST_DUE'
-      | 'CANCELED'
-      | 'INCOMPLETE';
+    subscriptionStatus?: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE';
     currentPeriodEnd?: string | null;
     /** Server-side `BILLING_ENFORCED`: false while Agendly is free. */
     billingEnforced?: boolean;
@@ -35,9 +30,7 @@ interface MeResponse {
  * Cookie fresco para reintentar /auth/me en el mismo render (el browser aún no tiene
  * las cookies nuevas dentro de esta pasada SSR).
  */
-async function tryRefresh(
-  base: string,
-): Promise<{ ok: boolean; cookieHeader?: string }> {
+async function tryRefresh(base: string): Promise<{ ok: boolean; cookieHeader?: string }> {
   try {
     const res = await $fetch.raw(`${base}/auth/refresh`, {
       method: 'POST',
@@ -73,8 +66,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (!store.user) {
     // apiBase(): URL interna en Docker SSR; same-origin /api on Netlify.
     const base = apiBase();
-    const ssrCookie = () =>
-      import.meta.server ? useRequestHeaders(['cookie']) : {};
+    const ssrCookie = () => (import.meta.server ? useRequestHeaders(['cookie']) : {});
 
     let profile: MeResponse;
     try {
@@ -89,9 +81,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       try {
         profile = await $fetch<MeResponse>(`${base}/auth/me`, {
           credentials: 'include',
-          headers: import.meta.server
-            ? { cookie: refreshed.cookieHeader ?? '' }
-            : {},
+          headers: import.meta.server ? { cookie: refreshed.cookieHeader ?? '' } : {},
         });
       } catch {
         return navigateTo('/login');

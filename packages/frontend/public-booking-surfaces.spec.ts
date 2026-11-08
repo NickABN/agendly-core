@@ -12,7 +12,9 @@ describe('additional public booking link surfaces', () => {
   });
 
   it('renders the runtime-config-driven booking example URL on the landing page', () => {
-    expect(landingSource).toContain("const exampleBookingUrl = computed(() => bookingDisplayUrl('tu-salon'))");
+    expect(landingSource).toContain(
+      "const exampleBookingUrl = computed(() => bookingDisplayUrl('tu-salon'))",
+    );
     expect(landingSource).toContain('{{ exampleBookingUrl }}');
   });
 });

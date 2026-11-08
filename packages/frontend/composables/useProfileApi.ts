@@ -38,10 +38,7 @@ export function useProfileApi() {
     });
   }
 
-  async function uploadImage(
-    type: 'logo' | 'banner',
-    file: File,
-  ): Promise<UploadResponseDto> {
+  async function uploadImage(type: 'logo' | 'banner', file: File): Promise<UploadResponseDto> {
     const formData = new FormData();
     formData.append('file', file);
 

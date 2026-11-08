@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { ProfileDto, UpdateProfileDto, UpdateLocationDto, ImageVersionDto } from '@agendly/shared';
+import type {
+  ProfileDto,
+  UpdateProfileDto,
+  UpdateLocationDto,
+  ImageVersionDto,
+} from '@agendly/shared';
 import { useProfileApi } from '~/composables/useProfileApi';
 
 export const useProfileStore = defineStore('profile', () => {
