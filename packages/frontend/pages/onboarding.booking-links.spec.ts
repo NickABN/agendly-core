@@ -12,7 +12,7 @@ describe('onboarding.vue public booking link surfaces', () => {
 
   it('renders the booking display URL in the success/share surface', () => {
     expect(source).toContain('return bookingDisplayUrl(slug);');
-    expect(source).toContain('{{ publicUrl }}');
+    expect(source).toMatch(/{{\s*publicUrl\s*}}/);
   });
 
   it('wires the copy button through the centralized booking URL helper', () => {

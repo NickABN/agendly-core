@@ -1,0 +1,4 @@
+# Generated Prisma client: rewritten by `prisma generate`
+packages/backend/src/generated/
+# Agent tooling, not project code
+.claude/
