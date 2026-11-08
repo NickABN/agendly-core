@@ -1,6 +1,7 @@
 import {
   BadGatewayException,
   Injectable,
+  ServiceUnavailableException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -52,6 +53,7 @@ export class UploadService {
     tenantId: string,
     file: Express.Multer.File,
   ): Promise<UploadResponseDto> {
+    this.ensureStorageConfigured();
     this.validateFile(file, 5);
     const processed = await this.optimize(file, 'logo');
 
@@ -92,6 +94,7 @@ export class UploadService {
     tenantId: string,
     file: Express.Multer.File,
   ): Promise<UploadResponseDto> {
+    this.ensureStorageConfigured();
     this.validateFile(file, 8);
     const processed = await this.optimize(file, 'banner');
 
@@ -126,6 +129,14 @@ export class UploadService {
     ]);
 
     return { url, imageVersion: this.toVersionDto(imageVersion) };
+  }
+
+  private ensureStorageConfigured(): void {
+    if (!this.storageService.isConfigured) {
+      throw new ServiceUnavailableException(
+        'La carga de imágenes no está disponible por ahora',
+      );
+    }
   }
 
   private toVersionDto(imageVersion: {

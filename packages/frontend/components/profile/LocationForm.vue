@@ -9,6 +9,7 @@ const props = defineProps<{
     latitude: number | null;
     longitude: number | null;
   };
+  saved?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -33,13 +34,27 @@ const mapContainer = ref<HTMLDivElement | null>(null);
 let mapInstance: any = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let markerInstance: any = null;
+let resizeObserver: ResizeObserver | null = null;
 
 // ─── Geocoding state ───────────────────────────────────────────────────────────
 const isGeocoding = ref(false);
+const isLocating = ref(false);
+const locationError = ref<string | null>(null);
+const edited = ref(false);
+// Address the current pin corresponds to; differs once the owner retypes it.
+const pinAddress = ref('');
 
 // ─── Computed ──────────────────────────────────────────────────────────────────
 const geocodingWarning = computed(() => store.geocodingWarning);
 const isSaving = computed(() => store.loading);
+const showSaved = computed(() => Boolean(props.saved && !edited.value));
+
+watch(
+  () => props.saved,
+  (saved) => {
+    if (saved) edited.value = false;
+  },
+);
 
 // ─── Map initialisation (client-only via onMounted) ───────────────────────────
 onMounted(async () => {
@@ -81,11 +96,31 @@ onMounted(async () => {
     attachDragEnd(L);
   }
 
+  mapInstance.on('click', (event: { latlng: { lat: number; lng: number } }) => {
+    void movePin(event.latlng.lat, event.latlng.lng);
+  });
+
   // Fix rendering when container becomes visible
   mapInstance.invalidateSize();
+
+  // The "Ubicación" tab is hidden with v-show, so the map is first created with a
+  // 0-size container and tiles only render for that empty viewport. Re-invalidate
+  // whenever the container gains (or changes) size, keeping the pin centred.
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(() => {
+      if (!mapInstance) return;
+      mapInstance.invalidateSize();
+      if (markerInstance) {
+        mapInstance.setView(markerInstance.getLatLng(), mapInstance.getZoom());
+      }
+    });
+    resizeObserver.observe(mapContainer.value);
+  }
 });
 
 onUnmounted(() => {
+  resizeObserver?.disconnect();
+  resizeObserver = null;
   mapInstance?.remove();
   mapInstance = null;
   markerInstance = null;
@@ -98,12 +133,22 @@ function attachDragEnd(_L: any) {
     const pos = markerInstance.getLatLng();
     latitude.value = pos.lat;
     longitude.value = pos.lng;
+    // A hand-placed pin is the owner's answer for the typed address.
+    pinAddress.value = address.value.trim();
+    edited.value = true;
+    locationError.value = null;
   });
 }
 
 // ─── Place / move marker programmatically ─────────────────────────────────────
 
-async function placeMarker(lat: number, lng: number) {
+async function movePin(lat: number, lng: number, markEdited = true, forAddress?: string) {
+  latitude.value = lat;
+  longitude.value = lng;
+  locationError.value = null;
+  // The pin matches the searched address, or whatever is typed for drag/click/GPS.
+  pinAddress.value = forAddress ?? address.value.trim();
+  if (markEdited) edited.value = true;
   if (!mapInstance) return;
   const L = await import('leaflet');
 
@@ -117,31 +162,74 @@ async function placeMarker(lat: number, lng: number) {
   mapInstance.setView([lat, lng], DEFAULT_ZOOM);
 }
 
-// ─── Address blur → geocode via store ─────────────────────────────────────────
-async function onAddressBlur() {
-  const trimmed = address.value.trim();
-  if (!trimmed) return;
+// ─── Explicit address search; geocoding never persists the location ───────────
+// Incremented per search so a slow, superseded response is ignored.
+let geocodeRequestId = 0;
 
+async function searchAddress(): Promise<boolean> {
+  const trimmed = address.value.trim();
+  if (!trimmed) return false;
+
+  locationError.value = null;
   isGeocoding.value = true;
+  // Ignore responses from searches superseded by a newer one.
+  const requestId = ++geocodeRequestId;
   try {
-    await store.saveLocation({ address: trimmed });
-    // After save, sync coordinates from store
-    const updated = store.profileData;
-    if (updated?.latitude !== undefined && updated?.longitude !== undefined) {
-      latitude.value = updated.latitude;
-      longitude.value = updated.longitude;
-      if (updated.latitude !== null && updated.longitude !== null) {
-        await placeMarker(updated.latitude, updated.longitude);
-      }
+    const result = await store.geocodeAddress(trimmed);
+    if (requestId !== geocodeRequestId) return false;
+    if (!result) {
+      locationError.value = 'No encontramos esa dirección, intenta con calle, número y colonia';
+      return false;
     }
+    await movePin(result.latitude, result.longitude, true, trimmed);
+    return true;
+  } catch {
+    if (requestId !== geocodeRequestId) return false;
+    locationError.value = 'No pudimos buscar la dirección. Intenta de nuevo en un momento.';
+    return false;
   } finally {
-    isGeocoding.value = false;
+    if (requestId === geocodeRequestId) isGeocoding.value = false;
   }
 }
 
+function useCurrentLocation() {
+  locationError.value = null;
+  if (!navigator.geolocation) {
+    locationError.value = 'No pudimos obtener tu ubicación';
+    return;
+  }
+
+  isLocating.value = true;
+  navigator.geolocation.getCurrentPosition(
+    ({ coords }) => {
+      void movePin(coords.latitude, coords.longitude).finally(() => {
+        isLocating.value = false;
+      });
+    },
+    () => {
+      locationError.value = 'No pudimos obtener tu ubicación';
+      isLocating.value = false;
+    },
+    { enableHighAccuracy: true, timeout: 10000 },
+  );
+}
+
+function onAddressInput() {
+  edited.value = true;
+  locationError.value = null;
+}
+
 // ─── Submit ────────────────────────────────────────────────────────────────────
-function handleSubmit() {
-  const dto: UpdateLocationDto = { address: address.value.trim() };
+async function handleSubmit() {
+  // A changed address with no new search/pin would save stale coordinates:
+  // geocode it first, and stop if it cannot be located.
+  const trimmedAddress = address.value.trim();
+  if (trimmedAddress && trimmedAddress !== pinAddress.value) {
+    const located = await searchAddress();
+    // Superseded or failed search, or the address changed meanwhile: do not save.
+    if (!located || pinAddress.value !== address.value.trim()) return;
+  }
+  const dto: UpdateLocationDto = { address: trimmedAddress };
   if (latitude.value !== null) dto.latitude = latitude.value;
   if (longitude.value !== null) dto.longitude = longitude.value;
   emit('submit', dto);
@@ -156,7 +244,7 @@ watch(
     latitude.value = data.latitude ?? null;
     longitude.value = data.longitude ?? null;
     if (data.latitude !== null && data.longitude !== null) {
-      await placeMarker(data.latitude, data.longitude);
+      await movePin(data.latitude, data.longitude, false);
     }
   },
 );
@@ -180,7 +268,8 @@ watch(
           placeholder="Ej. Av. Insurgentes Sur 1234, Col. Del Valle, CDMX"
           class="w-full px-4 py-3 rounded-lg bg-[var(--color-surface-container-high)] border-none focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] transition-all placeholder:text-[var(--color-outline)] pr-10"
           :disabled="isSaving"
-          @blur="onAddressBlur"
+          @input="onAddressInput"
+          @keydown.enter.prevent="searchAddress"
         />
         <!-- Geocoding spinner -->
         <span
@@ -190,9 +279,24 @@ watch(
           progress_activity
         </span>
       </div>
-      <p class="text-xs text-[var(--color-on-surface-variant)]">
-        Al salir del campo se intentará ubicar la dirección en el mapa automáticamente.
-      </p>
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          :disabled="isGeocoding || !address.trim() || isSaving"
+          class="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          @click="searchAddress"
+        >
+          {{ isGeocoding ? 'Buscando…' : 'Buscar' }}
+        </button>
+        <button
+          type="button"
+          :disabled="isLocating || isSaving"
+          class="rounded-lg bg-[var(--color-surface-container-high)] px-4 py-2 text-sm font-semibold text-[var(--color-on-surface)] disabled:opacity-50"
+          @click="useCurrentLocation"
+        >
+          {{ isLocating ? 'Buscando ubicación…' : 'Usar mi ubicación actual' }}
+        </button>
+      </div>
     </div>
 
     <!-- Geocoding warning -->
@@ -205,8 +309,15 @@ watch(
       <span>{{ geocodingWarning }}</span>
     </div>
 
+    <p v-if="locationError" class="text-sm text-red-600" role="alert">
+      {{ locationError }}
+    </p>
+
     <!-- Mapa Leaflet -->
     <div class="space-y-2">
+      <p class="text-sm text-[var(--color-on-surface-variant)]">
+        Busca tu dirección o arrastra el pin hasta tu local.
+      </p>
       <p
         class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
       >
@@ -218,7 +329,7 @@ watch(
         aria-label="Mapa interactivo para seleccionar ubicación"
       />
       <p class="text-xs text-[var(--color-on-surface-variant)]">
-        Arrastra el marcador para ajustar la ubicación exacta.
+        Haz clic en el mapa para mover el pin; también puedes arrastrarlo para ajustar la ubicación.
       </p>
     </div>
 
@@ -255,6 +366,9 @@ watch(
       >
         {{ isSaving ? 'Guardando…' : 'Guardar ubicación' }}
       </button>
+      <p v-if="showSaved" class="mt-3 text-sm font-medium text-emerald-700" role="status">
+        Ubicación guardada correctamente.
+      </p>
     </div>
   </form>
 </template>

@@ -27,6 +27,7 @@ export function useTenantConfig() {
   });
   const saving = ref(false);
   const saved = ref(false);
+  const slugError = ref<string | null>(null);
   const currentLogoUrl = ref<string | null>(null);
 
   const logoFile = ref<File | null>(null);
@@ -47,18 +48,26 @@ export function useTenantConfig() {
   async function save() {
     saving.value = true;
     saved.value = false;
+    slugError.value = null;
     try {
-      const payload: Record<string, unknown> = {
-        name: form.name,
-        slug: form.slug,
-        phone: form.phone,
-        address: form.address,
-      };
-      if (form.latitude != null) payload.latitude = form.latitude;
-      if (form.longitude != null) payload.longitude = form.longitude;
-      await api.patch('/tenant', payload);
+      const slug = form.slug.trim();
+      await api.patch('/tenant', { slug });
+      form.slug = slug;
       saved.value = true;
       setTimeout(() => (saved.value = false), 3000);
+    } catch (error: unknown) {
+      const response = error as {
+        data?: { message?: unknown };
+        response?: { _data?: { message?: unknown } };
+        message?: unknown;
+      };
+      const message =
+        response?.data?.message ?? response?.response?._data?.message ?? response?.message;
+      slugError.value = Array.isArray(message)
+        ? message.join(', ')
+        : typeof message === 'string'
+          ? message
+          : 'No se pudo guardar la URL pública. Intenta de nuevo.';
     } finally {
       saving.value = false;
     }
@@ -116,6 +125,7 @@ export function useTenantConfig() {
     form,
     saving,
     saved,
+    slugError,
     logoFile,
     logoPreview,
     logoUploading,

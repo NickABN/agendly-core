@@ -4,6 +4,7 @@ import {
   Get,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -19,6 +20,7 @@ import { ProfileService } from './profile.service';
 import { UploadService } from './upload.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { GeocodeQueryDto } from './dto/geocode-query.dto';
 import type {
   ProfileDto,
   ImageVersionDto,
@@ -37,6 +39,13 @@ export class ProfileController {
   @Get()
   getProfile(@CurrentTenant() tenantId: string): Promise<ProfileDto> {
     return this.profileService.getProfile(tenantId);
+  }
+
+  @Get('geocode')
+  geocodeAddress(
+    @Query() query: GeocodeQueryDto,
+  ): Promise<{ latitude: number; longitude: number } | null> {
+    return this.profileService.geocodeAddress(query.q);
   }
 
   @Patch()

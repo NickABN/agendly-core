@@ -8,6 +8,30 @@ import type {
 } from '@agendly/shared';
 import { useProfileApi } from '~/composables/useProfileApi';
 
+const STORAGE_UNAVAILABLE_MESSAGE = 'La carga de imágenes no está disponible por ahora';
+
+function uploadErrorMessage(error: unknown, fallback: string): string {
+  const response = error as {
+    data?: { message?: unknown };
+    response?: { status?: number; _data?: { message?: unknown } };
+    status?: number;
+    statusCode?: number;
+    message?: unknown;
+  };
+  // Prefer the server's own message; a raw fetch error message (e.g. "[POST] ... 503")
+  // must never win over the friendly storage message.
+  const serverMessage = response?.data?.message ?? response?.response?._data?.message;
+  if (Array.isArray(serverMessage))
+    return serverMessage.filter((item) => typeof item === 'string').join(', ');
+  if (typeof serverMessage === 'string' && serverMessage.length > 0) return serverMessage;
+  if ([response?.status, response?.statusCode, response?.response?.status].includes(503)) {
+    return STORAGE_UNAVAILABLE_MESSAGE;
+  }
+  const message = response?.message;
+  if (typeof message === 'string' && message.length > 0) return message;
+  return error instanceof Error ? error.message : fallback;
+}
+
 export const useProfileStore = defineStore('profile', () => {
   // The API composable is instantiated ONCE at store setup, not per action
   const api = useProfileApi();
@@ -65,6 +89,10 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
+  async function geocodeAddress(address: string) {
+    return api.geocodeAddress(address);
+  }
+
   async function uploadLogo(file: File) {
     loading.value = true;
     uploadProgress.value = 0;
@@ -76,7 +104,7 @@ export const useProfileStore = defineStore('profile', () => {
         profileData.value = { ...profileData.value, logoUrl: result.url };
       }
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error al subir el logo';
+      error.value = uploadErrorMessage(err, 'Error al subir el logo');
     } finally {
       loading.value = false;
     }
@@ -93,7 +121,7 @@ export const useProfileStore = defineStore('profile', () => {
         profileData.value = { ...profileData.value, bannerUrl: result.url };
       }
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error al subir el banner';
+      error.value = uploadErrorMessage(err, 'Error al subir el banner');
     } finally {
       loading.value = false;
     }
@@ -121,6 +149,7 @@ export const useProfileStore = defineStore('profile', () => {
     fetchProfile,
     saveProfile,
     saveLocation,
+    geocodeAddress,
     uploadLogo,
     uploadBanner,
     fetchImageHistory,

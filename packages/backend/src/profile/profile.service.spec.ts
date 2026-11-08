@@ -115,6 +115,56 @@ function makeService(
 // ---------------------------------------------------------------------------
 
 describe('ProfileService — unit tests', () => {
+  describe('geocodeAddress', () => {
+    it('returns geocoder coordinates without saving the tenant', async () => {
+      const tenantUpdate = jest.fn().mockResolvedValue(makeTenantRecord());
+      const prisma = makePrisma({ tenantUpdate });
+      const geocoder = makeGeocoder(() =>
+        Promise.resolve({ latitude: 19.4012, longitude: -99.1517 }),
+      );
+      const { service } = makeService(prisma, geocoder);
+      const geocodeAddress = (
+        service as unknown as Record<
+          string,
+          (...args: string[]) => Promise<unknown>
+        >
+      ).geocodeAddress;
+
+      expect(geocodeAddress).toEqual(expect.any(Function));
+      if (typeof geocodeAddress !== 'function') return;
+
+      await expect(
+        geocodeAddress.call(service, 'Calle 5, Colonia Centro'),
+      ).resolves.toEqual({
+        latitude: 19.4012,
+        longitude: -99.1517,
+      });
+      expect(geocoder.geocode).toHaveBeenCalledWith('Calle 5, Colonia Centro');
+      expect(tenantUpdate).not.toHaveBeenCalled();
+    });
+
+    it('returns null when the address cannot be found without persisting it', async () => {
+      const tenantUpdate = jest.fn();
+      const prisma = makePrisma({ tenantUpdate });
+      const geocoder = makeGeocoder(() => Promise.resolve(null));
+      const { service } = makeService(prisma, geocoder);
+      const geocodeAddress = (
+        service as unknown as Record<
+          string,
+          (...args: string[]) => Promise<unknown>
+        >
+      ).geocodeAddress;
+
+      expect(geocodeAddress).toEqual(expect.any(Function));
+      if (typeof geocodeAddress !== 'function') return;
+
+      await expect(
+        geocodeAddress.call(service, 'Dirección inexistente 999'),
+      ).resolves.toBeNull();
+      expect(tenantUpdate).not.toHaveBeenCalled();
+    });
+  });
+
   describe('getProfile', () => {
     it('returns all required fields for a seeded tenant', async () => {
       const tenant = makeTenantRecord();

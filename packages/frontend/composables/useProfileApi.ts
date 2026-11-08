@@ -7,6 +7,11 @@ import type {
   ImageVersionDto,
 } from '@agendly/shared';
 
+export interface GeocodeResult {
+  latitude: number;
+  longitude: number;
+}
+
 export function useProfileApi() {
   // apiBase(): URL interna del backend en SSR, pública en el cliente.
   const apiUrl = apiBase();
@@ -38,6 +43,16 @@ export function useProfileApi() {
     });
   }
 
+  async function geocodeAddress(address: string): Promise<GeocodeResult | null> {
+    return $fetch<GeocodeResult | null>(
+      `${apiUrl}/profile/geocode?q=${encodeURIComponent(address)}`,
+      {
+        credentials: 'include',
+        headers: ssrHeaders,
+      },
+    );
+  }
+
   async function uploadImage(type: 'logo' | 'banner', file: File): Promise<UploadResponseDto> {
     const formData = new FormData();
     formData.append('file', file);
@@ -61,6 +76,7 @@ export function useProfileApi() {
     getProfile,
     updateProfile,
     updateLocation,
+    geocodeAddress,
     uploadImage,
     getImageHistory,
   };
