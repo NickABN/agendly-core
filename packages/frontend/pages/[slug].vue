@@ -27,6 +27,11 @@ useSeoMeta({
   ogDescription: () => `Reserva tu cita en ${b.tenantName.value} con Agendly.`,
 });
 
+// SSR found the backend asleep: retry from the browser right away (with backoff).
+onMounted(() => {
+  if (b.serverWaking.value) void b.retryTenant();
+});
+
 const progressStep = computed(() => Math.min(b.step.value, 4));
 
 const tenantInitials = computed(() => getInitials(b.tenantName.value || 'A'));
@@ -59,10 +64,28 @@ const mapsUrl = computed(() =>
         aria-hidden="true"
         >cloud_off</span
       >
-      <p class="font-semibold text-[var(--color-on-surface)]">No pudimos cargar la página</p>
-      <p class="text-sm text-[var(--color-on-surface-variant)]">
-        Intenta de nuevo en unos minutos.
-      </p>
+      <template v-if="b.serverWaking.value">
+        <p class="font-semibold text-[var(--color-on-surface)]">Estamos despertando el servidor</p>
+        <p class="text-sm text-[var(--color-on-surface-variant)] max-w-sm">
+          Agendly usa por ahora un plan gratuito de hosting (Render) que pone el servidor en pausa
+          cuando no hay actividad. Al recibir la primera solicitud se reactiva y puede tardar hasta
+          un minuto. Es un tema de infraestructura, no una falla de la app.
+        </p>
+        <button
+          type="button"
+          class="bg-[var(--color-primary)] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+          :disabled="b.retryingTenant.value"
+          @click="b.retryTenant()"
+        >
+          {{ b.retryingTenant.value ? 'Reintentando…' : 'Reintentar' }}
+        </button>
+      </template>
+      <template v-else>
+        <p class="font-semibold text-[var(--color-on-surface)]">No pudimos cargar la página</p>
+        <p class="text-sm text-[var(--color-on-surface-variant)]">
+          Intenta de nuevo en unos minutos.
+        </p>
+      </template>
     </div>
 
     <!-- Booking flow -->
