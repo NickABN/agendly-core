@@ -384,3 +384,45 @@ describe('public booking confirmation handoff', () => {
     expect(confirmationProps?.tenantInfo).toEqual(tenantInfo);
   });
 });
+
+describe('public booking phone input', () => {
+  it('keeps the client phone label and required state while submitting a Mexican E.164 value', async () => {
+    booking = createBookingState({ step: 4, date: '2026-06-12' });
+    const wrapper = await mountPage();
+    const phoneField = wrapper.get('#client-phone');
+
+    expect(wrapper.get('label[for="client-phone"]').text()).toBe('Teléfono móvil');
+    expect(phoneField.attributes('required')).toBeDefined();
+    expect(wrapper.text()).not.toContain(
+      '10 dígitos en México, o con código de país (ej. +1 415 555 1234)',
+    );
+
+    await phoneField.setValue('55 1234 5678');
+    expect(booking.clientForm.phone).toBe('+525512345678');
+
+    await wrapper.get('form').trigger('submit');
+    expect(booking.submitBooking).toHaveBeenCalledTimes(1);
+  });
+
+  it('submits a Spanish E.164 value after selecting España', async () => {
+    booking = createBookingState({ step: 4, date: '2026-06-12' });
+    const wrapper = await mountPage();
+    const countrySelector = wrapper.get('[aria-haspopup="listbox"]');
+
+    await countrySelector.trigger('click');
+    const spainOption = wrapper.findAll('[role="option"]').find((option) =>
+      option
+        .text()
+        .replace(/\s*check$/, '')
+        .trim()
+        .includes('🇪🇸 España +34'),
+    );
+    expect(spainOption, 'Expected the España country option').toBeDefined();
+    await spainOption!.trigger('click');
+    await wrapper.get('#client-phone').setValue('61 2345 678');
+
+    expect(booking.clientForm.phone).toBe('+34612345678');
+    await wrapper.get('form').trigger('submit');
+    expect(booking.submitBooking).toHaveBeenCalledTimes(1);
+  });
+});

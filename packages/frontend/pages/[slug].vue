@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { formatDateKey, formatPhone, formatTime } from '@agendly/shared';
+import PhoneInput from '~/components/ui/PhoneInput.vue';
 
 definePageMeta({ layout: 'public' });
 
@@ -493,21 +494,7 @@ onBeforeUnmount(disconnectContinueObserver);
                 class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
                 >Teléfono móvil</label
               >
-              <input
-                id="client-phone"
-                v-model="b.clientForm.phone"
-                required
-                type="tel"
-                inputmode="tel"
-                pattern="[+]?[0-9\s\(\)\-]{8,20}"
-                title="Ingresa un teléfono válido (10 dígitos en México o con código de país)"
-                placeholder="+52 000 000 0000"
-                autocomplete="tel"
-                class="w-full bg-[var(--color-surface-container-high)] border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] outline-none transition-all placeholder:text-[var(--color-outline)]/50"
-              />
-              <p class="text-xs text-[var(--color-outline)]">
-                10 dígitos en México, o con código de país (ej. +1 415 555 1234)
-              </p>
+              <PhoneInput id="client-phone" v-model="b.clientForm.phone" :required="true" />
             </div>
 
             <div class="space-y-2">
