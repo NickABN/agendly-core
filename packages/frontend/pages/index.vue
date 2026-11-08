@@ -133,7 +133,7 @@
       </section>
 
       <!-- Benefits Bento Grid -->
-      <section class="py-24 px-6 lg:px-24 bg-surface-container-low" id="beneficios">
+      <section id="beneficios" class="py-24 px-6 lg:px-24 bg-surface-container-low">
         <div class="max-w-7xl mx-auto">
           <div class="mb-16 text-center">
             <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight text-on-surface mb-4">
@@ -243,7 +243,7 @@
       </section>
 
       <!-- Pricing -->
-      <section class="py-32 px-6 lg:px-24" id="precios">
+      <section id="precios" class="py-32 px-6 lg:px-24">
         <div class="max-w-7xl mx-auto">
           <div class="max-w-3xl mx-auto text-center mb-20">
             <h2 class="text-4xl lg:text-5xl font-semibold tracking-tight text-on-surface mb-6">
