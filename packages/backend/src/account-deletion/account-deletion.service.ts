@@ -213,8 +213,13 @@ export class AccountDeletionService {
   /** Deletes every tenant whose grace period is over. Idempotent; safe to overlap. */
   async purgeDue(now: Date = new Date()): Promise<PurgeRunResult> {
     const due = await this.prisma.tenant.findMany({
-      where: { deletionScheduledAt: { lte: now } },
-      select: { id: true, name: true, stripeSubscriptionId: true },
+      where: { isActive: false, deletionScheduledAt: { lte: now } },
+      select: {
+        id: true,
+        name: true,
+        stripeSubscriptionId: true,
+        subscriptionStatus: true,
+      },
       orderBy: { deletionScheduledAt: 'asc' },
       take: PURGE_BATCH_LIMIT,
     });
@@ -224,15 +229,24 @@ export class AccountDeletionService {
     for (const tenant of due) {
       try {
         const emails = await this.ownerEmails(tenant.id);
+        // External cleanup must complete first. If it fails, the tenant remains
+        // due so the next run can retry it; both cleanup operations are safe to
+        // repeat after a partial failure.
+        await this.cleanupExternal(tenant);
+
         // The condition is re-checked atomically: a reactivation that landed
-        // after the read above wins and the tenant is kept.
+        // after the read above wins and the tenant is kept. Keep this check
+        // immediately before the destructive database operation.
         const result = await this.prisma.tenant.deleteMany({
-          where: { id: tenant.id, deletionScheduledAt: { lte: now } },
+          where: {
+            id: tenant.id,
+            isActive: false,
+            deletionScheduledAt: { lte: now },
+          },
         });
         if (result.count === 0) continue;
         purged += 1;
         this.logger.log(`Tenant ${tenant.id} eliminado definitivamente`);
-        await this.cleanupExternal(tenant);
         for (const to of emails) {
           await this.emailService
             .sendAccountDeleted({ to, businessName: tenant.name })
@@ -256,26 +270,21 @@ export class AccountDeletionService {
     return { due: due.length, purged, failed };
   }
 
-  /** Best-effort: the DB rows are already gone, so failures are only logged. */
   private async cleanupExternal(tenant: {
     id: string;
     stripeSubscriptionId: string | null;
+    subscriptionStatus: string | null;
   }): Promise<void> {
-    await this.storage
-      .deletePrefix(`tenants/${tenant.id}/`)
-      .catch((err: Error) =>
-        this.logger.error(
-          `No se pudieron borrar las imágenes en R2 del tenant ${tenant.id}: ${err.message}`,
-        ),
-      );
-    if (tenant.stripeSubscriptionId) {
-      await this.billing
-        .cancelSubscriptionNow(tenant.stripeSubscriptionId)
-        .catch((err: Error) =>
-          this.logger.error(
-            `No se pudo cancelar la suscripción en Stripe del tenant ${tenant.id}: ${err.message}`,
-          ),
-        );
+    await this.storage.deletePrefix(`tenants/${tenant.id}/`);
+    if (
+      tenant.stripeSubscriptionId &&
+      tenant.subscriptionStatus !== 'CANCELED'
+    ) {
+      try {
+        await this.billing.cancelSubscriptionNow(tenant.stripeSubscriptionId);
+      } catch (err) {
+        if (!isAlreadyCanceledSubscription(err)) throw err;
+      }
     }
   }
 
@@ -300,5 +309,12 @@ function hasLiveSubscription(tenant: {
 }): boolean {
   return (
     !!tenant.stripeSubscriptionId && tenant.subscriptionStatus !== 'CANCELED'
+  );
+}
+
+function isAlreadyCanceledSubscription(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  return /subscription.*already.*cancel(?:led|ed)|already.*cancel(?:led|ed).*subscription/i.test(
+    err.message,
   );
 }

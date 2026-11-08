@@ -202,16 +202,34 @@ describe('AccountDeletionService.cancelDeletion', () => {
 });
 
 describe('AccountDeletionService.purgeDue', () => {
-  it('deletes due tenants atomically, then cleans R2 and Stripe and emails the owner', async () => {
+  it('cleans R2 and Stripe before atomically deleting the tenant and emailing the owner', async () => {
     const { service, prisma, storage, billing, email } = build({
       due: [{ id: 't1', name: 'Salón', stripeSubscriptionId: 'sub_1' }],
+    });
+    const steps: string[] = [];
+    storage.deletePrefix.mockImplementation(async () => {
+      steps.push('r2');
+      return 3;
+    });
+    billing.cancelSubscriptionNow.mockImplementation(async () => {
+      steps.push('stripe');
+    });
+    prisma.tenant.deleteMany.mockImplementation(async () => {
+      steps.push('delete');
+      return { count: 1 };
     });
 
     const res = await service.purgeDue(NOW);
 
     expect(res).toEqual({ due: 1, purged: 1, failed: 0 });
+    expect(steps.indexOf('delete')).toBeGreaterThan(steps.indexOf('r2'));
+    expect(steps.indexOf('delete')).toBeGreaterThan(steps.indexOf('stripe'));
     expect(prisma.tenant.deleteMany).toHaveBeenCalledWith({
-      where: { id: 't1', deletionScheduledAt: { lte: NOW } },
+      where: {
+        id: 't1',
+        isActive: false,
+        deletionScheduledAt: { lte: NOW },
+      },
     });
     expect(storage.deletePrefix).toHaveBeenCalledWith('tenants/t1/');
     expect(billing.cancelSubscriptionNow).toHaveBeenCalledWith('sub_1');
@@ -222,7 +240,7 @@ describe('AccountDeletionService.purgeDue', () => {
   });
 
   it('keeps a tenant reactivated between the read and the delete', async () => {
-    const { service, storage, email } = build({
+    const { service, prisma, storage, email } = build({
       due: [{ id: 't1', name: 'Salón', stripeSubscriptionId: null }],
       deleteCount: 0,
     });
@@ -230,20 +248,49 @@ describe('AccountDeletionService.purgeDue', () => {
     const res = await service.purgeDue(NOW);
 
     expect(res).toEqual({ due: 1, purged: 0, failed: 0 });
-    expect(storage.deletePrefix).not.toHaveBeenCalled();
+    expect(storage.deletePrefix).toHaveBeenCalledWith('tenants/t1/');
+    expect(prisma.tenant.deleteMany).toHaveBeenCalledWith({
+      where: {
+        id: 't1',
+        isActive: false,
+        deletionScheduledAt: { lte: NOW },
+      },
+    });
     expect(email.sendAccountDeleted).not.toHaveBeenCalled();
   });
 
-  it('still counts the purge when external cleanup fails', async () => {
-    const { service, storage } = build({
+  it('leaves a due tenant retryable when R2 cleanup fails', async () => {
+    const { service, prisma, storage } = build({
       due: [{ id: 't1', name: 'Salón', stripeSubscriptionId: null }],
     });
-    storage.deletePrefix.mockRejectedValue(new Error('R2 down'));
+    storage.deletePrefix.mockRejectedValueOnce(new Error('R2 down'));
+
+    expect(await service.purgeDue(NOW)).toEqual({
+      due: 1,
+      purged: 0,
+      failed: 1,
+    });
+    expect(prisma.tenant.deleteMany).not.toHaveBeenCalled();
 
     expect(await service.purgeDue(NOW)).toEqual({
       due: 1,
       purged: 1,
       failed: 0,
     });
+    expect(prisma.tenant.deleteMany).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not delete a due tenant when Stripe cancellation fails', async () => {
+    const { service, prisma, billing } = build({
+      due: [{ id: 't1', name: 'Salón', stripeSubscriptionId: 'sub_1' }],
+    });
+    billing.cancelSubscriptionNow.mockRejectedValue(new Error('Stripe down'));
+
+    expect(await service.purgeDue(NOW)).toEqual({
+      due: 1,
+      purged: 0,
+      failed: 1,
+    });
+    expect(prisma.tenant.deleteMany).not.toHaveBeenCalled();
   });
 });
