@@ -1,11 +1,36 @@
 <script setup lang="ts">
 import { ACCOUNT_DELETION_GRACE_DAYS, formatDate } from '@agendly/shared';
+import { watch } from 'vue';
 
 definePageMeta({ layout: 'admin' });
 
 const { store, logout } = useAuth();
 const timezone = useBusinessTimezone();
 const { status, loading, error, load, requestDeletion, cancelDeletion } = useAccountDeletion();
+const now = ref(Date.now());
+
+const MAX_TIMER_DELAY = 2_147_483_647;
+let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
+
+function clearDeadlineTimer() {
+  if (deadlineTimer !== undefined) {
+    clearTimeout(deadlineTimer);
+    deadlineTimer = undefined;
+  }
+}
+
+function scheduleDeadlineTimer() {
+  clearDeadlineTimer();
+  now.value = Date.now();
+
+  const deadline = store.deletionScheduledAt ? Date.parse(store.deletionScheduledAt) : NaN;
+  if (!Number.isFinite(deadline) || deadline <= now.value) return;
+
+  deadlineTimer = setTimeout(
+    scheduleDeadlineTimer,
+    Math.min(deadline - now.value, MAX_TIMER_DELAY),
+  );
+}
 
 const isOwner = computed(() => store.user?.role === 'OWNER');
 const slug = computed(() => store.tenant?.slug ?? '');
@@ -14,7 +39,7 @@ const pendingDate = computed(() =>
 );
 const reactivationDeadlinePassed = computed(() => {
   const deletionScheduledAt = store.deletionScheduledAt;
-  return !!deletionScheduledAt && Date.parse(deletionScheduledAt) <= Date.now();
+  return !!deletionScheduledAt && Date.parse(deletionScheduledAt) <= now.value;
 });
 
 const confirming = ref(false);
@@ -43,9 +68,20 @@ async function submitDeletion() {
 async function reactivate() {
   if (reactivationDeadlinePassed.value) return;
   reactivated.value = await cancelDeletion();
+  if (!reactivated.value) {
+    const reactivationError = error.value;
+    await load();
+    error.value = reactivationError;
+  }
 }
 
-onMounted(() => void load());
+watch(() => store.deletionScheduledAt, scheduleDeadlineTimer);
+
+onMounted(() => {
+  void load();
+  scheduleDeadlineTimer();
+});
+onUnmounted(clearDeadlineTimer);
 </script>
 
 <template>
