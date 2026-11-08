@@ -2,7 +2,6 @@ import { fileURLToPath } from 'node:url';
 import {
   isProductionNetlifyDeploy,
   validateNetlifyProxyConfig,
-  validateProductionPublicApiUrl,
   validateProductionPublicAppUrl,
 } from './config/runtime-config-validation';
 
@@ -40,7 +39,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-03-19',
   devtools: { enabled: true },
 
-  modules: ['@nuxt/ui', '@pinia/nuxt'],
+  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/eslint'],
 
   // Consume @agendly/shared from SOURCE: its dist is CommonJS and Vite can't
   // expose named value exports from it (types alone never hit this).

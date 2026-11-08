@@ -93,7 +93,7 @@ onUnmounted(() => {
 
 // ─── Drag-end handler ──────────────────────────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function attachDragEnd(L: any) {
+function attachDragEnd(_L: any) {
   markerInstance?.on('dragend', () => {
     const pos = markerInstance.getLatLng();
     latitude.value = pos.lat;
@@ -102,7 +102,7 @@ function attachDragEnd(L: any) {
 }
 
 // ─── Place / move marker programmatically ─────────────────────────────────────
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 async function placeMarker(lat: number, lng: number) {
   if (!mapInstance) return;
   const L = await import('leaflet');

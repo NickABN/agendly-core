@@ -74,7 +74,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const ssrCookie = () =>
       import.meta.server ? useRequestHeaders(['cookie']) : {};
 
-    let profile: MeResponse | null = null;
+    let profile: MeResponse;
     try {
       profile = await $fetch<MeResponse>(`${base}/auth/me`, {
         credentials: 'include',
