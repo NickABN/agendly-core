@@ -208,6 +208,68 @@ describe('RemindersService.sendDueReminders', () => {
     );
   });
 
+  it('builds reminder content from the current row returned by the atomic claim', async () => {
+    const candidate = appt('a1', {
+      employee: { name: 'Luisa at selection time' },
+    });
+    const claimed = appt('a1', {
+      employee: { name: 'María at claim time' },
+      tenant: { ...appt('x').tenant, phone: '+52 33 9999 0000' },
+    });
+    const updateManyAndReturn = jest.fn().mockResolvedValue([claimed]);
+    const findUnique = jest.fn().mockResolvedValue(claimed);
+    const updateMany = jest.fn().mockResolvedValue({ count: 1 });
+    const transactionClient = {
+      appointment: {
+        findUnique,
+        updateMany,
+        updateManyAndReturn,
+        update: jest.fn().mockResolvedValue(claimed),
+      },
+      $queryRaw: jest.fn().mockResolvedValue([claimed]),
+      $queryRawUnsafe: jest.fn().mockResolvedValue([claimed]),
+      $executeRaw: jest.fn().mockResolvedValue(1),
+      $executeRawUnsafe: jest.fn().mockResolvedValue(1),
+    };
+    const prisma = {
+      appointment: {
+        findMany: jest.fn().mockResolvedValue([candidate]),
+        findUnique,
+        updateMany,
+        updateManyAndReturn,
+        update: jest.fn().mockResolvedValue(claimed),
+      },
+      $transaction: jest
+        .fn()
+        .mockImplementation(
+          async (
+            callback: (
+              transaction: typeof transactionClient,
+            ) => Promise<unknown>,
+          ) => callback(transactionClient),
+        ),
+      $queryRaw: transactionClient.$queryRaw,
+      $queryRawUnsafe: transactionClient.$queryRawUnsafe,
+    };
+    const email = { sendBookingReminder: jest.fn().mockResolvedValue(true) };
+    const service = new RemindersService(
+      prisma as never,
+      email as never,
+      { annotate: jest.fn().mockResolvedValue(new Map()) } as never,
+      { manageUrl: (id: string) => `https://app.test/cita/${id}.sig` } as never,
+    );
+
+    const result = await service.sendDueReminders(NOW, noSleep);
+
+    expect(result).toEqual({ candidates: 1, sent: 1, failed: 0 });
+    expect(email.sendBookingReminder).toHaveBeenCalledWith(
+      expect.objectContaining({
+        employeeName: 'María at claim time',
+        businessPhone: '+52 33 9999 0000',
+      }),
+    );
+  });
+
   it('releases the claim when the provider fails so the next run retries', async () => {
     const { service, prisma } = build([appt('a1')], { sendOk: false });
     const res = await service.sendDueReminders(NOW, noSleep);
