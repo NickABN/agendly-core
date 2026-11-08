@@ -1,6 +1,14 @@
 import { computed, reactive, ref, watch } from 'vue';
 import { BUSINESS_TZ } from '@agendly/shared';
 import type { BookingResponse, CreateBookingRequest, PublicTenantResponse } from '@agendly/shared';
+import { isColdStartError } from '~/utils/coldStart';
+
+/**
+ * SSR budget for the tenant fetch. If the backend is asleep (Render free plan) we
+ * render a friendly "waking up" state before the hosting function itself times out,
+ * and the browser retries after hydration.
+ */
+const SSR_TENANT_TIMEOUT_MS = 8000;
 
 /**
  * Full state machine of the public booking flow for the public app /[slug] route:
@@ -19,9 +27,32 @@ export async function usePublicBooking(slug: string) {
   const startedAt = import.meta.client ? Date.now() : 0;
 
   // ── Tenant payload (SSR) ──
-  const { data: tenantData, error: fetchError } = await useAsyncData(`public-${slug}`, () =>
-    $fetch<PublicTenantResponse>(`${ssrBase}/public/${slug}`),
-  );
+  const {
+    data: tenantData,
+    error: fetchError,
+    status: tenantStatus,
+    refresh: retryTenant,
+  } = await useAsyncData(`public-${slug}`, async () => {
+    try {
+      return await $fetch<PublicTenantResponse>(
+        `${ssrBase}/public/${slug}`,
+        import.meta.server ? { timeout: SSR_TENANT_TIMEOUT_MS } : {},
+      );
+    } catch (err) {
+      // Normalize "backend asleep" to a 503 that survives SSR payload serialization.
+      if (isColdStartError(err)) {
+        throw createError({
+          statusCode: 503,
+          statusMessage: 'Backend waking up',
+          data: { coldStart: true },
+        });
+      }
+      throw err;
+    }
+  });
+  /** The tenant could not load because the backend is waking up (not a real error). */
+  const serverWaking = computed(() => !!fetchError.value && isColdStartError(fetchError.value));
+  const retryingTenant = computed(() => tenantStatus.value === 'pending');
 
   const tenantName = computed(() => tenantData.value?.tenant.name ?? '');
   const tenantLogoUrl = computed(() => tenantData.value?.tenant.logoUrl ?? null);
@@ -163,6 +194,9 @@ export async function usePublicBooking(slug: string) {
   return {
     tenantData,
     fetchError,
+    serverWaking,
+    retryingTenant,
+    retryTenant,
     tenantName,
     tenantLogoUrl,
     tenantBannerUrl,
