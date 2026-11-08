@@ -38,6 +38,13 @@ export class PublicService {
         bannerUrl: tenant.bannerUrl ?? null,
         address: tenant.address ?? null,
         phone: tenant.phone ?? null,
+        ...(tenant.latitude !== undefined && {
+          latitude: tenant.latitude === null ? null : Number(tenant.latitude),
+        }),
+        ...(tenant.longitude !== undefined && {
+          longitude:
+            tenant.longitude === null ? null : Number(tenant.longitude),
+        }),
       },
       services: services.map((s) => ({
         id: s.id,

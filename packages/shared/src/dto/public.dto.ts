@@ -23,6 +23,9 @@ export interface PublicTenantResponse {
     bannerUrl: string | null;
     address: string | null;
     phone: string | null;
+    /** Saved business coordinates; optional for older public payloads. */
+    latitude?: number | null;
+    longitude?: number | null;
   };
   services: PublicServiceDto[];
   employees: PublicEmployeeDto[];

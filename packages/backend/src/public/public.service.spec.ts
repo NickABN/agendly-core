@@ -44,6 +44,25 @@ describe('PublicService.getTenantBySlug', () => {
     });
   });
 
+  it('exposes saved map coordinates as numbers and null when the business has none', async () => {
+    delete process.env.BILLING_ENFORCED;
+    const withCoordinates = await serviceWith({
+      ...tenant,
+      latitude: 19.4326,
+      longitude: -99.1332,
+    }).getTenantBySlug('bellas-nails');
+    const withoutCoordinates = await serviceWith({
+      ...tenant,
+      latitude: null,
+      longitude: null,
+    }).getTenantBySlug('bellas-nails');
+
+    expect(withCoordinates.tenant).toHaveProperty('latitude', 19.4326);
+    expect(withCoordinates.tenant).toHaveProperty('longitude', -99.1332);
+    expect(withoutCoordinates.tenant).toHaveProperty('latitude', null);
+    expect(withoutCoordinates.tenant).toHaveProperty('longitude', null);
+  });
+
   it('keeps serving an expired trial while billing is not enforced', async () => {
     delete process.env.BILLING_ENFORCED;
     await expect(

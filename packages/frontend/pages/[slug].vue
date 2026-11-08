@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { nextTick, ref } from 'vue';
 import { formatDateKey, formatPhone, formatTime } from '@agendly/shared';
 
 definePageMeta({ layout: 'public' });
@@ -35,11 +36,28 @@ onMounted(() => {
 const progressStep = computed(() => Math.min(b.step.value, 4));
 
 const tenantInitials = computed(() => getInitials(b.tenantName.value || 'A'));
+const clientNameInput = ref<HTMLInputElement | null>(null);
 const mapsUrl = computed(() =>
   b.tenantAddress.value
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.tenantAddress.value)}`
     : '',
 );
+
+async function continueToClientForm() {
+  b.goToClientForm();
+  await nextTick();
+
+  const firstField = clientNameInput.value;
+  if (!firstField) return;
+
+  firstField.focus({ preventScroll: true });
+  const prefersReducedMotion =
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  firstField.scrollIntoView?.({
+    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    block: 'center',
+  });
+}
 </script>
 
 <template>
@@ -52,6 +70,7 @@ const mapsUrl = computed(() =>
       :employee-name="b.selectedEmployeeName.value"
       :tenant-name="b.tenantName.value"
       :timezone="b.tenantTimezone.value"
+      :tenant-info="b.tenantData.value?.tenant ?? null"
     />
 
     <!-- Backend unavailable (non-404 error) -->
@@ -287,7 +306,7 @@ const mapsUrl = computed(() =>
           <button
             v-if="b.selectedSlot.value"
             class="w-full soul-gradient text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all"
-            @click="b.goToClientForm"
+            @click="continueToClientForm"
           >
             Continuar al paso final
             <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
@@ -389,6 +408,7 @@ const mapsUrl = computed(() =>
               >
               <input
                 id="client-name"
+                ref="clientNameInput"
                 v-model="b.clientForm.name"
                 required
                 minlength="2"
@@ -484,11 +504,35 @@ const mapsUrl = computed(() =>
 
       <!-- Bottom Agendly badge -->
       <div
+        v-if="b.step.value !== 3 || !b.selectedDate.value || !b.selectedSlot.value"
         class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[var(--color-outline-variant)]/10 py-3"
       >
         <p class="text-center text-xs text-[var(--color-outline)]">
           Hecho con <span class="font-bold text-[var(--color-on-surface)]">⬡ Agendly</span>
         </p>
+      </div>
+
+      <!-- Quick continuation once both the day and time are selected -->
+      <div
+        v-if="b.step.value === 3 && b.selectedDate.value && b.selectedSlot.value"
+        class="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-outline-variant)]/20 bg-white/95 backdrop-blur-md"
+        style="padding-bottom: calc(env(safe-area-inset-bottom) + 1rem)"
+      >
+        <div class="max-w-sm mx-auto px-4 pt-3">
+          <div class="flex items-center justify-between gap-4">
+            <p class="min-w-0 truncate text-sm font-semibold text-[var(--color-on-surface)]">
+              {{ formatDateKey(b.selectedDate.value, 'short') }} ·
+              {{ formatTime(b.selectedSlot.value, b.tenantTimezone.value) }}
+            </p>
+            <button
+              type="button"
+              class="shrink-0 soul-gradient text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all"
+              @click="continueToClientForm"
+            >
+              Continuar
+            </button>
+          </div>
+        </div>
       </div>
     </template>
   </div>
