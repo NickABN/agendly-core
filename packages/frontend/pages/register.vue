@@ -48,22 +48,6 @@ async function handleSubmit() {
       <p class="text-[var(--color-on-surface-variant)]">Crea tu cuenta y transforma la gestión de tu negocio.</p>
     </header>
 
-    <!-- Aceptación de Términos (aplica a Google y a correo) -->
-    <label class="flex items-start gap-3 cursor-pointer p-3 rounded-lg bg-[var(--color-surface-container-low)]">
-      <input
-        v-model="acceptedTerms"
-        type="checkbox"
-        class="mt-0.5 w-4 h-4 rounded accent-[var(--color-primary)]"
-        @change="error = ''"
-      />
-      <span class="text-sm text-[var(--color-on-surface-variant)] leading-snug">
-        He leído y acepto los
-        <NuxtLink to="/terminos" target="_blank" class="text-[var(--color-primary)] underline">Términos y Condiciones</NuxtLink>
-        y el
-        <NuxtLink to="/privacidad" target="_blank" class="text-[var(--color-primary)] underline">Aviso de Privacidad</NuxtLink>.
-      </span>
-    </label>
-
     <!-- Google OAuth -->
     <button
       type="button"
@@ -160,7 +144,23 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <div class="pt-4">
+      <!-- Aceptación de Términos junto al botón de crear (aplica también a Google) -->
+      <label class="flex items-start gap-3 cursor-pointer p-3 rounded-lg bg-[var(--color-surface-container-low)]">
+        <input
+          v-model="acceptedTerms"
+          type="checkbox"
+          class="mt-0.5 w-4 h-4 rounded accent-[var(--color-primary)]"
+          @change="error = ''"
+        />
+        <span class="text-sm text-[var(--color-on-surface-variant)] leading-snug">
+          He leído y acepto los
+          <NuxtLink to="/terminos" target="_blank" class="text-[var(--color-primary)] underline">Términos y Condiciones</NuxtLink>
+          y el
+          <NuxtLink to="/privacidad" target="_blank" class="text-[var(--color-primary)] underline">Aviso de Privacidad</NuxtLink>.
+        </span>
+      </label>
+
+      <div class="pt-1">
         <button
           type="submit"
           :disabled="loading"
