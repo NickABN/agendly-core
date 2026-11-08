@@ -116,6 +116,8 @@ function attachDragEnd(_L: any) {
     const pos = markerInstance.getLatLng();
     latitude.value = pos.lat;
     longitude.value = pos.lng;
+    // A hand-placed pin is the owner's answer for the typed address.
+    pinAddress.value = address.value.trim();
     edited.value = true;
     locationError.value = null;
   });

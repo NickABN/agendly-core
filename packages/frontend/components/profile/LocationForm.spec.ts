@@ -79,7 +79,13 @@ function installVueGlobals() {
   vi.stubGlobal('onUnmounted', onUnmounted);
 }
 
-async function mountLocationForm(initialData = { address: null, latitude: null, longitude: null }) {
+async function mountLocationForm(
+  initialData: { address: string | null; latitude: number | null; longitude: number | null } = {
+    address: null,
+    latitude: null,
+    longitude: null,
+  },
+) {
   setActivePinia(createPinia());
   const wrapper = mount(LocationForm, { props: { initialData } });
   wrappers.push(wrapper);
@@ -302,6 +308,26 @@ describe('profile location form UX', () => {
       address: 'Av. Chapultepec 15, Guadalajara',
       latitude: 20.6597,
       longitude: -103.3496,
+    });
+  });
+
+  it('keeps a manually dragged pin for a typed address instead of re-geocoding it', async () => {
+    const wrapper = await mountLocationForm({
+      address: 'Calle 1',
+      latitude: 19.4326,
+      longitude: -99.1332,
+    });
+
+    await wrapper.get('#location-address').setValue('Calle 2, Centro');
+    await leafletMock.triggerMarkerDrag(19.5, -99.2);
+    await wrapper.get('form').trigger('submit');
+    await flushPromises();
+
+    expect(callsFor('/profile/geocode', 'GET')).toHaveLength(0);
+    expect(wrapper.emitted('submit')?.[0]?.[0]).toEqual({
+      address: 'Calle 2, Centro',
+      latitude: 19.5,
+      longitude: -99.2,
     });
   });
 
