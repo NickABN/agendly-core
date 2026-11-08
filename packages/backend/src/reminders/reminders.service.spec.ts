@@ -149,8 +149,7 @@ describe('RemindersService.sendDueReminders', () => {
               const startMatches =
                 where.startTime === undefined ||
                 (where.startTime instanceof Date &&
-                  where.startTime.getTime() ===
-                    (current.startTime as Date).getTime());
+                  where.startTime.getTime() === current.startTime.getTime());
               const employeeMatches =
                 where.employeeId === undefined ||
                 where.employeeId === current.employeeId;
