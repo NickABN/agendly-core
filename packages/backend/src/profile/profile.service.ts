@@ -23,6 +23,12 @@ export class ProfileService {
     return this.mapToProfileDto(tenant);
   }
 
+  async geocodeAddress(
+    address: string,
+  ): Promise<{ latitude: number; longitude: number } | null> {
+    return this.geocoder.geocode(address.trim());
+  }
+
   async updateProfile(
     tenantId: string,
     dto: UpdateProfileDto,

@@ -1,9 +1,11 @@
 import {
   BadGatewayException,
+  ServiceUnavailableException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import * as fc from 'fast-check';
 import { UploadService } from './upload.service';
+import { processImage } from './image-processor';
 
 // El pipeline de optimización real (sharp) se cubre en image-processor.spec.ts;
 // acá se mockea para que los buffers sintéticos del spec no sean rechazados y
@@ -46,6 +48,7 @@ function makeFile(
 
 function makeStorageService(uploadImpl?: () => Promise<string>) {
   return {
+    isConfigured: true,
     upload: jest
       .fn()
       .mockImplementation(
@@ -128,6 +131,48 @@ function makeService(
 // ---------------------------------------------------------------------------
 
 describe('UploadService — unit tests', () => {
+  describe('storage configuration', () => {
+    const unavailableMessage =
+      'La carga de imágenes no está disponible por ahora';
+
+    it.each(['logo', 'banner'] as const)(
+      'returns 503 for a %s upload before processing, storage, or database work when storage is not configured',
+      async (type) => {
+        const storage = {
+          isConfigured: false,
+          upload: jest
+            .fn()
+            .mockResolvedValue('https://cdn.example.com/test.jpg'),
+        };
+        const { service, prisma } = makeService(storage);
+        const optimizeImage = processImage as jest.MockedFunction<
+          typeof processImage
+        >;
+        optimizeImage.mockClear();
+
+        const upload =
+          type === 'logo'
+            ? service.uploadLogo('tenant-123', makeFile())
+            : service.uploadBanner('tenant-123', makeFile());
+        let error: unknown;
+        try {
+          await upload;
+        } catch (reason) {
+          error = reason;
+        }
+
+        expect(error).toBeInstanceOf(ServiceUnavailableException);
+        expect((error as ServiceUnavailableException).getStatus()).toBe(503);
+        expect((error as ServiceUnavailableException).getResponse()).toEqual(
+          expect.objectContaining({ message: unavailableMessage }),
+        );
+        expect(optimizeImage).not.toHaveBeenCalled();
+        expect(storage.upload).not.toHaveBeenCalled();
+        expect(prisma.$transaction).not.toHaveBeenCalled();
+      },
+    );
+  });
+
   describe('uploadLogo', () => {
     it('accepts a valid JPEG and creates ImageVersion + updates logoUrl', async () => {
       const { service, storage, prisma } = makeService();
