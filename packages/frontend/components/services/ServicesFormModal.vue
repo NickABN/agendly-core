@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import type { ServiceItem } from '~/composables/useServices';
+import AppSelect from '~/components/ui/AppSelect.vue';
+import {
+  ONBOARDING_SERVICE_DURATION_OPTIONS,
+  formatServiceDuration,
+} from '~/utils/onboardingServices';
 
 const props = defineProps<{
   open: boolean;
   editing: ServiceItem | null;
 }>();
+
+const durationOptions = ONBOARDING_SERVICE_DURATION_OPTIONS.map((duration) => ({
+  value: duration,
+  label: formatServiceDuration(duration),
+}));
 
 const emit = defineEmits<{
   'update:open': [open: boolean];
@@ -90,18 +100,11 @@ function submit() {
                 >
                   Duración
                 </label>
-                <select
+                <AppSelect
                   id="service-duration"
-                  v-model.number="form.durationMinutes"
-                  class="w-full px-4 py-3 bg-[var(--color-surface-container-high)] border-none rounded-lg focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-white transition-all outline-none appearance-none"
-                >
-                  <option :value="15">15 min</option>
-                  <option :value="30">30 min</option>
-                  <option :value="45">45 min</option>
-                  <option :value="60">60 min</option>
-                  <option :value="90">90 min</option>
-                  <option :value="120">2 horas</option>
-                </select>
+                  v-model="form.durationMinutes"
+                  :options="durationOptions"
+                />
               </div>
               <div class="space-y-2">
                 <label

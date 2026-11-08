@@ -2,7 +2,7 @@
 import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { computed, ref } from 'vue';
-import OnboardingSelect from './OnboardingSelect.vue';
+import AppSelect from './AppSelect.vue';
 
 let mountedWrappers: VueWrapper[] = [];
 
@@ -25,7 +25,7 @@ function mountSelect(
     disabled?: boolean;
   } = {},
 ) {
-  const wrapper = mount(OnboardingSelect, {
+  const wrapper = mount(AppSelect, {
     props: {
       id: props.id ?? 'service-duration-0',
       modelValue: props.modelValue ?? durationOptions[0].value,
@@ -57,7 +57,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('OnboardingSelect custom listbox', () => {
+describe('AppSelect custom listbox', () => {
   it('renders the selected option label on the trigger and keeps the id for label association', () => {
     const wrapper = mountSelect({ id: 'service-duration-0', modelValue: 60 });
 
