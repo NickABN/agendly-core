@@ -11,10 +11,14 @@ const props = defineProps<{
   editing: ServiceItem | null;
 }>();
 
-const durationOptions = ONBOARDING_SERVICE_DURATION_OPTIONS.map((duration) => ({
-  value: duration,
-  label: formatServiceDuration(duration),
-}));
+// Keep an existing service's duration selectable even if it is not a preset.
+const durationOptions = computed(() => {
+  const presets: number[] = [...ONBOARDING_SERVICE_DURATION_OPTIONS];
+  const current = form.durationMinutes;
+  const values =
+    current && !presets.includes(current) ? [...presets, current].sort((a, b) => a - b) : presets;
+  return values.map((duration) => ({ value: duration, label: formatServiceDuration(duration) }));
+});
 
 const emit = defineEmits<{
   'update:open': [open: boolean];

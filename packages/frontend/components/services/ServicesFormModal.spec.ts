@@ -76,4 +76,27 @@ describe('ServicesFormModal duration select', () => {
     expect(payload.durationMinutes).toBe(60);
     expect(typeof payload.durationMinutes).toBe('number');
   });
+
+  it('keeps a non-preset duration of an existing service selectable', async () => {
+    const wrapper = mount(ServicesFormModal, {
+      props: { open: false, editing: null },
+      attachTo: document.body,
+    });
+    mountedWrappers.push(wrapper);
+    await wrapper.setProps({
+      open: true,
+      editing: {
+        id: 'svc-1',
+        name: 'Tratamiento',
+        durationMinutes: 100,
+        bufferMinutes: 0,
+        priceMXN: '500',
+      } as never,
+    });
+    await nextTick();
+    await nextTick();
+
+    const trigger = document.querySelector('#service-duration');
+    expect(trigger?.textContent).toContain('1 h 40 min');
+  });
 });
