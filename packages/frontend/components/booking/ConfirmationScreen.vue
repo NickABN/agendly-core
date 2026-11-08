@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BUSINESS_TZ, formatDate, formatTime } from '@agendly/shared';
+import { BUSINESS_TZ, formatDate, formatPhone, formatTime } from '@agendly/shared';
 import type { BookingResponse, PublicTenantResponse } from '@agendly/shared';
 
 const props = withDefaults(
@@ -216,7 +216,7 @@ function addToCalendar() {
             class="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]"
           >
             <span class="material-symbols-outlined text-base" aria-hidden="true">call</span>
-            {{ tenantInfo.phone }}
+            {{ formatPhone(tenantInfo.phone) }}
           </a>
         </section>
 
