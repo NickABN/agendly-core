@@ -47,6 +47,9 @@ async function onUpdateStatus(id: string, status: 'COMPLETED' | 'NO_SHOW' | 'CAN
     <p class="sr-only" role="status" aria-live="polite">{{ calendar.announcement.value }}</p>
 
     <div class="flex-1 overflow-y-auto p-3 md:p-6">
+      <!-- Apoyo voluntario (solo mientras Agendly es gratis) -->
+      <AdminSupportNudge />
+
       <!-- Trial por vencer (últimos 7 días) -->
       <div
         v-if="

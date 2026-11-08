@@ -94,6 +94,12 @@ watch(
           }}</span>
           {{ planNavLabel }}
         </NuxtLink>
+        <p
+          v-if="!store.billingEnforced"
+          class="px-4 text-xs text-[var(--color-on-surface-variant)]"
+        >
+          ¿Te gusta Agendly? Apóyanos para mejorarlo.
+        </p>
         <NuxtLink
           to="/admin/account"
           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm text-[var(--color-on-surface-variant)] hover:bg-slate-200/40"
