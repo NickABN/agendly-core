@@ -363,6 +363,17 @@ pnpm 10.32.1 y Docker 29.
 | API backend         | http://localhost:3000                   |
 | Health check        | http://localhost:3000/health/ready      |
 
+Para verificar el login del usuario demo contra la API local:
+
+```bash
+curl -i -X POST http://localhost:3000/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"demo@agendly.mx","password":"demo1234"}'
+```
+
+La respuesta esperada es `HTTP 201`, con el usuario en el cuerpo y las cookies `agendly_token` y
+`agendly_refresh` en `Set-Cookie`.
+
 Para apagar la base: `docker compose down` (conserva los datos) o `docker compose down -v` (los
 borra).
 
