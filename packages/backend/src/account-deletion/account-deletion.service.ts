@@ -181,15 +181,16 @@ export class AccountDeletionService {
     if (user.role !== 'OWNER') {
       throw new ForbiddenException('Solo el dueño puede reactivar la cuenta');
     }
-    // Conditional on a pending deletion: never re-activates a tenant that was
-    // deactivated for another reason, and races with the purge job safely.
+    // Conditional on a pending deletion still inside its grace period: never
+    // re-activates a tenant deactivated for another reason, and never races the
+    // purge job, which cleans R2/Stripe as soon as the grace period ends.
     const result = await this.prisma.tenant.updateMany({
-      where: { id: user.tenantId, deletionScheduledAt: { not: null } },
+      where: { id: user.tenantId, deletionScheduledAt: { not: null, gt: now } },
       data: { isActive: true, deletionScheduledAt: null },
     });
     if (result.count === 0) {
       throw new BadRequestException(
-        'Tu cuenta no tiene una eliminación programada',
+        'Tu cuenta no tiene una eliminación programada o el plazo para reactivarla ya venció',
       );
     }
     this.logger.log(`Baja cancelada para el tenant ${user.tenantId}`);

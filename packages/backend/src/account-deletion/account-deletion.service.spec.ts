@@ -183,13 +183,15 @@ describe('AccountDeletionService.requestDeletion', () => {
 });
 
 describe('AccountDeletionService.cancelDeletion', () => {
-  it('reactivates only a tenant with a pending deletion', async () => {
+  it('reactivates only a tenant whose grace period has not ended yet', async () => {
     const { service, prisma } = build();
 
     await service.cancelDeletion(OWNER, NOW);
 
+    // Once the grace period ends the purge may already be cleaning R2/Stripe,
+    // so reactivation must no longer win that race.
     expect(prisma.tenant.updateMany).toHaveBeenCalledWith({
-      where: { id: 't1', deletionScheduledAt: { not: null } },
+      where: { id: 't1', deletionScheduledAt: { not: null, gt: NOW } },
       data: { isActive: true, deletionScheduledAt: null },
     });
   });
