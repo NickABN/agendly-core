@@ -22,13 +22,18 @@ const planNavLabel = computed(() => (store.billingEnforced ? 'Suscripción' : 'A
 const planNavIcon = computed(() => (store.billingEnforced ? 'credit_card' : 'volunteer_activism'));
 
 // Close the drawer on navigation
-watch(() => route.fullPath, () => {
-  drawerOpen.value = false;
-});
+watch(
+  () => route.fullPath,
+  () => {
+    drawerOpen.value = false;
+  },
+);
 </script>
 
 <template>
-  <div class="flex h-screen overflow-hidden bg-[var(--color-surface)] font-['Inter',sans-serif] text-[var(--color-on-surface)]">
+  <div
+    class="flex h-screen overflow-hidden bg-[var(--color-surface)] font-['Inter',sans-serif] text-[var(--color-on-surface)]"
+  >
     <!-- Mobile drawer backdrop -->
     <Transition name="fade">
       <div
@@ -48,7 +53,9 @@ watch(() => route.fullPath, () => {
       <div class="p-6 pb-4 flex items-start justify-between">
         <div>
           <h1 class="text-xl font-bold text-[var(--color-primary)] tracking-tight">Agendly</h1>
-          <p class="text-xs text-[var(--color-on-surface-variant)] font-medium mt-0.5">{{ tenantName }}</p>
+          <p class="text-xs text-[var(--color-on-surface-variant)] font-medium mt-0.5">
+            {{ tenantName }}
+          </p>
         </div>
         <button
           class="p-1.5 hover:bg-slate-200/60 rounded-lg transition-colors md:hidden"
@@ -67,7 +74,9 @@ watch(() => route.fullPath, () => {
           :to="item.to"
           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm text-[var(--color-on-surface-variant)] hover:bg-slate-200/40"
           active-class="bg-slate-200/60 !text-[var(--color-primary)] font-semibold"
-          :exact-active-class="item.exact ? 'bg-slate-200/60 !text-[var(--color-primary)] font-semibold' : undefined"
+          :exact-active-class="
+            item.exact ? 'bg-slate-200/60 !text-[var(--color-primary)] font-semibold' : undefined
+          "
         >
           <span class="material-symbols-outlined text-xl" aria-hidden="true">{{ item.icon }}</span>
           {{ item.label }}
@@ -80,7 +89,9 @@ watch(() => route.fullPath, () => {
           class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm text-[var(--color-on-surface-variant)] hover:bg-slate-200/40"
           active-class="bg-slate-200/60 !text-[var(--color-primary)] font-semibold"
         >
-          <span class="material-symbols-outlined text-xl" aria-hidden="true">{{ planNavIcon }}</span>
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">{{
+            planNavIcon
+          }}</span>
           {{ planNavLabel }}
         </NuxtLink>
         <NuxtLink
@@ -101,7 +112,9 @@ watch(() => route.fullPath, () => {
       <!-- User profile -->
       <div class="p-4 border-t border-[var(--color-outline-variant)]/10">
         <div class="flex items-center gap-3 p-2">
-          <div class="w-9 h-9 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white text-sm font-bold shrink-0">
+          <div
+            class="w-9 h-9 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white text-sm font-bold shrink-0"
+          >
             {{ userInitials }}
           </div>
           <div class="min-w-0 flex-1">
@@ -123,7 +136,9 @@ watch(() => route.fullPath, () => {
     <!-- Main area -->
     <div class="flex-1 flex flex-col overflow-hidden min-w-0">
       <!-- Mobile top bar with hamburger -->
-      <div class="flex md:hidden items-center gap-2 px-3 h-12 bg-white border-b border-[var(--color-outline-variant)]/10 shrink-0">
+      <div
+        class="flex md:hidden items-center gap-2 px-3 h-12 bg-white border-b border-[var(--color-outline-variant)]/10 shrink-0"
+      >
         <button
           class="p-2 hover:bg-slate-100 rounded-lg transition-colors"
           aria-label="Abrir menú"

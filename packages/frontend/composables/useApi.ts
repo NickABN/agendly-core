@@ -46,10 +46,9 @@ export function useApi() {
     onResponseError({ request, response }) {
       const status = response.status;
       if (status >= 500) {
-        Sentry.captureException(
-          new Error(`API ${status} en ${String(request)}`),
-          { extra: { status, body: response._data } },
-        );
+        Sentry.captureException(new Error(`API ${status} en ${String(request)}`), {
+          extra: { status, body: response._data },
+        });
       }
     },
   });
@@ -67,8 +66,7 @@ export function useApi() {
     try {
       return await client<T>(path, options);
     } catch (err) {
-      const isAuthPath =
-        path.includes('/auth/refresh') || path.includes('/auth/login');
+      const isAuthPath = path.includes('/auth/refresh') || path.includes('/auth/login');
       if (statusOf(err) === 401 && import.meta.client && !retried && !isAuthPath) {
         const ok = await refreshOnce(apiUrl);
         if (ok) return request<T>(path, options, true);

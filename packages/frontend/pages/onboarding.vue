@@ -147,9 +147,16 @@ async function nextStep() {
         return;
       }
       const created = await onboarding.createServices(
-        validServices.map(({ name, durationMinutes, priceMXN }) => ({ name, durationMinutes, priceMXN }))
+        validServices.map(({ name, durationMinutes, priceMXN }) => ({
+          name,
+          durationMinutes,
+          priceMXN,
+        })),
       );
-      createdServiceIds.value = created.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name }));
+      createdServiceIds.value = created.map((s: { id: string; name: string }) => ({
+        id: s.id,
+        name: s.name,
+      }));
     }
 
     if (currentStep.value === 3) {
@@ -163,7 +170,7 @@ async function nextStep() {
         validEmployees.map((e) => ({
           name: e.name,
           serviceIds: createdServiceIds.value.map((s) => s.id),
-        }))
+        })),
       );
       createdEmployeeIds.value = created.map((emp) => emp.id);
     }
@@ -204,7 +211,9 @@ function copyUrl() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[var(--color-surface)] font-['Inter',sans-serif] text-[var(--color-on-surface)]">
+  <div
+    class="min-h-screen bg-[var(--color-surface)] font-['Inter',sans-serif] text-[var(--color-on-surface)]"
+  >
     <!-- Sticky Header (hidden on success step) -->
     <header
       v-if="currentStep <= 4"
@@ -213,22 +222,26 @@ function copyUrl() {
       <div class="flex items-center gap-2">
         <span class="text-lg font-bold tracking-tight">Agendly</span>
         <span class="h-4 w-px bg-[var(--color-outline-variant)] mx-2 hidden sm:block"></span>
-        <span class="text-sm font-medium text-[var(--color-on-surface-variant)] hidden sm:block">Configuración inicial</span>
+        <span class="text-sm font-medium text-[var(--color-on-surface-variant)] hidden sm:block"
+          >Configuración inicial</span
+        >
       </div>
-      <div class="text-sm font-medium text-[var(--color-outline)]">
-        Paso {{ currentStep }} de 4
-      </div>
+      <div class="text-sm font-medium text-[var(--color-outline)]">Paso {{ currentStep }} de 4</div>
     </header>
 
     <!-- Main Content (Steps 1-4) -->
     <main v-if="currentStep <= 4" class="flex-grow flex flex-col lg:flex-row">
       <!-- Form Section -->
-      <section class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 px-6 lg:px-20 overflow-y-auto">
+      <section
+        class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 px-6 lg:px-20 overflow-y-auto"
+      >
         <!-- Stepper -->
         <div class="w-full max-w-xl mb-10">
           <div class="flex items-center justify-between relative">
             <!-- Line behind circles -->
-            <div class="absolute top-5 left-0 w-full h-0.5 bg-[var(--color-surface-container-high)] -z-0"></div>
+            <div
+              class="absolute top-5 left-0 w-full h-0.5 bg-[var(--color-surface-container-high)] -z-0"
+            ></div>
             <!-- Steps -->
             <div
               v-for="(label, i) in stepLabels"
@@ -240,7 +253,9 @@ function copyUrl() {
                 v-if="stepState(i + 1) === 'completed'"
                 class="w-10 h-10 rounded-full bg-[var(--color-primary)]/10 ring-2 ring-[var(--color-primary)] flex items-center justify-center"
               >
-                <span class="material-symbols-outlined text-[var(--color-primary)] text-lg">check</span>
+                <span class="material-symbols-outlined text-[var(--color-primary)] text-lg"
+                  >check</span
+                >
               </div>
               <!-- Active -->
               <div
@@ -258,7 +273,11 @@ function copyUrl() {
               </div>
               <span
                 class="text-xs font-medium"
-                :class="stepState(i + 1) === 'active' ? 'text-[var(--color-primary)] font-semibold' : 'text-[var(--color-on-surface-variant)]'"
+                :class="
+                  stepState(i + 1) === 'active'
+                    ? 'text-[var(--color-primary)] font-semibold'
+                    : 'text-[var(--color-on-surface-variant)]'
+                "
               >
                 {{ label }}
               </span>
@@ -267,7 +286,10 @@ function copyUrl() {
         </div>
 
         <!-- Error Alert -->
-        <div v-if="error" class="w-full max-w-xl mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+        <div
+          v-if="error"
+          class="w-full max-w-xl mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm"
+        >
           {{ error }}
         </div>
 
@@ -282,7 +304,10 @@ function copyUrl() {
 
           <div class="space-y-8">
             <div class="space-y-2">
-              <label class="text-sm font-medium tracking-wide text-[var(--color-on-surface-variant)] uppercase" for="biz-name">
+              <label
+                class="text-sm font-medium tracking-wide text-[var(--color-on-surface-variant)] uppercase"
+                for="biz-name"
+              >
                 Nombre del negocio
               </label>
               <input
@@ -295,11 +320,19 @@ function copyUrl() {
             </div>
 
             <div class="space-y-2">
-              <label class="text-sm font-medium tracking-wide text-[var(--color-on-surface-variant)] uppercase" for="biz-slug">
+              <label
+                class="text-sm font-medium tracking-wide text-[var(--color-on-surface-variant)] uppercase"
+                for="biz-slug"
+              >
                 Tu enlace personalizado
               </label>
-              <div class="flex items-center rounded-lg bg-[var(--color-surface-container-high)] focus-within:ring-2 focus-within:ring-[var(--color-primary)]/20 focus-within:bg-[var(--color-surface-container-lowest)] transition-all">
-                <span class="pl-4 pr-2 text-[var(--color-on-surface-variant)] font-medium text-sm whitespace-nowrap">{{ bookingBaseLabel }}</span>
+              <div
+                class="flex items-center rounded-lg bg-[var(--color-surface-container-high)] focus-within:ring-2 focus-within:ring-[var(--color-primary)]/20 focus-within:bg-[var(--color-surface-container-lowest)] transition-all"
+              >
+                <span
+                  class="pl-4 pr-2 text-[var(--color-on-surface-variant)] font-medium text-sm whitespace-nowrap"
+                  >{{ bookingBaseLabel }}</span
+                >
                 <input
                   id="biz-slug"
                   v-model="businessForm.slug"
@@ -308,7 +341,9 @@ function copyUrl() {
                   class="w-full min-w-0 pr-4 py-3 bg-transparent border-none rounded-r-lg focus:ring-0 focus:outline-none placeholder:text-[var(--color-outline)]/50"
                 />
               </div>
-              <p class="text-xs text-[var(--color-on-surface-variant)]">Solo letras minúsculas, números y guiones.</p>
+              <p class="text-xs text-[var(--color-on-surface-variant)]">
+                Solo letras minúsculas, números y guiones.
+              </p>
             </div>
           </div>
 
@@ -414,7 +449,8 @@ function copyUrl() {
           <div class="bg-amber-50 border border-amber-200/50 rounded-xl p-4 flex gap-3">
             <span class="material-symbols-outlined text-amber-600 text-xl">lightbulb</span>
             <p class="text-sm text-amber-800">
-              <strong>Dato:</strong> Los negocios con al menos 3 servicios configurados tienen un 60% más de reservas iniciales.
+              <strong>Dato:</strong> Los negocios con al menos 3 servicios configurados tienen un
+              60% más de reservas iniciales.
             </p>
           </div>
 
@@ -454,7 +490,9 @@ function copyUrl() {
             >
               <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                 <div class="md:col-span-6 space-y-2">
-                  <label class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+                  <label
+                    class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+                  >
                     Nombre completo
                   </label>
                   <input
@@ -529,11 +567,19 @@ function copyUrl() {
           <!-- Progress bar -->
           <div class="flex flex-col gap-2">
             <div class="flex justify-between items-end">
-              <span class="text-xs font-bold tracking-wider text-[var(--color-primary)] uppercase">Paso 4 de 4</span>
-              <span class="text-xs font-medium text-[var(--color-on-surface-variant)]">Finalizando...</span>
+              <span class="text-xs font-bold tracking-wider text-[var(--color-primary)] uppercase"
+                >Paso 4 de 4</span
+              >
+              <span class="text-xs font-medium text-[var(--color-on-surface-variant)]"
+                >Finalizando...</span
+              >
             </div>
-            <div class="h-1.5 w-full bg-[var(--color-surface-container-high)] rounded-full overflow-hidden">
-              <div class="h-full bg-[var(--color-primary)] w-full transition-all duration-500"></div>
+            <div
+              class="h-1.5 w-full bg-[var(--color-surface-container-high)] rounded-full overflow-hidden"
+            >
+              <div
+                class="h-full bg-[var(--color-primary)] w-full transition-all duration-500"
+              ></div>
             </div>
           </div>
 
@@ -542,17 +588,30 @@ function copyUrl() {
             class="bg-[var(--color-surface-container-lowest)] rounded-xl editorial-shadow p-4 md:p-10 flex flex-col gap-8"
           >
             <header class="text-center space-y-2">
-              <h1 class="text-2xl md:text-3xl font-bold tracking-tight leading-tight">Tus horarios de atención</h1>
-              <p class="text-[var(--color-on-surface-variant)]">Define cuándo está abierto tu negocio para recibir citas.</p>
+              <h1 class="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
+                Tus horarios de atención
+              </h1>
+              <p class="text-[var(--color-on-surface-variant)]">
+                Define cuándo está abierto tu negocio para recibir citas.
+              </p>
             </header>
 
             <!-- ROI Banner -->
-            <div class="bg-[var(--color-primary)]/5 rounded-xl p-4 flex items-center gap-4 border border-[var(--color-primary)]/10">
-              <div class="bg-[var(--color-primary-container)] text-white h-10 w-10 rounded-full flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">auto_awesome</span>
+            <div
+              class="bg-[var(--color-primary)]/5 rounded-xl p-4 flex items-center gap-4 border border-[var(--color-primary)]/10"
+            >
+              <div
+                class="bg-[var(--color-primary-container)] text-white h-10 w-10 rounded-full flex items-center justify-center shrink-0"
+              >
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1"
+                  >auto_awesome</span
+                >
               </div>
               <p class="text-sm font-medium">
-                Tus clientes ya pueden agendar solos, <span class="text-[var(--color-primary)] font-bold">sin mensajes de ida y vuelta</span>.
+                Tus clientes ya pueden agendar solos,
+                <span class="text-[var(--color-primary)] font-bold"
+                  >sin mensajes de ida y vuelta</span
+                >.
               </p>
             </div>
 
@@ -579,7 +638,8 @@ function copyUrl() {
           </div>
 
           <p class="text-center text-xs text-[var(--color-on-surface-variant)] px-8">
-            Podrás modificar estos horarios en cualquier momento desde la configuración de tu negocio. Agendly se sincronizará automáticamente.
+            Podrás modificar estos horarios en cualquier momento desde la configuración de tu
+            negocio. Agendly se sincronizará automáticamente.
           </p>
         </div>
       </section>
@@ -591,7 +651,9 @@ function copyUrl() {
       >
         <!-- Phone Preview (Steps 1-2) -->
         <div v-if="currentStep <= 2" class="w-full max-w-sm">
-          <p class="text-[10px] font-bold text-center text-[var(--color-outline)] uppercase tracking-[0.2em] mb-6">
+          <p
+            class="text-[10px] font-bold text-center text-[var(--color-outline)] uppercase tracking-[0.2em] mb-6"
+          >
             Vista previa pública
           </p>
           <div
@@ -606,12 +668,21 @@ function copyUrl() {
             </div>
             <div class="flex-grow space-y-8 px-4">
               <div class="flex flex-col items-center space-y-4">
-                <div class="w-20 h-20 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center">
-                  <span class="material-symbols-outlined text-4xl text-[var(--color-outline-variant)]">storefront</span>
+                <div
+                  class="w-20 h-20 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center"
+                >
+                  <span
+                    class="material-symbols-outlined text-4xl text-[var(--color-outline-variant)]"
+                    >storefront</span
+                  >
                 </div>
                 <div class="text-center space-y-1">
-                  <h2 class="text-xl font-bold tracking-tight">{{ businessForm.name || 'Tu Negocio' }}</h2>
-                  <p class="text-sm text-[var(--color-on-surface-variant)]">{{ publicUrl || `${bookingBaseLabel}tu-negocio` }}</p>
+                  <h2 class="text-xl font-bold tracking-tight">
+                    {{ businessForm.name || 'Tu Negocio' }}
+                  </h2>
+                  <p class="text-sm text-[var(--color-on-surface-variant)]">
+                    {{ publicUrl || `${bookingBaseLabel}tu-negocio` }}
+                  </p>
                 </div>
               </div>
               <OnboardingServicesPreview :services="services" />
@@ -623,25 +694,33 @@ function copyUrl() {
             </div>
           </div>
           <div class="mt-8 bg-[var(--color-primary)]/5 rounded-xl p-4 flex gap-3">
-            <span class="material-symbols-outlined text-[var(--color-primary)] text-xl">auto_awesome</span>
+            <span class="material-symbols-outlined text-[var(--color-primary)] text-xl"
+              >auto_awesome</span
+            >
             <p class="text-xs text-[var(--color-primary)] font-medium leading-relaxed">
-              Tus clientes podrán agendar directamente desde este enlace una vez que termines la configuración.
+              Tus clientes podrán agendar directamente desde este enlace una vez que termines la
+              configuración.
             </p>
           </div>
         </div>
 
         <!-- Team Visual (Step 3) -->
         <div v-if="currentStep === 3" class="w-full max-w-sm space-y-6">
-          <div class="rounded-2xl overflow-hidden aspect-[4/5] bg-[var(--color-surface-container)] relative">
+          <div
+            class="rounded-2xl overflow-hidden aspect-[4/5] bg-[var(--color-surface-container)] relative"
+          >
             <div class="absolute inset-0 soul-gradient opacity-80"></div>
             <div class="absolute inset-0 flex flex-col justify-end p-8">
               <div class="glass-panel p-6 rounded-xl border border-white/10">
                 <div class="flex items-center gap-3 mb-3">
-                  <span class="material-symbols-outlined text-[var(--color-primary)] text-2xl">group</span>
+                  <span class="material-symbols-outlined text-[var(--color-primary)] text-2xl"
+                    >group</span
+                  >
                   <h3 class="font-bold text-lg">El poder de tu equipo</h3>
                 </div>
                 <p class="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">
-                  Configurar a tu equipo correctamente permite que tus clientes elijan a su especialista favorito y optimiza tu calendario automáticamente.
+                  Configurar a tu equipo correctamente permite que tus clientes elijan a su
+                  especialista favorito y optimiza tu calendario automáticamente.
                 </p>
               </div>
             </div>
@@ -651,7 +730,8 @@ function copyUrl() {
             <div>
               <p class="font-bold text-sm text-amber-900">Consejo Agendly</p>
               <p class="text-sm text-amber-800 leading-relaxed">
-                "Asignar roles específicos te ayuda a filtrar servicios por persona en tu página de reservas."
+                "Asignar roles específicos te ayuda a filtrar servicios por persona en tu página de
+                reservas."
               </p>
             </div>
           </div>
@@ -662,7 +742,9 @@ function copyUrl() {
     <!-- Step 5: Success / Celebration -->
     <main v-if="currentStep === 5" class="max-w-4xl mx-auto px-4 py-8 md:py-16">
       <!-- Celebration Banner -->
-      <div class="celebrate-gradient rounded-2xl p-8 md:p-12 mb-8 shadow-sm flex flex-col md:flex-row items-center gap-6 text-center md:text-left relative overflow-hidden">
+      <div
+        class="celebrate-gradient rounded-2xl p-8 md:p-12 mb-8 shadow-sm flex flex-col md:flex-row items-center gap-6 text-center md:text-left relative overflow-hidden"
+      >
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <span class="material-symbols-outlined text-9xl">auto_awesome</span>
         </div>
@@ -673,7 +755,9 @@ function copyUrl() {
           <h1 class="text-3xl md:text-5xl font-black text-[#1c1c1c] tracking-tight">
             ¡Lo lograste{{ ownerName ? `, ${ownerName}` : '' }}!
           </h1>
-          <p class="text-lg md:text-xl font-medium text-[#1c1c1c]/80">Tu salón ya tiene agenda profesional</p>
+          <p class="text-lg md:text-xl font-medium text-[#1c1c1c]/80">
+            Tu salón ya tiene agenda profesional
+          </p>
         </div>
       </div>
 
@@ -681,13 +765,21 @@ function copyUrl() {
         <!-- Main Actions -->
         <div class="md:col-span-7 space-y-6">
           <!-- Link Card -->
-          <div class="bg-[var(--color-surface-container-lowest)] rounded-2xl p-8 border border-[var(--color-outline-variant)]/15 editorial-shadow flex flex-col gap-6">
+          <div
+            class="bg-[var(--color-surface-container-lowest)] rounded-2xl p-8 border border-[var(--color-outline-variant)]/15 editorial-shadow flex flex-col gap-6"
+          >
             <div class="flex flex-col gap-2">
-              <span class="text-sm font-bold uppercase tracking-widest text-[var(--color-on-surface-variant)]/70">
+              <span
+                class="text-sm font-bold uppercase tracking-widest text-[var(--color-on-surface-variant)]/70"
+              >
                 Tu link de agenda
               </span>
-              <div class="flex items-center justify-between bg-[var(--color-surface-container-low)] p-4 rounded-xl border border-[var(--color-outline-variant)]/20">
-                <span class="font-mono text-[var(--color-primary)] font-semibold truncate">{{ publicUrl }}</span>
+              <div
+                class="flex items-center justify-between bg-[var(--color-surface-container-low)] p-4 rounded-xl border border-[var(--color-outline-variant)]/20"
+              >
+                <span class="font-mono text-[var(--color-primary)] font-semibold truncate">{{
+                  publicUrl
+                }}</span>
                 <button
                   class="flex items-center gap-2 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 px-3 py-1.5 rounded-lg transition-colors"
                   @click="copyUrl"
@@ -698,7 +790,9 @@ function copyUrl() {
               </div>
             </div>
             <div class="flex flex-col gap-3">
-              <button class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-container)] text-white font-bold py-4 px-6 rounded-full flex items-center justify-center gap-3 transition-all duration-200 shadow-md">
+              <button
+                class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-container)] text-white font-bold py-4 px-6 rounded-full flex items-center justify-center gap-3 transition-all duration-200 shadow-md"
+              >
                 <span class="material-symbols-outlined">share</span>
                 Compartir en WhatsApp
               </button>
@@ -713,17 +807,27 @@ function copyUrl() {
           </div>
 
           <!-- Admin Preview -->
-          <div class="bg-[var(--color-surface-container-low)] rounded-2xl p-6 border border-[var(--color-outline-variant)]/10">
+          <div
+            class="bg-[var(--color-surface-container-low)] rounded-2xl p-6 border border-[var(--color-outline-variant)]/10"
+          >
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-amber-500" style="font-variation-settings: 'FILL' 1">calendar_today</span>
+                <span
+                  class="material-symbols-outlined text-amber-500"
+                  style="font-variation-settings: 'FILL' 1"
+                  >calendar_today</span
+                >
                 <h3 class="font-bold">Hoy</h3>
               </div>
-              <span class="text-xs font-bold text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-highest)] px-2 py-1 rounded-md uppercase">
+              <span
+                class="text-xs font-bold text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-highest)] px-2 py-1 rounded-md uppercase"
+              >
                 Modo Admin
               </span>
             </div>
-            <div class="bg-[var(--color-surface-container-lowest)] rounded-xl p-4 flex items-center justify-between shadow-sm border border-[var(--color-outline-variant)]/10">
+            <div
+              class="bg-[var(--color-surface-container-lowest)] rounded-xl p-4 flex items-center justify-between shadow-sm border border-[var(--color-outline-variant)]/10"
+            >
               <div class="flex items-center gap-4">
                 <div class="w-2 h-2 rounded-full bg-amber-400 ring-4 ring-amber-100"></div>
                 <div class="flex flex-col">
@@ -737,16 +841,28 @@ function copyUrl() {
 
         <!-- Side Visual -->
         <div class="md:col-span-5 space-y-6">
-          <div class="rounded-2xl overflow-hidden aspect-[4/5] bg-[var(--color-surface-container-low)] relative group shadow-lg">
+          <div
+            class="rounded-2xl overflow-hidden aspect-[4/5] bg-[var(--color-surface-container-low)] relative group shadow-lg"
+          >
             <div class="absolute inset-0 soul-gradient opacity-60"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8">
-              <div class="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-xl border border-white/20">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8"
+            >
+              <div
+                class="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-xl border border-white/20"
+              >
                 <div class="flex items-center gap-3 mb-2">
-                  <div class="w-10 h-10 rounded-full bg-[var(--color-primary-container)] flex items-center justify-center text-white">
+                  <div
+                    class="w-10 h-10 rounded-full bg-[var(--color-primary-container)] flex items-center justify-center text-white"
+                  >
                     <span class="material-symbols-outlined">auto_awesome</span>
                   </div>
                   <div>
-                    <p class="text-xs font-bold uppercase tracking-tight text-[var(--color-primary)]">Estado del salón</p>
+                    <p
+                      class="text-xs font-bold uppercase tracking-tight text-[var(--color-primary)]"
+                    >
+                      Estado del salón
+                    </p>
                     <p class="font-bold">Listo para recibir citas</p>
                   </div>
                 </div>
@@ -759,7 +875,8 @@ function copyUrl() {
             <div class="flex flex-col gap-1">
               <p class="font-bold text-amber-900">Tip de Agendly</p>
               <p class="text-sm text-amber-800 leading-relaxed">
-                Coloca tu nuevo link en la biografía de Instagram para que tus clientes agenden 24/7.
+                Coloca tu nuevo link en la biografía de Instagram para que tus clientes agenden
+                24/7.
               </p>
             </div>
           </div>
@@ -768,7 +885,9 @@ function copyUrl() {
 
       <!-- Footer -->
       <footer class="mt-16 text-center">
-        <p class="text-[var(--color-on-surface-variant)] text-sm mb-4">¿Necesitas ayuda para configurar algo más?</p>
+        <p class="text-[var(--color-on-surface-variant)] text-sm mb-4">
+          ¿Necesitas ayuda para configurar algo más?
+        </p>
         <div class="flex items-center justify-center gap-6">
           <button
             class="text-[var(--color-primary)] font-bold hover:underline flex items-center gap-1"
@@ -782,7 +901,11 @@ function copyUrl() {
     </main>
 
     <!-- Decorative Background Blurs -->
-    <div class="fixed -bottom-32 -left-32 w-96 h-96 bg-[var(--color-primary)]/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
-    <div class="fixed -top-32 -right-32 w-96 h-96 bg-[var(--color-secondary,#526070)]/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+    <div
+      class="fixed -bottom-32 -left-32 w-96 h-96 bg-[var(--color-primary)]/5 rounded-full blur-[100px] pointer-events-none -z-10"
+    ></div>
+    <div
+      class="fixed -top-32 -right-32 w-96 h-96 bg-[var(--color-secondary,#526070)]/5 rounded-full blur-[100px] pointer-events-none -z-10"
+    ></div>
   </div>
 </template>

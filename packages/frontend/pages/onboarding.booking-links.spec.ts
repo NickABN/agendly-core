@@ -7,7 +7,9 @@ const source = readFileSync(resolve(__dirname, 'onboarding.vue'), 'utf-8');
 describe('onboarding.vue public booking link surfaces', () => {
   it('renders the runtime-config-driven booking base label in the slug field', () => {
     expect(source).toContain('{{ bookingBaseLabel }}');
-    expect(source).toContain('const { bookingBaseLabel, bookingDisplayUrl, bookingUrl } = usePublicBookingUrl();');
+    expect(source).toContain(
+      'const { bookingBaseLabel, bookingDisplayUrl, bookingUrl } = usePublicBookingUrl();',
+    );
   });
 
   it('renders the booking display URL in the success/share surface', () => {

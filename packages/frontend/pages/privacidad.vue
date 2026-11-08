@@ -69,12 +69,14 @@ const legal = useLegalInfo();
     <h3>Finalidades necesarias</h3>
     <ul>
       <li>Crear y administrar tu cuenta y la página pública de tu negocio.</li>
-      <li>Agendar, confirmar o cancelar citas y enviarte la confirmación y un recordatorio por correo.</li>
+      <li>
+        Agendar, confirmar o cancelar citas y enviarte la confirmación y un recordatorio por correo.
+      </li>
       <li>
         Mostrar al negocio una estimación del riesgo de que una cita no se atienda, calculada solo
         con el historial de citas en ese mismo negocio (faltas previas, anticipación, si eres
-        cliente nuevo). Es una ayuda para que el negocio confirme la cita; no se usa para negarte
-        el servicio ni se comparte con otros negocios.
+        cliente nuevo). Es una ayuda para que el negocio confirme la cita; no se usa para negarte el
+        servicio ni se comparte con otros negocios.
       </li>
       <li>
         Mantener la seguridad de la plataforma (prevención de fraude y abuso, bitácoras de acceso).

@@ -69,9 +69,10 @@ async function processFile(file: File) {
       return;
     }
 
-    const newUrl = props.type === 'logo'
-      ? store.profileData?.logoUrl ?? null
-      : store.profileData?.bannerUrl ?? null;
+    const newUrl =
+      props.type === 'logo'
+        ? (store.profileData?.logoUrl ?? null)
+        : (store.profileData?.bannerUrl ?? null);
 
     if (newUrl) {
       emit('uploaded', newUrl);
@@ -132,7 +133,10 @@ onUnmounted(() => {
     </p>
 
     <!-- Current / preview image -->
-    <div v-if="displayUrl" :class="['overflow-hidden rounded-xl bg-[var(--color-surface-container-high)]', aspectClass]">
+    <div
+      v-if="displayUrl"
+      :class="['overflow-hidden rounded-xl bg-[var(--color-surface-container-high)]', aspectClass]"
+    >
       <img
         :src="displayUrl"
         :alt="`Vista previa del ${label.toLowerCase()}`"
@@ -162,7 +166,9 @@ onUnmounted(() => {
       <!-- Upload icon -->
       <span
         class="material-symbols-outlined text-4xl"
-        :class="isDragging ? 'text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'"
+        :class="
+          isDragging ? 'text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'
+        "
       >
         cloud_upload
       </span>
@@ -170,7 +176,9 @@ onUnmounted(() => {
       <!-- Instructions -->
       <div class="text-center">
         <p class="text-sm font-medium text-[var(--color-on-surface)]">
-          {{ isDragging ? 'Suelta la imagen aquí' : 'Arrastra una imagen o haz clic para seleccionar' }}
+          {{
+            isDragging ? 'Suelta la imagen aquí' : 'Arrastra una imagen o haz clic para seleccionar'
+          }}
         </p>
         <p class="text-xs text-[var(--color-on-surface-variant)] mt-1">
           JPEG o PNG · Máximo {{ maxSizeMb }} MB
@@ -194,7 +202,9 @@ onUnmounted(() => {
         <span>Subiendo {{ label.toLowerCase() }}…</span>
         <span>{{ uploadProgress }}%</span>
       </div>
-      <div class="w-full h-1.5 rounded-full bg-[var(--color-surface-container-highest)] overflow-hidden">
+      <div
+        class="w-full h-1.5 rounded-full bg-[var(--color-surface-container-highest)] overflow-hidden"
+      >
         <div
           class="h-full rounded-full bg-[var(--color-primary)] transition-all duration-300"
           :style="{ width: `${uploadProgress}%` }"

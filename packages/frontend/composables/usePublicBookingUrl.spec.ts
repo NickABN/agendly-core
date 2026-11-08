@@ -14,21 +14,21 @@ describe('usePublicBookingUrl helpers', () => {
   });
 
   it('formats the public app URL for display without the protocol', () => {
-    expect(
-      formatPublicAppUrlForDisplay('https://agendly-admin1.netlify.app/'),
-    ).toBe('agendly-admin1.netlify.app');
+    expect(formatPublicAppUrlForDisplay('https://agendly-admin1.netlify.app/')).toBe(
+      'agendly-admin1.netlify.app',
+    );
   });
 
   it('builds a full public booking URL from the configured app URL and slug', () => {
-    expect(
-      buildPublicBookingUrl('https://agendly-admin1.netlify.app/', 'salon-calma'),
-    ).toBe('https://agendly-admin1.netlify.app/salon-calma');
+    expect(buildPublicBookingUrl('https://agendly-admin1.netlify.app/', 'salon-calma')).toBe(
+      'https://agendly-admin1.netlify.app/salon-calma',
+    );
   });
 
   it('formats a public booking URL for display without the protocol', () => {
-    expect(
-      formatPublicBookingUrl('https://agendly-admin1.netlify.app/', 'salon-calma'),
-    ).toBe('agendly-admin1.netlify.app/salon-calma');
+    expect(formatPublicBookingUrl('https://agendly-admin1.netlify.app/', 'salon-calma')).toBe(
+      'agendly-admin1.netlify.app/salon-calma',
+    );
   });
 
   it('returns an empty string when no slug is available', () => {

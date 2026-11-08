@@ -12,30 +12,34 @@
         <a
           href="#beneficios"
           class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
-        >Beneficios</a>
+          >Beneficios</a
+        >
         <a
           href="#precios"
           class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
-        >Precios</a>
+          >Precios</a
+        >
         <NuxtLink
           to="/login"
           class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
-        >Iniciar sesión</NuxtLink>
+          >Iniciar sesión</NuxtLink
+        >
         <NuxtLink
           to="/register"
           class="soul-gradient text-on-primary px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-all"
-        >Empezar ahora</NuxtLink>
+          >Empezar ahora</NuxtLink
+        >
       </nav>
       <!-- Mobile menu -->
       <div class="flex md:hidden items-center gap-3">
-        <NuxtLink
-          to="/login"
-          class="text-sm font-semibold text-on-surface-variant"
-        >Entrar</NuxtLink>
+        <NuxtLink to="/login" class="text-sm font-semibold text-on-surface-variant"
+          >Entrar</NuxtLink
+        >
         <NuxtLink
           to="/register"
           class="soul-gradient text-on-primary px-4 py-2 rounded-lg text-sm font-semibold"
-        >Registrarse</NuxtLink>
+          >Registrarse</NuxtLink
+        >
       </div>
     </header>
 
@@ -47,7 +51,8 @@
           <div class="z-10">
             <span
               class="inline-block py-1 px-3 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase mb-6"
-            >Santuario Digital</span>
+              >Santuario Digital</span
+            >
             <h1
               class="text-5xl lg:text-6xl font-semibold text-on-surface tracking-tight leading-[1.1] mb-8"
             >
@@ -55,8 +60,8 @@
               <span class="text-primary">caos de WhatsApp.</span>
             </h1>
             <p class="text-xl text-on-surface-variant font-medium leading-relaxed mb-10 max-w-lg">
-              Centraliza tus citas, deja que tus clientes reserven solos y recupera tu paz mental. Diseñado para
-              profesionales que valoran su tiempo y el de sus clientes.
+              Centraliza tus citas, deja que tus clientes reserven solos y recupera tu paz mental.
+              Diseñado para profesionales que valoran su tiempo y el de sus clientes.
             </p>
             <div class="flex flex-col sm:flex-row gap-4">
               <NuxtLink
@@ -69,21 +74,26 @@
               <a
                 href="#beneficios"
                 class="bg-surface-container-high text-on-surface px-8 py-4 rounded-lg font-semibold text-lg hover:bg-surface-container-highest transition-all text-center"
-              >Ver Beneficios</a>
+                >Ver Beneficios</a
+              >
             </div>
-            <div class="mt-8 flex flex-wrap items-center gap-4 text-sm text-on-secondary-container font-medium">
+            <div
+              class="mt-8 flex flex-wrap items-center gap-4 text-sm text-on-secondary-container font-medium"
+            >
               <span class="flex items-center gap-1">
                 <span
                   class="material-symbols-outlined text-green-600 text-base"
-                  style="font-variation-settings: 'FILL' 1;"
-                >check_circle</span>
+                  style="font-variation-settings: 'FILL' 1"
+                  >check_circle</span
+                >
                 Sin tarjeta de crédito
               </span>
               <span class="flex items-center gap-1">
                 <span
                   class="material-symbols-outlined text-green-600 text-base"
-                  style="font-variation-settings: 'FILL' 1;"
-                >check_circle</span>
+                  style="font-variation-settings: 'FILL' 1"
+                  >check_circle</span
+                >
                 Configura en 2 minutos
               </span>
             </div>
@@ -98,7 +108,9 @@
               class="relative bg-surface-container-lowest rounded-xl shadow-2xl overflow-hidden border border-outline-variant/20"
             >
               <!-- Mock dashboard header -->
-              <div class="bg-white px-6 py-4 border-b border-outline-variant/20 flex items-center justify-between">
+              <div
+                class="bg-white px-6 py-4 border-b border-outline-variant/20 flex items-center justify-between"
+              >
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
                   <span class="text-sm font-bold text-on-surface">Agendly</span>
@@ -119,12 +131,15 @@
                 >
                   <div>
                     <p class="text-sm font-semibold text-on-surface">{{ apt.name }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ apt.service }} · {{ apt.time }}</p>
+                    <p class="text-xs text-on-surface-variant">
+                      {{ apt.service }} · {{ apt.time }}
+                    </p>
                   </div>
                   <span
                     class="text-xs font-semibold px-2 py-1 rounded-full"
                     :class="apt.badgeClass"
-                  >{{ apt.status }}</span>
+                    >{{ apt.status }}</span
+                  >
                 </div>
               </div>
             </div>
@@ -166,7 +181,8 @@
                   <span class="text-sm font-medium text-on-surface">{{ exampleBookingUrl }}</span>
                   <span
                     class="ml-auto text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-full"
-                  >Copiar</span>
+                    >Copiar</span
+                  >
                 </div>
                 <p class="text-xs text-center text-on-surface-variant pt-1">
                   Comparte este enlace en WhatsApp, Instagram o donde quieras
@@ -194,7 +210,7 @@
             >
               <div
                 class="w-12 h-12 rounded-lg flex items-center justify-center mb-6"
-                style="background: #ffdcc3; color: #2f1500;"
+                style="background: #ffdcc3; color: #2f1500"
               >
                 <span class="material-symbols-outlined">spa</span>
               </div>
@@ -221,7 +237,9 @@
                 </p>
               </div>
               <!-- Mini client list mockup -->
-              <div class="w-full md:w-64 rounded-xl overflow-hidden bg-surface-container p-4 space-y-2 shrink-0">
+              <div
+                class="w-full md:w-64 rounded-xl overflow-hidden bg-surface-container p-4 space-y-2 shrink-0"
+              >
                 <div
                   v-for="(client, i) in mockClients"
                   :key="i"
@@ -230,7 +248,9 @@
                   <div
                     class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                     :style="{ background: client.color }"
-                  >{{ client.initials }}</div>
+                  >
+                    {{ client.initials }}
+                  </div>
                   <div>
                     <p class="text-xs font-semibold text-on-surface">{{ client.name }}</p>
                     <p class="text-[10px] text-on-surface-variant">{{ client.visits }} visitas</p>
@@ -261,9 +281,9 @@
             <div
               class="relative bg-surface-container-lowest p-10 rounded-3xl border border-outline-variant/30 flex flex-col items-center editorial-shadow"
             >
-              <span
-                class="text-sm font-bold text-primary tracking-widest uppercase mb-4"
-              >Plan Beta</span>
+              <span class="text-sm font-bold text-primary tracking-widest uppercase mb-4"
+                >Plan Beta</span
+              >
               <div class="flex items-baseline gap-1 mb-8">
                 <span class="text-5xl font-bold text-on-surface">$0</span>
                 <span class="text-xl text-on-surface-variant font-medium">MXN</span>
@@ -276,8 +296,9 @@
                 >
                   <span
                     class="material-symbols-outlined text-primary text-xl shrink-0"
-                    style="font-variation-settings: 'FILL' 1;"
-                  >check_circle</span>
+                    style="font-variation-settings: 'FILL' 1"
+                    >check_circle</span
+                  >
                   {{ feature }}
                 </li>
               </ul>
@@ -296,7 +317,9 @@
       </section>
 
       <!-- CTA Final -->
-      <section class="py-24 px-6 lg:px-24 bg-primary text-on-primary text-center overflow-hidden relative">
+      <section
+        class="py-24 px-6 lg:px-24 bg-primary text-on-primary text-center overflow-hidden relative"
+      >
         <div class="absolute inset-0 pointer-events-none opacity-10">
           <div
             class="absolute -top-1/2 -left-1/4 w-full h-full bg-white rounded-full blur-[120px]"
@@ -332,15 +355,18 @@
           <NuxtLink
             to="/privacidad"
             class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors"
-          >Privacidad</NuxtLink>
+            >Privacidad</NuxtLink
+          >
           <NuxtLink
             to="/terminos"
             class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors"
-          >Términos</NuxtLink>
+            >Términos</NuxtLink
+          >
           <NuxtLink
             to="/arco"
             class="text-xs tracking-widest text-slate-400 hover:text-primary transition-colors"
-          >Derechos ARCO</NuxtLink>
+            >Derechos ARCO</NuxtLink
+          >
         </div>
       </div>
       <div
@@ -348,27 +374,32 @@
       >
         <span
           class="material-symbols-outlined text-primary"
-          style="font-size: 14px; font-variation-settings: 'FILL' 1;"
-        >verified</span>
-        <span class="text-[10px] font-bold text-on-surface uppercase tracking-wider">Hecho con Agendly</span>
+          style="font-size: 14px; font-variation-settings: 'FILL' 1"
+          >verified</span
+        >
+        <span class="text-[10px] font-bold text-on-surface uppercase tracking-wider"
+          >Hecho con Agendly</span
+        >
       </div>
-      <p class="text-xs tracking-widest text-slate-400">© 2025 Agendly. Todos los derechos reservados.</p>
+      <p class="text-xs tracking-widest text-slate-400">
+        © 2025 Agendly. Todos los derechos reservados.
+      </p>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: false })
+definePageMeta({ layout: false });
 
 useSeoMeta({
   title: 'Agendly — Dile adiós al caos de WhatsApp',
   description:
     'Centraliza tus citas, deja que tus clientes reserven solos y recupera tu paz mental. Diseñado para profesionales de belleza en México.',
-})
+});
 
-const { bookingDisplayUrl } = usePublicBookingUrl()
+const { bookingDisplayUrl } = usePublicBookingUrl();
 
-const exampleBookingUrl = computed(() => bookingDisplayUrl('tu-salon'))
+const exampleBookingUrl = computed(() => bookingDisplayUrl('tu-salon'));
 
 const mockAppointments = [
   {
@@ -395,13 +426,13 @@ const mockAppointments = [
     color: '#2e7d32',
     badgeClass: 'bg-green-50 text-green-700',
   },
-]
+];
 
 const mockClients = [
   { initials: 'AM', name: 'Ana Martínez', visits: 12, color: '#005da9' },
   { initials: 'SR', name: 'Sofía Ruiz', visits: 7, color: '#8d4b00' },
   { initials: 'LG', name: 'Laura García', visits: 5, color: '#526070' },
-]
+];
 
 // Solo funciones que existen hoy (evitar publicidad engañosa — PROFECO).
 const pricingFeatures = [
@@ -411,5 +442,5 @@ const pricingFeatures = [
   'Agenda por día, semana y mes',
   'Directorio de clientes',
   'Personal, servicios y horarios',
-]
+];
 </script>

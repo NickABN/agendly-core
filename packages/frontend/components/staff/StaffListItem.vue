@@ -50,15 +50,22 @@ const ringColors = [
           {{ employee.isActive ? 'Activo' : 'Inactivo' }}
         </span>
       </div>
-      <p v-if="employee.serviceIds.length > 0" class="text-sm text-[var(--color-on-surface-variant)] truncate">
-        <span class="material-symbols-outlined text-sm align-middle mr-1" aria-hidden="true">content_cut</span>
+      <p
+        v-if="employee.serviceIds.length > 0"
+        class="text-sm text-[var(--color-on-surface-variant)] truncate"
+      >
+        <span class="material-symbols-outlined text-sm align-middle mr-1" aria-hidden="true"
+          >content_cut</span
+        >
         {{ serviceNames }}
       </p>
       <p v-else class="text-sm text-[var(--color-outline)] italic">Sin servicios asignados</p>
     </div>
 
     <!-- Actions (always visible on touch, hover-reveal on desktop) -->
-    <div class="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
+    <div
+      class="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0"
+    >
       <button
         class="p-2 text-[var(--color-outline)] hover:bg-[var(--color-surface-container-high)] rounded-full transition-colors"
         :aria-label="`Horario de ${employee.name}`"

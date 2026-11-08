@@ -1,5 +1,21 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-core-experience', 'step-04-emotional-response', 'step-05-inspiration', 'step-06-design-system', 'step-07-defining-experience', 'step-08-visual-foundation', 'step-09-design-directions', 'step-10-user-journeys', 'step-11-component-strategy', 'step-12-ux-patterns', 'step-13-responsive-accessibility', 'step-14-complete']
+stepsCompleted:
+  [
+    'step-01-init',
+    'step-02-discovery',
+    'step-03-core-experience',
+    'step-04-emotional-response',
+    'step-05-inspiration',
+    'step-06-design-system',
+    'step-07-defining-experience',
+    'step-08-visual-foundation',
+    'step-09-design-directions',
+    'step-10-user-journeys',
+    'step-11-component-strategy',
+    'step-12-ux-patterns',
+    'step-13-responsive-accessibility',
+    'step-14-complete',
+  ]
 lastStep: 14
 workflowStatus: complete
 completedAt: '2026-03-03'
@@ -22,17 +38,18 @@ inputDocuments: ['_bmad-output/planning-artifacts/prd.md']
 Agendly es una plataforma SaaS de agendamiento de citas para negocios pequeños de belleza y estética en México. Resuelve un techo de tiempo operativo: los dueños invierten horas diarias coordinando citas por WhatsApp sin capacidad residual para enfocarse en la calidad del servicio. La propuesta central no es el canal — es la certeza: el cliente sabe que su cita es real, el dueño sabe que su día está definido sin haber monitoreado ningún chat.
 
 **Estados objetivo como criterios de diseño:**
-- Dueño del negocio: *"Estoy en control sin estar pendiente"*
-- Cliente final: *"Fue tan fácil que lo haré de nuevo"*
+
+- Dueño del negocio: _"Estoy en control sin estar pendiente"_
+- Cliente final: _"Fue tan fácil que lo haré de nuevo"_
 
 ### Target Users
 
-| Persona | Contexto de uso | Nivel tech | Dispositivo principal |
-|---|---|---|---|
-| **Lupita** — dueña de salón, low-tech | Siempre en movimiento, opera todo desde el celular | Básico | Celular |
-| **Roberto** — dueño de barbería, tech-savvy | Quiere control y estadísticas, gestiona empleados | Medio-alto | Celular + desktop |
-| **Don Marco** — dueño de spa, delega | Opera a través de recepcionista, prioriza confiabilidad | Mínimo | Celular (indirecto) |
-| **Daniela** — cliente final, digital nativa | Agenda desde link de WhatsApp, contexto de alta distracción | Alto | Celular |
+| Persona                                     | Contexto de uso                                             | Nivel tech | Dispositivo principal |
+| ------------------------------------------- | ----------------------------------------------------------- | ---------- | --------------------- |
+| **Lupita** — dueña de salón, low-tech       | Siempre en movimiento, opera todo desde el celular          | Básico     | Celular               |
+| **Roberto** — dueño de barbería, tech-savvy | Quiere control y estadísticas, gestiona empleados           | Medio-alto | Celular + desktop     |
+| **Don Marco** — dueño de spa, delega        | Opera a través de recepcionista, prioriza confiabilidad     | Mínimo     | Celular (indirecto)   |
+| **Daniela** — cliente final, digital nativa | Agenda desde link de WhatsApp, contexto de alta distracción | Alto       | Celular               |
 
 **Insight crítico:** El dueño administra su negocio desde el celular. Cualquier flujo de admin que requiera desktop está mal diseñado para este producto.
 
@@ -85,6 +102,7 @@ El loop central del producto: **cliente agenda → dueño recibe**. Si este loop
 ### Platform Strategy
 
 **Formulario público (experiencia del cliente):**
+
 - Web móvil — funciona desde cualquier link compartido, sin instalación de app
 - Touch-first: targets grandes, scroll vertical natural, teclado solo para captura de datos
 - Sin requerimiento de cuenta — sin descargas, sin contraseñas
@@ -92,9 +110,9 @@ El loop central del producto: **cliente agenda → dueño recibe**. Si este loop
 
 **Admin — vista adaptativa por dispositivo (mismo URL, responsive puro):**
 
-| Dispositivo | Vista principal | Lógica |
-|---|---|---|
-| **Mobile** | Lista cronológica + filtro de empleados (burbujas con avatar) | Consulta rápida de mañana — certeza en 5 segundos |
+| Dispositivo          | Vista principal                                                      | Lógica                                                                        |
+| -------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Mobile**           | Lista cronológica + filtro de empleados (burbujas con avatar)        | Consulta rápida de mañana — certeza en 5 segundos                             |
 | **Desktop / Tablet** | Cuadrícula tipo calendario (columnas por empleado × filas de tiempo) | Herramienta de maximización: detectar huecos, visualizar capacidad disponible |
 
 El dispositivo define el layout automáticamente — el dueño no configura ni elige versión.
@@ -127,19 +145,19 @@ El dispositivo define el layout automáticamente — el dueño no configura ni e
 
 ### Critical Success Moments
 
-**Momento 1 — "Ya llegó una cita sola"** *(Lupita, primera semana)*
+**Momento 1 — "Ya llegó una cita sola"** _(Lupita, primera semana)_
 El dueño recibe su primera notificación sin haber hecho nada. Es el momento de retención más poderoso del producto. Debe sentirse especial — no como una notificación genérica. Si no ocurre en los primeros días de onboarding, el usuario abandona.
 
-**Momento 2 — Confirmación del cliente** *(Daniela, cada reserva)*
-La pantalla de confirmación es el contrato de confiabilidad. El cliente siente que su cita *existe* con la misma certeza que un ticket de avión comprado — en pantalla + email simultáneos.
+**Momento 2 — Confirmación del cliente** _(Daniela, cada reserva)_
+La pantalla de confirmación es el contrato de confiabilidad. El cliente siente que su cita _existe_ con la misma certeza que un ticket de avión comprado — en pantalla + email simultáneos.
 
-**Momento 3 — "Tu negocio está listo"** *(Lupita/Roberto, fin del wizard)*
+**Momento 3 — "Tu negocio está listo"** _(Lupita/Roberto, fin del wizard)_
 El wizard termina con estado celebratorio: el link del negocio está listo para compartir. El dueño tiene una tarea clara y satisfactoria: copiar el link y mandarlo por WhatsApp. Activación diseñada como logro.
 
-**Momento 4 — La mañana tranquila** *(todos los dueños, diariamente)*
+**Momento 4 — La mañana tranquila** _(todos los dueños, diariamente)_
 Abrir el admin a las 9am y saber exactamente qué pasa en el día. Vista calmante: citas ordenadas, sin mensajes sin responder, sin incertidumbre. Este momento repetido construye el hábito y el valor percibido.
 
-**Momento 5 — Reserva sin fricción en contexto real** *(Daniela, primera vez)*
+**Momento 5 — Reserva sin fricción en contexto real** _(Daniela, primera vez)_
 Completar una reserva desde el celular, en espera del camión, con el pulgar, sin haber leído ninguna instrucción. Si este momento funciona, la recomendación boca a boca está garantizada.
 
 ### Experience Principles
@@ -162,18 +180,18 @@ Los 5 principios que guían todas las decisiones de experiencia de Agendly:
 
 **Para el dueño (Lupita / Roberto / Don Marco):**
 
-| Emoción | Definición en contexto de Agendly |
-|---|---|
-| **Confianza** (primaria) | "Sé que mi negocio está funcionando aunque no esté mirando" — certeza de que las citas llegan, se confirman y el día está definido sin intervención activa |
-| **Orgullo** (secundaria) | Doble capa: *externo* — "mi formulario se ve profesional, mis clientes me toman en serio"; *interno* — "yo logré configurar esto, yo hice que mi negocio operara solo" |
-| **Calma** (soporte) | La ausencia activa de ansiedad: sin mensajes sin responder, sin incertidumbre sobre qué pasa hoy |
+| Emoción                  | Definición en contexto de Agendly                                                                                                                                      |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Confianza** (primaria) | "Sé que mi negocio está funcionando aunque no esté mirando" — certeza de que las citas llegan, se confirman y el día está definido sin intervención activa             |
+| **Orgullo** (secundaria) | Doble capa: _externo_ — "mi formulario se ve profesional, mis clientes me toman en serio"; _interno_ — "yo logré configurar esto, yo hice que mi negocio operara solo" |
+| **Calma** (soporte)      | La ausencia activa de ansiedad: sin mensajes sin responder, sin incertidumbre sobre qué pasa hoy                                                                       |
 
 **Para el cliente (Daniela):**
 
-| Emoción | Secuencia | Definición |
-|---|---|---|
-| **Sorpresa positiva** | Primera reserva únicamente | "¿En serio fue tan fácil? No me esperaba esto" — violación de expectativas hacia arriba en el punto donde el usuario anticipaba fricción |
-| **Confianza** | Todas las reservas, incluyendo la primera | "Mi cita es real, la tienen registrada, todo está bien" — certeza inequívoca de que el sistema recibió y procesó correctamente |
+| Emoción               | Secuencia                                 | Definición                                                                                                                               |
+| --------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sorpresa positiva** | Primera reserva únicamente                | "¿En serio fue tan fácil? No me esperaba esto" — violación de expectativas hacia arriba en el punto donde el usuario anticipaba fricción |
+| **Confianza**         | Todas las reservas, incluyendo la primera | "Mi cita es real, la tienen registrada, todo está bien" — certeza inequívoca de que el sistema recibió y procesó correctamente           |
 
 **Nota de diseño crítica:** Para Daniela, sorpresa y confianza son **secuenciales, no simultáneas**. La sorpresa ocurre una sola vez (primera reserva). La confianza sostiene el uso recurrente — cuando regresa, no busca sorpresa: busca fluidez invisible.
 
@@ -207,12 +225,14 @@ Ante un error           → Confianza mantenida: el cliente ve el contacto del n
 ### Micro-Emotions
 
 **Para el cliente:**
+
 - **Sorpresa positiva > Expectativa cumplida** — la primera vez debe romper la expectativa hacia arriba, no simplemente cumplirla
 - **Confianza > Escepticismo** — en cada paso el usuario siente que la cita va a existir
 - **Fluidez > Confusión** — cero hesitación en ningún paso del formulario
 - **Certeza > Incertidumbre** — la confirmación elimina toda duda sin espacio para "¿quedó o no quedó?"
 
 **Para el dueño:**
+
 - **Calma > Ansiedad** — la vista de día nunca estresa, solo tranquiliza
 - **Orgullo personal > Orgullo del producto** — el wizard celebra a Lupita como persona, no al negocio como objeto
 - **Orgullo externo > Vergüenza** — el formulario público se ve suficientemente bien para que el dueño lo comparta sin dudar
@@ -220,6 +240,7 @@ Ante un error           → Confianza mantenida: el cliente ve el contacto del n
 - **Confianza > Desconfianza** — el sistema nunca deja al dueño preguntándose "¿se guardó bien?"
 
 **Emociones a evitar en todo momento:**
+
 - Incertidumbre ("¿se guardó mi cita?")
 - Agobio (demasiadas pantallas, demasiadas opciones)
 - Desconfianza ("¿este formulario es legítimo?")
@@ -230,25 +251,25 @@ Ante un error           → Confianza mantenida: el cliente ve el contacto del n
 ### Design Implications
 
 1. **Sorpresa positiva → Micro-copy post-confirmación que nombra lo que pasó**
-Después de la confirmación exitosa, una línea discreta: *"Listo. No necesitabas crear cuenta para esto."* Nombrar explícitamente lo que el usuario acaba de evitar amplifica la sorpresa. Solo aparece en la primera reserva; en reservas recurrentes desaparece.
+   Después de la confirmación exitosa, una línea discreta: _"Listo. No necesitabas crear cuenta para esto."_ Nombrar explícitamente lo que el usuario acaba de evitar amplifica la sorpresa. Solo aparece en la primera reserva; en reservas recurrentes desaparece.
 
 2. **Confianza del cliente → Confirmación con detalles específicos, no promesas genéricas**
-No "tu reserva fue enviada". Sí "Tu cita está confirmada: [Servicio] con [Empleada] el [Fecha] a las [Hora]." Los detalles concretos son la evidencia de confiabilidad. Email enviado inmediatamente, no con delay.
+   No "tu reserva fue enviada". Sí "Tu cita está confirmada: [Servicio] con [Empleada] el [Fecha] a las [Hora]." Los detalles concretos son la evidencia de confiabilidad. Email enviado inmediatamente, no con delay.
 
 3. **Orgullo personal de Lupita → El wizard la celebra a ella, no al negocio**
-El estado final del wizard dice *"Lo lograste. Tu salón ya tiene agenda profesional."* Le da crédito a ella como agente del cambio — crítico para usuarios que no se identifican como "tech" y que han fallado con otras apps antes.
+   El estado final del wizard dice _"Lo lograste. Tu salón ya tiene agenda profesional."_ Le da crédito a ella como agente del cambio — crítico para usuarios que no se identifican como "tech" y que han fallado con otras apps antes.
 
 4. **Orgullo cuantificado → Resumen semanal con tiempo recuperado**
-Una vez por semana, el admin muestra un mensaje: *"Esta semana recibiste 14 citas sin responder un solo WhatsApp. Eso es ~3 horas de tu tiempo."* Convierte el uso del producto en orgullo concreto y medible.
+   Una vez por semana, el admin muestra un mensaje: _"Esta semana recibiste 14 citas sin responder un solo WhatsApp. Eso es ~3 horas de tu tiempo."_ Convierte el uso del producto en orgullo concreto y medible.
 
 5. **Orgullo de crecimiento → Badge "cliente nuevo llegó solo"**
-Cuando alguien que nunca ha agendado antes completa su primera reserva, el admin lo marca de manera distinta: *"Cliente nuevo · llegó por tu link"*. El dueño siente que su negocio crece sin esfuerzo activo.
+   Cuando alguien que nunca ha agendado antes completa su primera reserva, el admin lo marca de manera distinta: _"Cliente nuevo · llegó por tu link"_. El dueño siente que su negocio crece sin esfuerzo activo.
 
 6. **Orgullo externo → Formulario público personalizable como tarjeta digital**
-El formulario incluye nombre del negocio, foto opcional y descripción breve. Un dueño que personaliza su página la comparte más — y cada vez que la comparte, refuerza su orgullo externo.
+   El formulario incluye nombre del negocio, foto opcional y descripción breve. Un dueño que personaliza su página la comparte más — y cada vez que la comparte, refuerza su orgullo externo.
 
 7. **Calma diaria → Silencio visual, no animaciones de tranquilidad**
-La serenidad de la vista de día viene de lo que no hay: sin alertas innecesarias, sin colores de alerta en el estado normal, sin elementos compitiendo por atención.
+   La serenidad de la vista de día viene de lo que no hay: sin alertas innecesarias, sin colores de alerta en el estado normal, sin elementos compitiendo por atención.
 
 ### Emotional Design Principles
 
@@ -269,18 +290,21 @@ La serenidad de la vista de día viene de lo que no hay: sin alertas innecesaria
 #### Referencia del Dueño
 
 **WhatsApp**
+
 - Problema central que resuelve: comunicación instantánea sin fricción de instalación previa ni configuración técnica
 - Por qué funciona: interfaz conocida (chat), sin learning curve, activa en México en 97% de smartphones con datos
 - Patrón clave: el estado de lectura (✓✓ azul) elimina la incertidumbre de "¿llegó mi mensaje?" — equivalente directo a la confirmación de cita de Agendly
 - Lección transferible: el usuario ya opera en este entorno; cualquier cosa más complicada que WhatsApp es fricción inaceptable para Lupita
 
 **Google Calendar**
+
 - Problema central que resuelve: visibilidad de lo que pasa en el tiempo, coordinación entre personas
 - Por qué funciona: vista de día/semana como modelo mental compartido universalmente, color-coding por categoría, actualización en tiempo real
 - Patrón clave: la vista de día como panel de control calmante — información completa sin necesidad de interacción
 - Lección transferible: el admin de Agendly hereda la metáfora del calendario (grilla de tiempo en desktop), pero optimizada para consulta en 5 segundos, no para gestión activa
 
 **Airbnb**
+
 - Problema central que resuelve: confianza en una transacción con un desconocido — a través de diseño, no solo reputación
 - Por qué funciona: muestra disponibilidad real antes de pedir datos personales; el calendario de disponibilidad es la primera pantalla; el precio total aparece antes del checkout
 - Patrón clave: "Valor antes del compromiso" — ves la foto, el precio y la disponibilidad antes de crear cuenta o ingresar tu tarjeta
@@ -289,24 +313,28 @@ La serenidad de la vista de día viene de lo que no hay: sin alertas innecesaria
 #### Referencia del Cliente (Daniela)
 
 **Uber**
+
 - Problema central que resuelve: transporte confiable en contexto de alta ansiedad (¿llegará? ¿dónde está?)
 - Por qué funciona: el mapa en tiempo real transforma la incertidumbre en control visual; la confirmación es inmediata y específica (nombre del conductor, placa, tiempo estimado)
 - Patrón clave: confirmación como artefacto concreto — no "tu solicitud fue enviada" sino "Ricardo · Honda Civic · gris · 3 min"
 - Lección transferible: la pantalla de confirmación de Agendly debe nombrar todo con la misma especificidad: servicio, empleada, fecha, hora — no "tu cita fue registrada"
 
 **Rappi**
+
 - Problema central que resuelve: delivery en contexto móvil de alta distracción, con muchas opciones y poco tiempo de decisión
 - Por qué funciona: filtros visuales grandes y tactiles; la foto del producto vende antes que la descripción; el tiempo de entrega visible antes del compromiso
 - Patrón clave: reducción de parálisis de decisión mediante agrupación visual y opción de "más popular"
 - Lección transferible: el slot grid de Agendly usa el mismo principio — opciones visuales grandes y tactiles, no listas de texto con horarios
 
 **Cinépolis**
+
 - Problema central que resuelve: selección de asiento en flujo de compra de tickets
 - Por qué funciona: la visualización del mapa de butacas convierte una decisión abstracta en una decisión espacial e intuitiva; disponible/ocupado en color
 - Patrón clave: disponibilidad visual > lista textual — el usuario ve inmediatamente dónde puede sentarse sin leer nada
 - Lección transferible: la grilla de slots de Agendly (disponible/ocupado en color) hereda este patrón — el ojo escanea antes de que el cerebro decida
 
 **Amazon / Mercado Libre / Shein**
+
 - Problema central que resuelven: decisión de compra en contexto de incertidumbre (¿llegará? ¿es lo que parece?)
 - Por qué funciona: urgency real ("quedan 3 en stock"), confirmación de pedido con número de orden específico, email de confirmación inmediato
 - Patrón clave: el número de orden / confirmación como "ticket" — el usuario tiene prueba tangible de que la transacción existe
@@ -320,26 +348,31 @@ La serenidad de la vista de día viene de lo que no hay: sin alertas innecesaria
 Investigación directa de los competidores líderes en el espacio. Estas son las razones por las que dueños de salones los abandonan:
 
 **Anti-pattern 1: "Impuesto al Crecimiento"**
+
 - Qué hace: cobran comisión sobre citas de clientes que el dueño ya tenía antes de usar la plataforma
 - Por qué falla: el dueño siente que el crecimiento de su negocio está siendo gravado por una app que él usa para administrar, no para adquirir clientes
 - Principio de Agendly opuesto: Agendly cobra subscripción plana, no comisión. El éxito del negocio no aumenta el costo de la herramienta.
 
 **Anti-pattern 2: "Branding Caníbal"**
+
 - Qué hace: las notificaciones y emails de confirmación dicen "Reserva en Fresha" antes que el nombre del negocio; el cliente recuerda Fresha, no el salón
 - Por qué falla: el dueño pierde identidad de marca en el canal más crítico de comunicación con su cliente
 - Principio de Agendly opuesto: "Tu cita en [Nombre del Salón]" — Agendly aparece solo en el badge discreto al pie, nunca antes que la identidad del negocio
 
 **Anti-pattern 3: "Parálisis por Análisis"**
+
 - Qué hace: onboarding con 40+ configuraciones antes de poder recibir la primera cita; dashboard con 12 widgets y analytics que Lupita nunca va a usar
 - Por qué falla: el costo cognitivo del setup supera el valor percibido; el usuario abandona antes de llegar al "momento aha"
 - Principio de Agendly opuesto: el wizard responde solo 4 preguntas de negocio (servicios, duración, horario, empleadas) — primera cita recibible en ≤15 minutos
 
 **Anti-pattern 4: "Muro de Pago Opaco"**
+
 - Qué hace: tier gratuito suficientemente funcional para enganchar, luego cambios de política que mueven features clave a planes de pago sin aviso claro
 - Por qué falla: destruye confianza en el momento más crítico — cuando el negocio ya depende de la plataforma
 - Principio de Agendly opuesto: pricing transparente desde el primer día; el dueño sabe exactamente qué incluye su plan antes de configurar nada
 
 **Anti-pattern 5: "Sincronización Glitchy"**
+
 - Qué hace: doble booking ocasional cuando dos clientes seleccionan el mismo slot simultáneamente; discrepancias entre la app del dueño y el formulario público
 - Por qué falla: una sola cita duplicada destruye meses de confianza construida — el dueño vuelve a WhatsApp porque "al menos ahí sé que es manual y tengo control"
 - Principio de Agendly opuesto: reserva atómica con lock optimista en backend; el slot desaparece del formulario público en el momento en que se confirma, no después
@@ -350,51 +383,60 @@ Investigación directa de los competidores líderes en el espacio. Estas son las
 
 #### Patrones de Navegación
 
-**Slot-first, empleada-second** *(de Cinépolis + confirmación de Nico)*
+**Slot-first, empleada-second** _(de Cinépolis + confirmación de Nico)_
+
 - Flujo: Servicio → Slot de tiempo → Empleada disponible en ese slot
 - No al revés: si el usuario elige empleada primero, luego descubre que Carmen no tiene horas que le funcionen y tiene que backtrack
 - El slot es el filtro real de disponibilidad; la empleada es consecuencia de la disponibilidad del slot
 - Aplicación en Agendly: el paso 2 del formulario público muestra la grilla de tiempo; el paso 3 asigna empleada (o "cualquier disponible" por defecto)
 
-**Progresión lineal sin backtracking** *(de Uber + Rappi)*
+**Progresión lineal sin backtracking** _(de Uber + Rappi)_
+
 - El usuario nunca necesita volver atrás porque el flujo está ordenado para eliminar decisiones que bloqueen las siguientes
 - Aplicación en Agendly: servicio → slot → datos mínimos → confirmación — en ese orden exacto, sin ramificaciones
 
-**Admin como panel de consulta, no de trabajo** *(de Google Calendar)*
+**Admin como panel de consulta, no de trabajo** _(de Google Calendar)_
+
 - La vista de día no requiere interacción para ser útil — la información está ahí, organizada, lista para consumir
 - Aplicación en Agendly: el admin abre en hoy, carga citas sin acción del dueño, muestra todo sin que el dueño tenga que filtrar ni buscar
 
 #### Patrones de Interacción
 
-**Confirmación como artefacto concreto** *(de Uber + Amazon)*
+**Confirmación como artefacto concreto** _(de Uber + Amazon)_
+
 - La confirmación nombra todo con especificidad: quién, qué, cuándo, dónde
 - No "tu solicitud fue procesada" — sí "Tu cita con Carmen · Corte y color · Martes 4 de marzo · 3:00 PM"
 - Email inmediato como respaldo tangible (Daniela lo reenvía a su calendario o lo muestra el día de la cita)
 
-**Urgency de disponibilidad real** *(de Amazon + Shein, confirmado por Nico)*
+**Urgency de disponibilidad real** _(de Amazon + Shein, confirmado por Nico)_
+
 - Cuando quedan ≤2 slots disponibles en el día seleccionado: "Quedan 2 horarios disponibles hoy"
 - Cuando queda solo 1: "Último horario disponible hoy"
 - NUNCA contadores sociales falsos ("3 personas están viendo esto") — solo escasez real de disponibilidad
 - Aplicación: aparece debajo de la grilla de slots, solo cuando aplica
 
-**"Cualquier disponible" como primera opción** *(de Airbnb — "¿Cuándo?" antes que "¿Dónde exactamente?")*
+**"Cualquier disponible" como primera opción** _(de Airbnb — "¿Cuándo?" antes que "¿Dónde exactamente?")_
+
 - El cliente sin preferencia de empleada no enfrenta parálisis de decisión
 - Un tap y el sistema asigna la primera disponible en el slot seleccionado
 - Aplicación: en el paso de empleada, la primera opción siempre es "Cualquier empleada disponible" — preseleccionada por default
 
 #### Patrones Visuales
 
-**Disponibilidad como estado visual, no textual** *(de Cinépolis + Airbnb)*
+**Disponibilidad como estado visual, no textual** _(de Cinépolis + Airbnb)_
+
 - El usuario escanea con los ojos antes de decidir con el cerebro
 - Slots disponibles en color primario, ocupados en gris — sin necesidad de leer etiquetas
 - Aplicación: la grilla de slots usa color como primer comunicador de disponibilidad
 
-**Identidad visual del negocio, no de la plataforma** *(lección inversa de Booksy)*
+**Identidad visual del negocio, no de la plataforma** _(lección inversa de Booksy)_
+
 - El nombre del negocio es el titular de cada comunicación; Agendly es el footnote
 - El formulario público muestra: nombre del negocio, foto opcional, descripción — antes de cualquier elemento de Agendly
 - Aplicación: el badge "Agenda con Agendly →" aparece al pie del formulario, nunca al inicio
 
-**Silencio visual como diseño** *(de WhatsApp + Google Calendar)*
+**Silencio visual como diseño** _(de WhatsApp + Google Calendar)_
+
 - La ausencia de elementos innecesarios es una decisión de diseño, no omisión
 - El admin de Agendly en mobile: lista de citas, filtro por empleada — nada más
 - Sin widgets de analytics, sin notificaciones de "tips", sin banners de upgrade en la vista principal
@@ -449,20 +491,20 @@ Investigación directa de los competidores líderes en el espacio. Estas son las
 
 #### Tabla de Priorización MVP / V1 / V2
 
-| Patrón | Prioridad | Razón |
-|---|---|---|
-| Slot-first flow (servicio → slot → empleada) | **MVP crítico** | Elimina el error de flujo más común; sin esto el producto no funciona |
-| Datos mínimos (nombre + teléfono) | **MVP crítico** | El gate de abandono más alto; sin esto no hay conversión |
-| Grid visual de slots (color disponible/ocupado) | **MVP crítico** | Reemplaza lista textual; esencial para contexto móvil de alta distracción |
-| Confirmación como artefacto real (pantalla + email) | **MVP crítico** | Sin esto la promesa de certeza no existe |
-| Polling silencioso (10–15s, tab visible) | **MVP crítico** | Sin esto el admin puede mostrar slots ya tomados |
-| Identity-first en formulario público | **MVP crítico** | Diferenciador contra Booksy desde el día 1 |
-| "Cualquier disponible" como primera opción | **MVP crítico** | Elimina el paso más probable de abandono en selección de empleada |
-| Urgency de disponibilidad real (≤2 slots) | **V1** | Mejora conversión; requiere lógica de conteo en tiempo real |
-| Línea de hora actual en desktop (admin) | **V1** | Mejora orientación en admin desktop; no crítico para MVP móvil |
-| Badge "cliente nuevo · llegó por tu link" | **V2** | Momento de orgullo de crecimiento; requiere tracking de first-time clients |
-| Resumen semanal con tiempo recuperado | **V2** | Momento de orgullo cuantificado; requiere datos históricos acumulados |
-| Micro-copy post-confirmación primera vez | **V2** | Amplifica sorpresa positiva; requiere lógica de "primera reserva de este usuario" |
+| Patrón                                              | Prioridad       | Razón                                                                             |
+| --------------------------------------------------- | --------------- | --------------------------------------------------------------------------------- |
+| Slot-first flow (servicio → slot → empleada)        | **MVP crítico** | Elimina el error de flujo más común; sin esto el producto no funciona             |
+| Datos mínimos (nombre + teléfono)                   | **MVP crítico** | El gate de abandono más alto; sin esto no hay conversión                          |
+| Grid visual de slots (color disponible/ocupado)     | **MVP crítico** | Reemplaza lista textual; esencial para contexto móvil de alta distracción         |
+| Confirmación como artefacto real (pantalla + email) | **MVP crítico** | Sin esto la promesa de certeza no existe                                          |
+| Polling silencioso (10–15s, tab visible)            | **MVP crítico** | Sin esto el admin puede mostrar slots ya tomados                                  |
+| Identity-first en formulario público                | **MVP crítico** | Diferenciador contra Booksy desde el día 1                                        |
+| "Cualquier disponible" como primera opción          | **MVP crítico** | Elimina el paso más probable de abandono en selección de empleada                 |
+| Urgency de disponibilidad real (≤2 slots)           | **V1**          | Mejora conversión; requiere lógica de conteo en tiempo real                       |
+| Línea de hora actual en desktop (admin)             | **V1**          | Mejora orientación en admin desktop; no crítico para MVP móvil                    |
+| Badge "cliente nuevo · llegó por tu link"           | **V2**          | Momento de orgullo de crecimiento; requiere tracking de first-time clients        |
+| Resumen semanal con tiempo recuperado               | **V2**          | Momento de orgullo cuantificado; requiere datos históricos acumulados             |
+| Micro-copy post-confirmación primera vez            | **V2**          | Amplifica sorpresa positiva; requiere lógica de "primera reserva de este usuario" |
 
 ## Design System Foundation
 
@@ -486,23 +528,24 @@ Investigación directa de los competidores líderes en el espacio. Estas son las
 
 Dos temperaturas emocionales que mapean directamente al journey emocional del Step 4:
 
-| Token | Hex | Uso | Temperatura emocional |
-|---|---|---|---|
-| `--brand-500` | `#2383E2` | CTA principal, slots disponibles, iconos, links | Confianza / Calma |
-| `--brand-600` | `#1A6BC4` | Hover de botón primario | Confianza |
-| `--brand-700` | `#1256A0` | Texto de marca sobre fondo blanco | Confianza (accesible) |
-| `--brand-50` | `#EFF6FF` | Backgrounds chips seleccionados | Confianza |
-| `--brand-100` | `#DBEAFE` | Badges, urgency backgrounds | Confianza |
-| `--celebrate` | `#FBBF24` | **Background-only** — wizard finale, primera cita, resumen semanal | Orgullo / Deleite |
-| `--success` | `#10B981` | Pantalla de confirmación | Certeza |
-| `--warning` | `#F59E0B` | Urgency slots ≤2 disponibles | Atención |
-| `--error` | `#EF4444` | Error states — siempre con fallback visible | — |
-| `--neutral-50` | `#F9FAFB` | Admin page background | Silencio visual |
-| `--neutral-900` | `#111827` | Texto principal | — |
+| Token           | Hex       | Uso                                                                | Temperatura emocional |
+| --------------- | --------- | ------------------------------------------------------------------ | --------------------- |
+| `--brand-500`   | `#2383E2` | CTA principal, slots disponibles, iconos, links                    | Confianza / Calma     |
+| `--brand-600`   | `#1A6BC4` | Hover de botón primario                                            | Confianza             |
+| `--brand-700`   | `#1256A0` | Texto de marca sobre fondo blanco                                  | Confianza (accesible) |
+| `--brand-50`    | `#EFF6FF` | Backgrounds chips seleccionados                                    | Confianza             |
+| `--brand-100`   | `#DBEAFE` | Badges, urgency backgrounds                                        | Confianza             |
+| `--celebrate`   | `#FBBF24` | **Background-only** — wizard finale, primera cita, resumen semanal | Orgullo / Deleite     |
+| `--success`     | `#10B981` | Pantalla de confirmación                                           | Certeza               |
+| `--warning`     | `#F59E0B` | Urgency slots ≤2 disponibles                                       | Atención              |
+| `--error`       | `#EF4444` | Error states — siempre con fallback visible                        | —                     |
+| `--neutral-50`  | `#F9FAFB` | Admin page background                                              | Silencio visual       |
+| `--neutral-900` | `#111827` | Texto principal                                                    | —                     |
 
 **Narrativa del color:** El `--brand-500` comunica confianza y profesionalismo sin sentirse frío o corporativo. El `--celebrate` aparece únicamente en momentos de orgullo y deleite — esa rareza es lo que los hace sentir especiales.
 
 **Reglas de accesibilidad (WCAG):**
+
 - `--brand-500` (#2383E2): ~3.9:1 sobre blanco → válido para elementos de UI (botones, iconos). No usar como texto de cuerpo sobre blanco.
 - `--brand-700` (#1256A0): ≥4.5:1 → usar cuando el azul de marca necesita ser texto sobre blanco.
 - `--celebrate` (#FBBF24): ~1.6:1 sobre blanco → **background-only**. El texto que va encima siempre usa `--neutral-900` (contraste 11:1).
@@ -511,20 +554,20 @@ Dos temperaturas emocionales que mapean directamente al journey emocional del St
 
 Dos velocidades. No más.
 
-| Contexto | Valor | Cuándo |
-|---|---|---|
-| Interacciones base | `transition: colors 150ms ease-in-out` | Hover, focus, active en cualquier elemento interactivo |
-| Momentos celebratorios | scale-in + fade, 300ms ease-out | Wizard finale, primera cita recibida, resumen semanal |
-| Todo lo demás | sin animación | Admin daily view, formulario, confirmación |
+| Contexto               | Valor                                  | Cuándo                                                 |
+| ---------------------- | -------------------------------------- | ------------------------------------------------------ |
+| Interacciones base     | `transition: colors 150ms ease-in-out` | Hover, focus, active en cualquier elemento interactivo |
+| Momentos celebratorios | scale-in + fade, 300ms ease-out        | Wizard finale, primera cita recibida, resumen semanal  |
+| Todo lo demás          | sin animación                          | Admin daily view, formulario, confirmación             |
 
 150ms = invisible para el cerebro, percibido como "responde bien". 300ms = perceptible, percibido como "este momento importa". No hay una tercera velocidad.
 
 ### Responsive Breakpoints
 
-| Breakpoint | Valor | Vista del admin |
-|---|---|---|
-| Mobile (default) | < 1024px | Lista cronológica + filtro de empleadas |
-| Desktop (`lg:`) | ≥ 1024px | Grilla vue-cal (columnas por empleada × filas de tiempo) |
+| Breakpoint       | Valor    | Vista del admin                                          |
+| ---------------- | -------- | -------------------------------------------------------- |
+| Mobile (default) | < 1024px | Lista cronológica + filtro de empleadas                  |
+| Desktop (`lg:`)  | ≥ 1024px | Grilla vue-cal (columnas por empleada × filas de tiempo) |
 
 El switch es automático — el dueño no configura ni elige versión.
 
@@ -533,6 +576,7 @@ El switch es automático — el dueño no configura ni elige versión.
 **Regla de sistema:** todos los elementos interactivos tienen área táctil mínima de 44×44px. Aplica a: botones de slot, filtros de empleada (burbujas), CTA del formulario, botones de wizard, opciones de servicio.
 
 **"Lupita Test" — Criterio de Aceptación Visual:**
+
 > ¿Funciona este componente con el pulgar de la mano derecha, en Chrome mobile, en un Samsung A14, con Network throttling en Slow 3G, con brillo al máximo?
 
 ### Implementation Approach
@@ -544,21 +588,22 @@ npm install vue-cal
 ```
 
 **`app.config.ts`:**
+
 ```ts
-export default defineAppConfig({ ui: { primary: 'blue', gray: 'slate' } })
+export default defineAppConfig({ ui: { primary: 'blue', gray: 'slate' } });
 ```
 
 **Componentes Nuxt UI para MVP:** `UButton`, `UCard`, `UInput` / `UForm`, `USelect` / `URadioGroup`, `UBadge`, `UModal` / `USlideOver`, `UAvatar`
 
 ### Customization Strategy — Component Architecture
 
-| Contexto | Componente | Librería | Razón |
-|---|---|---|---|
-| Formulario público — slot grid | Custom CSS Grid buttons | Ninguna (~50-80 líneas Vue) | Control total de touch targets; sin overhead |
-| Admin mobile — lista de citas | `AppointmentListItem` custom | Nuxt UI (`UCard`, `UBadge`) | Nuxt UI estructura; custom maneja datos de cita |
-| Admin mobile — filtro empleadas | `EmployeeFilterBubbles` custom | CSS Flexbox + `UAvatar` | Interacción específica: tap filtra, tap vuelve al total |
-| Admin desktop — calendario | `AdminCalendarGrid` | vue-cal | Columnas por empleada × filas de tiempo (desde `lg:`) |
-| Admin desktop — línea hora actual | `CurrentTimeLine` | CSS `position:absolute` | Línea roja sin JS adicional |
+| Contexto                          | Componente                     | Librería                    | Razón                                                   |
+| --------------------------------- | ------------------------------ | --------------------------- | ------------------------------------------------------- |
+| Formulario público — slot grid    | Custom CSS Grid buttons        | Ninguna (~50-80 líneas Vue) | Control total de touch targets; sin overhead            |
+| Admin mobile — lista de citas     | `AppointmentListItem` custom   | Nuxt UI (`UCard`, `UBadge`) | Nuxt UI estructura; custom maneja datos de cita         |
+| Admin mobile — filtro empleadas   | `EmployeeFilterBubbles` custom | CSS Flexbox + `UAvatar`     | Interacción específica: tap filtra, tap vuelve al total |
+| Admin desktop — calendario        | `AdminCalendarGrid`            | vue-cal                     | Columnas por empleada × filas de tiempo (desde `lg:`)   |
+| Admin desktop — línea hora actual | `CurrentTimeLine`              | CSS `position:absolute`     | Línea roja sin JS adicional                             |
 
 **Avatar de empleada:** Componente custom — iniciales + color determinístico por hash del nombre → paleta curada de 8-10 colores accesibles. El mismo nombre siempre produce el mismo color.
 
@@ -568,7 +613,7 @@ export default defineAppConfig({ ui: { primary: 'blue', gray: 'slate' } })
 
 ### 2.1 Defining Experience
 
-**La frase:** *"Un link, un tap, una cita confirmada."*
+**La frase:** _"Un link, un tap, una cita confirmada."_
 
 Agendly no cambia quién agenda — los clientes de Lupita ya quieren agendar, ya lo intentan, ya la contactan. Lo que cambia es el mecanismo: elimina la negociación verbal y la transcripción manual que ocurre después.
 
@@ -585,6 +630,7 @@ Agendly no cambia quién agenda — los clientes de Lupita ya quieren agendar, y
 **El modelo mental actual del cliente:**
 
 Agendar = negociar disponibilidad con una persona. El flujo esperado por Daniela:
+
 1. Pregunto ("¿cuándo tienes libre?") — pregunta abierta, no específica
 2. Espero respuesta (puede ser horas)
 3. La dueña me propone opciones consultando su agenda
@@ -597,12 +643,12 @@ El cliente espera un canal de comunicación — recibe un sistema de selección.
 
 **Puntos de confusión / fricción esperados:**
 
-| Momento | Duda del usuario | Solución de diseño |
-|---|---|---|
-| Primer pantallaso de la grilla | "¿Esto está actualizado? ¿Es de hoy?" | Indicador discreto en header de grilla: *"Disponibilidad actualizada · hace 8 seg"* — número concreto, no "en tiempo real" que suena a marketing. Se actualiza con cada poll. |
-| Después de tocar el slot | "¿Ya quedó? ¿O todavía falta algo?" | El slot seleccionado cambia de estado visualmente (filled, no solo borde) + indicador de progreso visible |
-| Pantalla de confirmación | "¿En serio ya quedó? ¿No me van a llamar para confirmar?" | La confirmación debe sentirse como un ticket, no como un formulario enviado — detalles completos, --success color, email simultáneo |
-| Slot tomado en simultáneo | "¡Error! Se rompió" | Mensaje específico: "Este horario acaba de ser reservado — elige otro" + grilla actualizada, no pantalla de error |
+| Momento                        | Duda del usuario                                          | Solución de diseño                                                                                                                                                            |
+| ------------------------------ | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Primer pantallaso de la grilla | "¿Esto está actualizado? ¿Es de hoy?"                     | Indicador discreto en header de grilla: _"Disponibilidad actualizada · hace 8 seg"_ — número concreto, no "en tiempo real" que suena a marketing. Se actualiza con cada poll. |
+| Después de tocar el slot       | "¿Ya quedó? ¿O todavía falta algo?"                       | El slot seleccionado cambia de estado visualmente (filled, no solo borde) + indicador de progreso visible                                                                     |
+| Pantalla de confirmación       | "¿En serio ya quedó? ¿No me van a llamar para confirmar?" | La confirmación debe sentirse como un ticket, no como un formulario enviado — detalles completos, --success color, email simultáneo                                           |
+| Slot tomado en simultáneo      | "¡Error! Se rompió"                                       | Mensaje específico: "Este horario acaba de ser reservado — elige otro" + grilla actualizada, no pantalla de error                                                             |
 
 **El modelo mental del dueño (Lupita):**
 
@@ -647,12 +693,12 @@ La libreta es el sistema de confianza. Cualquier nueva herramienta se evalúa co
 
 **Patrones establecidos que Agendly hereda (zero educación requerida):**
 
-| Patrón | Referencia | Por qué no necesita enseñarse |
-|---|---|---|
-| Grilla visual de disponibilidad | Cinépolis, Airbnb | Universal en México — el ojo ya sabe que azul = disponible, gris = ocupado |
-| Form de nombre + teléfono | Cualquier formulario móvil | La interacción más familiar en mobile |
-| Confirmación por email | Amazon, Uber, cualquier e-commerce | El usuario espera el email — lo busca activamente |
-| Navegación paso a paso con progreso | Apps de delivery, Uber | "Paso 2 de 4" es comprensible sin instrucciones |
+| Patrón                              | Referencia                         | Por qué no necesita enseñarse                                              |
+| ----------------------------------- | ---------------------------------- | -------------------------------------------------------------------------- |
+| Grilla visual de disponibilidad     | Cinépolis, Airbnb                  | Universal en México — el ojo ya sabe que azul = disponible, gris = ocupado |
+| Form de nombre + teléfono           | Cualquier formulario móvil         | La interacción más familiar en mobile                                      |
+| Confirmación por email              | Amazon, Uber, cualquier e-commerce | El usuario espera el email — lo busca activamente                          |
+| Navegación paso a paso con progreso | Apps de delivery, Uber             | "Paso 2 de 4" es comprensible sin instrucciones                            |
 
 **El elemento genuinamente nuevo para este contexto:**
 
@@ -661,6 +707,7 @@ La combinación **"disponibilidad real + confirmación instantánea sin persona 
 La fricción conceptual no es técnica: es de confianza. "¿Este sistema es tan confiable como Lupita diciéndome 'ya quedaste'?" El diseño responde esta pregunta con evidencia concreta, no con promesas.
 
 **Cómo construir confianza en el patrón nuevo:**
+
 1. Indicador de actualización con timestamp concreto ("actualizada · hace 8 seg") — sin que el usuario lo pida
 2. Confirmación que nombra todo específicamente (no genérica)
 3. Email inmediato como respaldo tangible
@@ -695,15 +742,16 @@ La fricción conceptual no es técnica: es de confianza. "¿Este sistema es tan 
 - Urgency label solo cuando aplica: "Quedan 2 horarios disponibles hoy" (--warning, encima de la grilla)
 - Tap en slot disponible → selección visual inmediata → CTA "Confirmar horario"
 
-#### Interacción — Paso 3: Empleada *(con reglas de auto-advance)*
+#### Interacción — Paso 3: Empleada _(con reglas de auto-advance)_
 
 **Regla 1 — Negocio con una sola empleada configurada:**
 El paso 3 se salta completamente. La empleada se asigna automáticamente y aparece en la pantalla de confirmación, no en el flujo. El cliente nunca ve un paso con una sola opción.
 
 **Regla 2 — Slot seleccionado con una sola empleada disponible:**
-El paso 3 muestra brevemente (400ms) la empleada preseleccionada con copy: *"Solo Carmen está disponible en este horario"* → auto-advance al paso 4. No requiere acción del usuario.
+El paso 3 muestra brevemente (400ms) la empleada preseleccionada con copy: _"Solo Carmen está disponible en este horario"_ → auto-advance al paso 4. No requiere acción del usuario.
 
 **Caso estándar — múltiples empleadas disponibles:**
+
 - Primera opción preseleccionada: **"Cualquier empleada disponible"** — avatar genérico
 - Opciones adicionales: empleadas disponibles en ese slot como chips con avatar + nombre
 - Tap selecciona → CTA "Continuar"
@@ -718,13 +766,13 @@ El paso 3 muestra brevemente (400ms) la empleada preseleccionada con copy: *"Sol
 
 #### Feedback
 
-| Estado | Qué ve el usuario | Cómo se implementa |
-|---|---|---|
-| Slot seleccionado | Card filled + check icon sutil | CSS transition 150ms |
-| CTA tapped / enviando | Spinner en el botón, botón disabled | Estado de carga local |
-| Éxito | Pantalla completa --success, check icon animado 300ms | Página reemplaza el form |
-| Slot tomado en simultáneo | "Este horario acaba de ser reservado. Elige otro." + grilla actualizada | Toast + re-fetch slots |
-| Error de servidor | Contacto directo del negocio visible + número de teléfono | Fallback como confianza |
+| Estado                    | Qué ve el usuario                                                       | Cómo se implementa       |
+| ------------------------- | ----------------------------------------------------------------------- | ------------------------ |
+| Slot seleccionado         | Card filled + check icon sutil                                          | CSS transition 150ms     |
+| CTA tapped / enviando     | Spinner en el botón, botón disabled                                     | Estado de carga local    |
+| Éxito                     | Pantalla completa --success, check icon animado 300ms                   | Página reemplaza el form |
+| Slot tomado en simultáneo | "Este horario acaba de ser reservado. Elige otro." + grilla actualizada | Toast + re-fetch slots   |
+| Error de servidor         | Contacto directo del negocio visible + número de teléfono               | Fallback como confianza  |
 
 #### Completado — Pantalla de confirmación
 
@@ -752,7 +800,7 @@ Email disparado simultáneamente.
 
 El último paso del wizard antes del estado celebratorio incluye:
 
-> *"Antes de compartir tu link, pruébalo como si fueras tu cliente →"*
+> _"Antes de compartir tu link, pruébalo como si fueras tu cliente →"_
 
 - Lupita completa su propio formulario en < 60 segundos
 - Llega a la pantalla de confirmación y ve qué ve Daniela
@@ -765,31 +813,31 @@ El último paso del wizard antes del estado celebratorio incluye:
 
 **Paleta semántica — tokens de sistema:**
 
-| Token | Hex | Rol semántico | Temperatura emocional |
-|---|---|---|---|
-| `--brand-500` | `#2383E2` | CTA principal, estado seleccionado (slot), iconos activos, links | Confianza / Calma |
-| `--brand-600` | `#1A6BC4` | Hover de botón primario | Confianza |
-| `--brand-700` | `#1256A0` | Texto de marca sobre blanco, texto disponible sobre `--brand-50` | Confianza (accesible) |
-| `--brand-50` | `#EFF6FF` | Fondo de slot disponible, chips seleccionados (fondo) | Confianza suave |
-| `--brand-100` | `#DBEAFE` | Badges, urgency backgrounds | Confianza suave |
-| `--celebrate` | `#FBBF24` | **Background-only** — wizard finale, primera cita, resumen semanal | Orgullo / Deleite |
-| `--success` | `#10B981` | Pantalla de confirmación (fondo + icono) | Certeza |
-| `--warning` | `#F59E0B` | Urgency slots ≤2 disponibles | Atención |
-| `--error` | `#EF4444` | Error states — siempre con fallback visible al pie | — |
-| `--neutral-50` | `#F9FAFB` | Admin page background | Silencio visual |
-| `--neutral-200` | `#E5E7EB` | Fondo de slot ocupado | Inactivo |
-| `--neutral-400` | `#9CA3AF` | Texto de slot ocupado, labels secundarios | Inactivo |
-| `--neutral-900` | `#111827` | Texto principal | — |
+| Token           | Hex       | Rol semántico                                                      | Temperatura emocional |
+| --------------- | --------- | ------------------------------------------------------------------ | --------------------- |
+| `--brand-500`   | `#2383E2` | CTA principal, estado seleccionado (slot), iconos activos, links   | Confianza / Calma     |
+| `--brand-600`   | `#1A6BC4` | Hover de botón primario                                            | Confianza             |
+| `--brand-700`   | `#1256A0` | Texto de marca sobre blanco, texto disponible sobre `--brand-50`   | Confianza (accesible) |
+| `--brand-50`    | `#EFF6FF` | Fondo de slot disponible, chips seleccionados (fondo)              | Confianza suave       |
+| `--brand-100`   | `#DBEAFE` | Badges, urgency backgrounds                                        | Confianza suave       |
+| `--celebrate`   | `#FBBF24` | **Background-only** — wizard finale, primera cita, resumen semanal | Orgullo / Deleite     |
+| `--success`     | `#10B981` | Pantalla de confirmación (fondo + icono)                           | Certeza               |
+| `--warning`     | `#F59E0B` | Urgency slots ≤2 disponibles                                       | Atención              |
+| `--error`       | `#EF4444` | Error states — siempre con fallback visible al pie                 | —                     |
+| `--neutral-50`  | `#F9FAFB` | Admin page background                                              | Silencio visual       |
+| `--neutral-200` | `#E5E7EB` | Fondo de slot ocupado                                              | Inactivo              |
+| `--neutral-400` | `#9CA3AF` | Texto de slot ocupado, labels secundarios                          | Inactivo              |
+| `--neutral-900` | `#111827` | Texto principal                                                    | —                     |
 
 **Estados visuales del slot grid — fuente de verdad para contraste:**
 
-| Estado | Fondo | Texto | Contraste | WCAG |
-|---|---|---|---|---|
-| Disponible | `--brand-50` (#EFF6FF) | `--brand-700` (#1256A0) | ~8.5:1 | **AAA** ✓ |
-| Ocupado | `--neutral-200` (#E5E7EB) | `--neutral-400` (#9CA3AF) | ~3.1:1 | decorativo* |
-| Seleccionado | `--brand-500` (#2383E2) | blanco + `scale-1.05` | ~4:1 | transitional** |
+| Estado       | Fondo                     | Texto                     | Contraste | WCAG             |
+| ------------ | ------------------------- | ------------------------- | --------- | ---------------- |
+| Disponible   | `--brand-50` (#EFF6FF)    | `--brand-700` (#1256A0)   | ~8.5:1    | **AAA** ✓        |
+| Ocupado      | `--neutral-200` (#E5E7EB) | `--neutral-400` (#9CA3AF) | ~3.1:1    | decorativo\*     |
+| Seleccionado | `--brand-500` (#2383E2)   | blanco + `scale-1.05`     | ~4:1      | transitional\*\* |
 
-*El slot ocupado es no-interactivo (`pointer-events: none`, `aria-disabled="true"`); su texto es puramente decorativo — el estado lo comunica el fondo, no el texto.
+\*El slot ocupado es no-interactivo (`pointer-events: none`, `aria-disabled="true"`); su texto es puramente decorativo — el estado lo comunica el fondo, no el texto.
 
 **El estado seleccionado (~4:1) es una transición de ~150ms** — el usuario llega a él por acción propia y avanza inmediatamente. No es un estado de lectura prolongada.
 
@@ -797,11 +845,11 @@ El último paso del wizard antes del estado celebratorio incluye:
 
 **Motion system — dos velocidades, no más:**
 
-| Contexto | Valor | Cuándo |
-|---|---|---|
-| Interacciones base | `transition: colors 150ms ease-in-out` | Hover, focus, active en cualquier elemento interactivo |
-| Momentos celebratorios | scale-in + fade, 300ms ease-out | Wizard finale, primera cita recibida, resumen semanal |
-| Todo lo demás | sin animación | Admin daily view, formulario, confirmación |
+| Contexto               | Valor                                  | Cuándo                                                 |
+| ---------------------- | -------------------------------------- | ------------------------------------------------------ |
+| Interacciones base     | `transition: colors 150ms ease-in-out` | Hover, focus, active en cualquier elemento interactivo |
+| Momentos celebratorios | scale-in + fade, 300ms ease-out        | Wizard finale, primera cita recibida, resumen semanal  |
+| Todo lo demás          | sin animación                          | Admin daily view, formulario, confirmación             |
 
 **Growth Badge — especificación:**
 
@@ -823,14 +871,14 @@ Hecho con  ⬡ Agendly  →
 
 **Escala de texto — 6 niveles:**
 
-| Nivel | Clase Tailwind | Uso |
-|---|---|---|
-| Título de página | `text-2xl font-semibold` | Título de sección en admin, heading principal de formulario |
-| Nombre de negocio / sección | `text-xl font-semibold` | Nombre del negocio en formulario público, títulos de sección en wizard |
-| Nombre de servicio / precio | `text-lg font-medium` | Cards de servicios, totales en confirmación |
-| Cuerpo / campos | `text-base font-normal` | Texto corriente, labels de inputs, descripción de negocio |
-| Labels / timestamps / badges | `text-sm font-normal` | Etiquetas de estado, timestamps de admin, badges de chip |
-| Captions / Growth Badge | `text-xs font-normal` | Texto al pie, badge "Hecho con Agendly" |
+| Nivel                        | Clase Tailwind           | Uso                                                                    |
+| ---------------------------- | ------------------------ | ---------------------------------------------------------------------- |
+| Título de página             | `text-2xl font-semibold` | Título de sección en admin, heading principal de formulario            |
+| Nombre de negocio / sección  | `text-xl font-semibold`  | Nombre del negocio en formulario público, títulos de sección en wizard |
+| Nombre de servicio / precio  | `text-lg font-medium`    | Cards de servicios, totales en confirmación                            |
+| Cuerpo / campos              | `text-base font-normal`  | Texto corriente, labels de inputs, descripción de negocio              |
+| Labels / timestamps / badges | `text-sm font-normal`    | Etiquetas de estado, timestamps de admin, badges de chip               |
+| Captions / Growth Badge      | `text-xs font-normal`    | Texto al pie, badge "Hecho con Agendly"                                |
 
 **Jerarquía de peso:** `font-semibold` para títulos → `font-medium` para nombres propios / precios → `font-normal` para todo lo demás. Sin `font-bold` — el producto no grita.
 
@@ -842,35 +890,35 @@ Hecho con  ⬡ Agendly  →
 
 **Base:** Tailwind CSS standard — 4px por unidad de espacio.
 
-| Valor | Clase Tailwind | Uso en Agendly |
-|---|---|---|
-| 4px | `space-1` / `p-1` | Separación entre icono y texto en badges |
-| 8px | `space-2` / `p-2` | Padding interno de chips, espacio entre label e input |
-| 12px | `space-3` / `p-3` | Padding interno de slots de la grilla |
-| 16px | `space-4` / `p-4` | Padding de cards de servicio, padding lateral de página |
-| 24px | `space-6` / `p-6` | Separación entre secciones del formulario |
-| 32px | `space-8` / `p-8` | Padding interno de confirmation card |
-| 48px | `space-12` / `p-12` | Espacio entre el último campo y el CTA principal |
+| Valor | Clase Tailwind      | Uso en Agendly                                          |
+| ----- | ------------------- | ------------------------------------------------------- |
+| 4px   | `space-1` / `p-1`   | Separación entre icono y texto en badges                |
+| 8px   | `space-2` / `p-2`   | Padding interno de chips, espacio entre label e input   |
+| 12px  | `space-3` / `p-3`   | Padding interno de slots de la grilla                   |
+| 16px  | `space-4` / `p-4`   | Padding de cards de servicio, padding lateral de página |
+| 24px  | `space-6` / `p-6`   | Separación entre secciones del formulario               |
+| 32px  | `space-8` / `p-8`   | Padding interno de confirmation card                    |
+| 48px  | `space-12` / `p-12` | Espacio entre el último campo y el CTA principal        |
 
 **Densidad:** Balanceado — ni denso ni aireado. El formulario no comprime pantallas, pero tampoco desperdicia espacio vertical en mobile.
 
 **Border radius — sistema completo:**
 
-| Token | Valor | Aplicación |
-|---|---|---|
-| `rounded-full` | 9999px | Avatars de empleadas, burbujas de filtro |
-| `rounded-xl` | 12px | Modals, bottom sheets, confirmation card |
-| `rounded-lg` | 8px | **DEFAULT** — service cards, buttons, inputs, slot grid cells |
-| `rounded-md` | 6px | Badges, chips, state tags |
-| `rounded` | 4px | Tooltips, indicadores pequeños |
+| Token          | Valor  | Aplicación                                                    |
+| -------------- | ------ | ------------------------------------------------------------- |
+| `rounded-full` | 9999px | Avatars de empleadas, burbujas de filtro                      |
+| `rounded-xl`   | 12px   | Modals, bottom sheets, confirmation card                      |
+| `rounded-lg`   | 8px    | **DEFAULT** — service cards, buttons, inputs, slot grid cells |
+| `rounded-md`   | 6px    | Badges, chips, state tags                                     |
+| `rounded`      | 4px    | Tooltips, indicadores pequeños                                |
 
 **Shadow system — mínimo:**
 
-| Sombra | Tailwind | Cuándo |
-|---|---|---|
-| `shadow-sm` | 2px blur, 1px y | Admin cards en mobile, service cards en formulario |
-| `shadow-md` | 6px blur, 2px y | Modals, bottom sheets |
-| Prohibido | `shadow-lg`, `shadow-xl` | Nunca — el producto no apila capas visuales innecesarias |
+| Sombra      | Tailwind                 | Cuándo                                                   |
+| ----------- | ------------------------ | -------------------------------------------------------- |
+| `shadow-sm` | 2px blur, 1px y          | Admin cards en mobile, service cards en formulario       |
+| `shadow-md` | 6px blur, 2px y          | Modals, bottom sheets                                    |
+| Prohibido   | `shadow-lg`, `shadow-xl` | Nunca — el producto no apila capas visuales innecesarias |
 
 **Interactive States — focus ring (teclado):**
 
@@ -885,12 +933,12 @@ focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500
 
 **Grillas de layout:**
 
-| Contexto | Grid | Max-width |
-|---|---|---|
-| Formulario público | 1 col, centrado | `max-w-md mx-auto px-4` (448px) |
-| Admin mobile | 1 col, full-width | `px-4` |
+| Contexto              | Grid                     | Max-width                             |
+| --------------------- | ------------------------ | ------------------------------------- |
+| Formulario público    | 1 col, centrado          | `max-w-md mx-auto px-4` (448px)       |
+| Admin mobile          | 1 col, full-width        | `px-4`                                |
 | Admin desktop (`lg:`) | vue-cal columnas × filas | Full viewport minus sidebar si aplica |
-| Wizard | 1 col, centrado | `max-w-lg mx-auto` (512px) |
+| Wizard                | 1 col, centrado          | `max-w-lg mx-auto` (512px)            |
 
 ---
 
@@ -898,29 +946,29 @@ focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500
 
 **Contraste de texto — tabla de compliance:**
 
-| Par | Ratio | WCAG | Uso |
-|---|---|---|---|
-| `--brand-700` (#1256A0) sobre `--brand-50` (#EFF6FF) | ~8.5:1 | **AAA** | Slot disponible — texto sobre fondo claro |
-| `--brand-700` (#1256A0) sobre blanco | ≥4.5:1 | **AA** | Texto de marca en páginas blancas |
-| `--neutral-900` (#111827) sobre `--neutral-50` (#F9FAFB) | ≥15:1 | **AAA** | Texto principal en admin |
-| `--neutral-900` sobre `--celebrate` (#FBBF24) | ~11:1 | **AAA** | Texto en fondos celebratorios |
-| Blanco sobre `--brand-500` (#2383E2) | ~4:1 | transitional* | Estado seleccionado (slot), CTAs |
-| `--neutral-400` sobre `--neutral-200` | ~3.1:1 | decorativo** | Slot ocupado — no-interactivo |
+| Par                                                      | Ratio  | WCAG           | Uso                                       |
+| -------------------------------------------------------- | ------ | -------------- | ----------------------------------------- |
+| `--brand-700` (#1256A0) sobre `--brand-50` (#EFF6FF)     | ~8.5:1 | **AAA**        | Slot disponible — texto sobre fondo claro |
+| `--brand-700` (#1256A0) sobre blanco                     | ≥4.5:1 | **AA**         | Texto de marca en páginas blancas         |
+| `--neutral-900` (#111827) sobre `--neutral-50` (#F9FAFB) | ≥15:1  | **AAA**        | Texto principal en admin                  |
+| `--neutral-900` sobre `--celebrate` (#FBBF24)            | ~11:1  | **AAA**        | Texto en fondos celebratorios             |
+| Blanco sobre `--brand-500` (#2383E2)                     | ~4:1   | transitional\* | Estado seleccionado (slot), CTAs          |
+| `--neutral-400` sobre `--neutral-200`                    | ~3.1:1 | decorativo\*\* | Slot ocupado — no-interactivo             |
 
-*El botón CTA (blanco sobre `--brand-500`) aplica al `UButton` primario — texto `text-lg font-medium` (18px/700 weight) que califica como "large text" en WCAG AA (~3:1 requerido). Borde de 2px disponible como refuerzo si QA lo requiere.
+\*El botón CTA (blanco sobre `--brand-500`) aplica al `UButton` primario — texto `text-lg font-medium` (18px/700 weight) que califica como "large text" en WCAG AA (~3:1 requerido). Borde de 2px disponible como refuerzo si QA lo requiere.
 
 **Touch targets:** todos los elementos interactivos tienen área táctil mínima de **44×44px**. Aplica a slots, service cards, filter bubbles, wizard buttons, CTAs del formulario.
 
 **Atributos ARIA — especificación:**
 
-| Elemento | Atributo | Valor |
-|---|---|---|
-| Slot disponible | — | (interactivo normal, `role="button"` implícito) |
-| Slot ocupado | `aria-disabled="true"` | Comunica no-interactivo a lectores de pantalla |
-| Slot seleccionado | `aria-pressed="true"` | Estado activo |
-| Timestamp de actualización | `aria-live="polite"` | Anuncia cambios al fondo sin interrumpir |
-| Formulario | `lang="es-MX"` | Idioma correcto para lectores de pantalla en México |
-| Inputs | `autocomplete="name"`, `autocomplete="tel"`, `inputmode="numeric"` | Facilita autocompletar y teclado correcto en mobile |
+| Elemento                   | Atributo                                                           | Valor                                               |
+| -------------------------- | ------------------------------------------------------------------ | --------------------------------------------------- |
+| Slot disponible            | —                                                                  | (interactivo normal, `role="button"` implícito)     |
+| Slot ocupado               | `aria-disabled="true"`                                             | Comunica no-interactivo a lectores de pantalla      |
+| Slot seleccionado          | `aria-pressed="true"`                                              | Estado activo                                       |
+| Timestamp de actualización | `aria-live="polite"`                                               | Anuncia cambios al fondo sin interrumpir            |
+| Formulario                 | `lang="es-MX"`                                                     | Idioma correcto para lectores de pantalla en México |
+| Inputs                     | `autocomplete="name"`, `autocomplete="tel"`, `inputmode="numeric"` | Facilita autocompletar y teclado correcto en mobile |
 
 **Movimiento reducido:**
 
@@ -939,14 +987,14 @@ Las transiciones de 150ms de colores permanecen activas — no son perceptibles 
 
 Se generaron 6 direcciones visuales en `_bmad-output/planning-artifacts/ux-design-directions.html` y se evaluaron con Party Mode (Sally — UX Designer, John — PM, Maya — Design Thinking Coach):
 
-| Dir | Nombre | Enfoque | Veredicto |
-|---|---|---|---|
-| A | Transparencia | Blanco puro, brand solo en activos | Descartada — ambigua en primera impresión para Daniela |
-| **B** | **Calidez Profesional** | neutral-50 base, cartas blancas | **Base elegida** |
-| C | Identidad Primero | Header brand-500 full-bleed | Descartada para MVP — uniformidad de marca entre negocios sin personalización de color |
-| D | Pasos Guiados | Progress bar + botón atrás prominentes | Reservada para onboarding asistido — no como dirección principal |
-| **E** | **Grilla Protagonista** | Grid 2 col, slots 38px | **Modificación adoptada para el slot grid** |
-| **F** | **Celebración Latente** | --celebrate en hitos, wizard finale | **Estado adoptado — no-negociable para retención semana 1** |
+| Dir   | Nombre                  | Enfoque                                | Veredicto                                                                              |
+| ----- | ----------------------- | -------------------------------------- | -------------------------------------------------------------------------------------- |
+| A     | Transparencia           | Blanco puro, brand solo en activos     | Descartada — ambigua en primera impresión para Daniela                                 |
+| **B** | **Calidez Profesional** | neutral-50 base, cartas blancas        | **Base elegida**                                                                       |
+| C     | Identidad Primero       | Header brand-500 full-bleed            | Descartada para MVP — uniformidad de marca entre negocios sin personalización de color |
+| D     | Pasos Guiados           | Progress bar + botón atrás prominentes | Reservada para onboarding asistido — no como dirección principal                       |
+| **E** | **Grilla Protagonista** | Grid 2 col, slots 38px                 | **Modificación adoptada para el slot grid**                                            |
+| **F** | **Celebración Latente** | --celebrate en hitos, wizard finale    | **Estado adoptado — no-negociable para retención semana 1**                            |
 
 **Nota sobre la Dirección C:** El header brand-500 crea uniformidad entre todos los negocios en Agendly en MVP (mismo azul, mismo layout). Reservada para V2 cuando haya personalización de color por negocio — en ese momento se convierte en modo premium donde Lupita elige su color de marca.
 
@@ -957,6 +1005,7 @@ Se generaron 6 direcciones visuales en `_bmad-output/planning-artifacts/ux-desig
 **Base: Dirección B (Calidez Profesional) con modificaciones de E y F**
 
 **Formulario público (Daniela):**
+
 - Superficie: `bg-neutral-50` como fondo de página, cartas blancas con `shadow-sm` para el contenido de cada paso
 - Nombre del negocio: `text-xl font-semibold` en carta propia encima del paso — primera señal de confianza antes de cualquier interacción
 - Progreso: barra de 3px en la parte superior de la carta del paso
@@ -964,11 +1013,13 @@ Se generaron 6 direcciones visuales en `_bmad-output/planning-artifacts/ux-desig
 - CTA: `UButton` primario ancho completo al pie de la carta
 
 **Admin mobile (Lupita / Roberto):**
+
 - Superficie: `bg-neutral-50` como fondo, `AppointmentListItem` como cartas blancas con `shadow-sm`
 - Burbujas de empleada: `EmployeeFilterBubbles` — iniciales + colores determinísticos, 30×30px `rounded-full`
 - Badge "cliente nueva · llegó por tu link" como micro-momento de orgullo inline en la lista
 
 **Wizard finale / hitos emocionales (capa F — no-negociable):**
+
 - Banner `bg-[var(--celebrate)]` full-width con texto dirigido a Lupita como persona ("¡Lo lograste, Lupita!")
 - Preview del admin con la cita de prueba ya visible en la pantalla de finale
 - Primera cita real: tratamiento visual distinto del resto de notificaciones
@@ -992,16 +1043,16 @@ Se generaron 6 direcciones visuales en `_bmad-output/planning-artifacts/ux-desig
 
 ### Implementation Approach
 
-| Componente | Implementación |
-|---|---|
-| `AppPublicForm` (wrapper) | `bg-neutral-50 min-h-screen` |
-| `BusinessHeader` | Carta blanca `shadow-sm rounded-xl` — nombre `text-xl font-semibold`, descripción `text-sm text-neutral-500` |
-| `StepCard` | Carta blanca `shadow-sm rounded-xl overflow-hidden` — progress bar 3px en top |
-| `SlotGrid` | CSS Grid 2 columnas, `gap-3`, celdas `min-h-[38px] rounded-lg` — colores según Visual Foundation |
-| `AppointmentListItem` | Carta blanca `shadow-sm rounded-xl` — hora · info · avatar |
-| `EmployeeFilterBubbles` | Row horizontal scrollable, burbujas `w-[30px] h-[30px] rounded-full` con colores determinísticos |
-| `WizardFinaleState` | Banner `bg-[var(--celebrate)]` full-width — `text-xl font-semibold text-neutral-900` dirigido a la persona |
-| `NewClientBadge` | `text-xs text-brand-700` inline en `AppointmentListItem` — solo primera cita de cada número nuevo |
+| Componente                | Implementación                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `AppPublicForm` (wrapper) | `bg-neutral-50 min-h-screen`                                                                                 |
+| `BusinessHeader`          | Carta blanca `shadow-sm rounded-xl` — nombre `text-xl font-semibold`, descripción `text-sm text-neutral-500` |
+| `StepCard`                | Carta blanca `shadow-sm rounded-xl overflow-hidden` — progress bar 3px en top                                |
+| `SlotGrid`                | CSS Grid 2 columnas, `gap-3`, celdas `min-h-[38px] rounded-lg` — colores según Visual Foundation             |
+| `AppointmentListItem`     | Carta blanca `shadow-sm rounded-xl` — hora · info · avatar                                                   |
+| `EmployeeFilterBubbles`   | Row horizontal scrollable, burbujas `w-[30px] h-[30px] rounded-full` con colores determinísticos             |
+| `WizardFinaleState`       | Banner `bg-[var(--celebrate)]` full-width — `text-xl font-semibold text-neutral-900` dirigido a la persona   |
+| `NewClientBadge`          | `text-xs text-brand-700` inline en `AppointmentListItem` — solo primera cita de cada número nuevo            |
 
 ---
 
@@ -1036,6 +1087,7 @@ flowchart TD
 ```
 
 **Optimizaciones clave:**
+
 - Auto-advance cuando solo hay una empleada elimina un paso completo
 - SlotGrid 2 columnas en mobile reduce scroll 50% vs lista vertical
 - Fallback de contacto visible solo en error — no interrumpe flujo feliz
@@ -1069,6 +1121,7 @@ flowchart TD
 ```
 
 **Optimizaciones clave:**
+
 - 4 preguntas máximo — ninguna es técnica, todas construyen el ROI personalizado
 - El test booking interno es opcional (puede saltarse) para no bloquear activación
 - Wizard Finale con `--celebrate` = primer momento de deleite emocional
@@ -1102,6 +1155,7 @@ flowchart TD
 ```
 
 **Optimizaciones clave:**
+
 - Polling silencioso elimina necesidad de recargar manualmente
 - Mobile-first lista + Desktop grid — misma data, distinta densidad
 - Walk-in flujo en 3 pasos máximo (servicio → empleada → slot)
@@ -1127,6 +1181,7 @@ flowchart TD
 ```
 
 **Optimizaciones clave:**
+
 - Badge "Agendado con Agendly" visible pero no intrusivo — no interrumpe experiencia de Daniela
 - NewClientBadge en admin da a Sandra señal clara de que el canal está funcionando
 
@@ -1136,14 +1191,14 @@ flowchart TD
 
 Patrones reutilizables identificados en los 4 flujos críticos:
 
-| Patrón | Descripción | Aplicación |
-|--------|-------------|------------|
-| **Progressive Disclosure** | Solo se muestra el siguiente paso cuando el anterior está completo | Booking público: pasos 1→2→3→4 secuenciales |
-| **Auto-Advance** | El sistema salta pasos innecesarios cuando la respuesta es obvia | Booking: omite selector de empleada si solo hay una |
-| **Atomic Confirmation** | Toda la información de confirmación en una sola pantalla | Booking: resumen completo antes del CTA final |
-| **Fallback-as-Trust** | Los errores muestran el número de teléfono del negocio como fallback | Booking error servidor: número visible, no página de error genérica |
-| **Silent Update** | El estado se actualiza sin interrumpir la sesión activa del usuario | Admin Day View: polling 30s, nuevas citas aparecen sin reload |
-| **Celebration-as-Milestone** | Los momentos de logro se marcan con señales visuales y emocionales | Wizard Finale `--celebrate`, primera cita real NewClientBadge |
+| Patrón                       | Descripción                                                          | Aplicación                                                          |
+| ---------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Progressive Disclosure**   | Solo se muestra el siguiente paso cuando el anterior está completo   | Booking público: pasos 1→2→3→4 secuenciales                         |
+| **Auto-Advance**             | El sistema salta pasos innecesarios cuando la respuesta es obvia     | Booking: omite selector de empleada si solo hay una                 |
+| **Atomic Confirmation**      | Toda la información de confirmación en una sola pantalla             | Booking: resumen completo antes del CTA final                       |
+| **Fallback-as-Trust**        | Los errores muestran el número de teléfono del negocio como fallback | Booking error servidor: número visible, no página de error genérica |
+| **Silent Update**            | El estado se actualiza sin interrumpir la sesión activa del usuario  | Admin Day View: polling 30s, nuevas citas aparecen sin reload       |
+| **Celebration-as-Milestone** | Los momentos de logro se marcan con señales visuales y emocionales   | Wizard Finale `--celebrate`, primera cita real NewClientBadge       |
 
 ---
 
@@ -1161,7 +1216,6 @@ En flujos multi-paso (booking wizard, onboarding wizard) el usuario siempre sabe
 **4. Recuperación graciosa de errores**
 Cuando algo falla, el sistema nunca deja al usuario varado. Siempre hay un camino alternativo: actualizar el slot, llamar al negocio, saltar el paso opcional. El error más costoso es el abandono.
 
-
 ---
 
 ## Component Strategy
@@ -1170,18 +1224,18 @@ Cuando algo falla, el sistema nunca deja al usuario varado. Siempre hay un camin
 
 Componentes disponibles de **shadcn-vue + Tailwind CSS** que se usan directamente sin customización significativa:
 
-| Componente base | Uso en Agendly |
-|-----------------|----------------|
-| `Button` | CTAs en todos los flows — primario, secundario, ghost |
-| `Input` / `Textarea` | Formulario datos cliente (Paso 4 booking público) |
-| `Dialog` | Cancelar cita, reagendar, WalkIn (composición) |
-| `Toast` | Conflicto de slot, errores de servidor |
-| `Badge` | Estados de cita (confirmada, pendiente, cancelada) |
-| `Card` | Contenedor genérico para secciones |
-| `Avatar` | Foto de empleada en `EmployeeCard` |
-| `Skeleton` | Loading states en `SlotGrid`, `DayViewList`, `BusinessHeader` |
-| `Tabs` | Navegación admin (Hoy / Semana / Clientes) |
-| `Select` | Selector de duración en onboarding wizard |
+| Componente base      | Uso en Agendly                                                |
+| -------------------- | ------------------------------------------------------------- |
+| `Button`             | CTAs en todos los flows — primario, secundario, ghost         |
+| `Input` / `Textarea` | Formulario datos cliente (Paso 4 booking público)             |
+| `Dialog`             | Cancelar cita, reagendar, WalkIn (composición)                |
+| `Toast`              | Conflicto de slot, errores de servidor                        |
+| `Badge`              | Estados de cita (confirmada, pendiente, cancelada)            |
+| `Card`               | Contenedor genérico para secciones                            |
+| `Avatar`             | Foto de empleada en `EmployeeCard`                            |
+| `Skeleton`           | Loading states en `SlotGrid`, `DayViewList`, `BusinessHeader` |
+| `Tabs`               | Navegación admin (Hoy / Semana / Clientes)                    |
+| `Select`             | Selector de duración en onboarding wizard                     |
 
 ### Custom Components
 
@@ -1335,39 +1389,38 @@ Componentes disponibles de **shadcn-vue + Tailwind CSS** que se usan directament
 
 ### Component Implementation Strategy
 
-| Principio | Aplicación |
-|-----------|------------|
-| **Tokens-first** | Todos los componentes usan `var(--brand-*)` — nunca colores hardcoded |
-| **Composition sobre herencia** | `AppointmentCard` es el primitivo; las vistas lo consumen |
-| **Accesibilidad por defecto** | ARIA roles y teclado en diseño inicial |
-| **Mobile-first** | `DayViewList` es primario; `DayViewGrid` es variante desktop |
-| **Estado explícito** | Cada componente maneja sus estados sin lógica en el padre |
-| **WalkIn como composición** | `Dialog` + `ServiceCard` + `EmployeeCard` + `SlotGrid` — sin componente bespoke |
+| Principio                      | Aplicación                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------- |
+| **Tokens-first**               | Todos los componentes usan `var(--brand-*)` — nunca colores hardcoded           |
+| **Composition sobre herencia** | `AppointmentCard` es el primitivo; las vistas lo consumen                       |
+| **Accesibilidad por defecto**  | ARIA roles y teclado en diseño inicial                                          |
+| **Mobile-first**               | `DayViewList` es primario; `DayViewGrid` es variante desktop                    |
+| **Estado explícito**           | Cada componente maneja sus estados sin lógica en el padre                       |
+| **WalkIn como composición**    | `Dialog` + `ServiceCard` + `EmployeeCard` + `SlotGrid` — sin componente bespoke |
 
 ### Implementation Roadmap
 
 **Fase 1 — Núcleo del booking público**
 
-| # | Componente | Journey crítico |
-|---|------------|-----------------|
-| 1 | `BookingWizard` | Orquestador — Journey 1 completo |
-| 2 | `SlotGrid` | Journey 1 — Daniela elige horario |
-| 3 | `ServiceCard` | Journey 1 — Paso 1 servicio |
-| 4 | `WizardProgress` | Journey 1 + Journey 2 |
-| 5 | `BusinessHeader` | Journey 1 — primera impresión |
-| 6 | `EmployeeCard` | Journey 1 — Paso 3 |
-| 7 | `BookingConfirmation` | Journey 1 — payoff emocional |
+| #   | Componente            | Journey crítico                   |
+| --- | --------------------- | --------------------------------- |
+| 1   | `BookingWizard`       | Orquestador — Journey 1 completo  |
+| 2   | `SlotGrid`            | Journey 1 — Daniela elige horario |
+| 3   | `ServiceCard`         | Journey 1 — Paso 1 servicio       |
+| 4   | `WizardProgress`      | Journey 1 + Journey 2             |
+| 5   | `BusinessHeader`      | Journey 1 — primera impresión     |
+| 6   | `EmployeeCard`        | Journey 1 — Paso 3                |
+| 7   | `BookingConfirmation` | Journey 1 — payoff emocional      |
 
 **Fase 2 — Onboarding y admin core**
 
-| # | Componente | Journey crítico |
-|---|------------|-----------------|
-| 8 | `WizardFinaleState` | Journey 2 — momento de activación |
-| 9 | `AppointmentCard` | Journey 3 — primitivo compartido |
-| 10 | `DayViewList` | Journey 3 — Sandra mobile |
-| 11 | `DayViewGrid` | Journey 3 — Sandra desktop |
-| 12 | `FilterBubbles` | Journey 3 — admin filtros |
-
+| #   | Componente          | Journey crítico                   |
+| --- | ------------------- | --------------------------------- |
+| 8   | `WizardFinaleState` | Journey 2 — momento de activación |
+| 9   | `AppointmentCard`   | Journey 3 — primitivo compartido  |
+| 10  | `DayViewList`       | Journey 3 — Sandra mobile         |
+| 11  | `DayViewGrid`       | Journey 3 — Sandra desktop        |
+| 12  | `FilterBubbles`     | Journey 3 — admin filtros         |
 
 ---
 
@@ -1377,26 +1430,26 @@ Componentes disponibles de **shadcn-vue + Tailwind CSS** que se usan directament
 
 Una sola acción primaria por pantalla — nunca dos botones `brand-500` compitiendo.
 
-| Nivel | Visual | Uso |
-|-------|--------|-----|
-| **Primario** | `bg-brand-500 text-white hover:bg-brand-600 rounded-lg h-11 px-6` | CTA principal: "Confirmar cita", "Siguiente", "Crear cuenta" |
-| **Secundario** | `border border-brand-300 text-brand-700 bg-white hover:bg-brand-50` | Acción alternativa: "Atrás", "Cambiar fecha" |
-| **Ghost** | `text-brand-700 hover:bg-brand-50` | Acción terciaria: "Saltar este paso", "Ver detalles" |
-| **Destructivo** | `bg-red-500 text-white hover:bg-red-600` | Confirmación final de cancelación — nunca en el primer paso del modal |
-| **Deshabilitado** | `opacity-40 cursor-not-allowed` (cualquier variante) | Mientras el formulario no cumple validación mínima |
+| Nivel             | Visual                                                              | Uso                                                                   |
+| ----------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Primario**      | `bg-brand-500 text-white hover:bg-brand-600 rounded-lg h-11 px-6`   | CTA principal: "Confirmar cita", "Siguiente", "Crear cuenta"          |
+| **Secundario**    | `border border-brand-300 text-brand-700 bg-white hover:bg-brand-50` | Acción alternativa: "Atrás", "Cambiar fecha"                          |
+| **Ghost**         | `text-brand-700 hover:bg-brand-50`                                  | Acción terciaria: "Saltar este paso", "Ver detalles"                  |
+| **Destructivo**   | `bg-red-500 text-white hover:bg-red-600`                            | Confirmación final de cancelación — nunca en el primer paso del modal |
+| **Deshabilitado** | `opacity-40 cursor-not-allowed` (cualquier variante)                | Mientras el formulario no cumple validación mínima                    |
 
 **Regla de posición:** Primario siempre a la derecha (o full-width en mobile), Secundario/Ghost a la izquierda.
 
 ### Feedback Patterns
 
-| Tipo | Visual | Duración | Dismiss |
-|------|--------|----------|---------|
-| **Éxito** | `bg-green-50 border border-green-200 text-green-800` | 3s auto | Automático |
-| **Error** | `bg-red-50 border border-red-200 text-red-800` | 5s o manual | Botón ✕ |
-| **Info** | `bg-brand-50 border border-brand-200 text-brand-800` | 4s auto | Automático |
-| **Conflicto de slot** | `bg-amber-50 border border-amber-200 text-amber-800` | Persiste hasta nueva selección | No se cierra solo |
-| **Walk-in registrado** | `bg-green-50 border border-green-200` | 3s auto | Automático |
-| **Celebration** | `bg-[var(--celebrate)] text-white` banner full-width | Persiste hasta dismiss activo | Solo botón explícito |
+| Tipo                   | Visual                                               | Duración                       | Dismiss              |
+| ---------------------- | ---------------------------------------------------- | ------------------------------ | -------------------- |
+| **Éxito**              | `bg-green-50 border border-green-200 text-green-800` | 3s auto                        | Automático           |
+| **Error**              | `bg-red-50 border border-red-200 text-red-800`       | 5s o manual                    | Botón ✕              |
+| **Info**               | `bg-brand-50 border border-brand-200 text-brand-800` | 4s auto                        | Automático           |
+| **Conflicto de slot**  | `bg-amber-50 border border-amber-200 text-amber-800` | Persiste hasta nueva selección | No se cierra solo    |
+| **Walk-in registrado** | `bg-green-50 border border-green-200`                | 3s auto                        | Automático           |
+| **Celebration**        | `bg-[var(--celebrate)] text-white` banner full-width | Persiste hasta dismiss activo  | Solo botón explícito |
 
 Toasts aparecen arriba al centro en desktop, arriba full-width en mobile. No bloquean la pantalla.
 
@@ -1418,6 +1471,7 @@ Toasts aparecen arriba al centro en desktop, arriba full-width en mobile. No blo
 **Booking público:** Flujo wizard lineal. "Atrás" como botón secundario visible (no ghost) en cada paso. Sin navegación global. `BookingConfirmation` es el destino final — sin redirección.
 
 **Admin — Mobile:** Bottom tab bar con 2 tabs principales + overflow:
+
 - `Agenda` — vista diaria
 - `Clientes` — historial y contactos
 - `⋮ Más` — sheet con Servicios, Empleadas, Ajustes
@@ -1430,18 +1484,26 @@ Badge de notificación sobre tab `Agenda` cuando hay cita pendiente.
 
 ### Modal and Overlay Patterns
 
-| Tipo | Uso | Click fuera |
-|------|-----|-------------|
+| Tipo                         | Uso                              | Click fuera                       |
+| ---------------------------- | -------------------------------- | --------------------------------- |
 | **Confirmación destructiva** | Cancelar cita, eliminar servicio | Shake animation 200ms — no cierra |
-| **Flujo rápido** | Walk-in, reagendar, ver detalles | Cierra |
-| **Informativo** | Historial del cliente | Cierra |
+| **Flujo rápido**             | Walk-in, reagendar, ver detalles | Cierra                            |
+| **Informativo**              | Historial del cliente            | Cierra                            |
 
 **Shake animation (modal destructivo):**
+
 ```css
 @keyframes shake {
-  0%, 100% { transform: translateX(0) }
-  25%       { transform: translateX(-4px) }
-  75%       { transform: translateX(4px) }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
 }
 ```
 
@@ -1451,13 +1513,13 @@ Reglas: fondo scrim `bg-black/50` · nunca anidar modales · `max-w-md` desktop 
 
 ### Empty States
 
-| Contexto | Mensaje | CTA |
-|----------|---------|-----|
-| **Día sin citas (admin)** | "No tienes citas para hoy" | "Registrar walk-in →" |
-| **SlotGrid — negocio cerrado** | "El negocio no tiene horario este día. Prueba otra fecha." | "← Elegir otra fecha" |
-| **SlotGrid — agenda llena** | "No quedan horarios disponibles. Intenta mañana." | "← Elegir otra fecha" |
-| **DayView — filtros sin resultados** | "No hay citas que coincidan con los filtros activos." | "Limpiar filtros" |
-| **Lista de clientes vacía** | "Tus clientes aparecerán aquí cuando agenden su primera cita." | — |
+| Contexto                             | Mensaje                                                        | CTA                   |
+| ------------------------------------ | -------------------------------------------------------------- | --------------------- |
+| **Día sin citas (admin)**            | "No tienes citas para hoy"                                     | "Registrar walk-in →" |
+| **SlotGrid — negocio cerrado**       | "El negocio no tiene horario este día. Prueba otra fecha."     | "← Elegir otra fecha" |
+| **SlotGrid — agenda llena**          | "No quedan horarios disponibles. Intenta mañana."              | "← Elegir otra fecha" |
+| **DayView — filtros sin resultados** | "No hay citas que coincidan con los filtros activos."          | "Limpiar filtros"     |
+| **Lista de clientes vacía**          | "Tus clientes aparecerán aquí cuando agenden su primera cita." | —                     |
 
 Diseño: ilustración simple en `text-brand-200` + texto `text-gray-500 text-sm text-center`.
 
@@ -1465,18 +1527,19 @@ Diseño: ilustración simple en `text-brand-200` + texto `text-gray-500 text-sm 
 
 Skeleton con la misma estructura visual que el contenido real — nunca spinner genérico flotante.
 
-| Componente | Skeleton |
-|------------|----------|
-| `SlotGrid` | 6 celdas por defecto (o último count conocido) `rounded-lg bg-gray-100 animate-pulse` en 2 cols |
-| `DayViewList` | 3 filas `AppointmentCard` skeleton |
-| `BusinessHeader` | Círculo 64px + 3 barras de texto de ancho variable |
-| `ServiceCard` lista | 4 cards skeleton apiladas |
+| Componente          | Skeleton                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| `SlotGrid`          | 6 celdas por defecto (o último count conocido) `rounded-lg bg-gray-100 animate-pulse` en 2 cols |
+| `DayViewList`       | 3 filas `AppointmentCard` skeleton                                                              |
+| `BusinessHeader`    | Círculo 64px + 3 barras de texto de ancho variable                                              |
+| `ServiceCard` lista | 4 cards skeleton apiladas                                                                       |
 
 Skeleton desaparece con `transition-opacity duration-200`. Nuevas citas por polling aparecen con `slide-in-from-top duration-300` — solo si la card no estaba visible antes.
 
 ### Filtering Patterns
 
 **FilterBubbles (admin DayView):**
+
 - Siempre visible — no se colapsa en dropdown
 - Multi-select permitido (`Sandra` + `Pendientes` simultáneamente)
 - Chip "Todas" desselecciona todos los filtros con un tap
@@ -1484,7 +1547,6 @@ Skeleton desaparece con `transition-opacity duration-200`. Nuevas citas por poll
 - Filtros activos sin resultados → Empty State "No hay citas que coincidan" + "Limpiar filtros" inline
 
 **Búsqueda en MVP:** No hay búsqueda por texto en la agenda diaria. La sección Clientes tendrá búsqueda en su propia pantalla.
-
 
 ---
 
@@ -1496,17 +1558,17 @@ Skeleton desaparece con `transition-opacity duration-200`. Nuevas citas por poll
 
 **Booking público (Daniela):**
 
-| Breakpoint | Layout |
-|------------|--------|
-| Mobile < 768px | Columna única full-width · CTA full-width · `SlotGrid` 2 columnas |
+| Breakpoint               | Layout                                                             |
+| ------------------------ | ------------------------------------------------------------------ |
+| Mobile < 768px           | Columna única full-width · CTA full-width · `SlotGrid` 2 columnas  |
 | Tablet / Desktop ≥ 768px | Card centrada `max-w-lg mx-auto` con sombra · CTA ancho controlado |
 
 **Admin (Sandra/Lupita):**
 
-| Breakpoint | Navigation | Vista de agenda |
-|------------|------------|-----------------|
-| < 1024px | Bottom Tab Bar (2 tabs + Más) | `DayViewList` — lista cronológica |
-| ≥ 1024px | Sidebar colapsable 64px ↔ 240px | `DayViewGrid` — vue-cal grid |
+| Breakpoint | Navigation                      | Vista de agenda                   |
+| ---------- | ------------------------------- | --------------------------------- |
+| < 1024px   | Bottom Tab Bar (2 tabs + Más)   | `DayViewList` — lista cronológica |
+| ≥ 1024px   | Sidebar colapsable 64px ↔ 240px | `DayViewGrid` — vue-cal grid      |
 
 **Landscape mobile:** En orientación horizontal, `SlotGrid` y formularios reducen padding vertical (`sm:landscape:py-2`) para evitar scroll excesivo en pantallas de 375px de alto.
 
@@ -1516,13 +1578,13 @@ Skeleton desaparece con `transition-opacity duration-200`. Nuevas citas por poll
 
 Tailwind CSS estándar (mobile-first):
 
-| Token | Valor | Cambio clave en Agendly |
-|-------|-------|-------------------------|
-| base | 0px+ | Layout mobile, lista, bottom tabs |
-| `sm:` | 640px | Booking card con padding lateral |
-| `md:` | 768px | Booking card centrada `max-w-lg` |
+| Token | Valor  | Cambio clave en Agendly             |
+| ----- | ------ | ----------------------------------- |
+| base  | 0px+   | Layout mobile, lista, bottom tabs   |
+| `sm:` | 640px  | Booking card con padding lateral    |
+| `md:` | 768px  | Booking card centrada `max-w-lg`    |
 | `lg:` | 1024px | Admin sidebar + DayViewGrid activos |
-| `xl:` | 1280px | Sidebar expandido por defecto |
+| `xl:` | 1280px | Sidebar expandido por defecto       |
 
 Breakpoint adicional: `screens: { 'xxs': '280px' }` en `tailwind.config` — usado exclusivamente para fallback de zoom de `SlotGrid`.
 
@@ -1532,51 +1594,59 @@ Breakpoint adicional: `screens: { 'xxs': '280px' }` en `tailwind.config` — usa
 
 **Estado de contraste (Step 8):**
 
-| Elemento | Ratio | Nivel |
-|----------|-------|-------|
-| Texto body sobre blanco | 4.8:1 | ✅ AA |
-| Slots disponibles (`--brand-700` sobre `--brand-50`) | 8.5:1 | ✅ AAA |
-| Slots seleccionados (blanco sobre `--brand-500`) | 4.1:1 | ✅ AA |
-| Texto sobre `--celebrate` | verificar en implementación | pendiente |
+| Elemento                                             | Ratio                       | Nivel     |
+| ---------------------------------------------------- | --------------------------- | --------- |
+| Texto body sobre blanco                              | 4.8:1                       | ✅ AA     |
+| Slots disponibles (`--brand-700` sobre `--brand-50`) | 8.5:1                       | ✅ AAA    |
+| Slots seleccionados (blanco sobre `--brand-500`)     | 4.1:1                       | ✅ AA     |
+| Texto sobre `--celebrate`                            | verificar en implementación | pendiente |
 
 **Touch targets (WCAG 2.5.5 — mínimo 44×44px):**
 
-| Componente | Estado | Acción |
-|------------|--------|--------|
-| Botón CTA `h-11` | ✅ 44px | — |
-| `SlotGrid` slots `min-h-[38px]` | ⚠️ | Ajustar a `min-h-[44px]` |
-| `FilterBubbles` chips | verificar | Mínimo `h-11` + padding |
-| `AppointmentCard` acción ⋮ | verificar | Área mínima 44×44px |
+| Componente                      | Estado    | Acción                   |
+| ------------------------------- | --------- | ------------------------ |
+| Botón CTA `h-11`                | ✅ 44px   | —                        |
+| `SlotGrid` slots `min-h-[38px]` | ⚠️        | Ajustar a `min-h-[44px]` |
+| `FilterBubbles` chips           | verificar | Mínimo `h-11` + padding  |
+| `AppointmentCard` acción ⋮      | verificar | Área mínima 44×44px      |
 
 **Focus visible:** `focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2` en todos los elementos interactivos.
 
 **`WizardProgress` en pantallas pequeñas:** Labels ocultos en viewports < 480px — solo puntos visibles: `<span class="hidden sm:inline">Paso 1</span>`
 
 **Dark mode:** Agendly no implementa dark mode en MVP. Declarar en el elemento raíz para prevenir inversiones automáticas de iOS:
+
 ```html
-<div id="app" data-theme="light">
+<div id="app" data-theme="light"></div>
 ```
+
 ```css
-[data-theme="light"] { color-scheme: light; }
+[data-theme='light'] {
+  color-scheme: light;
+}
 ```
+
 Usar `[data-theme="light"]` en lugar de `:root` preserva la capacidad de dark mode en V2.
 
 **ARIA crítico:**
 
-| Componente | Implementación |
-|------------|----------------|
-| `SlotGrid` | `role="radiogroup"` · `role="radio"` · `aria-disabled` · anuncia "09:00, seleccionado" al cambiar estado |
-| `EmployeeCard` lista | `role="radiogroup"` · `role="radio"` · `aria-checked` |
-| `FilterBubbles` | `role="group"` · `role="checkbox"` por chip |
-| `WizardProgress` | `role="progressbar"` · `aria-valuenow` · `aria-valuemax` |
-| `WizardFinaleState` | `aria-live="polite"` en región DOM preexistente vacía — contenido se inyecta dentro |
-| `AppointmentCard` + badge | `aria-label` incluye "Nuevo cliente" — badge no ignorado por screen reader |
-| Toasts | `role="status"` (info) · `role="alert"` (errores) |
+| Componente                | Implementación                                                                                           |
+| ------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `SlotGrid`                | `role="radiogroup"` · `role="radio"` · `aria-disabled` · anuncia "09:00, seleccionado" al cambiar estado |
+| `EmployeeCard` lista      | `role="radiogroup"` · `role="radio"` · `aria-checked`                                                    |
+| `FilterBubbles`           | `role="group"` · `role="checkbox"` por chip                                                              |
+| `WizardProgress`          | `role="progressbar"` · `aria-valuenow` · `aria-valuemax`                                                 |
+| `WizardFinaleState`       | `aria-live="polite"` en región DOM preexistente vacía — contenido se inyecta dentro                      |
+| `AppointmentCard` + badge | `aria-label` incluye "Nuevo cliente" — badge no ignorado por screen reader                               |
+| Toasts                    | `role="status"` (info) · `role="alert"` (errores)                                                        |
 
 **Reducción de movimiento:**
+
 ```css
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -1585,18 +1655,20 @@ Usar `[data-theme="light"]` en lugar de `:root` preserva la capacidad de dark mo
 ```
 
 **Zoom 200% — WCAG 1.4.4:** `SlotGrid` colapsa a 1 columna bajo viewport efectivo < 280px:
+
 ```html
-<div class="grid grid-cols-1 xxs:grid-cols-2 gap-3">
+<div class="grid grid-cols-1 xxs:grid-cols-2 gap-3"></div>
 ```
 
 **Lenguaje conversacional en mensajes:** Strings separados en `i18n/es-MX.ts`:
+
 ```ts
 export const messages = {
   slotConflict: 'Ese horario ya no está disponible — elige otro.',
   serverError: 'Algo salió mal. Intenta de nuevo o llama al negocio.',
   formRequired: 'Completa este campo para continuar.',
   walkInSuccess: 'Walk-in registrado correctamente.',
-}
+};
 ```
 
 **Idioma:** `lang="es-MX"` en `<html>` · fechas en `DD de mes de YYYY` · precios en `$1,200 MXN`.
@@ -1605,25 +1677,26 @@ export const messages = {
 
 **Dispositivos reales:**
 
-| Dispositivo | Resolución | Por qué |
-|-------------|------------|---------|
-| iPhone SE | 375×667px | Pantalla más pequeña en uso activo |
-| iPhone 14 | 390×844px | Dispositivo estándar del segmento |
-| iPad Air | 820×1180px | Límite de breakpoint `lg:` |
-| MacBook 13" | 1280×800px | Desktop admin |
+| Dispositivo | Resolución | Por qué                            |
+| ----------- | ---------- | ---------------------------------- |
+| iPhone SE   | 375×667px  | Pantalla más pequeña en uso activo |
+| iPhone 14   | 390×844px  | Dispositivo estándar del segmento  |
+| iPad Air    | 820×1180px | Límite de breakpoint `lg:`         |
+| MacBook 13" | 1280×800px | Desktop admin                      |
 
 **Accessibility testing:**
 
-| Herramienta | Tipo | Frecuencia |
-|-------------|------|------------|
-| axe-core | Automatizado | En cada PR |
-| Lighthouse | CI/CD gate ≥ 95 | En cada PR |
-| VoiceOver iOS — checklist manual | Screen reader | Antes de cada release |
-| Keyboard-only navigation | Manual | En booking crítico |
-| Zoom 150% (uso cotidiano 50+) | Manual | En cada release |
-| Zoom 200% en browser real (Ctrl+=) | Manual | En componentes con grid/layout |
+| Herramienta                        | Tipo            | Frecuencia                     |
+| ---------------------------------- | --------------- | ------------------------------ |
+| axe-core                           | Automatizado    | En cada PR                     |
+| Lighthouse                         | CI/CD gate ≥ 95 | En cada PR                     |
+| VoiceOver iOS — checklist manual   | Screen reader   | Antes de cada release          |
+| Keyboard-only navigation           | Manual          | En booking crítico             |
+| Zoom 150% (uso cotidiano 50+)      | Manual          | En cada release                |
+| Zoom 200% en browser real (Ctrl+=) | Manual          | En componentes con grid/layout |
 
 **Checklist manual VoiceOver — 3 flujos críticos:**
+
 1. `SlotGrid`: seleccionar slot → VoiceOver anuncia "09:00, seleccionado"
 2. `WizardFinaleState`: completar onboarding → VoiceOver anuncia mensaje de celebración via `aria-live`
 3. `AppointmentCard` + `NewClientBadge`: VoiceOver lee "Nuevo cliente" como parte del contexto de la cita
@@ -1635,22 +1708,23 @@ Lighthouse detecta ~30-40% de issues WCAG AA. El checklist manual cubre lo que l
 ### Implementation Guidelines
 
 **Code splitting por ruta:**
+
 ```
 /b/:businessSlug  →  bundle ~50KB  (booking público — sin admin code)
 /admin            →  bundle completo (vue-cal, sidebar, DayViewGrid)
 ```
+
 ```js
 const routes = [
   { path: '/b/:slug', component: () => import('./views/BookingPublic.vue') },
-  { path: '/admin',   component: () => import('./views/Admin.vue') },
-]
+  { path: '/admin', component: () => import('./views/Admin.vue') },
+];
 ```
 
 **DayViewGrid — carga bajo demanda:**
+
 ```js
-const DayViewGrid = defineAsyncComponent(
-  () => import('./components/DayViewGrid.vue')
-)
+const DayViewGrid = defineAsyncComponent(() => import('./components/DayViewGrid.vue'));
 ```
 
 **Formularios:** Campo de teléfono: `type="tel" inputmode="tel" autocomplete="tel-national"` · Campo de nombre: `autocomplete="name"`.
@@ -1658,4 +1732,3 @@ const DayViewGrid = defineAsyncComponent(
 **Imágenes:** `object-cover loading="lazy" alt="[descripción]"` · Sin foto: fallback con iniciales en `bg-brand-100 text-brand-700`.
 
 **Semántica HTML:** `<h1>` para nombre del negocio · `<main>`, `<nav>`, `<aside>` en admin · `<button>` para acciones · `<a href>` solo para navegación real.
-

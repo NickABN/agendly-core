@@ -17,7 +17,8 @@ function serviceIcon(name: string): string {
   if (lower.includes('corte') || lower.includes('cabello')) return 'content_cut';
   if (lower.includes('manicure') || lower.includes('uña')) return 'spa';
   if (lower.includes('barba')) return 'face';
-  if (lower.includes('color') || lower.includes('tinte') || lower.includes('tint')) return 'palette';
+  if (lower.includes('color') || lower.includes('tinte') || lower.includes('tint'))
+    return 'palette';
   if (lower.includes('masaje') || lower.includes('relaj')) return 'self_improvement';
   if (lower.includes('facial')) return 'face_retouching_natural';
   if (lower.includes('pedicure') || lower.includes('pie')) return 'podiatry';
@@ -42,9 +43,14 @@ const iconColors = [
     <div class="flex justify-between items-start mb-4">
       <div
         class="p-2.5 rounded-lg"
-        :class="[iconColors[index % iconColors.length].bg, iconColors[index % iconColors.length].text]"
+        :class="[
+          iconColors[index % iconColors.length].bg,
+          iconColors[index % iconColors.length].text,
+        ]"
       >
-        <span class="material-symbols-outlined" aria-hidden="true">{{ serviceIcon(service.name) }}</span>
+        <span class="material-symbols-outlined" aria-hidden="true">{{
+          serviceIcon(service.name)
+        }}</span>
       </div>
       <div class="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
         <button
@@ -87,7 +93,9 @@ const iconColors = [
     </div>
 
     <!-- Duration + Price -->
-    <div class="pt-4 mt-3 flex items-center justify-between border-t border-[var(--color-outline-variant)]/10">
+    <div
+      class="pt-4 mt-3 flex items-center justify-between border-t border-[var(--color-outline-variant)]/10"
+    >
       <div class="flex items-center gap-2 text-[var(--color-on-surface-variant)]">
         <span class="material-symbols-outlined text-lg" aria-hidden="true">schedule</span>
         <span class="text-sm font-medium">{{ service.durationMinutes }} min</span>

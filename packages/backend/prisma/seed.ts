@@ -37,11 +37,21 @@ async function main() {
   // 3. Create services
   const serviceData = [
     { name: 'Corte de cabello', durationMinutes: 45, priceMXN: 250 },
-    { name: 'Tinte completo', durationMinutes: 90, bufferMinutes: 15, priceMXN: 800 },
+    {
+      name: 'Tinte completo',
+      durationMinutes: 90,
+      bufferMinutes: 15,
+      priceMXN: 800,
+    },
     { name: 'Manicure', durationMinutes: 40, priceMXN: 200 },
     { name: 'Pedicure', durationMinutes: 50, priceMXN: 250 },
     { name: 'Uñas acrílicas', durationMinutes: 90, priceMXN: 500 },
-    { name: 'Alisado', durationMinutes: 120, bufferMinutes: 15, priceMXN: 1500 },
+    {
+      name: 'Alisado',
+      durationMinutes: 120,
+      bufferMinutes: 15,
+      priceMXN: 1500,
+    },
   ];
 
   const services = [];
@@ -81,7 +91,14 @@ async function main() {
   }
 
   // 6. Create Mon-Sat 09:00-19:00 schedules
-  const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'] as const;
+  const days = [
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+  ] as const;
   for (const emp of employees) {
     for (const day of days) {
       await prisma.schedule.create({

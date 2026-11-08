@@ -16,10 +16,7 @@ export function formatPublicAppUrlForDisplay(appUrl: string): string {
   return `${url.host}${normalizedPathname}`;
 }
 
-export function buildPublicBookingUrl(
-  appUrl: string,
-  slug: string | null | undefined,
-): string {
+export function buildPublicBookingUrl(appUrl: string, slug: string | null | undefined): string {
   const normalizedSlug = normalizeSlug(slug);
 
   if (!normalizedSlug) {
@@ -29,10 +26,7 @@ export function buildPublicBookingUrl(
   return `${normalizePublicAppUrl(appUrl)}/${normalizedSlug}`;
 }
 
-export function formatPublicBookingUrl(
-  appUrl: string,
-  slug: string | null | undefined,
-): string {
+export function formatPublicBookingUrl(appUrl: string, slug: string | null | undefined): string {
   const normalizedSlug = normalizeSlug(slug);
 
   if (!normalizedSlug) {

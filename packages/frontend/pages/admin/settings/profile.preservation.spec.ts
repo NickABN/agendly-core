@@ -92,14 +92,11 @@ describe('profile.vue — Preservation (Property 2)', () => {
       expect(source).toContain(label);
     });
 
-    it.each(expectedTabIds)(
-      'v-show section for tab "%s" is present in the template',
-      (tabId) => {
-        // Each section uses v-show="activeTab === '<tabId>'"
-        const vShowPattern = new RegExp(`v-show="activeTab === '${tabId}'"`, 'g');
-        expect(vShowPattern.test(source)).toBe(true);
-      },
-    );
+    it.each(expectedTabIds)('v-show section for tab "%s" is present in the template', (tabId) => {
+      // Each section uses v-show="activeTab === '<tabId>'"
+      const vShowPattern = new RegExp(`v-show="activeTab === '${tabId}'"`, 'g');
+      expect(vShowPattern.test(source)).toBe(true);
+    });
 
     it('all three tab ids are defined in the tabs array in the script', () => {
       // The script defines: { id: 'general' }, { id: 'imagenes' }, { id: 'ubicacion' }

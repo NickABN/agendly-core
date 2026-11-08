@@ -36,7 +36,9 @@ const viewLabels: Record<CalendarView, string> = {
         >
           <span class="material-symbols-outlined text-lg" aria-hidden="true">chevron_left</span>
         </button>
-        <h2 class="text-sm font-bold text-[var(--color-on-surface)] min-w-[140px] md:min-w-[200px] text-center first-letter:uppercase">
+        <h2
+          class="text-sm font-bold text-[var(--color-on-surface)] min-w-[140px] md:min-w-[200px] text-center first-letter:uppercase"
+        >
           {{ label }}
         </h2>
         <button
@@ -50,13 +52,19 @@ const viewLabels: Record<CalendarView, string> = {
           v-if="view === 'day' && !isToday"
           class="text-xs font-semibold text-[var(--color-primary)] px-3 py-1.5 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
           @click="emit('today')"
-        >Hoy</button>
+        >
+          Hoy
+        </button>
       </div>
 
       <!-- View mode toggle -->
-      <div class="flex p-1 bg-[var(--color-surface-container-low)] rounded-xl" role="group" aria-label="Cambiar vista">
+      <div
+        class="flex p-1 bg-[var(--color-surface-container-low)] rounded-xl"
+        role="group"
+        aria-label="Cambiar vista"
+      >
         <button
-          v-for="mode in (['day', 'week', 'month'] as CalendarView[])"
+          v-for="mode in ['day', 'week', 'month'] as CalendarView[]"
           :key="mode"
           class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
           :class="

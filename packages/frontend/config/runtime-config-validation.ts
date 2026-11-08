@@ -55,15 +55,11 @@ export function isProduction(env: RuntimeEnv = process.env as RuntimeEnv): boole
   return env.NODE_ENV === 'production';
 }
 
-export function isProductionNetlifyDeploy(
-  env: RuntimeEnv = process.env as RuntimeEnv,
-): boolean {
+export function isProductionNetlifyDeploy(env: RuntimeEnv = process.env as RuntimeEnv): boolean {
   return env.NETLIFY === 'true' && env.CONTEXT === 'production';
 }
 
-export function isLocalDockerCompose(
-  env: LocalDockerEnv = process.env as LocalDockerEnv,
-): boolean {
+export function isLocalDockerCompose(env: LocalDockerEnv = process.env as LocalDockerEnv): boolean {
   return env.AGENDLY_LOCAL_DOCKER === 'true' && !isProductionNetlifyDeploy(env);
 }
 
@@ -103,13 +99,7 @@ export function validateApiProxyTarget(value: string | undefined): URL {
     throw new Error('NUXT_API_PROXY_TARGET must use a Render onrender.com host');
   }
 
-  if (
-    url.username ||
-    url.password ||
-    url.pathname !== '/' ||
-    url.search ||
-    url.hash
-  ) {
+  if (url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
     throw new Error(
       'NUXT_API_PROXY_TARGET must be an origin without credentials, path, query, or hash',
     );

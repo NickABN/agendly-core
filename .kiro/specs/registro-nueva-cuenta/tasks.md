@@ -34,7 +34,6 @@
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
 - [x] 3. Fix: reemplazar transacciones interactivas por modo batch en AuthService
-
   - [x] 3.1 Refactorizar `ensureUniqueSlug` para recibir `PrismaService` en lugar del cliente interactivo
     - Cambiar la firma de `private async ensureUniqueSlug(tx: ..., baseSlug: string)` a `private async ensureUniqueSlug(prisma: PrismaService, baseSlug: string): Promise<string>`
     - Actualizar todas las llamadas internas para pasar `this.prisma` en lugar de `tx`

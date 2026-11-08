@@ -20,14 +20,19 @@ function onCellClick(date: string, currentMonth: boolean) {
   detailDate.value = date;
 }
 
-const detailInfo = computed(() =>
-  detailDate.value ? props.density[detailDate.value] : undefined,
-);
+const detailInfo = computed(() => (detailDate.value ? props.density[detailDate.value] : undefined));
 </script>
 
 <template>
-  <div v-if="loading && Object.keys(density).length === 0" class="flex items-center justify-center py-20 gap-3" role="status">
-    <div class="w-5 h-5 border-2 border-[var(--color-surface-container-high)] border-t-[var(--color-primary)] rounded-full animate-spin" aria-hidden="true"></div>
+  <div
+    v-if="loading && Object.keys(density).length === 0"
+    class="flex items-center justify-center py-20 gap-3"
+    role="status"
+  >
+    <div
+      class="w-5 h-5 border-2 border-[var(--color-surface-container-high)] border-t-[var(--color-primary)] rounded-full animate-spin"
+      aria-hidden="true"
+    ></div>
     <span class="text-sm text-[var(--color-on-surface-variant)]">Cargando mes...</span>
   </div>
 
@@ -40,17 +45,23 @@ const detailInfo = computed(() =>
           v-for="dayName in ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']"
           :key="dayName"
           class="text-center text-xs font-bold text-[var(--color-on-surface-variant)] tracking-widest uppercase py-2"
-        >{{ dayName }}</div>
+        >
+          {{ dayName }}
+        </div>
       </div>
 
       <!-- Days grid -->
-      <div class="grid grid-cols-7 bg-[var(--color-outline-variant)]/10 gap-[1px] rounded-xl overflow-hidden border border-[var(--color-outline-variant)]/20 shadow-sm">
+      <div
+        class="grid grid-cols-7 bg-[var(--color-outline-variant)]/10 gap-[1px] rounded-xl overflow-hidden border border-[var(--color-outline-variant)]/20 shadow-sm"
+      >
         <button
           v-for="cd in monthDays"
           :key="cd.date"
           class="min-h-[64px] md:min-h-[120px] p-1.5 md:p-3 flex flex-col text-left transition-colors"
           :class="[
-            cd.currentMonth ? 'bg-white hover:bg-[var(--color-surface-container-lowest)] cursor-pointer' : 'bg-[var(--color-surface-container-low)] opacity-40 cursor-default',
+            cd.currentMonth
+              ? 'bg-white hover:bg-[var(--color-surface-container-lowest)] cursor-pointer'
+              : 'bg-[var(--color-surface-container-low)] opacity-40 cursor-default',
             cd.isToday ? 'border-2 border-[var(--color-primary)] bg-[var(--color-primary)]/5' : '',
             detailDate === cd.date ? 'ring-2 ring-[var(--color-primary)]/40' : '',
           ]"
@@ -59,14 +70,22 @@ const detailInfo = computed(() =>
           @click="onCellClick(cd.date, cd.currentMonth)"
         >
           <div class="flex items-center justify-between mb-1 md:mb-2 w-full">
-            <span class="text-xs md:text-sm font-semibold" :class="cd.isToday ? 'text-[var(--color-primary)] font-bold' : ''">{{ cd.day }}</span>
+            <span
+              class="text-xs md:text-sm font-semibold"
+              :class="cd.isToday ? 'text-[var(--color-primary)] font-bold' : ''"
+              >{{ cd.day }}</span
+            >
             <span
               v-if="cd.isToday"
               class="hidden md:inline text-[9px] uppercase font-black text-[var(--color-primary)] bg-blue-50 px-1.5 py-0.5 rounded"
-            >Hoy</span>
+              >Hoy</span
+            >
           </div>
           <!-- Appointment dots -->
-          <div v-if="density[cd.date]" class="mt-auto flex flex-wrap gap-1 justify-end items-end w-full">
+          <div
+            v-if="density[cd.date]"
+            class="mt-auto flex flex-wrap gap-1 justify-end items-end w-full"
+          >
             <div
               v-for="emp in density[cd.date].employees.slice(0, 3)"
               :key="emp"
@@ -77,7 +96,8 @@ const detailInfo = computed(() =>
             <span
               v-if="density[cd.date].count > 3"
               class="text-[10px] font-bold text-[var(--color-on-surface-variant)] leading-none"
-            >+{{ density[cd.date].count - 3 }}</span>
+              >+{{ density[cd.date].count - 3 }}</span
+            >
           </div>
         </button>
       </div>

@@ -31,7 +31,6 @@
   - _Requirements: 3.1, 3.2, 3.3_
 
 - [x] 3. Fix: eliminar contexto de scroll interno en profile.vue
-
   - [x] 3.1 Implement the fix
     - In `packages/frontend/pages/admin/settings/profile.vue`, change the root div class from `"flex flex-col h-full overflow-hidden"` to `"flex flex-col"`
     - Change the content div class from `"flex-1 overflow-y-auto p-4 sm:p-6"` to `"p-4 sm:p-6"`

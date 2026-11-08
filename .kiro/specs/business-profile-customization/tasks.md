@@ -61,7 +61,7 @@ Implementación incremental del módulo de personalización de perfil de negocio
     - Validar con `validateFile(file, 5)`
     - Construir key `tenants/{tenantId}/logos/{timestamp}-{filename}`
     - Llamar `StorageService.upload` → lanzar `BadGatewayException` si falla
-    - Ejecutar `prisma.$transaction([tenant.update({ logoUrl }), imageVersion.create(...)])` 
+    - Ejecutar `prisma.$transaction([tenant.update({ logoUrl }), imageVersion.create(...)])`
     - Retornar `UploadResponseDto`
   - Implementar `uploadBanner(tenantId: string, file: Express.Multer.File): Promise<UploadResponseDto>` con la misma lógica pero key `banners/`, límite 8 MB, campo `bannerUrl`, y `imageType: BANNER`
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8_

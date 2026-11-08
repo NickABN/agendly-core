@@ -102,7 +102,7 @@ function attachDragEnd(_L: any) {
 }
 
 // ─── Place / move marker programmatically ─────────────────────────────────────
- 
+
 async function placeMarker(lat: number, lng: number) {
   if (!mapInstance) return;
   const L = await import('leaflet');
@@ -207,7 +207,9 @@ watch(
 
     <!-- Mapa Leaflet -->
     <div class="space-y-2">
-      <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+      <p
+        class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+      >
         Ubicación en el mapa
       </p>
       <div
@@ -223,7 +225,9 @@ watch(
     <!-- Coordenadas (solo lectura, informativas) -->
     <div v-if="latitude !== null && longitude !== null" class="flex gap-4">
       <div class="flex-1 space-y-1">
-        <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+        <p
+          class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+        >
           Latitud
         </p>
         <p class="text-sm text-[var(--color-on-surface)] font-mono">
@@ -231,7 +235,9 @@ watch(
         </p>
       </div>
       <div class="flex-1 space-y-1">
-        <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+        <p
+          class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+        >
           Longitud
         </p>
         <p class="text-sm text-[var(--color-on-surface)] font-mono">

@@ -22,6 +22,7 @@ La corrección es mínima: eliminar el contexto de altura fija y scroll interno 
 El bug se manifiesta cuando la página de perfil renderiza su template raíz con `h-full overflow-hidden` y su contenedor de contenido con `overflow-y-auto`. Dado que el layout ya limita la altura con `overflow-hidden`, el hijo `h-full` toma exactamente esa altura acotada y el `overflow-y-auto` genera una scrollbar interna en lugar de dejar que el scroll ocurra en el nivel del layout.
 
 **Formal Specification:**
+
 ```
 FUNCTION isBugCondition(pageRootElement)
   INPUT: pageRootElement — elemento raíz del template de profile.vue
@@ -47,6 +48,7 @@ END FUNCTION
 ### Preservation Requirements
 
 **Unchanged Behaviors:**
+
 - El header fijo con el botón de regreso y el título "Perfil del negocio" debe continuar visible y pegado al tope del área de contenido.
 - El usuario debe poder acceder a todo el contenido de los tres tabs (Información general, Imágenes, Ubicación) mediante scroll.
 - El layout admin (sidebar, navegación lateral, avatar de usuario) no debe sufrir ningún cambio visual ni funcional.
@@ -54,6 +56,7 @@ END FUNCTION
 
 **Scope:**
 Todos los inputs que NO involucren el patrón de clases `h-full overflow-hidden` + `overflow-y-auto` en la raíz de la página deben quedar completamente sin afectar. Esto incluye:
+
 - Clics en tabs y navegación entre secciones
 - Envío de formularios (perfil, ubicación)
 - Carga y visualización de imágenes
@@ -118,11 +121,13 @@ La estrategia sigue dos fases: primero confirmar el bug en el código sin correg
 **Test Plan**: Montar el componente `profile.vue` con un contenido que supere la altura del viewport y verificar que el elemento con `overflow-y-auto` tiene `scrollHeight > clientHeight` y que el elemento raíz tiene `overflow: hidden` computado.
 
 **Test Cases**:
+
 1. **Scrollbar interna visible**: Montar la página con contenido largo → verificar que existe un elemento con `overflow-y: auto` cuyo `scrollHeight > clientHeight` (fallará en código corregido).
 2. **Raíz con altura fija**: Verificar que el div raíz tiene `h-full` y `overflow-hidden` en sus clases (fallará en código corregido).
 3. **Scroll en nivel incorrecto**: Simular scroll y verificar que el evento ocurre en el contenedor interno, no en el layout (fallará en código corregido).
 
 **Expected Counterexamples**:
+
 - El elemento `.overflow-y-auto` tiene `scrollHeight > clientHeight` cuando el contenido supera la vista.
 - Posibles causas: `h-full` acota la altura, `overflow-y-auto` activa la scrollbar interna.
 
@@ -131,6 +136,7 @@ La estrategia sigue dos fases: primero confirmar el bug en el código sin correg
 **Goal**: Verificar que tras el fix, para todos los inputs donde el bug condition se cumplía, la página ya no genera scrollbar interna.
 
 **Pseudocode:**
+
 ```
 FOR ALL pageRender WHERE isBugCondition(pageRootElement) WAS true DO
   result := render(profile_fixed)
@@ -144,6 +150,7 @@ END FOR
 **Goal**: Verificar que para todos los inputs donde el bug condition NO se cumple, el template corregido produce el mismo resultado visual y funcional que el original.
 
 **Pseudocode:**
+
 ```
 FOR ALL interaction WHERE NOT isBugCondition(pageRootElement) DO
   ASSERT profile_original(interaction) = profile_fixed(interaction)
@@ -153,6 +160,7 @@ END FOR
 **Testing Approach**: Las pruebas de preservación son principalmente visuales y de componente. Se recomienda pruebas de componente con Vitest + Vue Test Utils para verificar que el header, los tabs y el contenido siguen renderizando correctamente.
 
 **Test Cases**:
+
 1. **Header fijo preservation**: Verificar que el header con `sticky top-0` sigue renderizando con las clases correctas tras el fix.
 2. **Tab navigation preservation**: Verificar que cambiar entre tabs sigue mostrando/ocultando las secciones correctas.
 3. **Content accessibility preservation**: Verificar que todo el contenido de cada tab es accesible en el DOM tras el fix.

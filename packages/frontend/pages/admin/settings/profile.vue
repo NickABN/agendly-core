@@ -67,7 +67,6 @@ onMounted(async () => {
     <!-- Content -->
     <div class="p-4 sm:p-6">
       <div class="max-w-3xl mx-auto w-full space-y-6">
-
         <!-- Page heading -->
         <div>
           <h2 class="text-2xl font-bold mb-1">Personalización del perfil</h2>
@@ -87,7 +86,10 @@ onMounted(async () => {
         </div>
 
         <!-- Loading skeleton -->
-        <div v-if="store.loading && !store.profileData" class="flex items-center justify-center py-20 gap-3">
+        <div
+          v-if="store.loading && !store.profileData"
+          class="flex items-center justify-center py-20 gap-3"
+        >
           <div
             class="w-5 h-5 border-2 border-[var(--color-surface-container-high)] border-t-[var(--color-primary)] rounded-full animate-spin"
           />
@@ -129,10 +131,7 @@ onMounted(async () => {
             >
               Información general
             </h3>
-            <ProfileForm
-              :initial-data="store.profileData ?? undefined"
-              @submit="onProfileSubmit"
-            />
+            <ProfileForm :initial-data="store.profileData ?? undefined" @submit="onProfileSubmit" />
           </section>
 
           <!-- ── Tab: Imágenes ── -->
@@ -156,7 +155,9 @@ onMounted(async () => {
                 :max-size-mb="5"
               />
               <div class="pt-2">
-                <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-3">
+                <p
+                  class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-3"
+                >
                   Historial de logos
                 </p>
                 <ProfileImageHistory :images="store.imageHistory" type="LOGO" />
@@ -176,7 +177,9 @@ onMounted(async () => {
                 :max-size-mb="8"
               />
               <div class="pt-2">
-                <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-3">
+                <p
+                  class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider mb-3"
+                >
                   Historial de banners
                 </p>
                 <ProfileImageHistory :images="store.imageHistory" type="BANNER" />
@@ -196,13 +199,9 @@ onMounted(async () => {
             >
               Ubicación
             </h3>
-            <ProfileLocationForm
-              :initial-data="locationInitialData"
-              @submit="onLocationSubmit"
-            />
+            <ProfileLocationForm :initial-data="locationInitialData" @submit="onLocationSubmit" />
           </section>
         </template>
-
       </div>
     </div>
   </div>

@@ -41,17 +41,12 @@ describe('useApi — interceptor de refresh', () => {
     client.mockImplementation(() => {
       calls += 1;
       // Las 2 primeras llamadas (una por request) fallan con 401; los reintentos pasan.
-      return calls <= 2
-        ? Promise.reject(err401)
-        : Promise.resolve({ ok: true });
+      return calls <= 2 ? Promise.reject(err401) : Promise.resolve({ ok: true });
     });
     $fetchMock.mockResolvedValue({}); // refresh OK
 
     const api = useApi();
-    const [r1, r2] = await Promise.all([
-      api.get('/a'),
-      api.get('/b'),
-    ]);
+    const [r1, r2] = await Promise.all([api.get('/a'), api.get('/b')]);
 
     expect($fetchMock).toHaveBeenCalledTimes(1); // un solo /auth/refresh
     expect($fetchMock).toHaveBeenCalledWith(
@@ -63,9 +58,7 @@ describe('useApi — interceptor de refresh', () => {
   });
 
   it('401 → refresh OK → reintenta UNA vez y resuelve', async () => {
-    client
-      .mockRejectedValueOnce(err401)
-      .mockResolvedValueOnce({ data: 42 });
+    client.mockRejectedValueOnce(err401).mockResolvedValueOnce({ data: 42 });
     $fetchMock.mockResolvedValue({});
 
     const api = useApi();

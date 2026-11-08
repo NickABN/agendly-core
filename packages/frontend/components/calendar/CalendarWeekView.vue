@@ -122,7 +122,9 @@ const employeeColorByName = computed(() => {
                 "
                 :title="appt.noShowRisk.reasons.join(' · ')"
               >
-                <span class="material-symbols-outlined text-[11px]" aria-hidden="true">warning</span>
+                <span class="material-symbols-outlined text-[11px]" aria-hidden="true"
+                  >warning</span
+                >
                 {{ appt.noShowRisk.level === 'HIGH' ? 'Riesgo alto' : 'Riesgo medio' }}
               </p>
               <div class="mt-2 flex items-center gap-1.5">
