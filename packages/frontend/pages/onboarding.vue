@@ -1,4 +1,17 @@
 <script setup lang="ts">
+import {
+  formatServiceDuration,
+  formatMXNPrice,
+  ONBOARDING_SERVICE_DURATION_OPTIONS,
+  parseMXNPrice,
+} from '~/utils/onboardingServices';
+import {
+  createInitialScheduleBlocks,
+  expandScheduleBlocks,
+  type OnboardingWeekDaySchedule,
+  type ScheduleChange,
+} from '~/utils/onboardingSchedule';
+
 definePageMeta({ layout: false });
 
 const currentStep = ref(1);
@@ -20,13 +33,48 @@ const businessForm = reactive({
 const services = reactive<Array<{ name: string; durationMinutes: number; priceMXN: number }>>([
   { name: '', durationMinutes: 45, priceMXN: 0 },
 ]);
+const serviceDurationOptions = ONBOARDING_SERVICE_DURATION_OPTIONS.map((duration) => ({
+  value: duration,
+  label: formatServiceDuration(duration),
+}));
+const employeeRoleOptions = [
+  { value: 'Administrador', label: 'Administrador' },
+  { value: 'Especialista', label: 'Especialista' },
+  { value: 'Recepcionista', label: 'Recepcionista' },
+];
+const servicePriceInputs = ref(services.map((service) => formatMXNPrice(service.priceMXN)));
 
 function addService() {
   services.push({ name: '', durationMinutes: 30, priceMXN: 0 });
+  servicePriceInputs.value.push('');
 }
 
 function removeService(index: number) {
-  if (services.length > 1) services.splice(index, 1);
+  if (services.length > 1) {
+    services.splice(index, 1);
+    servicePriceInputs.value.splice(index, 1);
+  }
+}
+
+function focusServicePrice(index: number) {
+  const service = services[index];
+  if (service) {
+    servicePriceInputs.value[index] = service.priceMXN === 0 ? '' : String(service.priceMXN);
+  }
+}
+
+function updateServicePrice(index: number, event: Event) {
+  const input = event.target as HTMLInputElement;
+  const service = services[index];
+  if (!service) return;
+
+  servicePriceInputs.value[index] = input.value;
+  service.priceMXN = parseMXNPrice(input.value);
+}
+
+function blurServicePrice(index: number) {
+  const service = services[index];
+  if (service) servicePriceInputs.value[index] = formatMXNPrice(service.priceMXN);
 }
 
 // ─── Step 3: Employees ─────────────────────────────
@@ -45,15 +93,14 @@ function removeEmployee(index: number) {
 }
 
 // ─── Step 4: Schedule ──────────────────────────────
-const weekDays = reactive([
-  { name: 'Lunes', enabled: true, start: '09:00', end: '18:00' },
-  { name: 'Martes', enabled: true, start: '09:00', end: '18:00' },
-  { name: 'Miércoles', enabled: true, start: '09:00', end: '18:00' },
-  { name: 'Jueves', enabled: true, start: '09:00', end: '18:00' },
-  { name: 'Viernes', enabled: true, start: '09:00', end: '18:00' },
-  { name: 'Sábado', enabled: false, start: '09:00', end: '18:00' },
-  { name: 'Domingo', enabled: false, start: '09:00', end: '18:00' },
-]);
+const initialScheduleBlocks = createInitialScheduleBlocks();
+const weekDays = reactive<OnboardingWeekDaySchedule[]>(expandScheduleBlocks(initialScheduleBlocks));
+const isScheduleValid = ref(true);
+
+function updateSchedule(change: ScheduleChange) {
+  weekDays.splice(0, weekDays.length, ...change.weekDays);
+  isScheduleValid.value = change.valid;
+}
 
 // ─── Step 5: Done ───────────────────────────────────
 const publicUrl = computed(() => {
@@ -74,6 +121,8 @@ function stepState(step: number): 'completed' | 'active' | 'pending' {
 
 // ─── Navigation ─────────────────────────────────────
 async function nextStep() {
+  if (currentStep.value === 4 && !isScheduleValid.value) return;
+
   loading.value = true;
   error.value = '';
 
@@ -292,10 +341,14 @@ function copyUrl() {
               class="bg-[var(--color-surface-container-low)] rounded-xl p-5 space-y-4"
             >
               <div class="space-y-2">
-                <label class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+                <label
+                  :for="`service-name-${i}`"
+                  class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+                >
                   Nombre del servicio
                 </label>
                 <input
+                  :id="`service-name-${i}`"
                   v-model="service.name"
                   type="text"
                   placeholder="Ej. Corte de cabello"
@@ -304,35 +357,37 @@ function copyUrl() {
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-2">
-                  <label class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+                  <label
+                    :for="`service-duration-${i}`"
+                    class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+                  >
                     Duración
                   </label>
-                  <select
-                    v-model.number="service.durationMinutes"
-                    class="w-full px-4 py-3 bg-[var(--color-surface-container-high)] border-none rounded-lg focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all appearance-none cursor-pointer"
-                  >
-                    <option :value="15">15 min</option>
-                    <option :value="30">30 min</option>
-                    <option :value="45">45 min</option>
-                    <option :value="60">60 min</option>
-                    <option :value="90">90 min</option>
-                    <option :value="120">120 min</option>
-                  </select>
+                  <OnboardingSelect
+                    :id="`service-duration-${i}`"
+                    v-model="service.durationMinutes"
+                    :options="serviceDurationOptions"
+                  />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+                  <label
+                    :for="`service-price-${i}`"
+                    class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+                  >
                     Precio
                   </label>
-                  <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] font-medium">$</span>
-                    <input
-                      v-model.number="service.priceMXN"
-                      type="number"
-                      min="0"
-                      placeholder="0.00"
-                      class="w-full pl-8 pr-4 py-3 bg-[var(--color-surface-container-high)] border-none rounded-lg focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] transition-all placeholder:text-[var(--color-outline)]/50"
-                    />
-                  </div>
+                  <input
+                    :id="`service-price-${i}`"
+                    :value="servicePriceInputs[i]"
+                    type="text"
+                    inputmode="decimal"
+                    autocomplete="off"
+                    placeholder="$0.00"
+                    class="w-full rounded-lg border border-[var(--color-outline-variant)]/20 bg-[var(--color-surface-container-high)] px-4 py-3 transition-all placeholder:text-[var(--color-outline)]/50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface-container-lowest)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20"
+                    @focus="focusServicePrice(i)"
+                    @input="updateServicePrice(i, $event)"
+                    @blur="blurServicePrice(i)"
+                  />
                 </div>
               </div>
               <button
@@ -410,17 +465,17 @@ function copyUrl() {
                   />
                 </div>
                 <div class="md:col-span-5 space-y-2">
-                  <label class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
+                  <label
+                    :for="`employee-role-${i}`"
+                    class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+                  >
                     Rol / Especialidad
                   </label>
-                  <select
+                  <OnboardingSelect
+                    :id="`employee-role-${i}`"
                     v-model="emp.role"
-                    class="w-full px-4 py-3 bg-[var(--color-surface-container-high)] border-none rounded-lg focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all appearance-none cursor-pointer"
-                  >
-                    <option>Administrador</option>
-                    <option>Especialista</option>
-                    <option>Recepcionista</option>
-                  </select>
+                    :options="employeeRoleOptions"
+                  />
                 </div>
                 <div class="md:col-span-1 flex justify-center">
                   <button
@@ -470,7 +525,7 @@ function copyUrl() {
         </div>
 
         <!-- Step 4: Schedule -->
-        <div v-if="currentStep === 4" class="w-full max-w-2xl space-y-8">
+        <div v-show="currentStep === 4" class="w-full max-w-2xl space-y-8">
           <!-- Progress bar -->
           <div class="flex flex-col gap-2">
             <div class="flex justify-between items-end">
@@ -483,7 +538,9 @@ function copyUrl() {
           </div>
 
           <!-- Main Card -->
-          <div class="bg-[var(--color-surface-container-lowest)] rounded-xl editorial-shadow p-8 md:p-10 flex flex-col gap-8">
+          <div
+            class="bg-[var(--color-surface-container-lowest)] rounded-xl editorial-shadow p-4 md:p-10 flex flex-col gap-8"
+          >
             <header class="text-center space-y-2">
               <h1 class="text-2xl md:text-3xl font-bold tracking-tight leading-tight">Tus horarios de atención</h1>
               <p class="text-[var(--color-on-surface-variant)]">Define cuándo está abierto tu negocio para recibir citas.</p>
@@ -500,38 +557,7 @@ function copyUrl() {
             </div>
 
             <!-- Weekly Schedule -->
-            <div class="space-y-4">
-              <div
-                v-for="(day, i) in weekDays"
-                :key="i"
-                class="flex flex-wrap md:flex-nowrap items-center justify-between p-4 rounded-xl gap-4"
-                :class="day.enabled ? 'bg-[var(--color-surface-container-low)]' : 'bg-[var(--color-surface-container-low)]/50 opacity-80'"
-              >
-                <div class="flex items-center gap-4 min-w-[120px]">
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input v-model="day.enabled" type="checkbox" class="sr-only peer" />
-                    <div class="w-11 h-6 bg-[var(--color-outline-variant)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--color-primary)]"></div>
-                  </label>
-                  <span class="font-semibold">{{ day.name }}</span>
-                </div>
-                <div v-if="day.enabled" class="flex items-center gap-3 flex-1 justify-end">
-                  <input
-                    v-model="day.start"
-                    type="text"
-                    class="bg-[var(--color-surface-container-lowest)] border-none rounded-lg py-2 px-3 text-sm w-24 text-center focus:ring-2 focus:ring-[var(--color-primary)] shadow-sm"
-                  />
-                  <span class="text-[var(--color-on-surface-variant)]">—</span>
-                  <input
-                    v-model="day.end"
-                    type="text"
-                    class="bg-[var(--color-surface-container-lowest)] border-none rounded-lg py-2 px-3 text-sm w-24 text-center focus:ring-2 focus:ring-[var(--color-primary)] shadow-sm"
-                  />
-                </div>
-                <div v-else class="flex items-center gap-3 flex-1 justify-end italic text-[var(--color-on-surface-variant)] text-sm">
-                  Cerrado para citas
-                </div>
-              </div>
-            </div>
+            <OnboardingScheduleEditor @schedule-change="updateSchedule" />
 
             <!-- Actions -->
             <footer class="flex flex-col md:flex-row gap-4 pt-4">
@@ -542,7 +568,7 @@ function copyUrl() {
                 Atrás
               </button>
               <button
-                :disabled="loading"
+                :disabled="loading || !isScheduleValid"
                 class="flex-[2] order-1 md:order-2 bg-[var(--color-primary)] text-white py-4 px-8 rounded-full font-bold shadow-lg shadow-[var(--color-primary)]/20 transition-all hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50"
                 @click="nextStep"
               >
@@ -561,15 +587,17 @@ function copyUrl() {
       <!-- Preview Sidebar (Steps 1-3 on desktop) -->
       <aside
         v-if="currentStep <= 3"
-        class="hidden lg:flex w-[480px] bg-[var(--color-surface-container-low)] p-8 flex-col items-center justify-center border-l border-[var(--color-outline-variant)]/10"
+        class="sticky top-16 hidden max-h-[calc(100vh-4rem)] w-[480px] self-start flex-col items-center overflow-y-auto border-l border-[var(--color-outline-variant)]/10 bg-[var(--color-surface-container-low)] p-8 lg:flex"
       >
         <!-- Phone Preview (Steps 1-2) -->
         <div v-if="currentStep <= 2" class="w-full max-w-sm">
           <p class="text-[10px] font-bold text-center text-[var(--color-outline)] uppercase tracking-[0.2em] mb-6">
             Vista previa pública
           </p>
-          <div class="bg-[var(--color-surface-container-lowest)] rounded-[2.5rem] p-4 shadow-2xl shadow-slate-200/50 aspect-[9/18.5] relative overflow-hidden flex flex-col ring-8 ring-slate-900/5">
-            <div class="flex justify-between items-center px-6 pt-4 mb-8">
+          <div
+            class="relative flex min-h-[34rem] max-h-[calc(100vh-12rem)] flex-col overflow-y-auto rounded-[2.5rem] bg-[var(--color-surface-container-lowest)] p-4 shadow-2xl shadow-slate-200/50 ring-8 ring-slate-900/5"
+          >
+            <div class="mb-8 flex shrink-0 items-center justify-between px-6 pt-4">
               <span class="text-xs font-bold">9:41</span>
               <div class="flex gap-1.5">
                 <span class="w-4 h-4 rounded-full bg-slate-200"></span>
@@ -586,17 +614,9 @@ function copyUrl() {
                   <p class="text-sm text-[var(--color-on-surface-variant)]">{{ publicUrl || `${bookingBaseLabel}tu-negocio` }}</p>
                 </div>
               </div>
-              <div class="space-y-6">
-                <div class="space-y-3">
-                  <div class="h-4 w-1/2 bg-[var(--color-surface-container-high)] rounded-full"></div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <div class="h-24 rounded-xl bg-[var(--color-surface-container-high)] animate-pulse"></div>
-                    <div class="h-24 rounded-xl bg-[var(--color-surface-container-high)] animate-pulse"></div>
-                  </div>
-                </div>
-              </div>
+              <OnboardingServicesPreview :services="services" />
             </div>
-            <div class="p-4 mt-auto">
+            <div class="mt-auto shrink-0 p-4">
               <div class="h-14 w-full bg-slate-100 rounded-2xl flex items-center justify-center">
                 <span class="text-sm font-bold text-slate-300">Agendar cita</span>
               </div>
