@@ -276,13 +276,21 @@ export class AccountDeletionService {
     stripeSubscriptionId: string | null;
     subscriptionStatus: string | null;
   }): Promise<void> {
+    if (!this.storage.isConfigured) {
+      throw new Error(
+        `R2 storage is not configured; cannot purge tenant ${tenant.id}`,
+      );
+    }
     await this.storage.deletePrefix(`tenants/${tenant.id}/`);
-    if (
-      tenant.stripeSubscriptionId &&
-      tenant.subscriptionStatus !== 'CANCELED'
-    ) {
+    const subscriptionId = tenant.stripeSubscriptionId;
+    if (subscriptionId && hasLiveSubscription(tenant)) {
+      if (!this.billing.isConfigured) {
+        throw new Error(
+          `Stripe is not configured; cannot cancel the subscription for tenant ${tenant.id}`,
+        );
+      }
       try {
-        await this.billing.cancelSubscriptionNow(tenant.stripeSubscriptionId);
+        await this.billing.cancelSubscriptionNow(subscriptionId);
       } catch (err) {
         if (!isAlreadyCanceledSubscription(err)) throw err;
       }
@@ -306,7 +314,7 @@ export class AccountDeletionService {
 
 function hasLiveSubscription(tenant: {
   stripeSubscriptionId: string | null;
-  subscriptionStatus: string;
+  subscriptionStatus: string | null;
 }): boolean {
   return (
     !!tenant.stripeSubscriptionId && tenant.subscriptionStatus !== 'CANCELED'
@@ -314,8 +322,29 @@ function hasLiveSubscription(tenant: {
 }
 
 function isAlreadyCanceledSubscription(err: unknown): boolean {
-  if (!(err instanceof Error)) return false;
+  if (typeof err !== 'object' || err === null) return false;
+
+  const stripeError = err as {
+    code?: unknown;
+    message?: unknown;
+    raw?: { code?: unknown; message?: unknown };
+  };
+  if (
+    // Only "the subscription no longer exists" proves cleanup is done; any other
+    // invalid request must fail the purge so the tenant is retried.
+    stripeError.code === 'resource_missing' ||
+    stripeError.raw?.code === 'resource_missing'
+  ) {
+    return true;
+  }
+
+  const message =
+    typeof stripeError.message === 'string'
+      ? stripeError.message
+      : typeof stripeError.raw?.message === 'string'
+        ? stripeError.raw.message
+        : '';
   return /subscription.*already.*cancel(?:led|ed)|already.*cancel(?:led|ed).*subscription/i.test(
-    err.message,
+    message,
   );
 }

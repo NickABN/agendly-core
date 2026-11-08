@@ -14,6 +14,10 @@ export class StorageService {
   private readonly bucketName: string;
   private readonly publicUrl: string;
 
+  get isConfigured(): boolean {
+    return this.s3Client !== undefined && this.bucketName.length > 0;
+  }
+
   constructor(private readonly configService: ConfigService) {
     const accountId = this.configService.get<string>('R2_ACCOUNT_ID');
     const accessKeyId = this.configService.get<string>('R2_ACCESS_KEY_ID');

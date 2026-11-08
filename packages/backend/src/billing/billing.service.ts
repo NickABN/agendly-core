@@ -36,6 +36,10 @@ export class BillingService {
   private readonly priceId?: string;
   private readonly webhookSecret?: string;
 
+  get isConfigured(): boolean {
+    return this.stripe !== null;
+  }
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,

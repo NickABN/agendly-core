@@ -16,6 +16,8 @@ function build(
     cancelCount?: number;
     due?: Array<Record<string, unknown>>;
     deleteCount?: number;
+    billingConfigured?: boolean;
+    storageConfigured?: boolean;
   } = {},
 ) {
   const tenant =
@@ -53,10 +55,14 @@ function build(
     sendAccountDeleted: jest.fn().mockResolvedValue(undefined),
   };
   const billing = {
+    isConfigured: opts.billingConfigured ?? true,
     setCancelAtPeriodEnd: jest.fn().mockResolvedValue(undefined),
     cancelSubscriptionNow: jest.fn().mockResolvedValue(undefined),
   };
-  const storage = { deletePrefix: jest.fn().mockResolvedValue(3) };
+  const storage = {
+    isConfigured: opts.storageConfigured ?? true,
+    deletePrefix: jest.fn().mockResolvedValue(3),
+  };
   const config = {
     get: (k: string) =>
       k === 'FRONTEND_URL' ? 'https://app.test/' : undefined,
@@ -211,7 +217,7 @@ describe('AccountDeletionService.purgeDue', () => {
     const steps: string[] = [];
     storage.deletePrefix.mockImplementation(async () => {
       steps.push('r2');
-      return 3;
+      return 0;
     });
     billing.cancelSubscriptionNow.mockImplementation(async () => {
       steps.push('stripe');
@@ -242,9 +248,17 @@ describe('AccountDeletionService.purgeDue', () => {
   });
 
   it('keeps a tenant reactivated between the read and the delete', async () => {
-    const { service, prisma, storage, email } = build({
-      due: [{ id: 't1', name: 'Salón', stripeSubscriptionId: null }],
+    const { service, prisma, storage, billing, email } = build({
+      due: [
+        {
+          id: 't1',
+          name: 'Salón',
+          stripeSubscriptionId: 'sub_1',
+          subscriptionStatus: 'CANCELED',
+        },
+      ],
       deleteCount: 0,
+      billingConfigured: false,
     });
 
     const res = await service.purgeDue(NOW);
@@ -258,6 +272,7 @@ describe('AccountDeletionService.purgeDue', () => {
         deletionScheduledAt: { lte: NOW },
       },
     });
+    expect(billing.cancelSubscriptionNow).not.toHaveBeenCalled();
     expect(email.sendAccountDeleted).not.toHaveBeenCalled();
   });
 
@@ -282,11 +297,102 @@ describe('AccountDeletionService.purgeDue', () => {
     expect(prisma.tenant.deleteMany).toHaveBeenCalledTimes(1);
   });
 
+  it('does not delete a due tenant when R2 is not configured', async () => {
+    const { service, prisma, storage } = build({
+      due: [{ id: 't1', name: 'Salón', stripeSubscriptionId: null }],
+      billingConfigured: false,
+      storageConfigured: false,
+    });
+    storage.deletePrefix.mockResolvedValue(0);
+
+    expect(await service.purgeDue(NOW)).toEqual({
+      due: 1,
+      purged: 0,
+      failed: 1,
+    });
+    expect(prisma.tenant.deleteMany).not.toHaveBeenCalled();
+  });
+
+  it('does not delete a tenant with a live subscription when Stripe is not configured', async () => {
+    const { service, prisma, storage, billing } = build({
+      due: [
+        {
+          id: 't1',
+          name: 'Salón',
+          stripeSubscriptionId: 'sub_1',
+          subscriptionStatus: 'ACTIVE',
+        },
+      ],
+      billingConfigured: false,
+    });
+
+    expect(await service.purgeDue(NOW)).toEqual({
+      due: 1,
+      purged: 0,
+      failed: 1,
+    });
+    expect(storage.deletePrefix).toHaveBeenCalledWith('tenants/t1/');
+    expect(billing.cancelSubscriptionNow).not.toHaveBeenCalled();
+    expect(prisma.tenant.deleteMany).not.toHaveBeenCalled();
+  });
+
   it('does not delete a due tenant when Stripe cancellation fails', async () => {
     const { service, prisma, billing } = build({
       due: [{ id: 't1', name: 'Salón', stripeSubscriptionId: 'sub_1' }],
     });
     billing.cancelSubscriptionNow.mockRejectedValue(new Error('Stripe down'));
+
+    expect(await service.purgeDue(NOW)).toEqual({
+      due: 1,
+      purged: 0,
+      failed: 1,
+    });
+    expect(prisma.tenant.deleteMany).not.toHaveBeenCalled();
+  });
+
+  it('treats a Stripe resource_missing error as an already-canceled subscription', async () => {
+    const { service, prisma, billing } = build({
+      due: [
+        {
+          id: 't1',
+          name: 'Salón',
+          stripeSubscriptionId: 'sub_1',
+          subscriptionStatus: 'ACTIVE',
+        },
+      ],
+    });
+    billing.cancelSubscriptionNow.mockRejectedValue(
+      Object.assign(new Error('Stripe request failed'), {
+        code: 'resource_missing',
+      }),
+    );
+
+    expect(await service.purgeDue(NOW)).toEqual({
+      due: 1,
+      purged: 1,
+      failed: 0,
+    });
+    expect(prisma.tenant.deleteMany).toHaveBeenCalled();
+  });
+
+  it('keeps the tenant when Stripe rejects the cancel for another reason', async () => {
+    const { service, prisma, billing } = build({
+      due: [
+        {
+          id: 't1',
+          name: 'Salón',
+          stripeSubscriptionId: 'sub_1',
+          subscriptionStatus: 'ACTIVE',
+        },
+      ],
+    });
+    // A generic invalid request (bad parameter, wrong mode...) does not prove the
+    // subscription is gone, so the tenant must stay due for the next run.
+    billing.cancelSubscriptionNow.mockRejectedValue(
+      Object.assign(new Error('Invalid Stripe request'), {
+        type: 'StripeInvalidRequestError',
+      }),
+    );
 
     expect(await service.purgeDue(NOW)).toEqual({
       due: 1,
