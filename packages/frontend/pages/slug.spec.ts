@@ -320,6 +320,21 @@ describe('public booking sticky bar vs in-page continue button (S1)', () => {
     expect(findStickyContinueButton(wrapper)).toBeDefined();
   });
 
+  it('shows the Agendly badge whenever the sticky bar is hidden, and only then', async () => {
+    const observer = installIntersectionObserver();
+    booking = createBookingState({ date: '2026-06-12', slot: '2026-06-12T17:00:00.000Z' });
+    const wrapper = await mountPage();
+
+    observer.emit(true);
+    await nextTick();
+    expect(wrapper.text()).toContain('Hecho con');
+
+    observer.emit(false);
+    await nextTick();
+    expect(findStickyContinueButton(wrapper)).toBeDefined();
+    expect(wrapper.text()).not.toContain('Hecho con');
+  });
+
   it('keeps the sticky bar hidden without a day and time even when out of view', async () => {
     const observer = installIntersectionObserver();
     booking = createBookingState({ date: '', slot: '' });

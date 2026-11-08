@@ -559,7 +559,7 @@ onBeforeUnmount(disconnectContinueObserver);
 
       <!-- Bottom Agendly badge -->
       <div
-        v-if="b.step.value !== 3 || !b.selectedDate.value || !b.selectedSlot.value"
+        v-if="!showStickyContinueBar"
         class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[var(--color-outline-variant)]/10 py-3"
       >
         <p class="text-center text-xs text-[var(--color-outline)]">
