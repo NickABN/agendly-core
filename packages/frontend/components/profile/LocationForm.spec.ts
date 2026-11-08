@@ -290,6 +290,33 @@ describe('profile location form UX', () => {
     expect(helperText).toBeLessThan(mapHeading);
   });
 
+  it('geocodes a retyped address on save instead of keeping the old pin', async () => {
+    mockFetch.mockResolvedValueOnce({ latitude: 20.6597, longitude: -103.3496 });
+    const wrapper = await mountLocationForm();
+
+    await wrapper.get('#location-address').setValue('Av. Chapultepec 15, Guadalajara');
+    await wrapper.get('form').trigger('submit');
+    await flushPromises();
+
+    expect(wrapper.emitted('submit')?.[0]?.[0]).toEqual({
+      address: 'Av. Chapultepec 15, Guadalajara',
+      latitude: 20.6597,
+      longitude: -103.3496,
+    });
+  });
+
+  it('does not save a retyped address that cannot be located', async () => {
+    mockFetch.mockResolvedValueOnce(null);
+    const wrapper = await mountLocationForm();
+
+    await wrapper.get('#location-address').setValue('Dirección inexistente 999');
+    await wrapper.get('form').trigger('submit');
+    await flushPromises();
+
+    expect(wrapper.emitted('submit')).toBeUndefined();
+    expect(wrapper.text()).toContain(noResultMessage);
+  });
+
   it('submits the address and both pin coordinates together with one save action', async () => {
     const wrapper = await mountLocationForm();
     const address = 'Av. Insurgentes 123, Colonia Del Valle';

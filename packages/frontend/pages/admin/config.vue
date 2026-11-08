@@ -5,6 +5,16 @@ import { useProfileStore } from '~/stores/profile';
 
 definePageMeta({ layout: 'admin' });
 
+// Business settings are for OWNER / ADMIN only (same guard the old profile page had).
+// Checked on mount (client only) so SSR never redirects before auth is loaded.
+const authStore = useAuthStore();
+onMounted(() => {
+  const role = authStore.user?.role;
+  if (role !== 'OWNER' && role !== 'ADMIN') {
+    void navigateTo('/admin');
+  }
+});
+
 type SettingsTab = 'general' | 'publica' | 'imagenes' | 'ubicacion';
 
 const tabs: { id: SettingsTab; label: string }[] = [

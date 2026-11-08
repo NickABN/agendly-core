@@ -42,7 +42,7 @@ type Harness = {
 const mountedWrappers: VueWrapper[] = [];
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
 
-function mountConfigPage(tab?: string): Harness {
+function mountConfigPage(tab?: string, role = 'OWNER'): Harness {
   vi.stubGlobal('ref', ref);
   vi.stubGlobal('computed', computed);
   vi.stubGlobal('reactive', reactive);
@@ -111,11 +111,11 @@ function mountConfigPage(tab?: string): Harness {
     saveLocation: vi.fn().mockResolvedValue(undefined),
   });
   pageMocks.useProfileStore.mockReturnValue(profileStore);
-  pageMocks.useAuthStore.mockReturnValue({ user: { role: 'OWNER' } });
+  pageMocks.useAuthStore.mockReturnValue({ user: { role } });
 
   vi.stubGlobal('useTenantConfig', () => tenantConfig);
   vi.stubGlobal('useProfileStore', () => profileStore);
-  vi.stubGlobal('useAuthStore', () => ({ user: { role: 'OWNER' } }));
+  vi.stubGlobal('useAuthStore', () => ({ user: { role } }));
   vi.stubGlobal('usePublicBookingUrl', () => ({
     bookingBaseLabel: computed(() => 'agendly.mx/'),
     bookingUrl: (slug: string) => `https://agendly.mx/${slug}`,
@@ -258,5 +258,25 @@ describe('admin config settings tabs', () => {
         .findAllComponents(RouterLinkStub)
         .some((link) => link.props('to') === '/admin/settings/profile'),
     ).toBe(false);
+  });
+});
+
+describe('admin config role guard', () => {
+  it('sends roles other than OWNER/ADMIN back to the dashboard', async () => {
+    mountConfigPage(undefined, 'STAFF');
+    await flushPromises();
+
+    expect((globalThis as unknown as { navigateTo: unknown }).navigateTo).toHaveBeenCalledWith(
+      '/admin',
+    );
+  });
+
+  it('lets an ADMIN stay on the settings page', async () => {
+    mountConfigPage(undefined, 'ADMIN');
+    await flushPromises();
+
+    expect((globalThis as unknown as { navigateTo: unknown }).navigateTo).not.toHaveBeenCalledWith(
+      '/admin',
+    );
   });
 });

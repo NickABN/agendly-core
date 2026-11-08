@@ -40,6 +40,8 @@ const isGeocoding = ref(false);
 const isLocating = ref(false);
 const locationError = ref<string | null>(null);
 const edited = ref(false);
+// Address the current pin corresponds to; differs once the owner retypes it.
+const pinAddress = ref('');
 
 // ─── Computed ──────────────────────────────────────────────────────────────────
 const geocodingWarning = computed(() => store.geocodingWarning);
@@ -125,6 +127,8 @@ async function movePin(lat: number, lng: number, markEdited = true) {
   latitude.value = lat;
   longitude.value = lng;
   locationError.value = null;
+  // The pin now matches whatever address is typed (search, drag, click or GPS).
+  pinAddress.value = address.value.trim();
   if (markEdited) edited.value = true;
   if (!mapInstance) return;
   const L = await import('leaflet');
@@ -195,8 +199,15 @@ function onAddressInput() {
 }
 
 // ─── Submit ────────────────────────────────────────────────────────────────────
-function handleSubmit() {
-  const dto: UpdateLocationDto = { address: address.value.trim() };
+async function handleSubmit() {
+  // A changed address with no new search/pin would save stale coordinates:
+  // geocode it first, and stop if it cannot be located.
+  const trimmedAddress = address.value.trim();
+  if (trimmedAddress && trimmedAddress !== pinAddress.value) {
+    await searchAddress();
+    if (locationError.value) return;
+  }
+  const dto: UpdateLocationDto = { address: trimmedAddress };
   if (latitude.value !== null) dto.latitude = latitude.value;
   if (longitude.value !== null) dto.longitude = longitude.value;
   emit('submit', dto);
