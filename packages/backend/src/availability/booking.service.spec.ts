@@ -142,6 +142,32 @@ describe('BookingService.createBooking', () => {
     );
   });
 
+  it('persists a normalized international phone on both the appointment and the consent', async () => {
+    // A foreign number flows through the DTO as E.164 and is written verbatim
+    // to Appointment AND PrivacyConsent.
+    const dto = plainToInstance(CreateBookingDto, {
+      employeeId: 'emp-1',
+      serviceId: 'svc-1',
+      startTime: futureStart.toISOString(),
+      clientName: 'Ana López',
+      clientPhone: '+1 415 555 1234',
+      clientEmail: 'ana@example.com',
+    });
+
+    await bookingService.createBooking(TENANT_ID, dto);
+
+    expect(prisma.appointment.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ clientPhone: '+14155551234' }),
+      }),
+    );
+    expect(prisma.privacyConsent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ clientPhone: '+14155551234' }),
+      }),
+    );
+  });
+
   it('validates the slot against availability computed in the tenant timezone', async () => {
     // 23:30 on 2030-06-10 in Tijuana = 2030-06-11T06:30Z. Resolving the date
     // key in CDMX would ask availability for the WRONG day (2030-06-11).

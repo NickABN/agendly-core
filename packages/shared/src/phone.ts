@@ -56,6 +56,41 @@ export function normalizeMxPhone(input: string): string | null {
   return `+52${national}`;
 }
 
+/** E.164: a leading `+`, a non-zero country-code digit, then 7–14 more digits. */
+const E164 = /^\+[1-9]\d{7,14}$/;
+
+/**
+ * Normalize any phone number to E.164, opening booking to other countries.
+ *
+ * - Input starting with `+`: strip spaces, dashes, dots and parentheses and
+ *   accept it only if it matches E.164 (`^\+[1-9]\d{7,14}$`), returned as-is.
+ *   A `+52...` input is still routed through the Mexican rules so legacy
+ *   `+521...` mobile numbers collapse to the canonical `+52` + 10 digits.
+ * - Input without `+`: apply the existing Mexican rules (10 digits default to
+ *   Mexico) via `normalizeMxPhone`.
+ * - Anything else → `null`.
+ *
+ * `normalizeMxPhone`/`formatMxPhone` are unchanged; this is the shared entry
+ * point used by the backend DTOs and the frontend booking form.
+ */
+export function normalizePhone(input: string): string | null {
+  if (typeof input !== 'string') return null;
+
+  const trimmed = input.trim();
+
+  if (trimmed.startsWith('+')) {
+    // `+52...` keeps the Mexican rules so legacy markers collapse.
+    if (trimmed.replace(/[\s().-]/g, '').startsWith('+52')) {
+      return normalizeMxPhone(trimmed);
+    }
+    const compact = trimmed.replace(/[\s().-]/g, '');
+    return E164.test(compact) ? compact : null;
+  }
+
+  // No leading `+`: Mexican rules (bare 10 digits default to Mexico).
+  return normalizeMxPhone(trimmed);
+}
+
 /** True when `value` is already a canonical normalized MX number. */
 function isNormalizedMxPhone(value: string): boolean {
   return /^\+52\d{10}$/.test(value);
@@ -72,4 +107,13 @@ export function formatMxPhone(e164: string): string {
   const first = national.slice(2, 6);
   const second = national.slice(6);
   return `+52 ${area} ${first} ${second}`;
+}
+
+/**
+ * Display form for any normalized phone. MX numbers (`+52` + 10 digits) use the
+ * pretty `+52 55 1234 5678` grouping; every other value (foreign E.164 or an
+ * unrecognized string) is returned unchanged.
+ */
+export function formatPhone(e164: string): string {
+  return formatMxPhone(e164);
 }

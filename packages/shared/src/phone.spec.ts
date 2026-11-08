@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatMxPhone, normalizeMxPhone } from './phone';
+import { formatMxPhone, formatPhone, normalizeMxPhone, normalizePhone } from './phone';
 
 const CANONICAL = '+525512345678';
 
@@ -76,5 +76,73 @@ describe('formatMxPhone', () => {
     const normalized = normalizeMxPhone('55 1234 5678');
     expect(normalized).toBe(CANONICAL);
     expect(formatMxPhone(normalized as string)).toBe('+52 55 1234 5678');
+  });
+});
+
+describe('normalizePhone (international)', () => {
+  it.each([
+    // No "+" → MX rules (unchanged behavior, 10 digits default to Mexico)
+    ['5512345678', CANONICAL],
+    ['55 1234 5678', CANONICAL],
+    ['(55) 1234 5678', CANONICAL],
+    ['525512345678', CANONICAL],
+    ['0445512345678', CANONICAL],
+    // "+52..." still goes through the MX rules (legacy "+521..." collapses)
+    ['+525512345678', CANONICAL],
+    ['+52 55 1234 5678', CANONICAL],
+    ['+5215512345678', CANONICAL],
+    ['+521 55 1234 5678', CANONICAL],
+  ])('keeps MX behavior for %s', (input, expected) => {
+    expect(normalizePhone(input)).toBe(expected);
+  });
+
+  it.each([
+    // International "+" inputs: strip separators, accept E.164, return as-is
+    ['+1 415 555 1234', '+14155551234'],
+    ['+14155551234', '+14155551234'],
+    ['+1 (415) 555-1234', '+14155551234'],
+    ['+34 612 345 678', '+34612345678'],
+    ['+34612345678', '+34612345678'],
+    ['+44 20 7946 0958', '+442079460958'],
+    ['+81.90.1234.5678', '+819012345678'],
+  ])('accepts international %s as %s', (input, expected) => {
+    expect(normalizePhone(input)).toBe(expected);
+  });
+
+  it('is idempotent for international numbers', () => {
+    const once = normalizePhone('+1 415 555 1234');
+    expect(once).toBe('+14155551234');
+    expect(normalizePhone(once as string)).toBe(once);
+  });
+
+  it.each([
+    ['empty string', ''],
+    ['only separators', '()- .'],
+    ['letters', 'abcdefghij'],
+    ['plus with letters', '+1 415 555 ABCD'],
+    ['plus without digits', '+'],
+    ['leading zero country code', '+0123456789'],
+    ['too short (+ and 7 digits)', '+1234567'],
+    ['too long (+ and 16 digits)', '+11234567890123456'],
+    ['bare 9 digits (not a valid MX number)', '551234567'],
+  ])('rejects %s -> null', (_label, input) => {
+    expect(normalizePhone(input)).toBeNull();
+  });
+});
+
+describe('formatPhone', () => {
+  it('formats a normalized MX number like formatMxPhone', () => {
+    expect(formatPhone(CANONICAL)).toBe('+52 55 1234 5678');
+    expect(formatPhone(CANONICAL)).toBe(formatMxPhone(CANONICAL));
+  });
+
+  it('returns non-MX E.164 values unchanged', () => {
+    expect(formatPhone('+14155551234')).toBe('+14155551234');
+    expect(formatPhone('+34612345678')).toBe('+34612345678');
+  });
+
+  it('returns arbitrary input unchanged when it is not a normalized MX number', () => {
+    expect(formatPhone('not a phone')).toBe('not a phone');
+    expect(formatPhone('')).toBe('');
   });
 });

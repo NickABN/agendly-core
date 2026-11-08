@@ -186,4 +186,18 @@ describe('usePublicBooking phone validation', () => {
     expect(options.body.clientPhone).toBe('+525512345678');
     expect(b.error.value).toBe('');
   });
+
+  it('accepts an international phone and sends it as E.164 in the request body', async () => {
+    const b = await setupBooking();
+    b.clientForm.phone = '+1 415 555 1234';
+    fetchMock.mockClear();
+    fetchMock.mockResolvedValueOnce({ id: 'appt-1' }); // booking POST
+
+    await b.submitBooking();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [, options] = fetchMock.mock.calls[0];
+    expect(options.body.clientPhone).toBe('+14155551234');
+    expect(b.error.value).toBe('');
+  });
 });
