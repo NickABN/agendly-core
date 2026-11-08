@@ -12,6 +12,10 @@ const slug = computed(() => store.tenant?.slug ?? '');
 const pendingDate = computed(() =>
   store.deletionScheduledAt ? formatDate(store.deletionScheduledAt, 'long', timezone.value) : '',
 );
+const reactivationDeadlinePassed = computed(() => {
+  const deletionScheduledAt = store.deletionScheduledAt;
+  return !!deletionScheduledAt && Date.parse(deletionScheduledAt) <= Date.now();
+});
 
 const confirming = ref(false);
 const confirmSlug = ref('');
@@ -37,6 +41,7 @@ async function submitDeletion() {
 }
 
 async function reactivate() {
+  if (reactivationDeadlinePassed.value) return;
   reactivated.value = await cancelDeletion();
 }
 
@@ -68,10 +73,17 @@ onMounted(() => void load());
             </p>
           </div>
         </div>
+        <p
+          v-if="reactivationDeadlinePassed"
+          class="text-sm text-red-700 font-semibold"
+          role="status"
+        >
+          El plazo para reactivar tu cuenta ya venció. La cuenta se eliminará pronto.
+        </p>
         <p v-if="error" class="text-sm text-red-700 font-semibold" role="alert">{{ error }}</p>
         <div class="flex flex-col sm:flex-row gap-3">
           <button
-            v-if="isOwner"
+            v-if="isOwner && !reactivationDeadlinePassed"
             class="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--color-primary)]/90 transition-colors disabled:opacity-50"
             :disabled="loading"
             @click="reactivate"
