@@ -242,6 +242,121 @@ describe('public booking date-and-time continuation', () => {
   });
 });
 
+type IntersectionObserverStub = {
+  instances: FakeIntersectionObserver[];
+  emit: (isIntersecting: boolean) => void;
+};
+
+class FakeIntersectionObserver {
+  static registry: FakeIntersectionObserver[] = [];
+  callback: IntersectionObserverCallback;
+  observed: Element[] = [];
+  disconnected = false;
+
+  constructor(callback: IntersectionObserverCallback) {
+    this.callback = callback;
+    FakeIntersectionObserver.registry.push(this);
+  }
+
+  observe(target: Element) {
+    this.observed.push(target);
+  }
+
+  unobserve(target: Element) {
+    this.observed = this.observed.filter((element) => element !== target);
+  }
+
+  disconnect() {
+    this.disconnected = true;
+    this.observed = [];
+  }
+
+  takeRecords() {
+    return [] as IntersectionObserverEntry[];
+  }
+}
+
+function installIntersectionObserver(): IntersectionObserverStub {
+  FakeIntersectionObserver.registry = [];
+  vi.stubGlobal('IntersectionObserver', FakeIntersectionObserver);
+  return {
+    instances: FakeIntersectionObserver.registry,
+    emit(isIntersecting: boolean) {
+      const active = FakeIntersectionObserver.registry.filter((observer) => !observer.disconnected);
+      const observer = active[active.length - 1];
+      if (!observer) throw new Error('No active IntersectionObserver to emit from');
+      observer.callback(
+        [{ isIntersecting } as IntersectionObserverEntry],
+        observer as unknown as IntersectionObserver,
+      );
+    },
+  };
+}
+
+describe('public booking sticky bar vs in-page continue button (S1)', () => {
+  it('hides the sticky bar while the in-page continue button intersects the viewport', async () => {
+    const observer = installIntersectionObserver();
+    booking = createBookingState({ date: '2026-06-12', slot: '2026-06-12T17:00:00.000Z' });
+    const wrapper = await mountPage();
+
+    // Initially (button in view) the sticky bar must not be shown.
+    observer.emit(true);
+    await nextTick();
+
+    expect(findStickyContinueButton(wrapper)).toBeUndefined();
+  });
+
+  it('shows the sticky bar when the in-page continue button leaves the viewport', async () => {
+    const observer = installIntersectionObserver();
+    booking = createBookingState({ date: '2026-06-12', slot: '2026-06-12T17:00:00.000Z' });
+    const wrapper = await mountPage();
+
+    observer.emit(true);
+    await nextTick();
+    expect(findStickyContinueButton(wrapper)).toBeUndefined();
+
+    observer.emit(false);
+    await nextTick();
+    expect(findStickyContinueButton(wrapper)).toBeDefined();
+  });
+
+  it('keeps the sticky bar hidden without a day and time even when out of view', async () => {
+    const observer = installIntersectionObserver();
+    booking = createBookingState({ date: '', slot: '' });
+    const wrapper = await mountPage();
+
+    if (observer.instances.some((instance) => !instance.disconnected)) {
+      observer.emit(false);
+    }
+    await nextTick();
+
+    expect(findStickyContinueButton(wrapper)).toBeUndefined();
+  });
+
+  it('does not crash and keeps the bar visible when IntersectionObserver is unavailable', async () => {
+    vi.stubGlobal('IntersectionObserver', undefined);
+    booking = createBookingState({ date: '2026-06-12', slot: '2026-06-12T17:00:00.000Z' });
+    const wrapper = await mountPage();
+
+    // Fallback behavior: bar stays visible while day + time are selected.
+    expect(findStickyContinueButton(wrapper)).toBeDefined();
+  });
+
+  it('disconnects the observer when leaving the date-and-time step', async () => {
+    const observer = installIntersectionObserver();
+    booking = createBookingState({ date: '2026-06-12', slot: '2026-06-12T17:00:00.000Z' });
+    await mountPage();
+
+    const activeBefore = observer.instances.filter((instance) => !instance.disconnected);
+    expect(activeBefore.length).toBeGreaterThan(0);
+
+    booking.step.value = 4;
+    await nextTick();
+
+    expect(observer.instances.every((instance) => instance.disconnected)).toBe(true);
+  });
+});
+
 describe('public booking confirmation handoff', () => {
   it('passes the public business information through to the confirmation screen', async () => {
     const tenantInfo: TenantInfo = {
