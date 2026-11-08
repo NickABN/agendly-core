@@ -2,6 +2,15 @@
 definePageMeta({ layout: 'auth' });
 
 const { login, loginWithGoogle } = useAuth();
+const route = useRoute();
+
+// The Google OAuth callback redirects here with ?error=google when sign-in
+// fails (unverified email, denied consent, or any guard error).
+const googleError = computed(() =>
+  route.query.error === 'google'
+    ? 'No pudimos iniciar sesión con Google. Intenta de nuevo o usa tu correo y contraseña.'
+    : '',
+);
 
 const form = reactive({
   email: '',
@@ -65,6 +74,14 @@ async function handleSubmit() {
       y el
       <NuxtLink to="/privacidad" target="_blank" class="underline">Aviso de Privacidad</NuxtLink>.
     </p>
+
+    <!-- Google OAuth error (callback redirected back with ?error=google) -->
+    <div
+      v-if="googleError"
+      class="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm"
+    >
+      {{ googleError }}
+    </div>
 
     <!-- Divider -->
     <div class="relative flex items-center py-2">

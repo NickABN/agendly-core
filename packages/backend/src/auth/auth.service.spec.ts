@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LEGAL_DOCS_VERSION, isReservedSlug } from '@agendly/shared';
 import * as fc from 'fast-check';
@@ -158,6 +158,7 @@ describe('AuthService — Property 1: Bug Condition (unfixed code)', () => {
           googleId: fc.string({ minLength: 10, maxLength: 30 }),
           email: validEmail,
           name: validOwnerName,
+          emailVerified: fc.constant(true as const),
         }),
         async (profile) => {
           const prisma = makePrismaWithInteractiveTransactionError();
@@ -372,6 +373,8 @@ describe('AuthService — Property 2: Preservation (unfixed code, non-buggy inpu
           googleId: fc.string({ minLength: 10, maxLength: 30 }),
           email: validEmail,
           name: validOwnerName,
+          // Already-linked identities return regardless of current verification.
+          emailVerified: fc.constant(false as const),
         }),
         async (profile) => {
           const existingUser = {
@@ -504,5 +507,202 @@ describe('AuthService — terms acceptance evidence', () => {
     const data = userCreate.mock.calls[0][0].data;
     expect(data.termsVersion).toBe(LEGAL_DOCS_VERSION);
     expect(data.termsAcceptedAt).toBeInstanceOf(Date);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// S2 — findOrCreateGoogleUser must only link/create on a verified, non-empty
+// email. The googleId-match path is exempt (already-linked identity).
+// ---------------------------------------------------------------------------
+
+const UNVERIFIED_MESSAGE = 'Tu correo de Google no está verificado';
+
+describe('AuthService.findOrCreateGoogleUser — verified-email gate (S2)', () => {
+  function makeService(prisma: unknown) {
+    return new AuthService(
+      prisma as never,
+      makeJwtService(),
+      makeTokenService(),
+    );
+  }
+
+  it('unverified email matching an existing account does NOT link and throws', async () => {
+    const existingUser = {
+      id: 'victim-id',
+      email: 'victim@example.com',
+      name: 'Victim',
+      role: 'OWNER',
+      tenantId: 'victim-tenant',
+      googleId: null,
+      passwordHash: 'hash',
+      isActive: true,
+    };
+    const update = jest.fn();
+    const prisma = {
+      user: {
+        // Lookup by googleId → null (not linked); lookup by email → existing user.
+        findUnique: jest.fn(
+          ({ where }: { where: { googleId?: string; email?: string } }) =>
+            Promise.resolve(where.email ? existingUser : null),
+        ),
+        update,
+        create: jest.fn(),
+      },
+      tenant: { create: jest.fn(), findUnique: jest.fn() },
+      $transaction: jest.fn(),
+    };
+    const service = makeService(prisma);
+
+    const attempt = service.findOrCreateGoogleUser({
+      googleId: 'attacker-google-id',
+      email: 'victim@example.com',
+      name: 'Victim',
+      emailVerified: false,
+    });
+
+    await expect(attempt).rejects.toThrow(UnauthorizedException);
+    await expect(attempt).rejects.toThrow(UNVERIFIED_MESSAGE);
+
+    // The existing account must never be linked to the attacker's googleId.
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it('unverified email with no existing account does NOT create and throws', async () => {
+    const create = jest.fn();
+    const tenantCreate = jest.fn();
+    const prisma = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        update: jest.fn(),
+        create,
+      },
+      tenant: { create: tenantCreate, findUnique: jest.fn() },
+      $transaction: jest.fn(),
+    };
+    const service = makeService(prisma);
+
+    await expect(
+      service.findOrCreateGoogleUser({
+        googleId: 'g-new',
+        email: 'new@example.com',
+        name: 'New User',
+        emailVerified: false,
+      }),
+    ).rejects.toThrow(UNVERIFIED_MESSAGE);
+
+    expect(create).not.toHaveBeenCalled();
+    expect(tenantCreate).not.toHaveBeenCalled();
+  });
+
+  it('missing (empty) email throws even if flagged verified', async () => {
+    const prisma = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        update: jest.fn(),
+        create: jest.fn(),
+      },
+      tenant: { create: jest.fn(), findUnique: jest.fn() },
+      $transaction: jest.fn(),
+    };
+    const service = makeService(prisma);
+
+    await expect(
+      service.findOrCreateGoogleUser({
+        googleId: 'g-noemail',
+        email: '',
+        name: 'No Email',
+        emailVerified: true,
+      }),
+    ).rejects.toThrow(UNVERIFIED_MESSAGE);
+  });
+
+  it('verified email links an existing password account', async () => {
+    const existingUser = {
+      id: 'owner-id',
+      email: 'owner@example.com',
+      name: 'Owner',
+      role: 'OWNER',
+      tenantId: 'owner-tenant',
+      googleId: null,
+      passwordHash: 'hash',
+      isActive: true,
+    };
+    const update = jest.fn().mockResolvedValue(existingUser);
+    const prisma = {
+      user: {
+        findUnique: jest
+          .fn()
+          .mockResolvedValueOnce(null)
+          .mockResolvedValueOnce(existingUser),
+        update,
+        create: jest.fn(),
+      },
+      tenant: { create: jest.fn(), findUnique: jest.fn() },
+      $transaction: jest.fn(),
+    };
+    const service = makeService(prisma);
+
+    const result = await service.findOrCreateGoogleUser({
+      googleId: 'g-owner',
+      email: 'owner@example.com',
+      name: 'Owner',
+      emailVerified: true,
+    });
+
+    expect(update).toHaveBeenCalledWith({
+      where: { id: 'owner-id' },
+      data: { googleId: 'g-owner' },
+    });
+    expect(result.accessToken).toBeTruthy();
+  });
+
+  it('verified email creates a new user when none exists', async () => {
+    const prisma = makePrismaWithInteractiveTransactionError();
+    prisma.user.findUnique.mockResolvedValue(null);
+    const service = makeService(prisma);
+
+    const result = await service.findOrCreateGoogleUser({
+      googleId: 'g-fresh',
+      email: 'fresh@example.com',
+      name: 'Fresh User',
+      emailVerified: true,
+    });
+
+    expect(result.accessToken).toBeTruthy();
+    expect(prisma.user.create).toHaveBeenCalled();
+  });
+
+  it('existing googleId returns the user even when unverified (already linked)', async () => {
+    const existingUser = {
+      id: 'linked-id',
+      email: 'linked@example.com',
+      name: 'Linked',
+      role: 'OWNER',
+      tenantId: 'linked-tenant',
+      googleId: 'g-linked',
+      passwordHash: null,
+      isActive: true,
+    };
+    const prisma = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue(existingUser),
+        update: jest.fn(),
+        create: jest.fn(),
+      },
+      tenant: { create: jest.fn(), findUnique: jest.fn() },
+      $transaction: jest.fn(),
+    };
+    const service = makeService(prisma);
+
+    const result = await service.findOrCreateGoogleUser({
+      googleId: 'g-linked',
+      email: 'linked@example.com',
+      name: 'Linked',
+      emailVerified: false,
+    });
+
+    expect(result.user.id).toBe('linked-id');
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+    expect(prisma.user.create).not.toHaveBeenCalled();
   });
 });

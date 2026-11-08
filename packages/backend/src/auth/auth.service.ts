@@ -138,13 +138,26 @@ export class AuthService {
     googleId: string;
     email: string;
     name: string;
+    emailVerified: boolean;
   }) {
     let user = await this.prisma.user.findUnique({
       where: { googleId: profile.googleId },
     });
 
     if (user) {
+      // Identity already linked to this Google account — trust it regardless of
+      // the current verification flag (it was validated at link time).
       return this.buildAuthResponse(user, user.tenantId);
+    }
+
+    // Beyond this point we would LINK to or CREATE an account from the email.
+    // Only a Google-verified, non-empty email may do that, otherwise an attacker
+    // could claim someone else's account with an unverified address (takeover).
+    if (!profile.emailVerified || !profile.email) {
+      this.logger.warn(
+        `Google OAuth rechazado (email no verificado): googleId=${profile.googleId}`,
+      );
+      throw new UnauthorizedException('Tu correo de Google no está verificado');
     }
 
     // Check if email already exists (link accounts)
