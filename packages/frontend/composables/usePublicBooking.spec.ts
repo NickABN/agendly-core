@@ -125,3 +125,65 @@ describe('usePublicBooking cold-start integration', () => {
     wrapper.unmount();
   });
 });
+
+describe('usePublicBooking phone validation', () => {
+  const tenantPayload = {
+    tenant: { name: 'Salón Calma', slug: 'salon-calma', timezone: 'America/Mexico_City' },
+    services: [{ id: 'svc-1', name: 'Corte', durationMinutes: 60, priceMXN: '200' }],
+    employees: [{ id: 'emp-1', name: 'María', serviceIds: ['svc-1'] }],
+  };
+
+  beforeEach(() => {
+    fetchMock.mockReset();
+    tenantStatus = ref('success');
+    tenantData = ref(null);
+    tenantError = ref(null);
+    useAsyncDataMock.mockReset();
+    useAsyncDataMock.mockImplementation(async (_key: string, handler: () => Promise<unknown>) => {
+      tenantData.value = await handler();
+      return {
+        data: tenantData,
+        error: tenantError,
+        status: tenantStatus,
+        refresh: refreshTenantMock,
+      };
+    });
+  });
+
+  async function setupBooking() {
+    fetchMock.mockResolvedValueOnce(tenantPayload); // tenant fetch
+    const b = await usePublicBooking('salon-calma');
+    b.selectedServiceId.value = 'svc-1';
+    b.selectedEmployeeId.value = 'emp-1';
+    b.selectedSlot.value = '2030-06-10T16:00:00.000Z';
+    b.clientForm.name = 'Ana López';
+    b.clientForm.privacyAccepted = true;
+    return b;
+  }
+
+  it('blocks submit and shows the friendly message for an invalid phone', async () => {
+    const b = await setupBooking();
+    b.clientForm.phone = '12345';
+    fetchMock.mockClear(); // ignore the tenant fetch
+
+    await b.submitBooking();
+
+    expect(b.error.value).toBe('El teléfono no es válido');
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(b.confirmation.value).toBeNull();
+  });
+
+  it('normalizes a loose MX phone to E.164 in the request body before submit', async () => {
+    const b = await setupBooking();
+    b.clientForm.phone = '55 1234 5678';
+    fetchMock.mockClear();
+    fetchMock.mockResolvedValueOnce({ id: 'appt-1' }); // booking POST
+
+    await b.submitBooking();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [, options] = fetchMock.mock.calls[0];
+    expect(options.body.clientPhone).toBe('+525512345678');
+    expect(b.error.value).toBe('');
+  });
+});

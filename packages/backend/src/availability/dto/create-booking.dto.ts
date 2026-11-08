@@ -13,7 +13,7 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { AppointmentChannel } from '@agendly/shared';
+import { AppointmentChannel, normalizeMxPhone } from '@agendly/shared';
 
 export class CreateBookingDto {
   @IsString()
@@ -41,10 +41,15 @@ export class CreateBookingDto {
   @MaxLength(100)
   clientName: string;
 
+  // Normalize to E.164 (+52XXXXXXXXXX) before validation so the DB always
+  // stores one canonical value per client. Invalid input stays as typed and
+  // fails the @Matches below with the friendly message.
   @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.trim() : value,
+    typeof value === 'string'
+      ? (normalizeMxPhone(value) ?? value.trim())
+      : value,
   )
-  @Matches(/^\+?[\d\s()-]{8,20}$/, { message: 'El teléfono no es válido' })
+  @Matches(/^\+52\d{10}$/, { message: 'El teléfono no es válido' })
   clientPhone: string;
 
   @IsOptional()

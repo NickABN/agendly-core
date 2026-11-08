@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatDate } from '@agendly/shared';
+import { formatDate, formatMxPhone } from '@agendly/shared';
 import type { ClientItem } from '~/composables/useClients';
 
 defineProps<{
@@ -8,14 +8,6 @@ defineProps<{
 }>();
 
 const timezone = useBusinessTimezone();
-
-function formatPhone(phone: string) {
-  // Format Mexican phone numbers: 55 1234 5678
-  if (phone.length === 10) {
-    return `${phone.slice(0, 2)} ${phone.slice(2, 6)} ${phone.slice(6)}`;
-  }
-  return phone;
-}
 </script>
 
 <template>
@@ -50,7 +42,7 @@ function formatPhone(phone: string) {
       <div class="flex items-center gap-4 text-sm text-[var(--color-on-surface-variant)]">
         <span class="flex items-center gap-1">
           <span class="material-symbols-outlined text-sm" aria-hidden="true">phone</span>
-          {{ formatPhone(client.phone) }}
+          {{ formatMxPhone(client.phone) }}
         </span>
         <span v-if="client.email" class="hidden sm:flex items-center gap-1 truncate">
           <span class="material-symbols-outlined text-sm" aria-hidden="true">mail</span>

@@ -10,6 +10,9 @@ export * from './reserved-slugs';
 // Legal documents version (stored with each terms acceptance)
 export * from './legal';
 
+// Phone normalization (single source of truth for MX phone → E.164)
+export * from './phone';
+
 // DTOs
 export * from './dto/auth.dto';
 export * from './dto/tenant.dto';
