@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { formatDateKey, formatPhone, formatTime } from '@agendly/shared';
+import PhoneInput from '~/components/ui/PhoneInput.vue';
 
 definePageMeta({ layout: 'public' });
 
@@ -35,11 +37,95 @@ onMounted(() => {
 const progressStep = computed(() => Math.min(b.step.value, 4));
 
 const tenantInitials = computed(() => getInitials(b.tenantName.value || 'A'));
+const clientNameInput = ref<HTMLInputElement | null>(null);
 const mapsUrl = computed(() =>
   b.tenantAddress.value
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.tenantAddress.value)}`
     : '',
 );
+
+async function continueToClientForm() {
+  b.goToClientForm();
+  await nextTick();
+
+  const firstField = clientNameInput.value;
+  if (!firstField) return;
+
+  firstField.focus({ preventScroll: true });
+  const prefersReducedMotion =
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  firstField.scrollIntoView?.({
+    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    block: 'center',
+  });
+}
+
+// --- Booking friction: avoid two "continue" buttons on the date/time step ---
+// When the in-page "Continuar al paso final" button is within the viewport,
+// the sticky summary bar at the bottom is redundant, so we hide it. When that
+// button scrolls out of view, we bring the sticky bar back (only while a day
+// and time are selected). We track the in-page button via IntersectionObserver.
+const inPageContinueButton = ref<HTMLButtonElement | null>(null);
+// Default to "in view" so that, before the observer reports, the sticky bar
+// stays hidden while the in-page button is on screen.
+const inPageButtonInView = ref(true);
+let continueObserver: IntersectionObserver | null = null;
+
+// Show the sticky bar only on step 3, with both day and time selected, and only
+// when the in-page continue button is NOT visible. When IntersectionObserver is
+// unavailable we keep the previous behavior (bar always shown while selected).
+const showStickyContinueBar = computed(
+  () =>
+    b.step?.value === 3 &&
+    !!b.selectedDate?.value &&
+    !!b.selectedSlot?.value &&
+    !inPageButtonInView.value,
+);
+
+function disconnectContinueObserver() {
+  if (continueObserver) {
+    continueObserver.disconnect();
+    continueObserver = null;
+  }
+}
+
+function observeContinueButton(target: HTMLButtonElement | null) {
+  disconnectContinueObserver();
+
+  // Guard environments without IntersectionObserver (SSR / old browsers):
+  // fall back to the previous behavior by treating the button as out of view
+  // so the sticky bar stays available while a day and time are selected.
+  if (typeof IntersectionObserver === 'undefined') {
+    inPageButtonInView.value = false;
+    return;
+  }
+
+  if (!target) return;
+
+  inPageButtonInView.value = true;
+  continueObserver = new IntersectionObserver((entries) => {
+    const entry = entries[entries.length - 1];
+    if (entry) inPageButtonInView.value = entry.isIntersecting;
+  });
+  continueObserver.observe(target);
+}
+
+watch(inPageContinueButton, (target) => {
+  observeContinueButton(target);
+});
+
+// Reset / disconnect when leaving the date-and-time step.
+watch(
+  () => b.step?.value,
+  (step) => {
+    if (step !== 3) {
+      disconnectContinueObserver();
+      inPageButtonInView.value = true;
+    }
+  },
+);
+
+onBeforeUnmount(disconnectContinueObserver);
 </script>
 
 <template>
@@ -52,6 +138,7 @@ const mapsUrl = computed(() =>
       :employee-name="b.selectedEmployeeName.value"
       :tenant-name="b.tenantName.value"
       :timezone="b.tenantTimezone.value"
+      :tenant-info="b.tenantData.value?.tenant ?? null"
     />
 
     <!-- Backend unavailable (non-404 error) -->
@@ -286,8 +373,9 @@ const mapsUrl = computed(() =>
 
           <button
             v-if="b.selectedSlot.value"
+            ref="inPageContinueButton"
             class="w-full soul-gradient text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all"
-            @click="b.goToClientForm"
+            @click="continueToClientForm"
           >
             Continuar al paso final
             <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
@@ -389,6 +477,7 @@ const mapsUrl = computed(() =>
               >
               <input
                 id="client-name"
+                ref="clientNameInput"
                 v-model="b.clientForm.name"
                 required
                 minlength="2"
@@ -405,21 +494,7 @@ const mapsUrl = computed(() =>
                 class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-wider"
                 >Teléfono móvil</label
               >
-              <input
-                id="client-phone"
-                v-model="b.clientForm.phone"
-                required
-                type="tel"
-                inputmode="tel"
-                pattern="[+]?[0-9\s\(\)\-]{8,20}"
-                title="Ingresa un teléfono válido (10 dígitos en México o con código de país)"
-                placeholder="+52 000 000 0000"
-                autocomplete="tel"
-                class="w-full bg-[var(--color-surface-container-high)] border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] outline-none transition-all placeholder:text-[var(--color-outline)]/50"
-              />
-              <p class="text-xs text-[var(--color-outline)]">
-                10 dígitos en México, o con código de país (ej. +1 415 555 1234)
-              </p>
+              <PhoneInput id="client-phone" v-model="b.clientForm.phone" :required="true" />
             </div>
 
             <div class="space-y-2">
@@ -484,12 +559,70 @@ const mapsUrl = computed(() =>
 
       <!-- Bottom Agendly badge -->
       <div
+        v-if="!showStickyContinueBar"
         class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[var(--color-outline-variant)]/10 py-3"
       >
         <p class="text-center text-xs text-[var(--color-outline)]">
           Hecho con <span class="font-bold text-[var(--color-on-surface)]">⬡ Agendly</span>
         </p>
       </div>
+
+      <!-- Quick continuation once both the day and time are selected.
+           Hidden while the in-page "Continuar al paso final" button is on
+           screen, so the user never sees two identical continue buttons. -->
+      <Transition name="sticky-continue">
+        <div
+          v-if="showStickyContinueBar"
+          class="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-outline-variant)]/20 bg-white/95 backdrop-blur-md"
+          style="padding-bottom: calc(env(safe-area-inset-bottom) + 1rem)"
+        >
+          <div class="max-w-sm mx-auto px-4 pt-3">
+            <div class="flex items-center justify-between gap-4">
+              <p class="min-w-0 truncate text-sm font-semibold text-[var(--color-on-surface)]">
+                {{ formatDateKey(b.selectedDate.value, 'short') }} ·
+                {{ formatTime(b.selectedSlot.value, b.tenantTimezone.value) }}
+              </p>
+              <button
+                type="button"
+                class="shrink-0 soul-gradient text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 active:scale-[0.98] transition-all"
+                @click="continueToClientForm"
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
     </template>
   </div>
 </template>
+
+<style scoped>
+/* Smooth fade/slide for the sticky continuation bar. */
+.sticky-continue-enter-active,
+.sticky-continue-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sticky-continue-enter-from,
+.sticky-continue-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+/* Respect users who prefer reduced motion: show/hide instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .sticky-continue-enter-active,
+  .sticky-continue-leave-active {
+    transition: none;
+  }
+
+  .sticky-continue-enter-from,
+  .sticky-continue-leave-to {
+    opacity: 1;
+    transform: none;
+  }
+}
+</style>

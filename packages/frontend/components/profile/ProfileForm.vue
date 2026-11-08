@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { ProfileDto, UpdateProfileDto } from '@agendly/shared';
+import AppSelect from '~/components/ui/AppSelect.vue';
+import PhoneInput from '~/components/ui/PhoneInput.vue';
 
 interface TimezoneOption {
   value: string;
@@ -123,14 +125,11 @@ watch(
         Teléfono
         <span class="normal-case font-normal text-[var(--color-outline)] ml-1">(opcional)</span>
       </label>
-      <input
+      <PhoneInput
         id="profile-phone"
         v-model="form.phone"
-        type="tel"
-        placeholder="+521XXXXXXXXXX"
-        class="w-full px-4 py-3 rounded-lg bg-[var(--color-surface-container-high)] border-none focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] transition-all placeholder:text-[var(--color-outline)]"
         :class="{ 'ring-2 ring-red-400': errors.phone }"
-        @blur="errors.phone = validatePhone(form.phone)"
+        @update:model-value="errors.phone = validatePhone($event)"
       />
       <p v-if="errors.phone" class="text-xs text-red-600">{{ errors.phone }}</p>
       <p v-else class="text-xs text-[var(--color-on-surface-variant)]">
@@ -146,18 +145,13 @@ watch(
       >
         Zona horaria
       </label>
-      <select
+      <AppSelect
         id="profile-timezone"
         v-model="form.timezone"
-        class="w-full px-4 py-3 rounded-lg bg-[var(--color-surface-container-high)] border-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all appearance-none cursor-pointer"
         :class="{ 'ring-2 ring-red-400': errors.timezone }"
-        @blur="errors.timezone = validateTimezone(form.timezone)"
-        @change="errors.timezone = validateTimezone(form.timezone)"
-      >
-        <option v-for="tz in MEXICO_TIMEZONES" :key="tz.value" :value="tz.value">
-          {{ tz.label }}
-        </option>
-      </select>
+        :options="MEXICO_TIMEZONES"
+        @update:model-value="errors.timezone = validateTimezone($event)"
+      />
       <p v-if="errors.timezone" class="text-xs text-red-600">{{ errors.timezone }}</p>
     </div>
 

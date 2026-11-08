@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { computed, defineComponent, h, nextTick, onMounted, ref, Suspense } from 'vue';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PublicBookingPage from '../pages/[slug].vue';
 
 const fetchMock = vi.fn();
@@ -28,6 +28,52 @@ vi.stubGlobal('useAvailability', () => ({
 }));
 
 const { publicTenantFetchOptions, usePublicBooking } = await import('./usePublicBooking');
+
+type Booking = Awaited<ReturnType<typeof usePublicBooking>>;
+const mountedPages: VueWrapper[] = [];
+
+async function mountBookingPage(booking: Booking) {
+  vi.stubGlobal('computed', computed);
+  vi.stubGlobal('onMounted', onMounted);
+  vi.stubGlobal('definePageMeta', vi.fn());
+  vi.stubGlobal('useRoute', () => ({ params: { slug: 'salon-calma' } }));
+  vi.stubGlobal('useSeoMeta', vi.fn());
+  vi.stubGlobal('usePublicBooking', async () => booking);
+  vi.stubGlobal('getInitials', (name: string) => name.slice(0, 1));
+
+  const parent = defineComponent({
+    setup: () => () =>
+      h(Suspense, null, {
+        default: () => h(PublicBookingPage),
+        fallback: () => h('div'),
+      }),
+  });
+  const wrapper = mount(parent, {
+    attachTo: document.body,
+    global: {
+      stubs: {
+        BookingConfirmationScreen: true,
+        BookingProgressBar: true,
+        BookingServiceCard: true,
+        BookingEmployeeSelector: true,
+        BookingDayTabs: true,
+        BookingSlotGrid: true,
+        NuxtLink: true,
+      },
+    },
+  });
+  mountedPages.push(wrapper);
+  await flushPromises();
+  await nextTick();
+  return wrapper;
+}
+
+function optionLabel(option: { text: () => string }) {
+  return option
+    .text()
+    .replace(/\s*check$/, '')
+    .trim();
+}
 
 describe('usePublicBooking cold-start integration', () => {
   beforeEach(() => {
@@ -161,6 +207,18 @@ describe('usePublicBooking phone validation', () => {
     return b;
   }
 
+  async function setupBookingForm() {
+    const booking = await setupBooking();
+    booking.step.value = 4;
+    booking.selectedDate.value = '2030-06-10';
+    return { booking, wrapper: await mountBookingPage(booking) };
+  }
+
+  afterEach(() => {
+    mountedPages.splice(0).forEach((wrapper) => wrapper.unmount());
+    document.body.replaceChildren();
+  });
+
   it('blocks submit and shows the friendly message for an invalid phone', async () => {
     const b = await setupBooking();
     b.clientForm.phone = '12345';
@@ -199,5 +257,62 @@ describe('usePublicBooking phone validation', () => {
     const [, options] = fetchMock.mock.calls[0];
     expect(options.body.clientPhone).toBe('+14155551234');
     expect(b.error.value).toBe('');
+  });
+
+  it('submits the E.164 value from the default Mexican lada in the booking form', async () => {
+    const { booking, wrapper } = await setupBookingForm();
+    const phoneField = wrapper.get('#client-phone');
+    await phoneField.setValue('55 1234 5678');
+
+    expect(booking.clientForm.phone).toBe('+525512345678');
+
+    fetchMock.mockClear();
+    fetchMock.mockResolvedValueOnce({ id: 'appt-1' });
+    await wrapper.get('form').trigger('submit');
+    await flushPromises();
+
+    const [, options] = fetchMock.mock.calls[0] ?? [];
+    expect(options?.body.clientPhone).toBe('+525512345678');
+  });
+
+  it('submits a Spanish E.164 value after selecting España in the booking form', async () => {
+    const { wrapper } = await setupBookingForm();
+    const countrySelector = wrapper.get('[aria-haspopup="listbox"]');
+
+    await countrySelector.trigger('click');
+    const spainOption = wrapper
+      .findAll('[role="option"]')
+      .find((option) => optionLabel(option).includes('🇪🇸 España +34'));
+    expect(spainOption, 'Expected the España country option').toBeDefined();
+    await spainOption!.trigger('click');
+    await wrapper.get('#client-phone').setValue('61 2345 678');
+
+    fetchMock.mockClear();
+    fetchMock.mockResolvedValueOnce({ id: 'appt-1' });
+    await wrapper.get('form').trigger('submit');
+    await flushPromises();
+
+    const [, options] = fetchMock.mock.calls[0] ?? [];
+    expect(options?.body.clientPhone).toBe('+34612345678');
+  });
+
+  it('shows the invalid-phone message and does not submit the booking', async () => {
+    const { wrapper } = await setupBookingForm();
+    const countrySelector = wrapper.get('[aria-haspopup="listbox"]');
+
+    await countrySelector.trigger('click');
+    const spainOption = wrapper
+      .findAll('[role="option"]')
+      .find((option) => optionLabel(option).includes('🇪🇸 España +34'));
+    expect(spainOption, 'Expected the España country option').toBeDefined();
+    await spainOption!.trigger('click');
+    await wrapper.get('#client-phone').setValue('12-34');
+
+    fetchMock.mockClear();
+    await wrapper.get('form').trigger('submit');
+    await flushPromises();
+
+    expect(wrapper.get('[role="alert"]').text()).toContain('El teléfono no es válido');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

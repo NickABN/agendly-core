@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { BUSINESS_TZ, formatDate, formatTime } from '@agendly/shared';
-import type { BookingResponse } from '@agendly/shared';
+import { BUSINESS_TZ, formatDate, formatPhone, formatTime } from '@agendly/shared';
+import type { BookingResponse, PublicTenantResponse } from '@agendly/shared';
 
 const props = withDefaults(
   defineProps<{
@@ -8,14 +8,34 @@ const props = withDefaults(
     serviceName: string;
     employeeName: string;
     tenantName: string;
+    tenantInfo?: PublicTenantResponse['tenant'] | null;
     /** IANA timezone of the business — the confirmation shows its wall clock. */
     timezone?: string;
   }>(),
-  { timezone: BUSINESS_TZ },
+  { tenantInfo: null, timezone: BUSINESS_TZ },
 );
 
 /** Short human reference derived from the REAL appointment id. */
 const reference = computed(() => `AG-${props.booking.id.slice(-6).toUpperCase()}`);
+const businessName = computed(() => props.tenantInfo?.name || props.tenantName);
+const mapsUrl = computed(() => {
+  const tenant = props.tenantInfo;
+  if (!tenant?.address) return '';
+
+  const hasCoordinates = tenant.latitude != null && tenant.longitude != null;
+  const query = hasCoordinates ? `${tenant.latitude},${tenant.longitude}` : tenant.address;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+});
+const hasBusinessInfo = computed(() =>
+  Boolean(
+    props.tenantInfo &&
+    (businessName.value ||
+      props.tenantInfo.logoUrl ||
+      props.tenantInfo.bannerUrl ||
+      props.tenantInfo.address ||
+      props.tenantInfo.phone),
+  ),
+);
 
 function toIcsStamp(iso: string): string {
   return iso.replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -32,8 +52,8 @@ function addToCalendar() {
     `DTSTAMP:${toIcsStamp(new Date().toISOString())}`,
     `DTSTART:${toIcsStamp(props.booking.startTime)}`,
     `DTEND:${toIcsStamp(props.booking.endTime)}`,
-    `SUMMARY:${props.serviceName} — ${props.tenantName}`,
-    `DESCRIPTION:Cita con ${props.employeeName} en ${props.tenantName}. Referencia ${reference.value}`,
+    `SUMMARY:${props.serviceName} — ${businessName.value}`,
+    `DESCRIPTION:Cita con ${props.employeeName} en ${businessName.value}. Referencia ${reference.value}`,
     'END:VEVENT',
     'END:VCALENDAR',
   ].join('\r\n');
@@ -94,7 +114,7 @@ function addToCalendar() {
             <p class="font-bold text-[var(--color-on-surface)] text-lg leading-tight">
               {{ serviceName }}
             </p>
-            <p class="text-sm text-[var(--color-on-surface-variant)]">{{ tenantName }}</p>
+            <p class="text-sm text-[var(--color-on-surface-variant)]">{{ businessName }}</p>
           </div>
         </div>
 
@@ -157,6 +177,48 @@ function addToCalendar() {
           <span class="material-symbols-outlined text-lg" aria-hidden="true">calendar_add_on</span>
           Agregar al calendario
         </button>
+
+        <section
+          v-if="tenantInfo && hasBusinessInfo"
+          class="space-y-3 rounded-xl border border-[var(--color-outline-variant)]/30 bg-[var(--color-surface-container-low)] p-4"
+          aria-label="Información del negocio"
+        >
+          <img
+            v-if="tenantInfo.bannerUrl"
+            :src="tenantInfo.bannerUrl"
+            alt=""
+            class="w-full max-h-32 rounded-lg object-cover"
+          />
+          <div v-if="tenantInfo.logoUrl || businessName" class="flex items-center gap-3">
+            <img
+              v-if="tenantInfo.logoUrl"
+              :src="tenantInfo.logoUrl"
+              alt=""
+              class="h-10 w-10 shrink-0 rounded-full object-cover"
+            />
+            <p v-if="businessName" class="font-semibold text-sm text-[var(--color-on-surface)]">
+              {{ businessName }}
+            </p>
+          </div>
+          <a
+            v-if="tenantInfo.address && mapsUrl"
+            :href="mapsUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-start gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]"
+          >
+            <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
+            <span>{{ tenantInfo.address }} · Cómo llegar</span>
+          </a>
+          <a
+            v-if="tenantInfo.phone"
+            :href="`tel:${tenantInfo.phone}`"
+            class="flex items-center gap-2 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]"
+          >
+            <span class="material-symbols-outlined text-base" aria-hidden="true">call</span>
+            {{ formatPhone(tenantInfo.phone) }}
+          </a>
+        </section>
 
         <div class="flex items-center gap-1 text-xs text-[var(--color-on-surface-variant)]">
           <span
