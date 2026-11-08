@@ -173,17 +173,37 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleCallback(
-    @Req() req: { user: { googleId: string; email: string; name: string } },
+    @Req()
+    req: {
+      user?: {
+        googleId: string;
+        email: string;
+        name: string;
+        emailVerified: boolean;
+      };
+    },
     @Res() res: Response,
   ) {
-    const { accessToken, refreshToken } =
-      await this.authService.findOrCreateGoogleUser(req.user);
-    // Las cookies se setean en el redirect; el token ya NO viaja en la URL (OWASP A07)
-    this.setSessionCookies(res, accessToken, refreshToken);
     const frontendUrl = this.configService.get<string>(
       'FRONTEND_URL',
       'http://localhost:3001',
     );
-    res.redirect(`${frontendUrl}/auth/callback`);
+
+    // The guard no longer throws on failure; an absent user means Google auth
+    // failed (denied consent, guard error, …) or the service rejected the
+    // identity (unverified email). Either way, redirect to a friendly page
+    // instead of returning a raw JSON 401.
+    try {
+      if (!req.user) {
+        throw new UnauthorizedException();
+      }
+      const { accessToken, refreshToken } =
+        await this.authService.findOrCreateGoogleUser(req.user);
+      // Las cookies se setean en el redirect; el token ya NO viaja en la URL (OWASP A07)
+      this.setSessionCookies(res, accessToken, refreshToken);
+      res.redirect(`${frontendUrl}/auth/callback`);
+    } catch {
+      res.redirect(`${frontendUrl}/login?error=google`);
+    }
   }
 }
