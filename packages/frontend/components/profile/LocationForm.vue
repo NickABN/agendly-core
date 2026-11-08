@@ -34,6 +34,7 @@ const mapContainer = ref<HTMLDivElement | null>(null);
 let mapInstance: any = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let markerInstance: any = null;
+let resizeObserver: ResizeObserver | null = null;
 
 // ─── Geocoding state ───────────────────────────────────────────────────────────
 const isGeocoding = ref(false);
@@ -101,9 +102,25 @@ onMounted(async () => {
 
   // Fix rendering when container becomes visible
   mapInstance.invalidateSize();
+
+  // The "Ubicación" tab is hidden with v-show, so the map is first created with a
+  // 0-size container and tiles only render for that empty viewport. Re-invalidate
+  // whenever the container gains (or changes) size, keeping the pin centred.
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(() => {
+      if (!mapInstance) return;
+      mapInstance.invalidateSize();
+      if (markerInstance) {
+        mapInstance.setView(markerInstance.getLatLng(), mapInstance.getZoom());
+      }
+    });
+    resizeObserver.observe(mapContainer.value);
+  }
 });
 
 onUnmounted(() => {
+  resizeObserver?.disconnect();
+  resizeObserver = null;
   mapInstance?.remove();
   mapInstance = null;
   markerInstance = null;

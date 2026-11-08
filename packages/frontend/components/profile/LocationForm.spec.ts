@@ -26,6 +26,7 @@ const leafletMock = vi.hoisted(() => {
   const mapInstance = {
     setView: vi.fn(() => mapInstance),
     invalidateSize: vi.fn(),
+    getZoom: vi.fn(() => 13),
     remove: vi.fn(),
     on: vi.fn(
       (event: string, handler: (event: { latlng: { lat: number; lng: number } }) => unknown) => {
@@ -63,6 +64,43 @@ const leafletMock = vi.hoisted(() => {
 
 vi.mock('leaflet', () => leafletMock);
 vi.mock('leaflet/dist/leaflet.css', () => ({}));
+
+// Controllable ResizeObserver harness: lets a test trigger the resize callback
+// and assert that the observer is disconnected on unmount.
+const resizeObserverHarness = vi.hoisted(() => {
+  const instances: {
+    callback: ResizeObserverCallback;
+    observe: ReturnType<typeof vi.fn>;
+    disconnect: ReturnType<typeof vi.fn>;
+  }[] = [];
+
+  class MockResizeObserver {
+    callback: ResizeObserverCallback;
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+
+    constructor(callback: ResizeObserverCallback) {
+      this.callback = callback;
+      instances.push({ callback, observe: this.observe, disconnect: this.disconnect });
+    }
+  }
+
+  return {
+    MockResizeObserver,
+    instances,
+    latest: () => instances[instances.length - 1],
+    triggerResize: () => {
+      const latest = instances[instances.length - 1];
+      latest?.callback([] as unknown as ResizeObserverEntry[], latest as unknown as ResizeObserver);
+    },
+    reset: () => {
+      instances.splice(0);
+    },
+  };
+});
+
+const originalResizeObserver = Object.getOwnPropertyDescriptor(globalThis, 'ResizeObserver');
 
 const mockFetch = vi.fn();
 const noResultMessage = 'No encontramos esa dirección, intenta con calle, número y colonia';
@@ -111,6 +149,12 @@ beforeEach(() => {
   vi.stubGlobal('$fetch', mockFetch);
   mockFetch.mockReset();
   leafletMock.reset();
+  resizeObserverHarness.reset();
+  Object.defineProperty(globalThis, 'ResizeObserver', {
+    configurable: true,
+    writable: true,
+    value: resizeObserverHarness.MockResizeObserver,
+  });
 });
 
 afterEach(() => {
@@ -119,6 +163,11 @@ afterEach(() => {
     Object.defineProperty(navigator, 'geolocation', originalGeolocation);
   } else {
     Reflect.deleteProperty(navigator, 'geolocation');
+  }
+  if (originalResizeObserver) {
+    Object.defineProperty(globalThis, 'ResizeObserver', originalResizeObserver);
+  } else {
+    Reflect.deleteProperty(globalThis, 'ResizeObserver');
   }
   vi.unstubAllGlobals();
 });
@@ -363,5 +412,57 @@ describe('profile location form UX', () => {
       latitude: 19.387,
       longitude: -99.167,
     });
+  });
+});
+
+describe('profile location form map resize handling', () => {
+  it('invalidates the map size when the container is resized', async () => {
+    await mountLocationForm();
+
+    expect(resizeObserverHarness.latest()).toBeDefined();
+    const invalidateCallsBefore = leafletMock.mapInstance.invalidateSize.mock.calls.length;
+
+    resizeObserverHarness.triggerResize();
+    await flushPromises();
+
+    expect(leafletMock.mapInstance.invalidateSize.mock.calls.length).toBeGreaterThan(
+      invalidateCallsBefore,
+    );
+  });
+
+  it('recenters an existing pin after a resize using the current zoom', async () => {
+    const wrapper = await mountLocationForm({
+      address: 'Calle 1',
+      latitude: 19.4326,
+      longitude: -99.1332,
+    });
+    await flushPromises();
+
+    leafletMock.mapInstance.setView.mockClear();
+    resizeObserverHarness.triggerResize();
+    await flushPromises();
+
+    expect(leafletMock.mapInstance.setView).toHaveBeenCalledWith(
+      { lat: 19.4326, lng: -99.1332 },
+      13,
+    );
+    wrapper.unmount();
+  });
+
+  it('disconnects the resize observer on unmount', async () => {
+    const wrapper = await mountLocationForm();
+    const observer = resizeObserverHarness.latest();
+    expect(observer).toBeDefined();
+
+    wrapper.unmount();
+
+    expect(observer!.disconnect).toHaveBeenCalled();
+  });
+
+  it('does not crash when ResizeObserver is undefined', async () => {
+    Reflect.deleteProperty(globalThis, 'ResizeObserver');
+
+    await expect(mountLocationForm()).resolves.toBeDefined();
+    expect(leafletMock.map).toHaveBeenCalled();
   });
 });
