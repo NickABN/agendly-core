@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppSelect from '~/components/ui/AppSelect.vue';
+
 definePageMeta({ layout: 'public' });
 useHead({ title: 'Derechos ARCO — Agendly' });
 
@@ -9,6 +11,11 @@ const RIGHTS = [
   { key: 'Rectificación', icon: 'edit', text: 'Corregir datos incompletos o equivocados.' },
   { key: 'Cancelación', icon: 'delete', text: 'Pedir que eliminemos tus datos.' },
   { key: 'Oposición', icon: 'block', text: 'Oponerte a un uso específico de tus datos.' },
+];
+
+const rightOptions = [
+  ...RIGHTS.map((right) => ({ value: right.key, label: right.key })),
+  { value: 'Revocación del consentimiento', label: 'Revocación del consentimiento' },
 ];
 
 const form = reactive({ name: '', contact: '', right: 'Acceso', business: '', detail: '' });
@@ -101,15 +108,14 @@ const canSend = computed(
           >
           <input v-model="form.contact" required class="arco-input" />
         </label>
-        <label class="space-y-1">
-          <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-outline)]"
-            >Derecho</span
+        <div class="space-y-1">
+          <label
+            for="arco-right"
+            class="text-xs font-bold uppercase tracking-wider text-[var(--color-outline)]"
+            >Derecho</label
           >
-          <select v-model="form.right" class="arco-input">
-            <option v-for="r in RIGHTS" :key="r.key" :value="r.key">{{ r.key }}</option>
-            <option value="Revocación del consentimiento">Revocación del consentimiento</option>
-          </select>
-        </label>
+          <AppSelect id="arco-right" v-model="form.right" :options="rightOptions" />
+        </div>
         <label class="space-y-1">
           <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-outline)]"
             >Negocio (opcional)</span
