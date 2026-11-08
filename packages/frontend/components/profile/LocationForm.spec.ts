@@ -185,6 +185,20 @@ describe('profile location form UX', () => {
     expect(callsFor('/profile/location', 'PATCH')).toHaveLength(0);
   });
 
+  it('shows a retry message, not "not found", when the search request fails', async () => {
+    mockFetch.mockRejectedValueOnce(new Error('network down'));
+    const wrapper = await mountLocationForm();
+
+    await wrapper.get('#location-address').setValue('Av. Reforma 222');
+    await findButton(wrapper, /^buscar$/i)!.trigger('click');
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(
+      'No pudimos buscar la dirección. Intenta de nuevo en un momento.',
+    );
+    expect(wrapper.text()).not.toContain(noResultMessage);
+  });
+
   it('moves the pin to browser coordinates when geolocation succeeds', async () => {
     const getCurrentPosition = vi.fn((success: PositionCallback) => {
       success({

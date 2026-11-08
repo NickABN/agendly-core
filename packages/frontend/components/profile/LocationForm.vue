@@ -140,23 +140,30 @@ async function movePin(lat: number, lng: number, markEdited = true) {
 }
 
 // ─── Explicit address search; geocoding never persists the location ───────────
+// Incremented per search so a slow, superseded response is ignored.
+let geocodeRequestId = 0;
+
 async function searchAddress() {
   const trimmed = address.value.trim();
   if (!trimmed) return;
 
   locationError.value = null;
   isGeocoding.value = true;
+  // Ignore responses from searches superseded by a newer one.
+  const requestId = ++geocodeRequestId;
   try {
     const result = await store.geocodeAddress(trimmed);
+    if (requestId !== geocodeRequestId) return;
     if (!result) {
       locationError.value = 'No encontramos esa dirección, intenta con calle, número y colonia';
       return;
     }
     await movePin(result.latitude, result.longitude);
   } catch {
-    locationError.value = 'No encontramos esa dirección, intenta con calle, número y colonia';
+    if (requestId !== geocodeRequestId) return;
+    locationError.value = 'No pudimos buscar la dirección. Intenta de nuevo en un momento.';
   } finally {
-    isGeocoding.value = false;
+    if (requestId === geocodeRequestId) isGeocoding.value = false;
   }
 }
 

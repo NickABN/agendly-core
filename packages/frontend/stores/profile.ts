@@ -18,13 +18,17 @@ function uploadErrorMessage(error: unknown, fallback: string): string {
     statusCode?: number;
     message?: unknown;
   };
-  const message =
-    response?.data?.message ?? response?.response?._data?.message ?? response?.message;
-  if (Array.isArray(message)) return message.filter((item) => typeof item === 'string').join(', ');
-  if (typeof message === 'string' && message.length > 0) return message;
+  // Prefer the server's own message; a raw fetch error message (e.g. "[POST] ... 503")
+  // must never win over the friendly storage message.
+  const serverMessage = response?.data?.message ?? response?.response?._data?.message;
+  if (Array.isArray(serverMessage))
+    return serverMessage.filter((item) => typeof item === 'string').join(', ');
+  if (typeof serverMessage === 'string' && serverMessage.length > 0) return serverMessage;
   if ([response?.status, response?.statusCode, response?.response?.status].includes(503)) {
     return STORAGE_UNAVAILABLE_MESSAGE;
   }
+  const message = response?.message;
+  if (typeof message === 'string' && message.length > 0) return message;
   return error instanceof Error ? error.message : fallback;
 }
 

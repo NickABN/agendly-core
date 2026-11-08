@@ -62,4 +62,27 @@ describe('profile image upload storage-unavailable response', () => {
     );
     expect(wrapper.get('p.text-red-600').text()).toContain(serverMessage);
   });
+
+  it('shows the friendly storage message on a 503 without a server message', async () => {
+    const fetchError = Object.assign(
+      new Error('[POST] "http://localhost:3000/profile/logo": 503 Service Unavailable'),
+      { status: 503, statusCode: 503 },
+    );
+    mockFetch.mockRejectedValueOnce(fetchError);
+
+    wrapper = mount(ImageUpload, {
+      props: { type: 'logo', currentUrl: null, maxSizeMb: 5 },
+    });
+
+    const fileInput = wrapper.get('input[type="file"]');
+    Object.defineProperty(fileInput.element, 'files', {
+      configurable: true,
+      value: [new File(['image-bytes'], 'logo.png', { type: 'image/png' })],
+    });
+    await fileInput.trigger('change');
+    await flushPromises();
+
+    expect(wrapper.get('p.text-red-600').text()).toContain(serverMessage);
+    expect(wrapper.get('p.text-red-600').text()).not.toContain('Service Unavailable');
+  });
 });
