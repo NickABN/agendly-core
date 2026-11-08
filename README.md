@@ -457,6 +457,6 @@ El detalle está en [`ROADMAP.md`](ROADMAP.md). Lo principal pendiente:
 **Autor:** Nico ([@NickABN](https://github.com/NickABN)). Proyecto desarrollado como Trabajo Final
 de Máster (TFM).
 
-**Licencia:** TODO: definir. El repositorio todavía no incluye un archivo `LICENSE` y el
-`package.json` del backend declara `"license": "UNLICENSED"`. Mientras no se agregue una licencia,
-aplican todos los derechos reservados por el autor.
+**Licencia:** © 2026 Nico (NickABN). Todos los derechos reservados. El código se publica para su
+consulta y evaluación como TFM; no se concede permiso para copiarlo, modificarlo, distribuirlo ni
+usarlo con fines comerciales sin autorización expresa del autor. Ver [`LICENSE`](LICENSE).
