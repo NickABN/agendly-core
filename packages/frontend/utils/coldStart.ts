@@ -15,6 +15,21 @@
 /** Statuses the proxy/hosting returns while the backend is asleep or waking up. */
 const COLD_START_STATUSES = new Set([502, 503, 504]);
 
+/** ofetch defaults, excluding proxy statuses handled by our own backoff. */
+const DEFAULT_RETRY_STATUSES = [408, 409, 425, 429, 500, 501, 521, 522, 524];
+
+/** Node fetch network errors that can also be surfaced as a FetchError cause. */
+const NETWORK_ERROR_CODES = new Set([
+  'ECONNREFUSED',
+  'ECONNRESET',
+  'EAI_AGAIN',
+  'ENETUNREACH',
+  'EHOSTUNREACH',
+  'ENOTFOUND',
+  'ETIMEDOUT',
+  'UND_ERR_CONNECT_TIMEOUT',
+]);
+
 /** Methods that are safe to repeat automatically (no side effects). */
 const IDEMPOTENT_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
@@ -37,6 +52,7 @@ interface ErrorLike {
 interface ColdStartFetchOptions {
   method?: string;
   retry?: number | false;
+  retryStatusCodes?: number[];
   timeout?: number;
   signal?: unknown;
   [key: string]: unknown;
@@ -77,6 +93,17 @@ function isTimeoutAbort(
   return isUserAbort(err) && !!options?.timeout && !options.signal;
 }
 
+function isNetworkFailureCause(cause: unknown): boolean {
+  if (cause instanceof TypeError) return true;
+  if (!cause || typeof cause !== 'object') return false;
+
+  const networkError = cause as { name?: unknown; code?: unknown };
+  return (
+    networkError.name === 'NetworkError' ||
+    (typeof networkError.code === 'string' && NETWORK_ERROR_CODES.has(networkError.code))
+  );
+}
+
 function isSerializedColdStartError(data: unknown): boolean {
   if (!data || typeof data !== 'object') return false;
   return (data as Record<string, unknown>).coldStart === true;
@@ -98,9 +125,14 @@ export function isColdStartError(
 
   const status = statusOf(e);
   if (status === undefined) {
-    // No HTTP response at all: network failure or timeout while the server boots.
-    // A deliberate abort (navigation, cancelled request) is not a cold start.
-    return !isUserAbort(e) || isTimeoutAbort(e, options);
+    if (e.name !== 'FetchError') return false;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return false;
+    if (isTimeoutAbort(e, options)) return true;
+    if (isUserAbort(e)) return false;
+
+    // Browsers and Node do not reliably distinguish a sleeping upstream from DNS or
+    // API-host configuration failures. Only FetchError network causes are eligible.
+    return isNetworkFailureCause(e.cause);
   }
   return COLD_START_STATUSES.has(status) && !isBackendAppError(e.data);
 }
@@ -197,7 +229,13 @@ export function withColdStartHandling<F extends Fetcher>(fetcher: F, opts: ColdS
     if (!opts.isApiRequest(request)) return fetcher(request, options);
 
     const method = options?.method;
-    const fetchOptions = { ...options, retry: 0 };
+    // Keep ofetch's caller/default retry count for ordinary transient errors, but
+    // reserve proxy cold-start statuses for this wrapper's bounded backoff.
+    const retryStatusCodes = options?.retryStatusCodes ?? DEFAULT_RETRY_STATUSES;
+    const fetchOptions = {
+      ...options,
+      retryStatusCodes: retryStatusCodes.filter((status) => !COLD_START_STATUSES.has(status)),
+    };
     let retry = 0;
     for (;;) {
       try {
