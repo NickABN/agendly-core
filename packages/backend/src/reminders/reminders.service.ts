@@ -99,7 +99,13 @@ export class RemindersService {
     let failed = 0;
     for (const a of eligible) {
       const claim = await this.prisma.appointment.updateMany({
-        where: { id: a.id, reminderSentAt: null, status: 'CONFIRMED' },
+        where: {
+          id: a.id,
+          reminderSentAt: null,
+          status: 'CONFIRMED',
+          startTime: a.startTime,
+          employeeId: a.employeeId,
+        },
         data: { reminderSentAt: now },
       });
       if (claim.count === 0) continue; // another run took it, or it was cancelled

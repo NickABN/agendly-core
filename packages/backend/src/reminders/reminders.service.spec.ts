@@ -7,6 +7,7 @@ function appt(id: string, overrides: Record<string, unknown> = {}) {
   return {
     id,
     tenantId: 't1',
+    employeeId: 'e1',
     clientName: 'Ana',
     clientPhone: '+521',
     clientEmail: 'ana@example.com',
@@ -81,7 +82,13 @@ describe('RemindersService.sendDueReminders', () => {
 
     expect(res).toEqual({ candidates: 1, sent: 1, failed: 0 });
     expect(prisma.appointment.updateMany).toHaveBeenCalledWith({
-      where: { id: 'a1', reminderSentAt: null, status: 'CONFIRMED' },
+      where: {
+        id: 'a1',
+        reminderSentAt: null,
+        status: 'CONFIRMED',
+        startTime: new Date('2026-10-12T15:00:00.000Z'),
+        employeeId: 'e1',
+      },
       data: { reminderSentAt: NOW },
     });
     expect(email.sendBookingReminder).toHaveBeenCalledWith(
@@ -109,6 +116,97 @@ describe('RemindersService.sendDueReminders', () => {
     const res = await service.sendDueReminders(NOW, noSleep);
     expect(email.sendBookingReminder).not.toHaveBeenCalled();
     expect(res.sent).toBe(0);
+  });
+
+  it('skips a candidate rescheduled after selection and later reminds using its current data', async () => {
+    const staleCandidate = appt('a1', {
+      employeeId: 'e1',
+      employee: { name: 'Luisa' },
+      startTime: new Date('2026-10-12T14:00:00.000Z'),
+    });
+    const movedCandidate = appt('a1', {
+      employeeId: 'e2',
+      employee: { name: 'María' },
+      startTime: new Date('2026-10-12T15:00:00.000Z'),
+    });
+    let current = staleCandidate;
+    let rescheduled = false;
+    let findManyCalls = 0;
+    const prisma = {
+      appointment: {
+        findMany: jest.fn().mockImplementation(async () => {
+          findManyCalls += 1;
+          return [findManyCalls === 1 ? staleCandidate : current];
+        }),
+        updateMany: jest
+          .fn()
+          .mockImplementation(
+            async ({ where }: { where: Record<string, unknown> }) => {
+              if (!rescheduled) {
+                current = movedCandidate;
+                rescheduled = true;
+              }
+              const startMatches =
+                where.startTime === undefined ||
+                (where.startTime instanceof Date &&
+                  where.startTime.getTime() ===
+                    (current.startTime as Date).getTime());
+              const employeeMatches =
+                where.employeeId === undefined ||
+                where.employeeId === current.employeeId;
+              const matches =
+                where.id === current.id &&
+                where.status === current.status &&
+                where.reminderSentAt === null &&
+                startMatches &&
+                employeeMatches;
+              return { count: matches ? 1 : 0 };
+            },
+          ),
+      },
+    };
+    const email = { sendBookingReminder: jest.fn().mockResolvedValue(true) };
+    const service = new RemindersService(
+      prisma as never,
+      email as never,
+      { annotate: jest.fn().mockResolvedValue(new Map()) } as never,
+      { manageUrl: (id: string) => `https://app.test/cita/${id}.sig` } as never,
+    );
+
+    const firstRun = await service.sendDueReminders(NOW, noSleep);
+
+    expect(firstRun).toEqual({ candidates: 1, sent: 0, failed: 0 });
+    expect(prisma.appointment.updateMany).toHaveBeenNthCalledWith(1, {
+      where: {
+        id: 'a1',
+        reminderSentAt: null,
+        status: 'CONFIRMED',
+        startTime: staleCandidate.startTime,
+        employeeId: 'e1',
+      },
+      data: { reminderSentAt: NOW },
+    });
+    expect(email.sendBookingReminder).not.toHaveBeenCalled();
+
+    const secondRun = await service.sendDueReminders(NOW, noSleep);
+
+    expect(secondRun).toEqual({ candidates: 1, sent: 1, failed: 0 });
+    expect(prisma.appointment.updateMany).toHaveBeenNthCalledWith(2, {
+      where: {
+        id: 'a1',
+        reminderSentAt: null,
+        status: 'CONFIRMED',
+        startTime: movedCandidate.startTime,
+        employeeId: 'e2',
+      },
+      data: { reminderSentAt: NOW },
+    });
+    expect(email.sendBookingReminder).toHaveBeenCalledWith(
+      expect.objectContaining({
+        employeeName: 'María',
+        time: expect.stringMatching(/9:00/),
+      }),
+    );
   });
 
   it('releases the claim when the provider fails so the next run retries', async () => {
