@@ -6,13 +6,17 @@ import {
 import { BookingService } from './booking.service';
 import { AvailabilityService } from './availability.service';
 import { zonedToUtc } from '@agendly/shared';
-import type { CreateBookingDto } from './dto/create-booking.dto';
+import { plainToInstance } from 'class-transformer';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import type { CreateBookingDto as CreateBookingDtoType } from './dto/create-booking.dto';
 
 const TENANT_ID = 'tenant-1';
 const FUTURE_DATE = '2030-06-10';
 const futureStart = zonedToUtc(FUTURE_DATE, '10:00');
 
-function buildDto(overrides: Partial<CreateBookingDto> = {}): CreateBookingDto {
+function buildDto(
+  overrides: Partial<CreateBookingDtoType> = {},
+): CreateBookingDtoType {
   return {
     employeeId: 'emp-1',
     serviceId: 'svc-1',
@@ -21,7 +25,7 @@ function buildDto(overrides: Partial<CreateBookingDto> = {}): CreateBookingDto {
     clientPhone: '5512345678',
     clientEmail: 'ana@example.com',
     ...overrides,
-  } as CreateBookingDto;
+  } as CreateBookingDtoType;
 }
 
 describe('BookingService.createBooking', () => {
@@ -110,6 +114,32 @@ describe('BookingService.createBooking', () => {
     expect(result.startTime).toBe(futureStart.toISOString());
     expect(prisma.$transaction).toHaveBeenCalledTimes(1);
     expect(prisma.privacyConsent.create).toHaveBeenCalled();
+  });
+
+  it('persists the normalized E.164 phone on both the appointment and the consent', async () => {
+    // A DTO built through class-transformer normalizes loose input; the service
+    // then writes the SAME canonical value to Appointment AND PrivacyConsent.
+    const dto = plainToInstance(CreateBookingDto, {
+      employeeId: 'emp-1',
+      serviceId: 'svc-1',
+      startTime: futureStart.toISOString(),
+      clientName: 'Ana López',
+      clientPhone: '55 1234 5678',
+      clientEmail: 'ana@example.com',
+    });
+
+    await bookingService.createBooking(TENANT_ID, dto);
+
+    expect(prisma.appointment.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ clientPhone: '+525512345678' }),
+      }),
+    );
+    expect(prisma.privacyConsent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ clientPhone: '+525512345678' }),
+      }),
+    );
   });
 
   it('validates the slot against availability computed in the tenant timezone', async () => {

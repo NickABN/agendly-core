@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatDateKey, formatTime } from '@agendly/shared';
+import { formatDateKey, formatMxPhone, formatTime } from '@agendly/shared';
 
 definePageMeta({ layout: 'public' });
 
@@ -172,7 +172,7 @@ const mapsUrl = computed(() =>
               class="flex items-center gap-1.5 hover:text-[var(--color-primary)]"
             >
               <span class="material-symbols-outlined text-sm" aria-hidden="true">call</span>
-              {{ b.tenantPhone.value }}
+              {{ formatMxPhone(b.tenantPhone.value) }}
             </a>
           </div>
         </div>
@@ -417,6 +417,7 @@ const mapsUrl = computed(() =>
                 autocomplete="tel"
                 class="w-full bg-[var(--color-surface-container-high)] border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:bg-[var(--color-surface-container-lowest)] outline-none transition-all placeholder:text-[var(--color-outline)]/50"
               />
+              <p class="text-xs text-[var(--color-outline)]">10 dígitos, ej. 55 1234 5678</p>
             </div>
 
             <div class="space-y-2">
