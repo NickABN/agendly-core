@@ -552,7 +552,7 @@ function copyUrl() {
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">auto_awesome</span>
               </div>
               <p class="text-sm font-medium">
-                ¡Listo! Recuperarás aprox. <span class="text-[var(--color-primary)] font-bold">4 horas por semana</span> con Agendly.
+                Tus clientes ya pueden agendar solos, <span class="text-[var(--color-primary)] font-bold">sin mensajes de ida y vuelta</span>.
               </p>
             </div>
 
