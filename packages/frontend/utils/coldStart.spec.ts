@@ -6,6 +6,7 @@ import {
   coldStartRetryDelay,
   isApiUrl,
   isColdStartError,
+  noticePhaseAfterSuccess,
   shouldRetryColdStart,
   withColdStartHandling,
 } from './coldStart';
@@ -99,7 +100,7 @@ describe('retry policy', () => {
 describe('withColdStartHandling', () => {
   function setup(impl: (...args: unknown[]) => Promise<unknown>) {
     const fetcher = vi.fn(impl);
-    const notifier = { waking: vi.fn(), recovered: vi.fn(), failed: vi.fn() };
+    const notifier = { waking: vi.fn(), recovered: vi.fn(), failed: vi.fn(), succeeded: vi.fn() };
     const sleep = vi.fn(() => Promise.resolve());
     const wrapped = withColdStartHandling(fetcher, {
       notifier,
@@ -151,6 +152,20 @@ describe('withColdStartHandling', () => {
     expect(notifier.failed).toHaveBeenCalledWith('write');
   });
 
+  it('POST: a successful manual retry reports a "write" success (clears the failed-write notice)', async () => {
+    let calls = 0;
+    const { notifier, wrapped } = setup(() => {
+      calls += 1;
+      return calls === 1 ? Promise.reject(httpError(504)) : Promise.resolve({ ok: true });
+    });
+
+    await wrapped('/api/appointments', { method: 'POST' }).catch(() => undefined);
+    await expect(wrapped('/api/appointments', { method: 'POST' })).resolves.toEqual({ ok: true });
+
+    expect(notifier.failed).toHaveBeenCalledWith('write');
+    expect(notifier.succeeded).toHaveBeenCalledWith('write');
+  });
+
   it('rethrows real errors untouched (401 keeps the refresh flow working)', async () => {
     const err401 = httpError(401);
     const { fetcher, notifier, wrapped } = setup(() => Promise.reject(err401));
@@ -183,5 +198,22 @@ describe('isApiUrl', () => {
     expect(isApiUrl('/_payload.json', '/api')).toBe(false);
     expect(isApiUrl(new Request('http://x/api'), '/api')).toBe(false);
     expect(isApiUrl('/api/x', '')).toBe(false);
+  });
+});
+
+describe('noticePhaseAfterSuccess', () => {
+  it('a successful write clears a stale failed-write notice', () => {
+    expect(noticePhaseAfterSuccess('failed-write', 'write')).toBe('hidden');
+  });
+
+  it('a successful read does not hide a failed-write notice the user has not seen resolved', () => {
+    expect(noticePhaseAfterSuccess('failed-write', 'read')).toBe('failed-write');
+  });
+
+  it('any success clears "waking"; failed-read and hidden stay as they are', () => {
+    expect(noticePhaseAfterSuccess('waking', 'read')).toBe('hidden');
+    expect(noticePhaseAfterSuccess('waking', 'write')).toBe('hidden');
+    expect(noticePhaseAfterSuccess('failed-read', 'write')).toBe('failed-read');
+    expect(noticePhaseAfterSuccess('hidden', 'read')).toBe('hidden');
   });
 });

@@ -1,6 +1,7 @@
-import type { ColdStartNotifier } from '~/utils/coldStart';
+import { noticePhaseAfterSuccess } from '~/utils/coldStart';
+import type { ColdStartNoticePhase, ColdStartNotifier } from '~/utils/coldStart';
 
-export type ColdStartPhase = 'hidden' | 'waking' | 'failed-read' | 'failed-write';
+export type ColdStartPhase = ColdStartNoticePhase;
 
 /**
  * App-wide state of the "server is waking up" notice (see utils/coldStart.ts).
@@ -20,6 +21,9 @@ export function useColdStartNotice() {
     },
     failed(kind) {
       phase.value = kind === 'read' ? 'failed-read' : 'failed-write';
+    },
+    succeeded(kind) {
+      phase.value = noticePhaseAfterSuccess(phase.value, kind);
     },
   };
 
