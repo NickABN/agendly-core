@@ -41,7 +41,7 @@ export async function usePublicBooking(slug: string) {
     status: tenantStatus,
     refresh: retryTenant,
   } = await useAsyncData(`public-${slug}`, async () => {
-    const fetchOptions = publicTenantFetchOptions(import.meta.server);
+    const fetchOptions = publicTenantFetchOptions(import.meta.server === true);
     try {
       return await $fetch<PublicTenantResponse>(`${ssrBase}/public/${slug}`, fetchOptions);
     } catch (err) {
