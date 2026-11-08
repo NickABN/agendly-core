@@ -13,12 +13,17 @@ export default defineNuxtPlugin(() => {
   const { notifier } = useColdStartNotice();
 
   function wrap(fetcher: FetchFn, isApiRequest: (request: unknown) => boolean): FetchFn {
-    const wrapped = withColdStartHandling(
-      fetcher as unknown as (request: unknown, options?: { method?: string }) => Promise<unknown>,
-      { notifier, isApiRequest },
-    );
+    const fetchLike = fetcher as unknown as (
+      request: unknown,
+      options?: { method?: string; [key: string]: unknown },
+    ) => Promise<unknown>;
+    const wrapped = withColdStartHandling(fetchLike, { notifier, isApiRequest });
+    const wrappedRaw = withColdStartHandling(fetcher.raw as unknown as typeof fetchLike, {
+      notifier,
+      isApiRequest,
+    });
     return Object.assign(wrapped, {
-      raw: fetcher.raw,
+      raw: wrappedRaw as FetchFn['raw'],
       native: (fetcher as unknown as { native?: unknown }).native,
       create: ((defaults, ...rest) => {
         const instance = fetcher.create(defaults, ...rest);

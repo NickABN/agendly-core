@@ -34,6 +34,14 @@ interface ErrorLike {
   response?: { status?: unknown };
 }
 
+interface ColdStartFetchOptions {
+  method?: string;
+  retry?: number | false;
+  timeout?: number;
+  signal?: unknown;
+  [key: string]: unknown;
+}
+
 function statusOf(err: ErrorLike): number | undefined {
   const status = err.response?.status ?? err.statusCode ?? err.status;
   return typeof status === 'number' && status > 0 ? status : undefined;
@@ -57,21 +65,42 @@ function isUserAbort(err: ErrorLike): boolean {
   return err.name === 'AbortError' || cause?.name === 'AbortError';
 }
 
+function isTimeoutAbort(
+  err: ErrorLike,
+  options?: Pick<ColdStartFetchOptions, 'timeout' | 'signal'>,
+): boolean {
+  const cause = err.cause as { name?: unknown } | undefined;
+  if (err.name === 'TimeoutError' || cause?.name === 'TimeoutError') return true;
+
+  // ofetch versions that use a plain AbortController report AbortError. Its timeout
+  // only creates that signal when no caller-provided signal was passed.
+  return isUserAbort(err) && !!options?.timeout && !options.signal;
+}
+
+function isSerializedColdStartError(data: unknown): boolean {
+  if (!data || typeof data !== 'object') return false;
+  return (data as Record<string, unknown>).coldStart === true;
+}
+
 /**
  * Classifies a fetch error as a cold-start symptom (backend asleep / waking up)
  * versus a real error that the caller must handle (4xx validation, 401 refresh,
  * 409 conflicts, backend 5xx with a message).
  */
-export function isColdStartError(err: unknown): boolean {
+export function isColdStartError(
+  err: unknown,
+  options?: Pick<ColdStartFetchOptions, 'timeout' | 'signal'>,
+): boolean {
   if (!err || typeof err !== 'object') return false;
   const e = err as ErrorLike;
   if (e.name === 'ColdStartError') return true;
+  if (isSerializedColdStartError(e.data)) return true;
 
   const status = statusOf(e);
   if (status === undefined) {
     // No HTTP response at all: network failure or timeout while the server boots.
     // A deliberate abort (navigation, cancelled request) is not a cold start.
-    return !isUserAbort(e);
+    return !isUserAbort(e) || isTimeoutAbort(e, options);
   }
   return COLD_START_STATUSES.has(status) && !isBackendAppError(e.data);
 }
@@ -90,8 +119,14 @@ export function coldStartRetryDelay(retry: number): number {
  * already made. Non-idempotent requests (POST/PATCH/PUT/DELETE) are never retried:
  * the first attempt may have reached the server, so the user decides.
  */
-export function shouldRetryColdStart(err: unknown, method: string | undefined, retry: number) {
-  return isIdempotentMethod(method) && retry < COLD_START_MAX_RETRIES && isColdStartError(err);
+export function shouldRetryColdStart(
+  err: unknown,
+  method: string | undefined,
+  retry: number,
+  options?: Pick<ColdStartFetchOptions, 'timeout' | 'signal'>,
+) {
+  if (!isIdempotentMethod(method) || retry >= COLD_START_MAX_RETRIES) return false;
+  return isColdStartError(err, options);
 }
 
 /** Error thrown after a cold-start failure; keeps the original status for callers. */
@@ -101,7 +136,7 @@ export class ColdStartError extends Error {
   readonly status?: number;
   readonly response?: unknown;
   /** Callers commonly show `err.data?.message`: make it the transparent message. */
-  readonly data = { message: COLD_START_INLINE_MESSAGE };
+  readonly data = { coldStart: true, statusCode: 503, message: COLD_START_INLINE_MESSAGE };
 
   constructor(readonly original: unknown) {
     super(COLD_START_INLINE_MESSAGE);
@@ -127,20 +162,19 @@ export interface ColdStartNotifier {
 export type ColdStartNoticePhase = 'hidden' | 'waking' | 'failed-read' | 'failed-write';
 
 /**
- * Notice state after a successful API request. "waking" always clears. A failed-write
- * notice clears only when a write succeeds (the user repeated the action), so an
- * unrelated background read cannot hide it before the user has acted.
+ * A success clears "waking" and "failed-read". A failed-write notice clears only when
+ * a write succeeds (the user repeated the action), so an unrelated read cannot hide it.
  */
 export function noticePhaseAfterSuccess(
   phase: ColdStartNoticePhase,
   kind: 'read' | 'write',
 ): ColdStartNoticePhase {
-  if (phase === 'waking') return 'hidden';
+  if (phase === 'waking' || phase === 'failed-read') return 'hidden';
   if (phase === 'failed-write' && kind === 'write') return 'hidden';
   return phase;
 }
 
-type Fetcher = (request: unknown, options?: { method?: string }) => Promise<unknown>;
+type Fetcher = (request: unknown, options?: ColdStartFetchOptions) => Promise<unknown>;
 
 export interface ColdStartOptions {
   notifier: ColdStartNotifier;
@@ -159,20 +193,21 @@ const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(r
 export function withColdStartHandling<F extends Fetcher>(fetcher: F, opts: ColdStartOptions): F {
   const sleep = opts.sleep ?? defaultSleep;
 
-  const wrapped = async (request: unknown, options?: { method?: string }) => {
+  const wrapped = async (request: unknown, options?: ColdStartFetchOptions) => {
     if (!opts.isApiRequest(request)) return fetcher(request, options);
 
     const method = options?.method;
+    const fetchOptions = { ...options, retry: 0 };
     let retry = 0;
     for (;;) {
       try {
-        const result = await fetcher(request, options);
+        const result = await fetcher(request, fetchOptions);
         if (retry > 0) opts.notifier.recovered();
         opts.notifier.succeeded(isIdempotentMethod(method) ? 'read' : 'write');
         return result;
       } catch (err) {
-        if (!isColdStartError(err)) throw err;
-        if (!shouldRetryColdStart(err, method, retry)) {
+        if (!isColdStartError(err, options)) throw err;
+        if (!shouldRetryColdStart(err, method, retry, options)) {
           opts.notifier.failed(isIdempotentMethod(method) ? 'read' : 'write');
           throw new ColdStartError(err);
         }

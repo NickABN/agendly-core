@@ -10,6 +10,14 @@ import { isColdStartError } from '~/utils/coldStart';
  */
 const SSR_TENANT_TIMEOUT_MS = 8000;
 
+/** Disable ofetch's own retries; the client wrapper owns retry timing. */
+export function publicTenantFetchOptions(isServer: boolean) {
+  return {
+    ...(isServer ? { timeout: SSR_TENANT_TIMEOUT_MS } : {}),
+    retry: 0,
+  };
+}
+
 /**
  * Full state machine of the public booking flow for the public app /[slug] route:
  * steps, selections, slot search, submit with 409 recovery, confirmation data.
@@ -33,18 +41,16 @@ export async function usePublicBooking(slug: string) {
     status: tenantStatus,
     refresh: retryTenant,
   } = await useAsyncData(`public-${slug}`, async () => {
+    const fetchOptions = publicTenantFetchOptions(import.meta.server);
     try {
-      return await $fetch<PublicTenantResponse>(
-        `${ssrBase}/public/${slug}`,
-        import.meta.server ? { timeout: SSR_TENANT_TIMEOUT_MS } : {},
-      );
+      return await $fetch<PublicTenantResponse>(`${ssrBase}/public/${slug}`, fetchOptions);
     } catch (err) {
       // Normalize "backend asleep" to a 503 that survives SSR payload serialization.
-      if (isColdStartError(err)) {
+      if (isColdStartError(err, fetchOptions)) {
         throw createError({
           statusCode: 503,
           statusMessage: 'Backend waking up',
-          data: { coldStart: true },
+          data: { coldStart: true, statusCode: 503 },
         });
       }
       throw err;
