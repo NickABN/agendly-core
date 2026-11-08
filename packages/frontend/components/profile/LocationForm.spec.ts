@@ -380,6 +380,28 @@ describe('profile location form UX', () => {
     });
   });
 
+  it('re-geocodes on save when the address was edited while a search was running', async () => {
+    let resolveFirst: (value: unknown) => void = () => {};
+    mockFetch.mockImplementationOnce(() => new Promise((resolve) => (resolveFirst = resolve)));
+    const wrapper = await mountLocationForm();
+
+    await wrapper.get('#location-address').setValue('Av. Juárez 10');
+    await findButton(wrapper, /^buscar$/i)!.trigger('click');
+    await wrapper.get('#location-address').setValue('Av. Juárez 100, Centro');
+    resolveFirst({ latitude: 19.43, longitude: -99.14 });
+    await flushPromises();
+
+    mockFetch.mockResolvedValueOnce({ latitude: 19.44, longitude: -99.15 });
+    await wrapper.get('form').trigger('submit');
+    await flushPromises();
+
+    expect(wrapper.emitted('submit')?.[0]?.[0]).toEqual({
+      address: 'Av. Juárez 100, Centro',
+      latitude: 19.44,
+      longitude: -99.15,
+    });
+  });
+
   it('does not save a retyped address that cannot be located', async () => {
     mockFetch.mockResolvedValueOnce(null);
     const wrapper = await mountLocationForm();

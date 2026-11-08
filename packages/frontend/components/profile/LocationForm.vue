@@ -142,12 +142,12 @@ function attachDragEnd(_L: any) {
 
 // ─── Place / move marker programmatically ─────────────────────────────────────
 
-async function movePin(lat: number, lng: number, markEdited = true) {
+async function movePin(lat: number, lng: number, markEdited = true, forAddress?: string) {
   latitude.value = lat;
   longitude.value = lng;
   locationError.value = null;
-  // The pin now matches whatever address is typed (search, drag, click or GPS).
-  pinAddress.value = address.value.trim();
+  // The pin matches the searched address, or whatever is typed for drag/click/GPS.
+  pinAddress.value = forAddress ?? address.value.trim();
   if (markEdited) edited.value = true;
   if (!mapInstance) return;
   const L = await import('leaflet');
@@ -166,9 +166,9 @@ async function movePin(lat: number, lng: number, markEdited = true) {
 // Incremented per search so a slow, superseded response is ignored.
 let geocodeRequestId = 0;
 
-async function searchAddress() {
+async function searchAddress(): Promise<boolean> {
   const trimmed = address.value.trim();
-  if (!trimmed) return;
+  if (!trimmed) return false;
 
   locationError.value = null;
   isGeocoding.value = true;
@@ -176,15 +176,17 @@ async function searchAddress() {
   const requestId = ++geocodeRequestId;
   try {
     const result = await store.geocodeAddress(trimmed);
-    if (requestId !== geocodeRequestId) return;
+    if (requestId !== geocodeRequestId) return false;
     if (!result) {
       locationError.value = 'No encontramos esa dirección, intenta con calle, número y colonia';
-      return;
+      return false;
     }
-    await movePin(result.latitude, result.longitude);
+    await movePin(result.latitude, result.longitude, true, trimmed);
+    return true;
   } catch {
-    if (requestId !== geocodeRequestId) return;
+    if (requestId !== geocodeRequestId) return false;
     locationError.value = 'No pudimos buscar la dirección. Intenta de nuevo en un momento.';
+    return false;
   } finally {
     if (requestId === geocodeRequestId) isGeocoding.value = false;
   }
@@ -223,8 +225,9 @@ async function handleSubmit() {
   // geocode it first, and stop if it cannot be located.
   const trimmedAddress = address.value.trim();
   if (trimmedAddress && trimmedAddress !== pinAddress.value) {
-    await searchAddress();
-    if (locationError.value) return;
+    const located = await searchAddress();
+    // Superseded or failed search, or the address changed meanwhile: do not save.
+    if (!located || pinAddress.value !== address.value.trim()) return;
   }
   const dto: UpdateLocationDto = { address: trimmedAddress };
   if (latitude.value !== null) dto.latitude = latitude.value;
