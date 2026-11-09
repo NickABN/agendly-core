@@ -103,6 +103,7 @@ export const useProfileStore = defineStore('profile', () => {
       if (profileData.value) {
         profileData.value = { ...profileData.value, logoUrl: result.url };
       }
+      await fetchImageHistory({ background: true });
     } catch (err: unknown) {
       error.value = uploadErrorMessage(err, 'Error al subir el logo');
     } finally {
@@ -120,6 +121,7 @@ export const useProfileStore = defineStore('profile', () => {
       if (profileData.value) {
         profileData.value = { ...profileData.value, bannerUrl: result.url };
       }
+      await fetchImageHistory({ background: true });
     } catch (err: unknown) {
       error.value = uploadErrorMessage(err, 'Error al subir el banner');
     } finally {
@@ -127,15 +129,20 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  async function fetchImageHistory() {
-    loading.value = true;
-    error.value = null;
+  async function fetchImageHistory({ background = false }: { background?: boolean } = {}) {
+    if (!background) {
+      loading.value = true;
+      error.value = null;
+    }
     try {
       imageHistory.value = await api.getImageHistory();
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error al cargar el historial de imágenes';
+      if (!background) {
+        error.value =
+          err instanceof Error ? err.message : 'Error al cargar el historial de imágenes';
+      }
     } finally {
-      loading.value = false;
+      if (!background) loading.value = false;
     }
   }
 

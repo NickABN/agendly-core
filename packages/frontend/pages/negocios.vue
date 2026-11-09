@@ -82,22 +82,32 @@ onUnmounted(() => {
         <li v-for="business in businesses" :key="business.slug">
           <NuxtLink
             :to="`/${business.slug}`"
-            class="flex h-full items-center gap-4 rounded-xl border border-[var(--color-outline-variant)]/30 bg-[var(--color-surface-container-lowest)] p-4 transition hover:border-[var(--color-primary)]/40 hover:shadow-sm"
+            class="block h-full rounded-xl border border-[var(--color-outline-variant)]/30 bg-[var(--color-surface-container-lowest)] transition hover:border-[var(--color-primary)]/40 hover:shadow-sm"
           >
-            <img
-              v-if="business.logoUrl"
-              :src="business.logoUrl"
-              :alt="`Logo de ${business.name}`"
-              class="size-14 shrink-0 rounded-full object-cover"
-            />
-            <span
-              v-else
-              aria-hidden="true"
-              class="flex size-14 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]/10 font-bold text-[var(--color-primary)]"
+            <div
+              class="relative aspect-[3/1] rounded-t-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)]"
             >
-              {{ getInitials(business.name) }}
-            </span>
-            <span class="min-w-0 space-y-1">
+              <img
+                v-if="business.bannerUrl"
+                :src="business.bannerUrl"
+                alt=""
+                class="absolute inset-0 size-full rounded-t-xl object-cover"
+              />
+              <img
+                v-if="business.logoUrl"
+                :src="business.logoUrl"
+                :alt="`Logo de ${business.name}`"
+                class="absolute bottom-0 left-4 size-16 translate-y-1/2 rounded-full border-4 border-white object-cover"
+              />
+              <span
+                v-else
+                aria-hidden="true"
+                class="absolute bottom-0 left-4 flex size-16 translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-[var(--color-surface-container-lowest)] font-bold text-[var(--color-primary)]"
+              >
+                {{ getInitials(business.name) }}
+              </span>
+            </div>
+            <span class="block space-y-1 px-4 pb-4 pt-10">
               <span class="block truncate font-semibold">{{ business.name }}</span>
               <span
                 v-if="business.address"

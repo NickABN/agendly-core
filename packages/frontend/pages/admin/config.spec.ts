@@ -14,7 +14,23 @@ vi.mock('~/stores/auth', () => ({ useAuthStore: pageMocks.useAuthStore }));
 
 const ProfileFormStub = defineComponent({
   name: 'ProfileForm',
-  setup: () => () => h('div', { 'data-test': 'profile-form' }, 'Nombre Teléfono Zona horaria'),
+  props: { saving: { type: Boolean, default: false } },
+  emits: ['submit'],
+  setup:
+    (props, { emit }) =>
+    () =>
+      h('div', { 'data-test': 'profile-form' }, [
+        h(
+          'button',
+          {
+            type: 'button',
+            'data-test': 'profile-submit',
+            disabled: props.saving,
+            onClick: () => emit('submit', { name: 'Salón Calma actualizado' }),
+          },
+          props.saving ? 'Guardando…' : 'Guardar cambios',
+        ),
+      ]),
 });
 
 const ProfileImageUploadStub = defineComponent({
@@ -37,6 +53,11 @@ type Harness = {
   route: { query: Record<string, string | undefined> };
   router: { replace: ReturnType<typeof vi.fn>; push: ReturnType<typeof vi.fn> };
   clipboardWriteText: ReturnType<typeof vi.fn>;
+  toasts: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
+  profileStore: {
+    loading: boolean;
+    saveProfile: ReturnType<typeof vi.fn>;
+  };
   tenantConfig: {
     form: { listedInDirectory: boolean; slug: string };
     save: ReturnType<typeof vi.fn>;
@@ -83,6 +104,7 @@ function mountConfigPage(tab?: string, role = 'OWNER'): Harness {
     }),
     saving: ref(false),
     saved: ref(false),
+    slugError: ref<string | null>(null),
     logoFile: ref<File | null>(null),
     logoUploading: ref(false),
     logoSrc: computed(() => null),
@@ -127,6 +149,9 @@ function mountConfigPage(tab?: string, role = 'OWNER'): Harness {
     bookingDisplayUrl: (slug: string) => `agendly.mx/${slug}`,
   }));
 
+  const toasts = { success: vi.fn(), error: vi.fn() };
+  vi.stubGlobal('useAppToast', () => toasts);
+
   const clipboardWriteText = vi.fn().mockResolvedValue(undefined);
   Object.defineProperty(navigator, 'clipboard', {
     configurable: true,
@@ -135,6 +160,7 @@ function mountConfigPage(tab?: string, role = 'OWNER'): Harness {
 
   const wrapper = mount(ConfigPage, {
     global: {
+      config: { errorHandler: vi.fn() },
       components: {
         NuxtLink: RouterLinkStub,
         ProfileForm: ProfileFormStub,
@@ -145,7 +171,7 @@ function mountConfigPage(tab?: string, role = 'OWNER'): Harness {
     },
   });
   mountedWrappers.push(wrapper);
-  return { wrapper, route, router, clipboardWriteText, tenantConfig };
+  return { wrapper, route, router, clipboardWriteText, tenantConfig, toasts, profileStore };
 }
 
 afterEach(() => {
@@ -237,7 +263,7 @@ describe('admin config settings tabs', () => {
   });
 
   it('copies the public booking URL from the public-page section', async () => {
-    const { wrapper, clipboardWriteText } = mountConfigPage('publica');
+    const { wrapper, clipboardWriteText, toasts } = mountConfigPage('publica');
     await flushPromises();
 
     const copyButton = wrapper.findAll('button').find((button) => /copiar/i.test(button.text()));
@@ -245,6 +271,62 @@ describe('admin config settings tabs', () => {
     await copyButton!.trigger('click');
 
     expect(clipboardWriteText).toHaveBeenCalledWith('https://agendly.mx/salon-calma');
+    expect(toasts.success).toHaveBeenCalledWith('Enlace copiado.');
+  });
+
+  it('shows an error toast when copying the public booking URL fails', async () => {
+    const { wrapper, clipboardWriteText, toasts } = mountConfigPage('publica');
+    clipboardWriteText.mockRejectedValueOnce(new Error('Clipboard unavailable'));
+    await flushPromises();
+
+    const copyButton = wrapper.findAll('button').find((button) => /copiar/i.test(button.text()));
+    await copyButton!.trigger('click');
+    await flushPromises();
+
+    expect(clipboardWriteText).toHaveBeenCalledWith('https://agendly.mx/salon-calma');
+    expect(toasts.error).toHaveBeenCalledWith('No se pudo copiar el enlace.');
+  });
+
+  it('shows a success toast after saving the public-page settings', async () => {
+    const { wrapper, tenantConfig, toasts } = mountConfigPage('publica');
+    await flushPromises();
+
+    await wrapper
+      .get('[role="tabpanel"][aria-label="Página pública"]')
+      .findAll('button')
+      .find((button) => button.text().trim() === 'Guardar cambios')!
+      .trigger('click');
+    await flushPromises();
+
+    expect(tenantConfig.save).toHaveBeenCalledOnce();
+    expect(toasts.success).toHaveBeenCalledWith('Cambios guardados.');
+  });
+
+  it('shows save feedback and a disabled pending state for the General form', async () => {
+    const { wrapper, profileStore, toasts } = mountConfigPage();
+    let resolveSave: () => void = () => {};
+    profileStore.saveProfile.mockImplementation(() => {
+      profileStore.loading = true;
+      return new Promise<void>((resolve) => {
+        resolveSave = () => {
+          profileStore.loading = false;
+          resolve();
+        };
+      });
+    });
+
+    await wrapper.get('[data-test="profile-submit"]').trigger('click');
+    await flushPromises();
+
+    expect(profileStore.saveProfile).toHaveBeenCalledOnce();
+    expect(wrapper.get('[data-test="profile-submit"]').text()).toBe('Guardando…');
+    expect(wrapper.get('[data-test="profile-submit"]').attributes('disabled')).toBeDefined();
+    expect(toasts.success).not.toHaveBeenCalled();
+
+    resolveSave();
+    await flushPromises();
+
+    expect(toasts.success).toHaveBeenCalledWith('Cambios guardados.');
   });
 
   it('offers the public directory opt-in and preserves it when saving the page settings', async () => {
@@ -259,6 +341,7 @@ describe('admin config settings tabs', () => {
     const toggle = wrapper.get('input[type="checkbox"]');
     await toggle.setValue(true);
     await wrapper
+      .get('[role="tabpanel"][aria-label="Página pública"]')
       .findAll('button')
       .find((button) => button.text().trim() === 'Guardar cambios')!
       .trigger('click');

@@ -23,6 +23,7 @@ const E164_REGEX = /^\+[1-9]\d{1,14}$/;
 
 const props = defineProps<{
   initialData?: ProfileDto;
+  saving?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -159,9 +160,10 @@ watch(
     <div class="pt-2">
       <button
         type="submit"
+        :disabled="props.saving"
         class="w-full sm:w-auto px-10 py-3 bg-[var(--color-primary)] text-white rounded-lg font-semibold shadow-lg shadow-[var(--color-primary)]/10 hover:opacity-90 transition-all disabled:opacity-50"
       >
-        Guardar cambios
+        {{ props.saving ? 'Guardando…' : 'Guardar cambios' }}
       </button>
     </div>
   </form>

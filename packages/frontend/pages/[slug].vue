@@ -219,48 +219,69 @@ onBeforeUnmount(disconnectContinueObserver);
       <div class="max-w-sm mx-auto px-4 py-6 pb-24">
         <!-- Business header (step 1 only) -->
         <div v-if="b.step.value === 1" class="mb-6 space-y-1">
-          <img
-            v-if="b.tenantBannerUrl.value"
-            :src="b.tenantBannerUrl.value"
-            alt=""
-            class="w-full aspect-[3/1] object-cover rounded-2xl mb-4"
-          />
-          <div class="flex items-center gap-2">
-            <span
-              class="material-symbols-outlined text-emerald-500 text-lg"
-              style="font-variation-settings: 'FILL' 1"
-              aria-hidden="true"
-              >verified</span
-            >
-            <h1 class="text-2xl font-bold text-[var(--color-on-surface)] leading-tight">
-              {{ b.tenantName.value }}
-            </h1>
-          </div>
-          <p class="text-sm text-[var(--color-on-surface-variant)]">
-            Reserva tu experiencia de bienestar
-          </p>
           <div
-            v-if="b.tenantAddress.value || b.tenantPhone.value"
-            class="flex flex-col gap-1 pt-2 text-xs text-[var(--color-on-surface-variant)]"
+            class="relative mb-10 aspect-[3/1] rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)]"
           >
-            <a
-              v-if="b.tenantAddress.value"
-              :href="mapsUrl"
-              target="_blank"
-              rel="noopener"
-              class="flex items-start gap-1.5 hover:text-[var(--color-primary)]"
+            <img
+              v-if="b.tenantBannerUrl.value"
+              :src="b.tenantBannerUrl.value"
+              alt=""
+              class="absolute inset-0 size-full rounded-2xl object-cover"
+            />
+            <img
+              v-if="b.tenantLogoUrl.value"
+              :src="b.tenantLogoUrl.value"
+              alt=""
+              class="absolute bottom-0 left-4 size-[72px] translate-y-1/2 rounded-full border-4 border-white object-cover"
+            />
+            <span
+              v-else
+              class="absolute bottom-0 left-4 flex size-[72px] translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-[var(--color-surface-container-lowest)] text-lg font-bold text-[var(--color-primary)]"
+              aria-hidden="true"
             >
-              <span class="material-symbols-outlined text-sm" aria-hidden="true">location_on</span>
-              {{ b.tenantAddress.value }}
-            </a>
-            <a
-              v-if="b.tenantPhone.value"
-              :href="`tel:${b.tenantPhone.value}`"
-              class="flex items-center gap-1.5 hover:text-[var(--color-primary)]"
+              {{ tenantInitials }}
+            </span>
+          </div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span
+                class="material-symbols-outlined text-lg text-emerald-500"
+                style="font-variation-settings: 'FILL' 1"
+                aria-hidden="true"
+                >verified</span
+              >
+              <h1 class="text-2xl font-bold leading-tight text-[var(--color-on-surface)]">
+                {{ b.tenantName.value }}
+              </h1>
+            </div>
+            <p class="text-sm text-[var(--color-on-surface-variant)]">
+              Reserva tu experiencia de bienestar
+            </p>
+            <div
+              v-if="b.tenantAddress.value || b.tenantPhone.value"
+              class="flex flex-col gap-1 pt-2 text-xs text-[var(--color-on-surface-variant)]"
             >
-              <span class="material-symbols-outlined text-sm" aria-hidden="true">call</span>
-              {{ formatPhone(b.tenantPhone.value) }}
-            </a>
+              <a
+                v-if="b.tenantAddress.value"
+                :href="mapsUrl"
+                target="_blank"
+                rel="noopener"
+                class="flex items-start gap-1.5 hover:text-[var(--color-primary)]"
+              >
+                <span class="material-symbols-outlined text-sm" aria-hidden="true"
+                  >location_on</span
+                >
+                {{ b.tenantAddress.value }}
+              </a>
+              <a
+                v-if="b.tenantPhone.value"
+                :href="`tel:${b.tenantPhone.value}`"
+                class="flex items-center gap-1.5 hover:text-[var(--color-primary)]"
+              >
+                <span class="material-symbols-outlined text-sm" aria-hidden="true">call</span>
+                {{ formatPhone(b.tenantPhone.value) }}
+              </a>
+            </div>
           </div>
         </div>
 
