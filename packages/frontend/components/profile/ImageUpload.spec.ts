@@ -33,6 +33,7 @@ afterEach(() => {
     Reflect.deleteProperty(URL, 'createObjectURL');
   }
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 describe('profile image upload storage-unavailable response', () => {
@@ -84,5 +85,38 @@ describe('profile image upload storage-unavailable response', () => {
 
     expect(wrapper.get('p.text-red-600').text()).toContain(serverMessage);
     expect(wrapper.get('p.text-red-600').text()).not.toContain('Service Unavailable');
+  });
+});
+
+describe('profile image upload presentation', () => {
+  it('shows a dropzone and WebP instructions when there is no current image', () => {
+    wrapper = mount(ImageUpload, {
+      props: { type: 'logo', currentUrl: null, maxSizeMb: 5 },
+    });
+
+    expect(wrapper.find('[role="button"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain('JPEG, PNG o WebP · Máximo 5 MB');
+  });
+
+  it('hides the dropzone, avoids a duplicate label, and opens the picker to change a logo', async () => {
+    const inputClick = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => {});
+    wrapper = mount(ImageUpload, {
+      props: {
+        type: 'logo',
+        currentUrl: 'https://images.example.com/logo.png',
+        maxSizeMb: 5,
+      },
+    });
+
+    expect(wrapper.find('[role="button"]').exists()).toBe(false);
+    expect(wrapper.findAll('p').some((paragraph) => paragraph.text().trim() === 'Logo')).toBe(
+      false,
+    );
+
+    await wrapper.get('button').trigger('click');
+
+    expect(wrapper.get('button').text()).toContain('Cambiar logo');
+    expect(inputClick).toHaveBeenCalledOnce();
+    inputClick.mockRestore();
   });
 });

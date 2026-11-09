@@ -110,6 +110,54 @@ describe('useProfileStore', () => {
       expect(store.error).toBe('Upload failed');
       expect(store.loading).toBe(false);
     });
+
+    it('refreshes image history after a successful upload', async () => {
+      mockUploadImage.mockResolvedValueOnce(uploadResponseFixture);
+      mockGetImageHistory.mockResolvedValueOnce([imageVersionFixture]);
+
+      const store = useProfileStore();
+      store.profileData = { ...profileFixture, logoUrl: null };
+
+      await store.uploadLogo(new File(['content'], 'logo.png', { type: 'image/png' }));
+
+      expect(mockGetImageHistory).toHaveBeenCalledOnce();
+      expect(store.imageHistory).toEqual([imageVersionFixture]);
+      expect(store.error).toBeNull();
+    });
+
+    it('keeps a successful upload successful when refreshing history fails', async () => {
+      mockUploadImage.mockResolvedValueOnce(uploadResponseFixture);
+      mockGetImageHistory.mockRejectedValueOnce(new Error('History unavailable'));
+
+      const store = useProfileStore();
+      store.profileData = { ...profileFixture, logoUrl: null };
+
+      await store.uploadLogo(new File(['content'], 'logo.png', { type: 'image/png' }));
+
+      expect(mockGetImageHistory).toHaveBeenCalledOnce();
+      expect(store.profileData?.logoUrl).toBe(uploadResponseFixture.url);
+      expect(store.error).toBeNull();
+      expect(store.loading).toBe(false);
+    });
+  });
+
+  describe('uploadBanner', () => {
+    it('refreshes image history after a successful upload', async () => {
+      mockUploadImage.mockResolvedValueOnce({
+        ...uploadResponseFixture,
+        imageVersion: { ...imageVersionFixture, imageType: 'BANNER' },
+      });
+      mockGetImageHistory.mockResolvedValueOnce([{ ...imageVersionFixture, imageType: 'BANNER' }]);
+
+      const store = useProfileStore();
+      store.profileData = { ...profileFixture, bannerUrl: null };
+
+      await store.uploadBanner(new File(['content'], 'banner.png', { type: 'image/png' }));
+
+      expect(mockGetImageHistory).toHaveBeenCalledOnce();
+      expect(store.imageHistory).toEqual([{ ...imageVersionFixture, imageType: 'BANNER' }]);
+      expect(store.error).toBeNull();
+    });
   });
 
   describe('saveProfile', () => {

@@ -105,3 +105,18 @@ describe('ProfileForm time zone listbox', () => {
     expect(wrapper.emitted('submit')?.[0]?.[0]).toMatchObject({ timezone: 'America/Tijuana' });
   });
 });
+
+describe('ProfileForm saving state', () => {
+  it('disables the submit action and shows Guardando while saving', () => {
+    const props = { initialData: profile(), saving: true } as {
+      initialData: ProfileDto;
+      saving: boolean;
+    };
+    const wrapper = mount(ProfileForm, { props });
+    mountedWrappers.push(wrapper);
+
+    const submitButton = wrapper.get('button[type="submit"]');
+    expect(submitButton.text()).toBe('Guardando…');
+    expect(submitButton.attributes('disabled')).toBeDefined();
+  });
+});

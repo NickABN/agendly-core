@@ -4,6 +4,7 @@ import type { ImageVersionDto } from '@agendly/shared';
 const props = defineProps<{
   images: ImageVersionDto[];
   type: 'LOGO' | 'BANNER';
+  currentUrl: string | null;
 }>();
 
 // ─── Computed ──────────────────────────────────────────────────────────────────
@@ -58,8 +59,14 @@ function formatDate(isoString: string): string {
 
         <!-- Meta -->
         <div class="min-w-0 flex-1">
-          <p class="text-xs text-[var(--color-on-surface)] truncate">
+          <p class="flex items-center gap-2 text-xs text-[var(--color-on-surface)] truncate">
             {{ formatDate(image.createdAt) }}
+            <span
+              v-if="image.url === props.currentUrl"
+              class="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800"
+            >
+              En uso
+            </span>
           </p>
           <p class="text-xs text-[var(--color-on-surface-variant)] mt-0.5">
             {{ formatFileSize(image.fileSize) }}

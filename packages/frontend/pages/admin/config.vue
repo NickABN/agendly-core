@@ -27,6 +27,7 @@ const tabs: { id: SettingsTab; label: string }[] = [
 const route = useRoute();
 const router = useRouter();
 const profileStore = useProfileStore();
+const toast = useAppToast();
 const locationSaved = ref(false);
 
 const {
@@ -61,18 +62,33 @@ function selectTab(tab: SettingsTab) {
 
 async function onProfileSubmit(dto: UpdateProfileDto) {
   await profileStore.saveProfile(dto);
+  if (profileStore.error !== null) {
+    toast.error(profileStore.error || 'No se pudieron guardar los cambios. Intenta de nuevo.');
+    return;
+  }
+  toast.success('Cambios guardados.');
 }
 
 async function onLocationSubmit(dto: UpdateLocationDto) {
   locationSaved.value = false;
   await profileStore.saveLocation(dto);
   locationSaved.value = !profileStore.error;
+  if (profileStore.error) {
+    toast.error(profileStore.error);
+    return;
+  }
+  toast.success('Ubicación guardada.');
 }
 
 async function copyPublicUrl() {
   const url = bookingUrl(businessForm.slug);
   if (!url) return;
-  await navigator.clipboard.writeText(url);
+  try {
+    await navigator.clipboard.writeText(url);
+    toast.success('Enlace copiado.');
+  } catch {
+    toast.error('No se pudo copiar el enlace.');
+  }
 }
 
 function validatePublicSlug(): string | null {
@@ -88,10 +104,16 @@ async function handlePublicPageSubmit() {
   const validationError = validatePublicSlug();
   if (validationError) {
     slugError.value = validationError;
+    toast.error(validationError);
     return;
   }
   businessForm.slug = businessForm.slug.trim();
   await savePublicPage();
+  if (slugError.value) {
+    toast.error(slugError.value);
+    return;
+  }
+  toast.success('Cambios guardados.');
 }
 </script>
 
@@ -173,6 +195,7 @@ async function handlePublicPageSubmit() {
         >
           <ProfileForm
             :initial-data="profileStore.profileData ?? undefined"
+            :saving="profileStore.loading"
             @submit="onProfileSubmit"
           />
         </section>
@@ -277,6 +300,9 @@ async function handlePublicPageSubmit() {
           role="tabpanel"
           aria-label="Imágenes"
         >
+          <p class="text-sm text-[var(--color-on-surface-variant)]">
+            Tu logo y tu banner aparecen en tu página de reservas y en el directorio de negocios.
+          </p>
           <div
             class="space-y-4 rounded-xl border border-[var(--color-outline-variant)]/10 bg-[var(--color-surface-container-lowest)] p-4 sm:p-6"
           >
@@ -294,7 +320,11 @@ async function handlePublicPageSubmit() {
               >
                 Historial de logos
               </p>
-              <ProfileImageHistory :images="profileStore.imageHistory" type="LOGO" />
+              <ProfileImageHistory
+                :images="profileStore.imageHistory"
+                :current-url="profileStore.profileData?.logoUrl ?? null"
+                type="LOGO"
+              />
             </div>
           </div>
 
@@ -315,7 +345,11 @@ async function handlePublicPageSubmit() {
               >
                 Historial de banners
               </p>
-              <ProfileImageHistory :images="profileStore.imageHistory" type="BANNER" />
+              <ProfileImageHistory
+                :images="profileStore.imageHistory"
+                :current-url="profileStore.profileData?.bannerUrl ?? null"
+                type="BANNER"
+              />
             </div>
           </div>
         </section>

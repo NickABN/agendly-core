@@ -3,4 +3,5 @@
     <NuxtPage />
   </NuxtLayout>
   <ColdStartNotice />
+  <AppToaster />
 </template>

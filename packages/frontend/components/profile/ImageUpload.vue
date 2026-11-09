@@ -28,8 +28,22 @@ const uploadProgress = computed(() => store.uploadProgress);
 
 const label = computed(() => (props.type === 'logo' ? 'Logo' : 'Banner'));
 const aspectClass = computed(() =>
-  props.type === 'logo' ? 'aspect-square max-w-[200px]' : 'aspect-[3/1] w-full',
+  props.type === 'logo' ? 'aspect-square w-40 max-w-full' : 'aspect-[3/1] w-full',
 );
+
+function notifyToast(kind: 'success' | 'error', message: string) {
+  try {
+    useAppToast()[kind](message);
+  } catch {
+    // Keep inline feedback available when mounted outside a Nuxt app context.
+  }
+}
+
+function clearPreview() {
+  if (!previewUrl.value) return;
+  if (typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(previewUrl.value);
+  previewUrl.value = null;
+}
 
 // ─── Validation ────────────────────────────────────────────────────────────────
 function validateFile(file: File): string | null {
@@ -50,10 +64,12 @@ async function processFile(file: File) {
   const validationError = validateFile(file);
   if (validationError) {
     errorMessage.value = validationError;
+    notifyToast('error', validationError);
     return;
   }
 
-  // Show local preview immediately
+  clearPreview();
+  // Show local preview immediately.
   previewUrl.value = URL.createObjectURL(file);
 
   try {
@@ -65,9 +81,12 @@ async function processFile(file: File) {
 
     if (store.error) {
       errorMessage.value = store.error;
-      previewUrl.value = null;
+      notifyToast('error', store.error);
+      clearPreview();
       return;
     }
+
+    notifyToast('success', props.type === 'logo' ? 'Logo actualizado.' : 'Banner actualizado.');
 
     const newUrl =
       props.type === 'logo'
@@ -79,12 +98,14 @@ async function processFile(file: File) {
     }
   } catch {
     errorMessage.value = 'Ocurrió un error al subir la imagen. Intenta de nuevo.';
-    previewUrl.value = null;
+    notifyToast('error', errorMessage.value);
+    clearPreview();
   }
 }
 
 // ─── Click to upload ───────────────────────────────────────────────────────────
 function openFilePicker() {
+  if (isUploading.value) return;
   fileInputRef.value?.click();
 }
 
@@ -111,6 +132,7 @@ function onDragLeave() {
 function onDrop(event: DragEvent) {
   event.preventDefault();
   isDragging.value = false;
+  if (isUploading.value) return;
   const file = event.dataTransfer?.files?.[0];
   if (file) {
     processFile(file);
@@ -119,35 +141,42 @@ function onDrop(event: DragEvent) {
 
 // ─── Cleanup object URLs ───────────────────────────────────────────────────────
 onUnmounted(() => {
-  if (previewUrl.value) {
-    URL.revokeObjectURL(previewUrl.value);
-  }
+  clearPreview();
 });
 </script>
 
 <template>
   <div class="space-y-3">
-    <!-- Label -->
-    <p class="text-xs font-medium text-[var(--color-on-surface-variant)] uppercase tracking-wider">
-      {{ label }}
-    </p>
-
     <!-- Current / preview image -->
     <div
       v-if="displayUrl"
-      :class="['overflow-hidden rounded-xl bg-[var(--color-surface-container-high)]', aspectClass]"
+      :class="[
+        'relative overflow-hidden rounded-xl bg-[var(--color-surface-container-high)]',
+        aspectClass,
+      ]"
+      @dragover="onDragOver"
+      @dragleave="onDragLeave"
+      @drop="onDrop"
     >
       <img
         :src="displayUrl"
         :alt="`Vista previa del ${label.toLowerCase()}`"
-        class="w-full h-full object-cover"
+        class="size-full object-cover"
       />
+      <div
+        v-if="isDragging"
+        class="absolute inset-0 flex items-center justify-center bg-[var(--color-primary)]/75 p-4 text-center text-sm font-semibold text-white"
+      >
+        Suelta la imagen para reemplazarla
+      </div>
     </div>
 
     <!-- Drop zone -->
     <div
+      v-else
       role="button"
-      tabindex="0"
+      :tabindex="isUploading ? -1 : 0"
+      :aria-disabled="isUploading"
       :aria-label="`Subir ${label.toLowerCase()}`"
       class="relative flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40"
       :class="[
@@ -180,24 +209,35 @@ onUnmounted(() => {
             isDragging ? 'Suelta la imagen aquí' : 'Arrastra una imagen o haz clic para seleccionar'
           }}
         </p>
-        <p class="text-xs text-[var(--color-on-surface-variant)] mt-1">
-          JPEG o PNG · Máximo {{ maxSizeMb }} MB
-        </p>
       </div>
-
-      <!-- Hidden file input -->
-      <input
-        ref="fileInputRef"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        class="sr-only"
-        :aria-hidden="true"
-        @change="onFileInputChange"
-      />
     </div>
 
+    <button
+      v-if="displayUrl"
+      type="button"
+      :disabled="isUploading"
+      class="rounded-lg border border-[var(--color-outline-variant)] px-4 py-2 text-sm font-semibold text-[var(--color-on-surface)] transition-colors hover:bg-[var(--color-surface-container-high)] disabled:cursor-not-allowed disabled:opacity-50"
+      @click="openFilePicker"
+    >
+      Cambiar {{ label.toLowerCase() }}
+    </button>
+
+    <p class="text-xs text-[var(--color-on-surface-variant)]">
+      JPEG, PNG o WebP · Máximo {{ maxSizeMb }} MB
+    </p>
+
+    <!-- Hidden file input -->
+    <input
+      ref="fileInputRef"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      class="sr-only"
+      :aria-hidden="true"
+      @change="onFileInputChange"
+    />
+
     <!-- Upload progress -->
-    <div v-if="isUploading" class="space-y-1">
+    <div v-if="isUploading" class="space-y-1" role="status" aria-live="polite">
       <div class="flex items-center justify-between text-xs text-[var(--color-on-surface-variant)]">
         <span>Subiendo {{ label.toLowerCase() }}…</span>
         <span>{{ uploadProgress }}%</span>
@@ -213,7 +253,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Error message -->
-    <p v-if="errorMessage" class="flex items-center gap-1.5 text-xs text-red-600">
+    <p v-if="errorMessage" class="flex items-center gap-1.5 text-xs text-red-600" role="alert">
       <span class="material-symbols-outlined text-sm">error</span>
       {{ errorMessage }}
     </p>
