@@ -1,0 +1,1 @@
+ALTER TABLE "Tenant" ADD COLUMN "listedInDirectory" BOOLEAN NOT NULL DEFAULT false;

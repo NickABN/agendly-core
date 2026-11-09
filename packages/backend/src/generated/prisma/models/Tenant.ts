@@ -50,6 +50,7 @@ export type TenantMinAggregateOutputType = {
   onboardedAt: Date | null
   trialEndsAt: Date | null
   isActive: boolean | null
+  listedInDirectory: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   deletionScheduledAt: Date | null
@@ -73,6 +74,7 @@ export type TenantMaxAggregateOutputType = {
   onboardedAt: Date | null
   trialEndsAt: Date | null
   isActive: boolean | null
+  listedInDirectory: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   deletionScheduledAt: Date | null
@@ -96,6 +98,7 @@ export type TenantCountAggregateOutputType = {
   onboardedAt: number
   trialEndsAt: number
   isActive: number
+  listedInDirectory: number
   createdAt: number
   updatedAt: number
   deletionScheduledAt: number
@@ -131,6 +134,7 @@ export type TenantMinAggregateInputType = {
   onboardedAt?: true
   trialEndsAt?: true
   isActive?: true
+  listedInDirectory?: true
   createdAt?: true
   updatedAt?: true
   deletionScheduledAt?: true
@@ -154,6 +158,7 @@ export type TenantMaxAggregateInputType = {
   onboardedAt?: true
   trialEndsAt?: true
   isActive?: true
+  listedInDirectory?: true
   createdAt?: true
   updatedAt?: true
   deletionScheduledAt?: true
@@ -177,6 +182,7 @@ export type TenantCountAggregateInputType = {
   onboardedAt?: true
   trialEndsAt?: true
   isActive?: true
+  listedInDirectory?: true
   createdAt?: true
   updatedAt?: true
   deletionScheduledAt?: true
@@ -287,6 +293,7 @@ export type TenantGroupByOutputType = {
   onboardedAt: Date | null
   trialEndsAt: Date
   isActive: boolean
+  listedInDirectory: boolean
   createdAt: Date
   updatedAt: Date
   deletionScheduledAt: Date | null
@@ -333,6 +340,7 @@ export type TenantWhereInput = {
   onboardedAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
+  listedInDirectory?: Prisma.BoolFilter<"Tenant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   deletionScheduledAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
@@ -364,6 +372,7 @@ export type TenantOrderByWithRelationInput = {
   onboardedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  listedInDirectory?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletionScheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -399,6 +408,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   onboardedAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
+  listedInDirectory?: Prisma.BoolFilter<"Tenant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   deletionScheduledAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
@@ -429,6 +439,7 @@ export type TenantOrderByWithAggregationInput = {
   onboardedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  listedInDirectory?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletionScheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -460,6 +471,7 @@ export type TenantScalarWhereWithAggregatesInput = {
   onboardedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
   trialEndsAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
   isActive?: Prisma.BoolWithAggregatesFilter<"Tenant"> | boolean
+  listedInDirectory?: Prisma.BoolWithAggregatesFilter<"Tenant"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
   deletionScheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
@@ -483,6 +495,7 @@ export type TenantCreateInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -514,6 +527,7 @@ export type TenantUncheckedCreateInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -545,6 +559,7 @@ export type TenantUpdateInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -576,6 +591,7 @@ export type TenantUncheckedUpdateInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -607,6 +623,7 @@ export type TenantCreateManyInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -630,6 +647,7 @@ export type TenantUpdateManyMutationInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -653,6 +671,7 @@ export type TenantUncheckedUpdateManyInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -676,6 +695,7 @@ export type TenantCountOrderByAggregateInput = {
   onboardedAt?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  listedInDirectory?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletionScheduledAt?: Prisma.SortOrder
@@ -704,6 +724,7 @@ export type TenantMaxOrderByAggregateInput = {
   onboardedAt?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  listedInDirectory?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletionScheduledAt?: Prisma.SortOrder
@@ -727,6 +748,7 @@ export type TenantMinOrderByAggregateInput = {
   onboardedAt?: Prisma.SortOrder
   trialEndsAt?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  listedInDirectory?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletionScheduledAt?: Prisma.SortOrder
@@ -904,6 +926,7 @@ export type TenantCreateWithoutUsersInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -934,6 +957,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -980,6 +1004,7 @@ export type TenantUpdateWithoutUsersInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1010,6 +1035,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1040,6 +1066,7 @@ export type TenantCreateWithoutEmployeesInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1070,6 +1097,7 @@ export type TenantUncheckedCreateWithoutEmployeesInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1116,6 +1144,7 @@ export type TenantUpdateWithoutEmployeesInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1146,6 +1175,7 @@ export type TenantUncheckedUpdateWithoutEmployeesInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1176,6 +1206,7 @@ export type TenantCreateWithoutServicesInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1206,6 +1237,7 @@ export type TenantUncheckedCreateWithoutServicesInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1252,6 +1284,7 @@ export type TenantUpdateWithoutServicesInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1282,6 +1315,7 @@ export type TenantUncheckedUpdateWithoutServicesInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1312,6 +1346,7 @@ export type TenantCreateWithoutSchedulesInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1342,6 +1377,7 @@ export type TenantUncheckedCreateWithoutSchedulesInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1388,6 +1424,7 @@ export type TenantUpdateWithoutSchedulesInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1418,6 +1455,7 @@ export type TenantUncheckedUpdateWithoutSchedulesInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1448,6 +1486,7 @@ export type TenantCreateWithoutScheduleExceptionsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1478,6 +1517,7 @@ export type TenantUncheckedCreateWithoutScheduleExceptionsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1524,6 +1564,7 @@ export type TenantUpdateWithoutScheduleExceptionsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1554,6 +1595,7 @@ export type TenantUncheckedUpdateWithoutScheduleExceptionsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1584,6 +1626,7 @@ export type TenantCreateWithoutAppointmentsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1614,6 +1657,7 @@ export type TenantUncheckedCreateWithoutAppointmentsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1660,6 +1704,7 @@ export type TenantUpdateWithoutAppointmentsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1690,6 +1735,7 @@ export type TenantUncheckedUpdateWithoutAppointmentsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1720,6 +1766,7 @@ export type TenantCreateWithoutPrivacyConsentsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1750,6 +1797,7 @@ export type TenantUncheckedCreateWithoutPrivacyConsentsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1796,6 +1844,7 @@ export type TenantUpdateWithoutPrivacyConsentsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1826,6 +1875,7 @@ export type TenantUncheckedUpdateWithoutPrivacyConsentsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1856,6 +1906,7 @@ export type TenantCreateWithoutImageVersionsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1886,6 +1937,7 @@ export type TenantUncheckedCreateWithoutImageVersionsInput = {
   onboardedAt?: Date | string | null
   trialEndsAt: Date | string
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletionScheduledAt?: Date | string | null
@@ -1932,6 +1984,7 @@ export type TenantUpdateWithoutImageVersionsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1962,6 +2015,7 @@ export type TenantUncheckedUpdateWithoutImageVersionsInput = {
   onboardedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   trialEndsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  listedInDirectory?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletionScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2086,6 +2140,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   onboardedAt?: boolean
   trialEndsAt?: boolean
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletionScheduledAt?: boolean
@@ -2118,6 +2173,7 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   onboardedAt?: boolean
   trialEndsAt?: boolean
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletionScheduledAt?: boolean
@@ -2141,6 +2197,7 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   onboardedAt?: boolean
   trialEndsAt?: boolean
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletionScheduledAt?: boolean
@@ -2164,6 +2221,7 @@ export type TenantSelectScalar = {
   onboardedAt?: boolean
   trialEndsAt?: boolean
   isActive?: boolean
+  listedInDirectory?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletionScheduledAt?: boolean
@@ -2173,7 +2231,7 @@ export type TenantSelectScalar = {
   currentPeriodEnd?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "logoUrl" | "bannerUrl" | "latitude" | "longitude" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "createdAt" | "updatedAt" | "deletionScheduledAt" | "stripeCustomerId" | "stripeSubscriptionId" | "subscriptionStatus" | "currentPeriodEnd", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "phone" | "address" | "logoUrl" | "bannerUrl" | "latitude" | "longitude" | "timezone" | "onboardedAt" | "trialEndsAt" | "isActive" | "listedInDirectory" | "createdAt" | "updatedAt" | "deletionScheduledAt" | "stripeCustomerId" | "stripeSubscriptionId" | "subscriptionStatus" | "currentPeriodEnd", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   employees?: boolean | Prisma.Tenant$employeesArgs<ExtArgs>
@@ -2214,6 +2272,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     onboardedAt: Date | null
     trialEndsAt: Date
     isActive: boolean
+    listedInDirectory: boolean
     createdAt: Date
     updatedAt: Date
     deletionScheduledAt: Date | null
@@ -2665,6 +2724,7 @@ export interface TenantFieldRefs {
   readonly onboardedAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly trialEndsAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"Tenant", 'Boolean'>
+  readonly listedInDirectory: Prisma.FieldRef<"Tenant", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly deletionScheduledAt: Prisma.FieldRef<"Tenant", 'DateTime'>

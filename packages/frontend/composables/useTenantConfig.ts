@@ -10,6 +10,7 @@ export interface TenantData {
   latitude: number | null;
   longitude: number | null;
   timezone: string;
+  listedInDirectory: boolean;
 }
 
 /** Business info + logo management for the config page. */
@@ -24,6 +25,7 @@ export function useTenantConfig() {
     address: '',
     latitude: null as number | null,
     longitude: null as number | null,
+    listedInDirectory: false,
   });
   const saving = ref(false);
   const saved = ref(false);
@@ -42,6 +44,7 @@ export function useTenantConfig() {
     form.address = tenant.address || '';
     form.latitude = tenant.latitude;
     form.longitude = tenant.longitude;
+    form.listedInDirectory = tenant.listedInDirectory ?? false;
     currentLogoUrl.value = tenant.logoUrl;
   }
 
@@ -51,7 +54,10 @@ export function useTenantConfig() {
     slugError.value = null;
     try {
       const slug = form.slug.trim();
-      await api.patch('/tenant', { slug });
+      await api.patch('/tenant', {
+        slug,
+        listedInDirectory: form.listedInDirectory,
+      });
       form.slug = slug;
       saved.value = true;
       setTimeout(() => (saved.value = false), 3000);
@@ -67,7 +73,7 @@ export function useTenantConfig() {
         ? message.join(', ')
         : typeof message === 'string'
           ? message
-          : 'No se pudo guardar la URL pública. Intenta de nuevo.';
+          : 'No se pudieron guardar los cambios. Intenta de nuevo.';
     } finally {
       saving.value = false;
     }

@@ -30,3 +30,16 @@ export interface PublicTenantResponse {
   services: PublicServiceDto[];
   employees: PublicEmployeeDto[];
 }
+
+/** A discoverable business exposed by GET /public/directory. */
+export interface PublicDirectoryBusinessDto {
+  name: string;
+  slug: string;
+  logoUrl: string | null;
+  address: string | null;
+}
+
+/** Response of GET /public/directory. */
+export interface PublicDirectoryResponse {
+  businesses: PublicDirectoryBusinessDto[];
+}

@@ -1,6 +1,7 @@
 import {
   IsNumber,
   IsOptional,
+  IsBoolean,
   IsString,
   IsTimeZone,
   Matches,
@@ -56,4 +57,8 @@ export class UpdateTenantDto {
   @IsOptional()
   @IsNumber()
   longitude?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  listedInDirectory?: boolean;
 }

@@ -67,6 +67,7 @@ model Tenant {
   onboardedAt DateTime?
   trialEndsAt DateTime
   isActive    Boolean   @default(true)
+  listedInDirectory Boolean @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

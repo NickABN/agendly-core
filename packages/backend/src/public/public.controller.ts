@@ -1,8 +1,17 @@
-import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { PublicService } from './public.service';
 import { ClientAppointmentsService } from './client-appointments.service';
 import { ClientCancelDto } from './dto/client-cancel.dto';
+import { DirectoryQueryDto } from './dto/directory-query.dto';
 
 @Controller('public')
 export class PublicController {
@@ -27,6 +36,13 @@ export class PublicController {
     @Body() body: ClientCancelDto,
   ) {
     return this.clientAppointments.cancel(token, body.reason);
+  }
+
+  /** GET /public/directory — lists businesses that opted into discovery. */
+  @Get('directory')
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
+  getDirectory(@Query() query: DirectoryQueryDto) {
+    return this.publicService.getDirectory(query.q);
   }
 
   /** GET /public/:slug — returns tenant info, services, and employees */

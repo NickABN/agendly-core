@@ -8,6 +8,7 @@ export interface TenantDto {
   onboardedAt: string | null;
   trialEndsAt: string;
   isActive: boolean;
+  listedInDirectory: boolean;
 }
 
 export interface UpdateTenantDto {
@@ -16,4 +17,5 @@ export interface UpdateTenantDto {
   phone?: string;
   address?: string;
   timezone?: string;
+  listedInDirectory?: boolean;
 }
