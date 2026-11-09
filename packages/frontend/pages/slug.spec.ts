@@ -20,6 +20,21 @@ type TenantInfo = {
 };
 type Confirmation = { id: string; startTime: string; endTime: string };
 
+function makeTenantInfo(overrides: Partial<TenantInfo> = {}): TenantInfo {
+  return {
+    name: 'Estudio Luna',
+    slug: 'estudio-luna',
+    timezone: 'America/Mexico_City',
+    logoUrl: null,
+    bannerUrl: null,
+    address: 'Av. Vallarta 123, Guadalajara',
+    phone: null,
+    latitude: null,
+    longitude: null,
+    ...overrides,
+  };
+}
+
 let booking: BookingState;
 let wrappers: ReturnType<typeof mount>[] = [];
 let originalScrollIntoView: PropertyDescriptor | undefined;
@@ -124,6 +139,12 @@ async function mountPage() {
   await flushPromises();
   await nextTick();
   return wrapper;
+}
+
+function findAspectCover(wrapper: ReturnType<typeof mount>) {
+  return wrapper
+    .findAll('[class]')
+    .find((element) => (element.attributes('class') ?? '').includes('aspect-[3/1]'));
 }
 
 beforeEach(() => {
@@ -439,5 +460,71 @@ describe('public booking phone input', () => {
     expect(booking.clientForm.phone).toBe('+34612345678');
     await wrapper.get('form').trigger('submit');
     expect(booking.submitBooking).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('public booking business hero branding', () => {
+  it('renders a branded hero placeholder when the business has no banner', async () => {
+    booking = createBookingState({
+      step: 1,
+      tenantInfo: makeTenantInfo(),
+    });
+    const wrapper = await mountPage();
+
+    const heroCover = findAspectCover(wrapper);
+    expect(heroCover).toBeDefined();
+    const placeholderClasses = [
+      heroCover!.attributes('class') ?? '',
+      ...heroCover!.findAll('[class]').map((element) => element.attributes('class') ?? ''),
+    ].join(' ');
+    expect(placeholderClasses).toMatch(/(?:bg-gradient|bg-linear)-/);
+    expect(placeholderClasses).toContain('var(--color-primary)');
+    expect(placeholderClasses).toContain('var(--color-primary-container)');
+    expect(
+      wrapper.findAll('img').some((image) => image.attributes('src')?.includes('banner')),
+    ).toBe(false);
+  });
+
+  it('renders the banner image in the step-one hero when one is available', async () => {
+    const bannerUrl = 'https://cdn.example.test/luna-banner.webp';
+    booking = createBookingState({
+      step: 1,
+      tenantInfo: makeTenantInfo({ bannerUrl }),
+    });
+    const wrapper = await mountPage();
+
+    const heroCover = findAspectCover(wrapper);
+    expect(heroCover).toBeDefined();
+    const banner = wrapper.findAll('img').find((image) => image.attributes('src') === bannerUrl);
+    expect(banner).toBeDefined();
+    expect(
+      (heroCover!.element.tagName === 'IMG' && heroCover!.attributes('src') === bannerUrl) ||
+        heroCover!.findAll('img').some((image) => image.attributes('src') === bannerUrl),
+    ).toBe(true);
+  });
+
+  it('renders the large business logo in the step-one hero when available', async () => {
+    const logoUrl = 'https://cdn.example.test/luna-logo.webp';
+    booking = createBookingState({
+      step: 1,
+      tenantInfo: makeTenantInfo({ logoUrl }),
+    });
+    const wrapper = await mountPage();
+
+    expect(
+      wrapper.findAll('img').filter((image) => image.attributes('src') === logoUrl),
+    ).toHaveLength(2);
+  });
+
+  it('renders initials in the step-one hero when the business has no logo', async () => {
+    booking = createBookingState({
+      step: 1,
+      tenantInfo: makeTenantInfo({ bannerUrl: 'https://cdn.example.test/luna-banner.webp' }),
+    });
+    const wrapper = await mountPage();
+
+    expect(
+      wrapper.findAll('[aria-hidden="true"]').filter((element) => element.text().trim() === 'E'),
+    ).toHaveLength(2);
   });
 });

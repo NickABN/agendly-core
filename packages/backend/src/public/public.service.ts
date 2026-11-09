@@ -52,6 +52,7 @@ export class PublicService {
         name: true,
         slug: true,
         logoUrl: true,
+        bannerUrl: true,
         address: true,
         isActive: true,
         subscriptionStatus: true,
@@ -68,6 +69,7 @@ export class PublicService {
           name: tenant.name,
           slug: tenant.slug,
           logoUrl: tenant.logoUrl ?? null,
+          bannerUrl: tenant.bannerUrl ?? null,
           address: tenant.address ?? null,
         })),
     };

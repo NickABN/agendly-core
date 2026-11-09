@@ -30,6 +30,7 @@ function directoryTenant(overrides: Record<string, unknown> = {}) {
     name: 'Salón Calma',
     slug: 'salon-calma',
     logoUrl: 'https://cdn.example/logo.webp',
+    bannerUrl: null,
     address: 'Av. Reforma 1, Ciudad de México',
     phone: '+52 55 1234 5678',
     email: 'owner@example.com',
@@ -135,6 +136,7 @@ function getDirectory(service: PublicService, q?: string) {
         name: string;
         slug: string;
         logoUrl: string | null;
+        bannerUrl: string | null;
         address: string | null;
       }>;
     }>;
@@ -275,9 +277,10 @@ describe('PublicService.getDirectory', () => {
     );
   });
 
-  it('exposes only the four public directory fields', async () => {
+  it('exposes only the five public directory fields, including the banner URL', async () => {
+    const bannerUrl = 'https://cdn.example/banner.webp';
     const { service } = directoryServiceWith([
-      directoryTenant({ logoUrl: null, address: null }),
+      directoryTenant({ logoUrl: null, bannerUrl, address: null }),
     ]);
 
     const result = await getDirectory(service);
@@ -286,10 +289,12 @@ describe('PublicService.getDirectory', () => {
       name: 'Salón Calma',
       slug: 'salon-calma',
       logoUrl: null,
+      bannerUrl,
       address: null,
     });
     expect(Object.keys(result.businesses[0]).sort()).toEqual([
       'address',
+      'bannerUrl',
       'logoUrl',
       'name',
       'slug',

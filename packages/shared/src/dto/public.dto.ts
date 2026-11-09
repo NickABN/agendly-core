@@ -36,6 +36,7 @@ export interface PublicDirectoryBusinessDto {
   name: string;
   slug: string;
   logoUrl: string | null;
+  bannerUrl: string | null;
   address: string | null;
 }
 
