@@ -12,6 +12,7 @@ export interface ProfileDto {
   onboardedAt: string | null;
   trialEndsAt: string;
   isActive: boolean;
+  listedInDirectory?: boolean;
 }
 
 export interface UpdateProfileDto {

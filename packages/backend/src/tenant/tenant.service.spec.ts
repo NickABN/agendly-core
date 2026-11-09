@@ -13,6 +13,7 @@ const baseTenant = {
   bannerUrl: null,
   latitude: null,
   longitude: null,
+  listedInDirectory: false,
   timezone: 'America/Mexico_City',
   onboardedAt: null,
   trialEndsAt: new Date('2026-08-01T00:00:00.000Z'),
@@ -75,5 +76,25 @@ describe('TenantService.update — slug validation', () => {
       where: { id: TENANT_ID },
       data: { slug: 'mi-salon' },
     });
+  });
+
+  it('persists and returns the public-directory opt-in without changing other fields', async () => {
+    const prisma = makePrisma();
+    const service = new TenantService(prisma as never);
+
+    const result = await service.update(TENANT_ID, {
+      listedInDirectory: true,
+    } as never);
+
+    expect(prisma.tenant.update).toHaveBeenCalledWith({
+      where: { id: TENANT_ID },
+      data: { listedInDirectory: true },
+    });
+    expect(result as unknown as Record<string, unknown>).toHaveProperty(
+      'listedInDirectory',
+      true,
+    );
+    expect(result.name).toBe(baseTenant.name);
+    expect(result.slug).toBe(baseTenant.slug);
   });
 });

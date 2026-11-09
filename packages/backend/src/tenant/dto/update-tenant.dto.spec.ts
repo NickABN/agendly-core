@@ -49,4 +49,26 @@ describe('UpdateTenantDto phone normalization', () => {
       );
     },
   );
+
+  it.each([true, false])(
+    'accepts listedInDirectory=%s',
+    async (listedInDirectory) => {
+      const dto = build({ listedInDirectory });
+
+      expect(await validate(dto)).toHaveLength(0);
+      expect(dto).toHaveProperty('listedInDirectory', listedInDirectory);
+    },
+  );
+
+  it.each(['true', 1, {}])(
+    'rejects non-boolean listedInDirectory value %p',
+    async (listedInDirectory) => {
+      const dto = build({ listedInDirectory });
+      const errors = await validate(dto);
+
+      expect(
+        errors.some((error) => error.property === 'listedInDirectory'),
+      ).toBe(true);
+    },
+  );
 });

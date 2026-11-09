@@ -1431,6 +1431,7 @@ export const TenantScalarFieldEnum = {
   onboardedAt: 'onboardedAt',
   trialEndsAt: 'trialEndsAt',
   isActive: 'isActive',
+  listedInDirectory: 'listedInDirectory',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletionScheduledAt: 'deletionScheduledAt',

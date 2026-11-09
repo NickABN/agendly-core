@@ -26,5 +26,6 @@ export function mapTenantToProfileDto(tenant: Tenant): ProfileDto {
     onboardedAt: tenant.onboardedAt ? tenant.onboardedAt.toISOString() : null,
     trialEndsAt: tenant.trialEndsAt.toISOString(),
     isActive: tenant.isActive,
+    listedInDirectory: tenant.listedInDirectory,
   };
 }
