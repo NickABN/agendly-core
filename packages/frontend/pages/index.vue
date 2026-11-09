@@ -76,6 +76,12 @@
                 class="bg-surface-container-high text-on-surface px-8 py-4 rounded-lg font-semibold text-lg hover:bg-surface-container-highest transition-all text-center"
                 >Ver Beneficios</a
               >
+              <NuxtLink
+                to="/negocios"
+                class="bg-surface-container-high text-on-surface px-8 py-4 rounded-lg font-semibold text-lg hover:bg-surface-container-highest transition-all text-center"
+              >
+                Ver negocios
+              </NuxtLink>
             </div>
             <div
               class="mt-8 flex flex-wrap items-center gap-4 text-sm text-on-secondary-container font-medium"

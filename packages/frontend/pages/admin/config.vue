@@ -239,6 +239,28 @@ async function handlePublicPageSubmit() {
             </div>
           </div>
 
+          <div class="flex items-start gap-3">
+            <input
+              id="listed-in-directory"
+              v-model="businessForm.listedInDirectory"
+              type="checkbox"
+              aria-describedby="listed-in-directory-help"
+              class="mt-1 size-4 accent-[var(--color-primary)]"
+            />
+            <div class="space-y-1">
+              <label for="listed-in-directory" class="font-medium text-[var(--color-on-surface)]">
+                Mostrar mi negocio en el directorio público de Agendly
+              </label>
+              <p
+                id="listed-in-directory-help"
+                class="text-sm text-[var(--color-on-surface-variant)]"
+              >
+                Tus clientes podrán encontrarte en la sección Negocios de Agendly. Puedes quitarlo
+                cuando quieras.
+              </p>
+            </div>
+          </div>
+
           <button
             type="button"
             :disabled="businessLoading"

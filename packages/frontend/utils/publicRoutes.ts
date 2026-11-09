@@ -10,6 +10,7 @@ const PUBLIC_ROUTE_PREFIXES = [
   '/terminos',
   '/forgot-password',
   '/reset-password',
+  '/negocios',
   // Client self-service appointment page (signed link from emails)
   '/cita/',
 ];

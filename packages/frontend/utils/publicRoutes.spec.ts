@@ -15,6 +15,7 @@ describe('isPublicRoutePath', () => {
     '/terminos',
     '/forgot-password',
     '/reset-password',
+    '/negocios',
     '/cita/cm1abc.c2lnbmF0dXJl',
   ])('treats the explicit public route "%s" as public', (path) => {
     expect(isPublicRoutePath(path)).toBe(true);
@@ -27,7 +28,7 @@ describe('isPublicRoutePath', () => {
     },
   );
 
-  it.each(['/admin', '/onboarding'])(
+  it.each(['/admin', '/onboarding', '/directory'])(
     'does NOT treat the reserved app route "%s" as a public booking page',
     (path) => {
       expect(isPublicRoutePath(path)).toBe(false);

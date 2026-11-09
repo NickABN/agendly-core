@@ -37,6 +37,10 @@ type Harness = {
   route: { query: Record<string, string | undefined> };
   router: { replace: ReturnType<typeof vi.fn>; push: ReturnType<typeof vi.fn> };
   clipboardWriteText: ReturnType<typeof vi.fn>;
+  tenantConfig: {
+    form: { listedInDirectory: boolean; slug: string };
+    save: ReturnType<typeof vi.fn>;
+  };
 };
 
 const mountedWrappers: VueWrapper[] = [];
@@ -75,6 +79,7 @@ function mountConfigPage(tab?: string, role = 'OWNER'): Harness {
       address: 'Av. Reforma 1, Ciudad de México',
       latitude: 19.4326,
       longitude: -99.1332,
+      listedInDirectory: false,
     }),
     saving: ref(false),
     saved: ref(false),
@@ -140,7 +145,7 @@ function mountConfigPage(tab?: string, role = 'OWNER'): Harness {
     },
   });
   mountedWrappers.push(wrapper);
-  return { wrapper, route, router, clipboardWriteText };
+  return { wrapper, route, router, clipboardWriteText, tenantConfig };
 }
 
 afterEach(() => {
@@ -240,6 +245,27 @@ describe('admin config settings tabs', () => {
     await copyButton!.trigger('click');
 
     expect(clipboardWriteText).toHaveBeenCalledWith('https://agendly.mx/salon-calma');
+  });
+
+  it('offers the public directory opt-in and preserves it when saving the page settings', async () => {
+    const { wrapper, tenantConfig } = mountConfigPage('publica');
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('Mostrar mi negocio en el directorio público de Agendly');
+    expect(wrapper.text()).toContain(
+      'Tus clientes podrán encontrarte en la sección Negocios de Agendly. Puedes quitarlo cuando quieras.',
+    );
+
+    const toggle = wrapper.get('input[type="checkbox"]');
+    await toggle.setValue(true);
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text().trim() === 'Guardar cambios')!
+      .trigger('click');
+    await flushPromises();
+
+    expect(tenantConfig.form.listedInDirectory).toBe(true);
+    expect(tenantConfig.save).toHaveBeenCalledTimes(1);
   });
 
   it('does not expose duplicate editable coordinate inputs', async () => {
