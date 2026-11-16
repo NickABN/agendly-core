@@ -6,13 +6,13 @@ crear cuenta, y el dueño administra su agenda desde un panel pensado primero pa
 
 ## Enlaces de entrega
 
-| Recurso                   | Enlace                                               |
-| ------------------------- | ---------------------------------------------------- |
-| Demo (panel)              | https://agendly-admin1.netlify.app                   |
-| Página pública de ejemplo | https://agendly-admin1.netlify.app/bellas-nails-demo |
-| Presentación (slides)     | TODO: agregar enlace                                 |
-| Video de demostración     | TODO: agregar enlace                                 |
-| Repositorio               | https://github.com/NickABN/agendly-core              |
+| Recurso                   | Enlace                                                                                                         |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Demo (panel)              | https://agendly-admin1.netlify.app                                                                             |
+| Página pública de ejemplo | https://agendly-admin1.netlify.app/bellas-nails-demo                                                           |
+| Presentación (slides)     | [Carpeta de entrega en Google Drive](https://drive.google.com/drive/folders/1aGeknvG7Jv589v_MlBNevASSbECnp7tO) |
+| Video de demostración     | [Carpeta de entrega en Google Drive](https://drive.google.com/drive/folders/1aGeknvG7Jv589v_MlBNevASSbECnp7tO) |
+| Repositorio               | https://github.com/NickABN/agendly-core                                                                        |
 
 ### Usuario de prueba
 
