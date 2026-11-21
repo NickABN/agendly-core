@@ -402,10 +402,10 @@ pnpm typecheck
 pnpm format:check
 ```
 
-Resultado en la copia limpia usada para este README: **401 tests pasan** (backend 215 con Jest,
-frontend 130 y `shared` 56 con Vitest), y `lint` y `typecheck` terminan sin errores. Los tests de
-unidad no necesitan base de datos. El lint con ESLint está configurado en el backend; frontend y
-`shared` todavía no tienen lint propio.
+Resultado en la copia limpia usada para este README (21 de noviembre de 2026): **797 tests pasan**
+(backend 327 con Jest, frontend 345 y `shared` 125 con Vitest), y `lint` y `typecheck` terminan sin
+errores. Los tests de unidad no necesitan base de datos. El lint con ESLint está configurado en el
+backend y el frontend; `shared` todavía no tiene lint propio.
 
 Las pruebas cubren la lógica crítica: disponibilidad y reservas, rotación y revocación de tokens,
 recuperación de contraseña, aislamiento entre tenants, recordatorios, métricas y el modelo de
